@@ -1,0 +1,12 @@
+{
+    "version": "1.0.0",
+    "description": "default settings",
+
+    "font_constants": [
+        {
+            "FONT_WHITESPACE_INTERVAL_STANDARD": [0.20, 0.25],
+            "FONT_WHITESPACE_INTERVAL_JUSTIFIED_TEXT": [0.16, 0.33],
+            "FONT_LEADING_INTERVAL_STANDARD": [1.2, 1.5]
+        }
+    ]
+}
