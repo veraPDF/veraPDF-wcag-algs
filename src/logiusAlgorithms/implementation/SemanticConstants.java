@@ -1,4 +1,4 @@
-package logiusAlgorithms.semantics;
+package logiusAlgorithms.implementation;
 
 public class SemanticConstants {
     public final static String settingsFileName = "settings.json";

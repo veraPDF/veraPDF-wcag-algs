@@ -1,32 +1,31 @@
-package logiusAlgorithms.algorithms;
+package logiusAlgorithms.implementation.algorithms;
 
 import javafx.util.Pair;
-import logiusAlgorithms.tree.Node;
-import logiusAlgorithms.tree.Tree;
-
+import java.util.Iterator;
 import java.util.Stack;
 
-public class DFSTreeIterator extends TreeIterator {
-    protected Stack<Pair<Node, Integer>> parentsStack;
+import logiusAlgorithms.interfaces.Node;
+import logiusAlgorithms.interfaces.Tree;
 
-    public DFSTreeIterator(Tree tree) {
-        super(tree);
+public class DFSTreeIterator implements Iterator<Node> {
+    protected Stack<Pair<Node, Integer>> parentsStack;
+    Node next;
+
+    public DFSTreeIterator(Tree<Node> tree) {
         parentsStack = new Stack<>();
         parentsStack.push(new Pair<>(tree.getRoot(), 0));
-    }
-
-    @Override public Node first() {
-        return next();
+        next = next();
     }
 
     @Override
-    public Node current() {
-        return parentsStack.isEmpty() ? null : parentsStack.peek().getKey();
+    public boolean hasNext() {
+        return next != null;
     }
 
     @Override
     public Node next() {
         Pair<Node, Integer> parentsStackTopItem;
+        Node returnNode = next;
 
         while (true) {
             if (parentsStack.isEmpty()) {
@@ -43,10 +42,12 @@ public class DFSTreeIterator extends TreeIterator {
                 parentsStack.push(new Pair<>(node, nextChildIndex + 1));
                 parentsStack.push(new Pair<>(node.getChildren().get(nextChildIndex), 0));
             } else {
-                return node;
+                next = node;
+                break;
             }
         }
 
-        return null;
+        next = null;
+        return returnNode;
     }
 }
