@@ -1,22 +1,20 @@
 package logiusAlgorithms.implementation.algorithms;
 
-import logiusAlgorithms.implementation.TextSemanticsChecker;
-import logiusAlgorithms.interfaces.Chunk;
+import logiusAlgorithms.implementation.ChunksMergeUtils;
 import logiusAlgorithms.interfaces.Node;
-import logiusAlgorithms.interfaces.TextChunk;
 import logiusAlgorithms.interfaces.Tree;
 
 import java.util.Map;
 import java.util.function.Consumer;
 
 public class SemanticChecksConsumer implements Consumer<Node> {
-    protected TextSemanticsChecker textSemanticsChecker;
+    protected ChunksMergeUtils chunksMergeUtils;
     protected Tree tree;
     protected Map<Node, Node> nodeToAccumulatedNodeMap;
 
     public SemanticChecksConsumer(Tree tree) {
         this.tree = tree;
-        textSemanticsChecker = new TextSemanticsChecker();
+        chunksMergeUtils = new ChunksMergeUtils();
 
         AccumulatedNodeBuilder accumulatedNodeBuilder = new AccumulatedNodeBuilder();
         tree.forEach(accumulatedNodeBuilder);
@@ -38,7 +36,7 @@ public class SemanticChecksConsumer implements Consumer<Node> {
 //            if (previousChildAccumulatedChunk == null || currentChildAccumulatedChunk == null)
 //                continue; // correct with lastChild: [ a, null, b ] -> probability = 1
 //
-//            accumulatedNodeProbability *= textSemanticsChecker.mergeProbability(
+//            accumulatedNodeProbability *= chunksMergeUtils.mergeProbability(
 //                    (TextChunk) previousChildAccumulatedChunk,
 //                    (TextChunk) currentChildAccumulatedChunk,
 //                    accumulatedNodeChunkType);

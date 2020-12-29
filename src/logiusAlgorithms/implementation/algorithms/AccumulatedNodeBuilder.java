@@ -1,8 +1,8 @@
 package logiusAlgorithms.implementation.algorithms;
 
+import logiusAlgorithms.implementation.ChunksMergeUtils;
 import logiusAlgorithms.implementation.SemanticNode;
 import logiusAlgorithms.implementation.SemanticTextChunk;
-import logiusAlgorithms.implementation.TextSemanticsChecker;
 import logiusAlgorithms.interfaces.Chunk;
 import logiusAlgorithms.interfaces.Node;
 import logiusAlgorithms.interfaces.TextChunk;
@@ -91,7 +91,7 @@ public class AccumulatedNodeBuilder implements Consumer<Node> {
 //            }
 //            TextChunk nextChild = (TextChunk) nodeToAccumulatedNodeMap.get(children.get(lineBoundary.second));
 //
-//            double mergeProbability = TextSemanticsChecker.toParagraphMergeProbability((TextChunk) prevChild, nextChild);
+//            double mergeProbability = ChunksMergeUtils.toParagraphMergeProbability((TextChunk) prevChild, nextChild);
 //            mergeProbabilities.set(lineBoundary.second - 1, mergeProbability);
 //
 //            paragraphProbability *= mergeProbability;
@@ -116,7 +116,7 @@ public class AccumulatedNodeBuilder implements Consumer<Node> {
             double mergeProbability = 1;
 
             if (currentText.getSemanticType().equals("SPAN") && nextText.getSemanticType().equals("SPAN")) {
-                mergeProbability = TextSemanticsChecker.toParagraphMergeProbability((TextChunk) currentText, (TextChunk) nextText);
+                mergeProbability = ChunksMergeUtils.toLineMergeProbability((TextChunk) currentText, (TextChunk) nextText);
             } else if (true) {
 
             }
@@ -128,12 +128,13 @@ public class AccumulatedNodeBuilder implements Consumer<Node> {
         node.setCorrectSemanticScore(paragraphProbability);
     }
 
+
     private void findLines(Node node, List<Pair<Integer, Integer>> linesBoundaries, List<Double> mergeProbabilities) {
         List<Node> children = node.getChildren();
         int numChildren = node.numChildren();
 
         // Use two pointers method to build linesBoundaries
-        Integer currentLineLeftBoundary = -1; // left pointer
+        Integer currentLineLeftBoundary = -1; // left pointer and i of for-loop is the right pointer
         for (int i = 0; i < numChildren - 1; ++i) {
             mergeProbabilities.add(i, 0.);
 
@@ -157,7 +158,7 @@ public class AccumulatedNodeBuilder implements Consumer<Node> {
 
             // now: currentChild.semanticType == nextChild.semanticType == "SPAN"
 
-            double mergeProbability = TextSemanticsChecker.toLineMergeProbability(currentChild, nextChild);
+            double mergeProbability = ChunksMergeUtils.toLineMergeProbability(currentChild, nextChild);
             mergeProbabilities.set(i, mergeProbability);
             if (mergeProbability < MERGE_PROBABILITY_THRESHOLD) {
                 linesBoundaries.add(new Pair<>(currentLineLeftBoundary, i + 1));
