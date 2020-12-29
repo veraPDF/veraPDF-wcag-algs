@@ -1,10 +1,9 @@
 package logiusAlgorithms.implementation;
 
-import logiusAlgorithms.interfaces.ChunkTypes;
 import logiusAlgorithms.interfaces.TextChunk;
 
 public class SemanticTextChunk extends SemanticChunk implements TextChunk {
-    public final static ChunkTypes CHUNK_TYPE = ChunkTypes.TEXT_CHUNK;
+    public final static String SEMANTIC_TYPE = "SPAN";
 
     private String text;
     private String fontName;
@@ -14,10 +13,19 @@ public class SemanticTextChunk extends SemanticChunk implements TextChunk {
     private double[] fontColor;
     private double baseLine;
 
+    public SemanticTextChunk(String text, double[] boundingBox, double fontSize, double baseLine, int pageNumber) {
+        super(SEMANTIC_TYPE, boundingBox, pageNumber);
+        this.fontSize = fontSize;
+        this.baseLine = baseLine;
+    }
+
+    public SemanticTextChunk(String text, double[] boundingBox, int pageNumber) {
+        super(SEMANTIC_TYPE, boundingBox, pageNumber);
+    }
+
     public SemanticTextChunk(String text, String fontName, double fontSize, int fontWeight, double italicAngle,
                              double[] fontColor, double[] boundingBox, double baseLine, int pageNumber) {
-        super(pageNumber, boundingBox);
-        this.accumulatedChunk = this;
+        super(SEMANTIC_TYPE, boundingBox, pageNumber);
         this.text = text;
         this.fontName = fontName;
         this.fontSize = fontSize;
@@ -47,9 +55,6 @@ public class SemanticTextChunk extends SemanticChunk implements TextChunk {
 
     @Override
     public double getBaseLine() { return baseLine; }
-
-    @Override
-    public ChunkTypes getChunkType() { return CHUNK_TYPE; }
 
 //    @Override
 //    public int compareTo(SemanticTextChunk o) {

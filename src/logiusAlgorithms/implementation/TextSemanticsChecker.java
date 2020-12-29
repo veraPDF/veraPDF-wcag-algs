@@ -1,8 +1,5 @@
 package logiusAlgorithms.implementation;
 
-import logiusAlgorithms.interfaces.Chunk;
-import logiusAlgorithms.interfaces.ChunkTypes;
-import logiusAlgorithms.interfaces.Node;
 import logiusAlgorithms.interfaces.TextChunk;
 
 import java.util.Arrays;
@@ -10,19 +7,18 @@ import java.util.Arrays;
 public class TextSemanticsChecker {
     // TODO: move all constants in settings.json
     // TODO: replace numbers in the code with constants
-    // TODO: move some methods into new classes
     private final static String settingsFileName = "settings.json";
     private final static double FLOATING_POINT_OPERATIONS_EPS = 1e-7;
     private final static double FONT_METRIC_UNIVERSAL_TEMPORARY_THRESHOLD = 0.1;
     private final static double FONT_SIZE_COMPARISON_THRESHOLD = 0.05;
     private final static double FONT_WHITESPACE_COMPARISON_THRESHOLD = 0.1;
-    private final static double FONT_LEADING_INTERVAL_STANDARD = 0.1;
-    private final static double[] FONT_WHITESPACE_INTERVAL_STANDARD = { 0.2, 0.25 };
-    private final static double[] FONT_WHITESPACE_INTERVAL_JUSTIFIED_TEXT = { 0.16, 0.33 };
+    private final static double FONT_LEADING_INTERVAL_STANDARD = 1;
+//    private final static double[] FONT_WHITESPACE_INTERVAL_STANDARD = { 0.2, 0.25 };
+//    private final static double[] FONT_WHITESPACE_INTERVAL_JUSTIFIED_TEXT = { 0.16, 0.33 };
     private final static double[] DEFAULT_FONT_CHAR_SPACING_INTERVAL = { 0, 0.33 };
     private final static double[] DEFAULT_FONT_LEADING_INTERVAL = { 0, 1.5 };
 
-    private double thresholdProbability(double[] probability1Interval, double point, double initIntervalLength) {
+    private static double thresholdProbability(double[] probability1Interval, double point, double initIntervalLength) {
         if (point + FLOATING_POINT_OPERATIONS_EPS > probability1Interval[0] &&
                 point < probability1Interval[1] + FLOATING_POINT_OPERATIONS_EPS) {
             return 1;
@@ -45,11 +41,11 @@ public class TextSemanticsChecker {
         return (initIntervalLength - deviation) * probabilityFactor + targetProbabilityInterval[0];
     }
 
-    private double mergeByFontNameProbability(TextChunk x, TextChunk y) {
+    private static double mergeByFontNameProbability(TextChunk x, TextChunk y) {
         return x.getFontName().equals(y.getFontName()) ? 1 : 0;
     }
 
-    private double mergeByFontSizeProbability(TextChunk x, TextChunk y) {
+    private static double mergeByFontSizeProbability(TextChunk x, TextChunk y) {
         double fontSize1 = x.getFontSize();
         double fontSize2 = y.getFontSize();
 
@@ -67,31 +63,17 @@ public class TextSemanticsChecker {
                 FONT_SIZE_COMPARISON_THRESHOLD);
     }
 
-    private double mergeByBaseLineProbability(TextChunk x, TextChunk y) {
-        return 1;
+    private static double mergeByBaseLineProbability(TextChunk x, TextChunk y) {
+        return thresholdProbability(new double[] { 0, FLOATING_POINT_OPERATIONS_EPS },
+                Math.abs(x.getBaseLine() - y.getBaseLine()),
+                FONT_METRIC_UNIVERSAL_TEMPORARY_THRESHOLD);
     }
 
-    private double mergeByFontColorProbability(TextChunk x, TextChunk y) {
+    private static double mergeByFontColorProbability(TextChunk x, TextChunk y) {
         return Arrays.equals(x.getFontColor(), y.getFontColor()) ? 1 : 0;
     }
 
-    private boolean lastCharIsWhitespace(String str) {
-        if (str.length() > 0 && str.charAt(str.length() - 1) == ' ')
-            return true;
-        return false;
-    }
-
-    private boolean firstCharIsWhitespace(String str) {
-        if (str.length() > 0 && str.charAt(0) == ' ')
-            return true;
-        return false;
-    }
-
-    private double whitespaceSize(double fontSize) {
-        return fontSize / 4;
-    }
-
-    private double mergeByCharSpacingProbability(TextChunk x, TextChunk y) {
+    private static double mergeByCharSpacingProbability(TextChunk x, TextChunk y) {
         if (Math.abs(x.getBaseLine() - y.getBaseLine()) > 0.95)
             return 1;
 
@@ -115,7 +97,7 @@ public class TextSemanticsChecker {
                 FONT_WHITESPACE_COMPARISON_THRESHOLD);
     }
 
-    private double mergeLeadingProbability(TextChunk x, TextChunk y) {
+    private static double mergeLeadingProbability(TextChunk x, TextChunk y) {
         if (Math.abs(x.getFontSize() - y.getFontSize()) > 0.95)
             return 0;
 
@@ -127,7 +109,7 @@ public class TextSemanticsChecker {
                 FONT_LEADING_INTERVAL_STANDARD);
     }
 
-    private double mergeByBoundingBoxProbability(TextChunk x, TextChunk y) {
+    private static double mergeIndentationProbability(TextChunk x, TextChunk y) {
         // We assume that x, y have approx the same fontSize
         double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
 
@@ -145,100 +127,71 @@ public class TextSemanticsChecker {
                 FONT_METRIC_UNIVERSAL_TEMPORARY_THRESHOLD);
     }
 
-    // TODO: check that we start with easy fast checks and move to computational (if exists) checks:
-    //       may be useful in future if we compare probability after each "mergeByXXXProbability" with some threshold
-    public double toChunkMergeProbability(TextChunk x, TextChunk y) {
+    public static double toChunkMergeProbability(TextChunk x, TextChunk y) {
         double resultProbability = 1;
 
         resultProbability *= mergeByFontNameProbability(x, y);
         resultProbability *= mergeByFontSizeProbability(x, y);
         resultProbability *= mergeByFontColorProbability(x, y);
-//        resultProbability *= mergeByBaseLineProbability(x, y);
-//        resultProbability *= mergeByCharSpacingProbability(x, y);
+        resultProbability *= mergeByBaseLineProbability(x, y);
+        resultProbability *= mergeByCharSpacingProbability(x, y);
 
         return resultProbability;
     }
 
-    public double toLineMergeProbability(TextChunk x, TextChunk y) {
+    public static double toLineMergeProbability(TextChunk x, TextChunk y) {
         double resultProbability = 1;
 
-        resultProbability *= mergeByFontSizeProbability(x, y);
-        resultProbability *= mergeByBaseLineProbability(x, y);
-//        resultProbability *= (1 - mergeByCharSpacingProbability(x, y));
+        resultProbability *= mergeByCharSpacingProbability(x, y);
+        resultProbability *= mergeYAlmostNestedProbability(x, y);
 
         return resultProbability;
     }
 
-    // TODO: when will be used in loop to merge several lines
-    //       remember that the first line may be indented. So loop 2, ..., n
-    public double toParagraphMergeProbability(TextChunk x, TextChunk y) {
+    public static double toParagraphMergeProbability(TextChunk x, TextChunk y) {
         double resultProbability = 1;
 
         resultProbability *= mergeLeadingProbability(x, y);
-        resultProbability *= mergeByBoundingBoxProbability(x, y);
+        resultProbability *= mergeIndentationProbability(x, y);
 
         return resultProbability;
     }
 
-//    public String mergeFontName(SemanticNode x, SemanticNode y) {
-//        SemanticTextChunk xa = (SemanticTextChunk) x.accumulatedNode;
-//        SemanticTextChunk ya = (SemanticTextChunk) y.accumulatedNode;
-//
-//        if (xa.getFontName().equals(ya.getFontName())) {
-//            return xa.getFontName();
-//        } else {
-//            return null;
-//        }
+    private static double mergeYAlmostNestedProbability(TextChunk x, TextChunk y) {
+        double minBottomY = Math.min(x.getBottomY(), y.getBottomY());
+        double maxBottomY = Math.max(x.getBottomY(), y.getBottomY());
+        double minTopY = Math.min(x.getTopY(), y.getTopY());
+        double maxTopY = Math.max(x.getTopY(), y.getTopY());
+
+        double boundingBoxYIntersection = minTopY - maxBottomY;
+        double minDeviation = Math.min(maxBottomY - minBottomY, maxTopY - minTopY);
+        double ratio = minDeviation / boundingBoxYIntersection;
+
+        return thresholdProbability(new double[] { 0, 0 },
+                ratio,
+                FONT_METRIC_UNIVERSAL_TEMPORARY_THRESHOLD);
+    }
+
+    private static boolean lastCharIsWhitespace(String str) {
+        if (str.length() > 0 && str.charAt(str.length() - 1) == ' ')
+            return true;
+        return false;
+    }
+
+    private static boolean firstCharIsWhitespace(String str) {
+        if (str.length() > 0 && str.charAt(0) == ' ')
+            return true;
+        return false;
+    }
+
+    private static double whitespaceSize(double fontSize) {
+        return fontSize / 4;
+    }
+
+//    private static boolean isTextChunkAlmostNested(TextChunk x, TextChunk y) {
+//        return x.getBottomY() < y.getBottomY() + FLOATING_POINT_OPERATIONS_EPS ?
+//                x.getTopY() > y.getTopY() - FLOATING_POINT_OPERATIONS_EPS:
+//                x.getTopY() < y.getTopY() + FLOATING_POINT_OPERATIONS_EPS;
 //    }
 //
-//    public double mergeFontSize(SemanticNode x, SemanticNode y) {
-//        SemanticTextChunk xa = (SemanticTextChunk) x.accumulatedNode;
-//        SemanticTextChunk ya = (SemanticTextChunk) y.accumulatedNode;
-//
-//
-//    }
-
-    private boolean isTextChunkAlmostNested(TextChunk x, TextChunk y) {
-        return x.getBottomY() < y.getBottomY() + FLOATING_POINT_OPERATIONS_EPS ?
-                x.getTopY() > y.getTopY() - FLOATING_POINT_OPERATIONS_EPS:
-                x.getTopY() < y.getTopY() + FLOATING_POINT_OPERATIONS_EPS;
-    }
-
-    private boolean isOneTextLine(TextChunk x, TextChunk y) {
-        return isTextChunkAlmostNested(x, y);
-    }
-
-    public ChunkTypes calculateAccumulatedNodeChunkType(Node node) {
-        ChunkTypes accumulatedNodeChunkType = ChunkTypes.TEXT_CHUNK;
-        Chunk lastRelevantChildAccumulatedChunk = null;
-        for (Node child : node.getChildren()) {
-            if (child.getAccumulatedChunk() == null)
-                continue;
-
-            if (lastRelevantChildAccumulatedChunk != null) {
-                boolean onOneLine = isTextChunkAlmostNested((TextChunk) lastRelevantChildAccumulatedChunk,
-                        (TextChunk) child.getAccumulatedChunk());
-
-                if (!onOneLine) {
-                    accumulatedNodeChunkType = ChunkTypes.PARAGRAPH;
-                    break;
-                }
-            }
-
-            lastRelevantChildAccumulatedChunk = child.getAccumulatedChunk();
-        }
-
-        return accumulatedNodeChunkType;
-    }
-
-    public double mergeProbability(TextChunk x, TextChunk y, ChunkTypes type) {
-        switch (type) {
-            case TEXT_CHUNK:
-                return toChunkMergeProbability(x, y);
-            case PARAGRAPH:
-                return toParagraphMergeProbability(x, y);
-        }
-        return 0;
-    }
-
 } 

@@ -2,11 +2,12 @@ package logiusAlgorithms.implementation;
 
 import logiusAlgorithms.interfaces.Chunk;
 
-public abstract class SemanticChunk extends SemanticNode implements Chunk {
+public class SemanticChunk extends SemanticNode implements Chunk {
     protected int pageNumber;
     protected double[] boundingBox;
 
-    public SemanticChunk(int pageNumber, double[] boundingBox) {
+    public SemanticChunk(String semanticType, double[] boundingBox, int pageNumber) {
+        super(semanticType);
         this.pageNumber = pageNumber;
         this.boundingBox = boundingBox;
     }

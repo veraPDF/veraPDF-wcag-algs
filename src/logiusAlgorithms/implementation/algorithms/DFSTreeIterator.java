@@ -14,7 +14,7 @@ public class DFSTreeIterator implements Iterator<Node> {
     public DFSTreeIterator(Tree<Node> tree) {
         parentsStack = new Stack<>();
         parentsStack.push(new Pair<>(tree.getRoot(), 0));
-        next = next();
+        next();
     }
 
     @Override
@@ -26,6 +26,7 @@ public class DFSTreeIterator implements Iterator<Node> {
     public Node next() {
         Pair<Node, Integer> parentsStackTopItem;
         Node returnNode = next;
+        next = null;
 
         while (true) {
             if (parentsStack.isEmpty()) {
@@ -35,10 +36,14 @@ public class DFSTreeIterator implements Iterator<Node> {
             parentsStackTopItem = parentsStack.peek();
             parentsStack.pop();
 
+            if (parentsStackTopItem == null) {
+                continue;
+            }
+
             Node node = parentsStackTopItem.getKey();
             int nextChildIndex = parentsStackTopItem.getValue();
 
-            if (nextChildIndex < node.getNumChildren()) {
+            if (nextChildIndex < node.numChildren()) {
                 parentsStack.push(new Pair<>(node, nextChildIndex + 1));
                 parentsStack.push(new Pair<>(node.getChildren().get(nextChildIndex), 0));
             } else {
@@ -47,7 +52,6 @@ public class DFSTreeIterator implements Iterator<Node> {
             }
         }
 
-        next = null;
         return returnNode;
     }
 }

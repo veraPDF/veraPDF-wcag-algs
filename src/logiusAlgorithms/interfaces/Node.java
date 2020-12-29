@@ -2,11 +2,11 @@ package logiusAlgorithms.interfaces;
 
 import java.util.List;
 
-// make iterable?
 public interface Node {
     List<Node> getChildren();
-    int getNumChildren();
+    int numChildren();
     boolean isLeaf();
-    Chunk getAccumulatedChunk();
-    void setAccumulatedChunk(Chunk accumulatedChunk);
+    String getSemanticType();
+    double getCorrectSemanticScore();
+    void setCorrectSemanticScore(double correctSemanticScore);
 }

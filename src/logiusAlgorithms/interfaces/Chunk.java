@@ -1,7 +1,6 @@
 package logiusAlgorithms.interfaces;
 
 public interface Chunk extends Node {
-    ChunkTypes getChunkType();
     int getPageNumber();
     double[] getBoundingBox();
     double getLeftX();
