@@ -94,7 +94,7 @@ public class ChunksMergeUtils {
                 FONT_WHITESPACE_COMPARISON_THRESHOLD);
     }
 
-    private static double mergeLeadingProbability(TextChunk x, TextChunk y) {
+    public static double mergeLeadingProbability(TextChunk x, TextChunk y) {
         if (Math.abs(x.getFontSize() - y.getFontSize()) > 0.95)
             return 0;
 
@@ -119,8 +119,32 @@ public class ChunksMergeUtils {
         minDifference = Math.min(minDifference, centerXDifference);
         minDifference /= maxFontSize;
 
-        return getUniformProbability(new double[] { 1, 1 },
+        return getUniformProbability(new double[] { 0, FLOATING_POINT_OPERATIONS_EPS },
                 minDifference,
+                FONT_METRIC_UNIVERSAL_TEMPORARY_THRESHOLD);
+    }
+
+    private static double mergeIndentationProbability(TextChunk x, TextChunk y, int indentation) {
+        double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
+
+        double difference = 0;
+        switch (indentation) {
+            case 0: // left
+                difference = Math.abs(x.getLeftX() - y.getLeftX());
+                break;
+            case 1: // right
+                difference = Math.abs(x.getRightX() - y.getRightX());
+                break;
+            case 2: // center
+                difference = Math.abs((x.getRightX() + x.getLeftX()) - (y.getRightX() + y.getLeftX())) / 2;
+                break;
+            default:
+                break;
+        }
+        difference /= maxFontSize;
+
+        return getUniformProbability(new double[] { 0, FLOATING_POINT_OPERATIONS_EPS },
+                difference,
                 FONT_METRIC_UNIVERSAL_TEMPORARY_THRESHOLD);
     }
 
@@ -145,7 +169,7 @@ public class ChunksMergeUtils {
         return resultProbability;
     }
 
-    public static double toParagraphMergeProbability(TextChunk x, TextChunk y) {
+    public static double toParagraphMergeProbability(TextChunk x, TextChunk y, int indentation) {
         double resultProbability = 1;
 
         resultProbability *= mergeLeadingProbability(x, y);

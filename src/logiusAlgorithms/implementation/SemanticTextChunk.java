@@ -15,6 +15,7 @@ public class SemanticTextChunk extends SemanticChunk implements TextChunk {
 
     public SemanticTextChunk(String text, double[] boundingBox, double fontSize, double baseLine, int pageNumber) {
         super(SEMANTIC_TYPE, boundingBox, pageNumber);
+        this.text = text;
         this.fontSize = fontSize;
         this.baseLine = baseLine;
     }

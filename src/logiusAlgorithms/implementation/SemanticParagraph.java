@@ -4,31 +4,41 @@ import logiusAlgorithms.interfaces.TextChunk;
 
 public class SemanticParagraph extends SemanticChunk {
     public final static String SEMANTIC_TYPE = "PARAGRAPH";
-
     protected boolean enclosedTop;
-    protected TextChunk firstTextLine;
+    protected TextChunk firstLine;
     protected boolean enclosedBottom;
-    protected TextChunk lastTextLine;
+    protected TextChunk lastLine;
     protected int lastPageNumber;
+    protected int indentation; // 0 - left, 1 - right, 2 - center
 
-    public SemanticParagraph(TextChunk firstTextLine, TextChunk lastTextLine, double[] boundingBox,
+    public SemanticParagraph(TextChunk firstLine, TextChunk lastLine, double[] boundingBox,
                              int pageNumber, int lastPageNumber) {
         super(SEMANTIC_TYPE, boundingBox, pageNumber);
-        this.firstTextLine = firstTextLine;
-        this.lastTextLine = lastTextLine;
+        this.firstLine = firstLine;
+        this.lastLine = lastLine;
         this.lastPageNumber = lastPageNumber;
-
-        setEnclosedTop(firstTextLine);
-        setEnclosedBottom(lastTextLine);
     }
 
-    // todo add fontSize ane rewrite
-    private void setEnclosedTop(TextChunk firstTextLine) {
-        enclosedTop = Math.abs(getLeftX() - firstTextLine.getLeftX()) > 1e-5;
+    public TextChunk getFirstLine() {
+        return firstLine;
     }
 
-    private void setEnclosedBottom(TextChunk lastTextLine) {
-        enclosedBottom = Math.abs(getRightX() - lastTextLine.getRightX()) > 1e-5;
+    public TextChunk getLastLine() {
+        return lastLine;
     }
+
+    public int getLastPageNumber() {
+        return lastPageNumber;
+    }
+
+    public int getIndentation() { return indentation; }
+
+    public void setBoundingBox(double[] boundingBox) { this.boundingBox = boundingBox; }
+
+    public void setLastPageNumber(int lastPageNumber) { this.lastPageNumber = lastPageNumber; }
+
+    public void setFirstLine(TextChunk firstLine) { this.firstLine = firstLine; }
+
+    public void setLastLine(TextChunk lastLine) { this.lastLine = lastLine; }
 
 }

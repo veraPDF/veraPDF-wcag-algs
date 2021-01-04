@@ -19,6 +19,9 @@ public class SemanticNode implements Node {
     public String getSemanticType() { return semanticType; }
 
     @Override
+    public void setSemanticType(String semanticType) { this.semanticType = semanticType; }
+
+    @Override
     public double getCorrectSemanticScore() { return correctSemanticScore; }
 
     @Override

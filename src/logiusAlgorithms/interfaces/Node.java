@@ -7,6 +7,7 @@ public interface Node {
     int numChildren();
     boolean isLeaf();
     String getSemanticType();
+    void setSemanticType(String semanticType);
     double getCorrectSemanticScore();
     void setCorrectSemanticScore(double correctSemanticScore);
 }
