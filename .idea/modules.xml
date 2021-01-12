@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/logius_interface.iml" filepath="$PROJECT_DIR$/logius_interface.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wcag-algorithms.iml" filepath="$PROJECT_DIR$/wcag-algorithms.iml" />
     </modules>
   </component>
 </project>
