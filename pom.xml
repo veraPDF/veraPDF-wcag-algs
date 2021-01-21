@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>verapdf-parent</artifactId>
+        <groupId>org.verapdf</groupId>
+        <version>1.16.1</version>
+    </parent>
+
+    <groupId>org.verapdf</groupId>
+    <artifactId>wcag-algorithms</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <name>veraPDF wcag algorithms</name>
+    <description>veraPDF algorithms for semantic checks.</description>
+
+    <packaging>jar</packaging>
+
+    <scm>
+        <url>https://github.com/veraPDF/veraPDF-wcag-algs/</url>
+        <connection>scm:git:https://github.com/veraPDF/veraPDF-wcag-algs.git</connection>
+        <developerConnection>scm:git:git@github.com:veraPDF/veraPDF-wcag-algs.git</developerConnection>
+    </scm>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <jackson.version>2.12.1</jackson.version>
+        <junit.version>5.6.2</junit.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
