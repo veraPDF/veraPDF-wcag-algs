@@ -1,0 +1,22 @@
+{
+	"type": "SEDocument",
+	"children": [
+		{
+			"type": "SEP",
+			"children": [
+				{
+					"type": "PDTextChunk",
+					"pageNumber": 0,
+					"value": "Deze tekst heeft een te laag contrast. Dit mag niet door de test komen.",
+					"baseLine": 773.989,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 144.0,
+					"boundingBox": [56.8, 770.3530000000001, 392.8960000000001, 785.773],
+					"color": [0.69803, 0.69803, 0.69803],
+					"fontName": "LiberationSerif"
+				}
+			]
+		}
+	]
+}
