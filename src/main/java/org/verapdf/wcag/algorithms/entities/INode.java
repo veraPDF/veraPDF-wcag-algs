@@ -8,11 +8,17 @@ public interface INode {
 
 	void setSemanticType(SemanticType semanticType);
 
-	double getCorrectSemanticScore();
+	Double getCorrectSemanticScore();
 
-	void setCorrectSemanticScore(double correctSemanticScore);
+	void setCorrectSemanticScore(Double correctSemanticScore);
 
-	int getPageNumber();
+	Integer getPageNumber();
+
+	void setPageNumber(Integer pageNumber);
+
+	Integer getLastPageNumber();
+
+	void setLastPageNumber(Integer lastPageNumber);
 
 	double getLeftX();
 
@@ -23,6 +29,8 @@ public interface INode {
 	double getTopY();
 
 	double[] getBoundingBox();
+
+	void setBoundingBox(double[] boundingBox);
 
 	SemanticType getSemanticType();
 

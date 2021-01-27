@@ -104,7 +104,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			INode currentChild = nodeToAccumulatedNodeMap.get(children.get(i));
 			INode nextChild = nodeToAccumulatedNodeMap.get(children.get(i + 1));
 
-			if (!currentChild.getSemanticType().equals(SemanticType.SPAN)) {
+			if (!SemanticType.SPAN.equals(currentChild.getSemanticType())) {
 				semanticChunksBoundaries.add(new SemanticChunkBoundaries(i, i + 1));
 				continue;
 			}
@@ -113,7 +113,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 				currentLineLeftBoundary = i;
 			}
 
-			if (!nextChild.getSemanticType().equals(SemanticType.SPAN)) {
+			if (!SemanticType.SPAN.equals(nextChild.getSemanticType())) {
 				semanticChunksBoundaries.add(new SemanticChunkBoundaries(currentLineLeftBoundary, i + 1));
 				currentLineLeftBoundary = -1;
 				continue;
@@ -233,8 +233,10 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 
 		double fontSize = 0;
 		double baseLine = 0;
+		StringBuilder stringBuilder = new StringBuilder();
 		for (int i = semanticChunkBoundaries.getStart(); i < semanticChunkBoundaries.getEnd(); ++i) {
 			SemanticTextChunk chunk = (SemanticTextChunk) nodeToAccumulatedNodeMap.get(children.get(i));
+			stringBuilder.append(chunk.getText());
 			if (chunk.getFontSize() > fontSize) {
 				fontSize = chunk.getFontSize();
 				baseLine = chunk.getBaseLine();
@@ -245,15 +247,15 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 				= (SemanticTextChunk) nodeToAccumulatedNodeMap.get(children.get(semanticChunkBoundaries.getStart()));
 
 		return new SemanticTextChunk(textChunk.getPageNumber(), minMaxBoundingBox(node, semanticChunkBoundaries),
-		                             "", fontSize, baseLine);
+		                             stringBuilder.toString(), fontSize, baseLine);
 	}
 
 	private INode buildParagraphFromChildren(INode node) {
 		INode firstChild = nodeToAccumulatedNodeMap.get(node.getChildren().get(0));
 		INode lastChild = nodeToAccumulatedNodeMap.get(node.getChildren().get(node.getChildren().size() - 1));
-		SemanticTextChunk firstLine = firstChild.getSemanticType().equals(SemanticType.SPAN)
+		SemanticTextChunk firstLine = SemanticType.SPAN.equals(firstChild.getSemanticType())
 		                              ? (SemanticTextChunk) firstChild : ((SemanticParagraph) firstChild).getFirstLine();
-		SemanticTextChunk lastLine = lastChild.getSemanticType().equals(SemanticType.SPAN)
+		SemanticTextChunk lastLine = SemanticType.SPAN.equals(lastChild.getSemanticType())
 		                             ? (SemanticTextChunk) lastChild : ((SemanticParagraph) lastChild).getLastLine();
 
 		return new SemanticParagraph((firstChild).getPageNumber(),

@@ -8,8 +8,9 @@ import java.util.List;
 
 public abstract class SemanticNode implements INode {
 
-	private double correctSemanticScore;
-	private int pageNumber;
+	private Double correctSemanticScore;
+	private Integer pageNumber;
+	private Integer lastPageNumber;
 	private double[] boundingBox;
 	private SemanticType semanticType;
 	private final List<INode> children;
@@ -18,7 +19,7 @@ public abstract class SemanticNode implements INode {
 		this.children = new ArrayList<>();
 	}
 
-	public SemanticNode(int pageNumber, double[] boundingBox, SemanticType semanticType) {
+	public SemanticNode(Integer pageNumber, double[] boundingBox, SemanticType semanticType) {
 		this.pageNumber = pageNumber;
 		this.boundingBox = boundingBox;
 		this.semanticType = semanticType;
@@ -26,19 +27,39 @@ public abstract class SemanticNode implements INode {
 		this.children = new ArrayList<>();
 	}
 
+	public SemanticNode(Integer pageNumber, Integer lastPageNumber, double[] boundingBox, SemanticType semanticType) {
+		this(pageNumber, boundingBox, semanticType);
+		this.lastPageNumber = lastPageNumber;
+	}
+
 	@Override
-	public double getCorrectSemanticScore() {
+	public Double getCorrectSemanticScore() {
 		return correctSemanticScore;
 	}
 
 	@Override
-	public void setCorrectSemanticScore(double correctSemanticScore) {
+	public void setCorrectSemanticScore(Double correctSemanticScore) {
 		this.correctSemanticScore = correctSemanticScore;
 	}
 
 	@Override
-	public int getPageNumber() {
+	public Integer getPageNumber() {
 		return pageNumber;
+	}
+
+	@Override
+	public void setPageNumber(Integer pageNumber) {
+		this.pageNumber = pageNumber;
+	}
+
+	@Override
+	public Integer getLastPageNumber() {
+		return lastPageNumber != null ? lastPageNumber : pageNumber;
+	}
+
+	@Override
+	public void setLastPageNumber(Integer lastPageNumber) {
+		this.lastPageNumber = lastPageNumber;
 	}
 
 	@Override

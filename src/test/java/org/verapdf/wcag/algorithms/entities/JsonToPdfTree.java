@@ -26,7 +26,7 @@ public class JsonToPdfTree {
 		INode node;
 		String pdfType = jsonNode.getType();
 
-		if ("PDTextChunk".equals(pdfType)) {
+		if ("PDTextChunk".equals(pdfType) || "TextChunk".equals(pdfType)) {
 			node = new SemanticTextChunk(jsonNode.getPageNumber(), jsonNode.getBoundingBox(), jsonNode.getValue(),
 			                             jsonNode.getFontName(), jsonNode.getFontSize(), jsonNode.getFontWeight(),
 			                             jsonNode.getItalicAngle(), jsonNode.getBaseLine(), jsonNode.getColor());

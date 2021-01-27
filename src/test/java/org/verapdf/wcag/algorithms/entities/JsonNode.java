@@ -10,7 +10,7 @@ public class JsonNode {
 	private String value;
 	private String fontName;
 	private double fontSize;
-	private int fontWeight;
+	private double fontWeight;
 	private double italicAngle;
 	private double baseLine;
 	private int pageNumber;
@@ -53,11 +53,11 @@ public class JsonNode {
 		this.fontSize = fontSize;
 	}
 
-	public int getFontWeight() {
+	public double getFontWeight() {
 		return fontWeight;
 	}
 
-	public void setFontWeight(int fontWeight) {
+	public void setFontWeight(double fontWeight) {
 		this.fontWeight = fontWeight;
 	}
 

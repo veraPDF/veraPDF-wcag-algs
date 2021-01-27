@@ -1,14 +1,14 @@
 {
-	"type": "SEDocument",
+	"type": "Document",
 	"children": [
 		{
-			"type": "SENote",
+			"type": "Note",
 			"children": [
 				{
-					"type": "SESpan",
+					"type": "Span",
 					"children": [
 						{
-							"type": "PDTextChunk",
+							"type": "TextChunk",
 							"pageNumber": 0,
 							"value": "Artifacts may also be used to describe areas of the document where the author uses a graphical background, with ",
 							"baseLine": 98.04,
@@ -22,16 +22,16 @@
 					]
 				},
 				{
-					"type": "SESpan",
+					"type": "Span",
 					"children": [
                         {
-                            "type": "SESpan",
+                            "type": "Span",
                             "children": [
                                 {
-                                    "type": "SESpan",
+                                    "type": "Span",
                                     "children": [
                                         {
-                                            "type": "PDTextChunk",
+                                            "type": "TextChunk",
 											"pageNumber": 0,
 											"value": "the goa",
 											"baseLine": 85.79916,
@@ -47,7 +47,7 @@
                             ]
                         },
 						{
-							"type": "PDTextChunk",
+							"type": "TextChunk",
 							"pageNumber": 0,
 							"value": "l of enhancing the visual experience. In such a case, the background is not required for understanding the ",
 							"baseLine": 85.79916,
@@ -59,7 +59,7 @@
 							"fontName": "Calibri"
                         },
                         {
-							"type": "PDTextChunk",
+							"type": "TextChunk",
 							"pageNumber": 0,
 							"value": "content.",
 							"baseLine": 73.55832,

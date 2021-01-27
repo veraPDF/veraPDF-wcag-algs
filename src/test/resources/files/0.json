@@ -1,14 +1,14 @@
 {
-	"type": "SEDocument",
+	"type": "Document",
 	"children": [
 		{
-			"type": "SENote",
+			"type": "Note",
 			"children": [
 				{
-					"type": "SESpan",
+					"type": "Span",
 					"children": [
 						{
-							"type": "PDTextChunk",
+							"type": "TextChunk",
 							"pageNumber": 0,
 							"value": "Artifacts may also be used to describe areas of the document where the author uses a graphical background, with ",
 							"baseLine": 98.04,
@@ -22,10 +22,10 @@
 					]
 				},
 				{
-					"type": "SESpan",
+					"type": "Span",
 					"children": [
 						{
-							"type": "PDTextChunk",
+							"type": "TextChunk",
 							"pageNumber": 0,
 							"value": "content.",
 							"baseLine": 73.55832,
