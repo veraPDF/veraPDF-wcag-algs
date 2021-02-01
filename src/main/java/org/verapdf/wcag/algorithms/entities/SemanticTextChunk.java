@@ -10,7 +10,7 @@ public class SemanticTextChunk extends SemanticNode {
 	private String text;
 	private String fontName;
 	private double fontSize;
-	private int fontWeight;
+	private double fontWeight;
 	private double italicAngle;
 	private double baseLine;
 	private double[] fontColor;
@@ -26,7 +26,7 @@ public class SemanticTextChunk extends SemanticNode {
 	}
 
 	public SemanticTextChunk(int pageNumber, double[] boundingBox, String text, String fontName, double fontSize,
-	                         int fontWeight, double italicAngle, double baseLine, double[] fontColor) {
+							 double fontWeight, double italicAngle, double baseLine, double[] fontColor) {
 		super(pageNumber, boundingBox, SemanticType.SPAN);
 		this.text = text;
 		this.fontName = fontName;
@@ -61,11 +61,11 @@ public class SemanticTextChunk extends SemanticNode {
 		this.fontSize = fontSize;
 	}
 
-	public int getFontWeight() {
+	public double getFontWeight() {
 		return fontWeight;
 	}
 
-	public void setFontWeight(int fontWeight) {
+	public void setFontWeight(double fontWeight) {
 		this.fontWeight = fontWeight;
 	}
 
@@ -103,7 +103,7 @@ public class SemanticTextChunk extends SemanticNode {
 		}
 		SemanticTextChunk that = (SemanticTextChunk) o;
 		return Double.compare(that.fontSize, fontSize) == 0
-		       && fontWeight == that.fontWeight
+		       && Double.compare(that.fontWeight, fontWeight) == 0
 		       && Double.compare(that.italicAngle, italicAngle) == 0
 		       && Double.compare(that.baseLine, baseLine) == 0
 		       && Objects.equals(text, that.text)

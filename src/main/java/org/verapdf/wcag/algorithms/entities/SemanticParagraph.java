@@ -8,7 +8,6 @@ public class SemanticParagraph extends SemanticNode {
 
 	private boolean enclosedTop;
 	private boolean enclosedBottom;
-	private int lastPageNumber;
 	private int indentation; // 0 - left, 1 - right, 2 - center
 	private SemanticTextChunk firstLine;
 	private SemanticTextChunk lastLine;
@@ -16,12 +15,11 @@ public class SemanticParagraph extends SemanticNode {
 	public SemanticParagraph() {
 	}
 
-	public SemanticParagraph(int pageNumber, double[] boundingBox, int lastPageNumber, SemanticTextChunk firstLine,
+	public SemanticParagraph(Integer pageNumber, double[] boundingBox, Integer lastPageNumber, SemanticTextChunk firstLine,
 	                         SemanticTextChunk lastLine) {
-		super(pageNumber, boundingBox, SemanticType.PARAGRAPH);
+		super(pageNumber, lastPageNumber, boundingBox, SemanticType.PARAGRAPH);
 		this.firstLine = firstLine;
 		this.lastLine = lastLine;
-		this.lastPageNumber = lastPageNumber;
 	}
 
 	public boolean isEnclosedTop() {
@@ -56,14 +54,6 @@ public class SemanticParagraph extends SemanticNode {
 		this.lastLine = lastLine;
 	}
 
-	public int getLastPageNumber() {
-		return lastPageNumber;
-	}
-
-	public void setLastPageNumber(int lastPageNumber) {
-		this.lastPageNumber = lastPageNumber;
-	}
-
 	public int getIndentation() {
 		return indentation;
 	}
@@ -83,7 +73,6 @@ public class SemanticParagraph extends SemanticNode {
 		SemanticParagraph that = (SemanticParagraph) o;
 		return enclosedTop == that.enclosedTop
 		       && enclosedBottom == that.enclosedBottom
-		       && lastPageNumber == that.lastPageNumber
 		       && indentation == that.indentation
 		       && Objects.equals(firstLine, that.firstLine)
 		       && Objects.equals(lastLine, that.lastLine);
@@ -91,7 +80,7 @@ public class SemanticParagraph extends SemanticNode {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(enclosedTop, enclosedBottom, lastPageNumber, indentation, firstLine, lastLine);
+		return Objects.hash(enclosedTop, enclosedBottom, indentation, firstLine, lastLine);
 	}
 
 	@Override
@@ -99,7 +88,6 @@ public class SemanticParagraph extends SemanticNode {
 		return "SemanticParagraph{" +
 		       "enclosedTop=" + enclosedTop +
 		       ", enclosedBottom=" + enclosedBottom +
-		       ", lastPageNumber=" + lastPageNumber +
 		       ", indentation=" + indentation +
 		       ", firstLine=" + firstLine +
 		       ", lastLine=" + lastLine +
