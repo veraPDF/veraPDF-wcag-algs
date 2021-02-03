@@ -5,6 +5,7 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class SemanticNode implements INode {
 
@@ -104,6 +105,28 @@ public abstract class SemanticNode implements INode {
 	@Override
 	public List<INode> getChildren() {
 		return children;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		SemanticNode that = (SemanticNode) o;
+		return Objects.equals(pageNumber, that.pageNumber)
+		       && Objects.equals(lastPageNumber, that.lastPageNumber)
+		       && Arrays.equals(boundingBox, that.boundingBox)
+		       && Objects.equals(children, that.children);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = Objects.hash(pageNumber, lastPageNumber, children);
+		result = 31 * result + Arrays.hashCode(boundingBox);
+		return result;
 	}
 
 	@Override

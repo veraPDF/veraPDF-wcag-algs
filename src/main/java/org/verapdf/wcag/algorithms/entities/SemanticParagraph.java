@@ -70,6 +70,9 @@ public class SemanticParagraph extends SemanticNode {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
+		if (!super.equals(o)) {
+			return false;
+		}
 		SemanticParagraph that = (SemanticParagraph) o;
 		return enclosedTop == that.enclosedTop
 		       && enclosedBottom == that.enclosedBottom
@@ -80,7 +83,7 @@ public class SemanticParagraph extends SemanticNode {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(enclosedTop, enclosedBottom, indentation, firstLine, lastLine);
+		return Objects.hash(super.hashCode(), enclosedTop, enclosedBottom, indentation, firstLine, lastLine);
 	}
 
 	@Override

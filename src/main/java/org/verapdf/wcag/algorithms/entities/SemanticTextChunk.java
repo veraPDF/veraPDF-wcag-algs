@@ -101,6 +101,9 @@ public class SemanticTextChunk extends SemanticNode {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
+		if (!super.equals(o)) {
+			return false;
+		}
 		SemanticTextChunk that = (SemanticTextChunk) o;
 		return Double.compare(that.fontSize, fontSize) == 0
 		       && Double.compare(that.fontWeight, fontWeight) == 0
@@ -113,7 +116,7 @@ public class SemanticTextChunk extends SemanticNode {
 
 	@Override
 	public int hashCode() {
-		int result = Objects.hash(text, fontName, fontSize, fontWeight, italicAngle, baseLine);
+		int result = Objects.hash(super.hashCode(), text, fontName, fontSize, fontWeight, italicAngle, baseLine);
 		result = 31 * result + Arrays.hashCode(fontColor);
 		return result;
 	}
