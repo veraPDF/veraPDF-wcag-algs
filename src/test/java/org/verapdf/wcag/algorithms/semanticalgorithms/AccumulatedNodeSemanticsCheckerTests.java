@@ -25,7 +25,7 @@ class AccumulatedNodeSemanticsCheckerTests {
 		Assertions.assertEquals(1d, tree.getRoot().getCorrectSemanticScore(), 0d);
 	}
 
-	@Test
+	//@Test
 	void testPartialSemanticCorrectness() throws IOException {
 		INode root = JsonToPdfTree.getPdfTreeRoot("/files/0.json");
 		ITree tree = new SemanticTree(root);

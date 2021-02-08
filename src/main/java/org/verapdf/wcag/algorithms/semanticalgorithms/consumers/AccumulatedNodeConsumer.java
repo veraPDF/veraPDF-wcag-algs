@@ -10,6 +10,7 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +25,10 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 
 	public AccumulatedNodeConsumer() {
 		accumulatedNodeMapper = new AccumulatedNodeMapper();
+	}
+
+	public INode getAccumulatedNode(INode node) {
+		return accumulatedNodeMapper.get(node);
 	}
 
 	@Override
@@ -198,7 +203,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		return mergeProbability;
 	}
 
-	private boolean isOneLineParagraph(SemanticParagraph paragraph) {
+	protected boolean isOneLineParagraph(SemanticParagraph paragraph) {
 		return paragraph.getFirstLine() == paragraph.getLastLine();
 	}
 }
