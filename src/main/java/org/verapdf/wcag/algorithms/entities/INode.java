@@ -1,10 +1,13 @@
 package org.verapdf.wcag.algorithms.entities;
 
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 import java.util.List;
 
 public interface INode {
+
+	SemanticType getSemanticType();
 
 	void setSemanticType(SemanticType semanticType);
 
@@ -28,11 +31,9 @@ public interface INode {
 
 	double getTopY();
 
-	double[] getBoundingBox();
+	BoundingBox getBoundingBox();
 
-	void setBoundingBox(double[] boundingBox);
-
-	SemanticType getSemanticType();
+	void setBoundingBox(BoundingBox boundingBox);
 
 	List<INode> getChildren();
 }

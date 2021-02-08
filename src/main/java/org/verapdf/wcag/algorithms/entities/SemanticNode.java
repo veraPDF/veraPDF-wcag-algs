@@ -1,35 +1,28 @@
 package org.verapdf.wcag.algorithms.entities;
 
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class SemanticNode implements INode {
 
 	private Double correctSemanticScore;
-	private Integer pageNumber;
-	private Integer lastPageNumber;
-	private double[] boundingBox;
+	private BoundingBox boundingBox;
 	private SemanticType semanticType;
 	private final List<INode> children;
 
 	public SemanticNode() {
+		boundingBox = new BoundingBox();
 		this.children = new ArrayList<>();
 	}
 
-	public SemanticNode(Integer pageNumber, double[] boundingBox, SemanticType semanticType) {
-		this.pageNumber = pageNumber;
-		this.boundingBox = boundingBox;
+	public SemanticNode(BoundingBox bbox, SemanticType semanticType) {
+		this.boundingBox = new BoundingBox(bbox);
 		this.semanticType = semanticType;
-
 		this.children = new ArrayList<>();
-	}
-
-	public SemanticNode(Integer pageNumber, Integer lastPageNumber, double[] boundingBox, SemanticType semanticType) {
-		this(pageNumber, boundingBox, semanticType);
-		this.lastPageNumber = lastPageNumber;
 	}
 
 	@Override
@@ -44,51 +37,52 @@ public abstract class SemanticNode implements INode {
 
 	@Override
 	public Integer getPageNumber() {
-		return pageNumber;
+		return boundingBox.getPageNumber();
 	}
 
 	@Override
 	public void setPageNumber(Integer pageNumber) {
-		this.pageNumber = pageNumber;
+		boundingBox.setPageNumber(pageNumber);
 	}
 
 	@Override
 	public Integer getLastPageNumber() {
-		return lastPageNumber != null ? lastPageNumber : pageNumber;
+		return boundingBox.getLastPageNumber();
 	}
 
 	@Override
 	public void setLastPageNumber(Integer lastPageNumber) {
-		this.lastPageNumber = lastPageNumber;
+		boundingBox.setLastPageNumber(lastPageNumber);
 	}
 
 	@Override
 	public double getLeftX() {
-		return boundingBox[0];
+		return boundingBox.getLeftX();
 	}
 
 	@Override
 	public double getBottomY() {
-		return boundingBox[1];
+		return boundingBox.getBottomY();
 	}
 
 	@Override
 	public double getRightX() {
-		return boundingBox[2];
+		return boundingBox.getRightX();
 	}
 
 	@Override
 	public double getTopY() {
-		return boundingBox[3];
+		return boundingBox.getTopY();
 	}
 
 	@Override
-	public double[] getBoundingBox() {
+	public BoundingBox getBoundingBox() {
 		return boundingBox;
 	}
 
-	public void setBoundingBox(double[] boundingBox) {
-		this.boundingBox = boundingBox;
+	@Override
+	public void setBoundingBox(BoundingBox bbox) {
+		boundingBox.init(bbox);
 	}
 
 	@Override
@@ -107,11 +101,29 @@ public abstract class SemanticNode implements INode {
 	}
 
 	@Override
+	public int hashCode() {
+		return Objects.hashCode(boundingBox);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+
+		SemanticNode that = (SemanticNode) o;
+		return that.boundingBox.equals(boundingBox);
+	}
+
+	@Override
 	public String toString() {
 		return "SemanticNode{" +
 		       "correctSemanticScore=" + correctSemanticScore +
-		       ", pageNumber=" + pageNumber +
-		       ", boundingBox=" + Arrays.toString(boundingBox) +
+		       ", pageNumber=" + boundingBox.getPageNumber() +
+		       ", boundingBox=" + boundingBox +
 		       ", semanticType=" + semanticType +
 		       ", children=" + children +
 		       '}';

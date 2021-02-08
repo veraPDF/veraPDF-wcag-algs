@@ -1,6 +1,6 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
-import org.verapdf.wcag.algorithms.entities.SemanticTextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 
 import java.util.Arrays;
 
@@ -17,7 +17,7 @@ public class ChunksMergeUtils {
 	private ChunksMergeUtils() {
 	}
 
-	public static double toChunkMergeProbability(SemanticTextChunk x, SemanticTextChunk y) {
+	public static double toChunkMergeProbability(TextChunk x, TextChunk y) {
 		double resultProbability = 1;
 
 		resultProbability *= mergeByFontNameProbability(x, y);
@@ -29,7 +29,7 @@ public class ChunksMergeUtils {
 		return resultProbability;
 	}
 
-	public static double toLineMergeProbability(SemanticTextChunk x, SemanticTextChunk y) {
+	public static double toLineMergeProbability(TextChunk x, TextChunk y) {
 		double resultProbability = 1;
 
 		resultProbability *= mergeByCharSpacingProbability(x, y);
@@ -38,7 +38,7 @@ public class ChunksMergeUtils {
 		return resultProbability;
 	}
 
-	public static double toParagraphMergeProbability(SemanticTextChunk x, SemanticTextChunk y) {
+	public static double toParagraphMergeProbability(TextChunk x, TextChunk y) {
 		double resultProbability = 1;
 
 		resultProbability *= mergeLeadingProbability(x, y);
@@ -47,7 +47,7 @@ public class ChunksMergeUtils {
 		return resultProbability;
 	}
 
-	public static double mergeLeadingProbability(SemanticTextChunk x, SemanticTextChunk y) {
+	public static double mergeLeadingProbability(TextChunk x, TextChunk y) {
 		if (Math.abs(x.getFontSize() - y.getFontSize()) > 0.95) {
 			return 0;
 		}
@@ -59,11 +59,11 @@ public class ChunksMergeUtils {
 		                             FONT_LEADING_INTERVAL_STANDARD);
 	}
 
-	private static double mergeByFontNameProbability(SemanticTextChunk x, SemanticTextChunk y) {
+	private static double mergeByFontNameProbability(TextChunk x, TextChunk y) {
 		return x.getFontName().equals(y.getFontName()) ? 1 : 0;
 	}
 
-	private static double mergeByFontSizeProbability(SemanticTextChunk x, SemanticTextChunk y) {
+	private static double mergeByFontSizeProbability(TextChunk x, TextChunk y) {
 		double fontSize1 = x.getFontSize();
 		double fontSize2 = y.getFontSize();
 
@@ -73,31 +73,31 @@ public class ChunksMergeUtils {
 		return getUniformProbability(new double[]{0, 0}, ratio, FONT_SIZE_COMPARISON_THRESHOLD);
 	}
 
-	private static double mergeByFontColorProbability(SemanticTextChunk x, SemanticTextChunk y) {
+	private static double mergeByFontColorProbability(TextChunk x, TextChunk y) {
 		return Arrays.equals(x.getFontColor(), y.getFontColor()) ? 1 : 0;
 	}
 
-	private static double mergeByBaseLineProbability(SemanticTextChunk x, SemanticTextChunk y) {
+	private static double mergeByBaseLineProbability(TextChunk x, TextChunk y) {
 		return getUniformProbability(new double[]{0, FLOATING_POINT_OPERATIONS_EPS},
 		                             Math.abs(x.getBaseLine() - y.getBaseLine()),
 		                             FONT_METRIC_UNIVERSAL_TEMPORARY_THRESHOLD);
 	}
 
-	private static double mergeByCharSpacingProbability(SemanticTextChunk x, SemanticTextChunk y) {
+	private static double mergeByCharSpacingProbability(TextChunk x, TextChunk y) {
 //todo        if (Math.abs(x.getBaseLine() - y.getBaseLine()) > 0.95)
 //            return 1;
 //            replace with mergeYAlmostNestedProbability
 //            We assume that x < y
 
-		double leftChunkRightX = x.getBoundingBox()[2];
-		double rightChunkLeftX = y.getBoundingBox()[0];
+		double leftChunkRightX = x.getRightX();
+		double rightChunkLeftX = y.getLeftX();
 		double distanceBetweenChunks = Math.abs(leftChunkRightX - rightChunkLeftX);
 
-		if (lastCharIsWhitespace(x.getText())) {
+		if (lastCharIsWhitespace(x.getValue())) {
 			distanceBetweenChunks += whitespaceSize(x.getFontSize());
 		}
 
-		if (firstCharIsWhitespace(y.getText())) {
+		if (firstCharIsWhitespace(y.getValue())) {
 			distanceBetweenChunks += whitespaceSize(y.getFontSize());
 		}
 
@@ -107,7 +107,7 @@ public class ChunksMergeUtils {
 		                             FONT_WHITESPACE_COMPARISON_THRESHOLD);
 	}
 
-	private static double mergeIndentationProbability(SemanticTextChunk x, SemanticTextChunk y) {
+	private static double mergeIndentationProbability(TextChunk x, TextChunk y) {
 		// We assume that x, y have approx the same fontSize
 		double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
 
@@ -123,7 +123,7 @@ public class ChunksMergeUtils {
 		                             FONT_METRIC_UNIVERSAL_TEMPORARY_THRESHOLD);
 	}
 
-	private static double mergeYAlmostNestedProbability(SemanticTextChunk x, SemanticTextChunk y) {
+	private static double mergeYAlmostNestedProbability(TextChunk x, TextChunk y) {
 		double minBottomY = Math.min(x.getBottomY(), y.getBottomY());
 		double maxBottomY = Math.max(x.getBottomY(), y.getBottomY());
 		double minTopY = Math.min(x.getTopY(), y.getTopY());

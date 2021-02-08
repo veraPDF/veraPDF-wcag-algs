@@ -1,6 +1,8 @@
 package org.verapdf.wcag.algorithms.entities;
 
+import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 import java.util.Objects;
 
@@ -9,15 +11,15 @@ public class SemanticParagraph extends SemanticNode {
 	private boolean enclosedTop;
 	private boolean enclosedBottom;
 	private int indentation; // 0 - left, 1 - right, 2 - center
-	private SemanticTextChunk firstLine;
-	private SemanticTextChunk lastLine;
+	private TextChunk firstLine;
+	private TextChunk lastLine;
 
 	public SemanticParagraph() {
+		setSemanticType(SemanticType.SPAN);
 	}
 
-	public SemanticParagraph(Integer pageNumber, double[] boundingBox, Integer lastPageNumber, SemanticTextChunk firstLine,
-	                         SemanticTextChunk lastLine) {
-		super(pageNumber, lastPageNumber, boundingBox, SemanticType.PARAGRAPH);
+	public SemanticParagraph(BoundingBox bbox, TextChunk firstLine, TextChunk lastLine) {
+		super(bbox, SemanticType.PARAGRAPH);
 		this.firstLine = firstLine;
 		this.lastLine = lastLine;
 	}
@@ -38,19 +40,19 @@ public class SemanticParagraph extends SemanticNode {
 		this.enclosedBottom = enclosedBottom;
 	}
 
-	public SemanticTextChunk getFirstLine() {
+	public TextChunk getFirstLine() {
 		return firstLine;
 	}
 
-	public void setFirstLine(SemanticTextChunk firstLine) {
+	public void setFirstLine(TextChunk firstLine) {
 		this.firstLine = firstLine;
 	}
 
-	public SemanticTextChunk getLastLine() {
+	public TextChunk getLastLine() {
 		return lastLine;
 	}
 
-	public void setLastLine(SemanticTextChunk lastLine) {
+	public void setLastLine(TextChunk lastLine) {
 		this.lastLine = lastLine;
 	}
 
@@ -64,12 +66,10 @@ public class SemanticParagraph extends SemanticNode {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
+		if (!super.equals(o)) {
 			return false;
 		}
+
 		SemanticParagraph that = (SemanticParagraph) o;
 		return enclosedTop == that.enclosedTop
 		       && enclosedBottom == that.enclosedBottom
@@ -80,7 +80,9 @@ public class SemanticParagraph extends SemanticNode {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(enclosedTop, enclosedBottom, indentation, firstLine, lastLine);
+		int result = super.hashCode();
+		result = 31 * result + Objects.hash(enclosedTop, enclosedBottom, indentation, firstLine);
+		return result;
 	}
 
 	@Override
