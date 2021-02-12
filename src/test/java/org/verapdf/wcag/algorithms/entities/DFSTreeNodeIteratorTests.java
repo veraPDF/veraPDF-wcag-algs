@@ -2,10 +2,11 @@ package org.verapdf.wcag.algorithms.entities;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 import java.util.*;
 
-class DFSTreeNodeIteratorTest {
+class DFSTreeNodeIteratorTests {
 
     @Test
     public void testWithEmptyTree() {
@@ -21,7 +22,7 @@ class DFSTreeNodeIteratorTest {
     public void testWithSingleNodeTree() {
         List<Integer> expectedList = new ArrayList<>();
 
-        INode root = new SemanticParagraph(1, new double[4], 1, null, null);
+        INode root = new SemanticParagraph(new BoundingBox(1), null, null);
         expectedList.add(1);
 
         ITree tree = new SemanticTree(root);
@@ -40,10 +41,10 @@ class DFSTreeNodeIteratorTest {
             expectedList.add(number);
         }
 
-        INode root = new SemanticParagraph(0, new double[4], 0, null, null);
+        INode root = new SemanticParagraph(new BoundingBox(0), null, null);
         INode node = root;
         for (int i = 1; i < expectedArray.length; ++i) {
-            INode child = new SemanticParagraph(i, new double[4], i, null, null);
+            INode child = new SemanticParagraph(new BoundingBox(i), null, null);
             node.getChildren().add(child);
             node = child;
         }
@@ -65,7 +66,7 @@ class DFSTreeNodeIteratorTest {
 
         List<INode> nodeList = new ArrayList<>(expectedArray.length);
         for (int i = 0; i < expectedArray.length; ++i) {
-            nodeList.add(new SemanticParagraph(i, new double[4], i, null, null));
+            nodeList.add(new SemanticParagraph(new BoundingBox(i), null, null));
         }
         nodeList.get(0).getChildren().addAll(nodeList.subList(1, 4));
         nodeList.get(1).getChildren().add(nodeList.get(4));

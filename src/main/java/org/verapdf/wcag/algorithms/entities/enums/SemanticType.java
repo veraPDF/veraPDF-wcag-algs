@@ -1,6 +1,8 @@
 package org.verapdf.wcag.algorithms.entities.enums;
 
 public enum SemanticType {
+	DOCUMENT("Document"),
+	DIV("Div"),
 	PARAGRAPH("P"),
 	SPAN("Span");
 
@@ -13,5 +15,4 @@ public enum SemanticType {
 	public String getValue() {
 		return value;
 	}
-
 }
