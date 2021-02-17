@@ -1,11 +1,11 @@
 {
-	"type": "SEDocument",
+	"type": "Document",
 	"children": [
 		{
-			"type": "SEP",
+			"type": "P",
 			"children": [
 				{
-					"type": "PDTextChunk",
+					"type": "TextChunk",
 					"pageNumber": 0,
 					"value": "Deze tekst heeft een te laag contrast. Dit mag niet door de test komen.",
 					"baseLine": 773.989,

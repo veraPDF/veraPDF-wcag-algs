@@ -78,7 +78,7 @@ public class BoundingBox {
     }
 
     public BoundingBox union(BoundingBox second) {
-        if (second == null) {
+        if (second == null || second.pageNumber == null) {
             return this;
         }
         if (pageNumber == null) {
@@ -275,7 +275,7 @@ public class BoundingBox {
 
     public BoundingBox scale(double coeffX, double coeffY) {
         rightX = leftX + (rightX - leftX) * coeffX;
-        if (pageNumber.equals(lastPageNumber)) {
+        if (pageNumber != null && pageNumber.equals(lastPageNumber)) {
             topY = bottomY + (topY - bottomY) * coeffY;
         }
         return this;
