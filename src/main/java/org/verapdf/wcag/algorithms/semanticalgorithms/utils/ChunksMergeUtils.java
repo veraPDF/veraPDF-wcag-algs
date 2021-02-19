@@ -70,7 +70,7 @@ public class ChunksMergeUtils {
 		double ratio = fontSize1 < fontSize2 ? fontSize1 / fontSize2
 		                                     : fontSize2 / fontSize1;
 
-		return getUniformProbability(new double[]{0, 0}, ratio, FONT_SIZE_COMPARISON_THRESHOLD);
+		return getUniformProbability(new double[]{1, 1}, ratio, FONT_SIZE_COMPARISON_THRESHOLD);
 	}
 
 	private static double mergeByFontColorProbability(TextChunk x, TextChunk y) {
