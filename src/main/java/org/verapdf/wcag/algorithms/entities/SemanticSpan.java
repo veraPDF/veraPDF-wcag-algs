@@ -68,12 +68,13 @@ public class SemanticSpan extends SemanticNode {
         if (textChunks.size() == 0) {
             return "SemanticSpan{}";
         }
-        StringBuilder result = new StringBuilder("SemanticSpan{ ");
+        StringBuilder result = new StringBuilder("SemanticSpan{");
         result.append(textChunks.get(0));
         for (int i = 1; i < textChunks.size(); ++i) {
             result.append(", ");
             result.append(textChunks.get(i));
         }
+        result.append("}");
         return result.toString();
     }
 }
