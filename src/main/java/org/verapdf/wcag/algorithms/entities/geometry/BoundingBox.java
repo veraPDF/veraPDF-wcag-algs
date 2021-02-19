@@ -10,6 +10,7 @@ public class BoundingBox {
     private double bottomY;
     private double rightX;
     private double topY;
+    private double contrastRatio;
 
     private static double EPSILON = 1.e-18;
 
@@ -121,6 +122,14 @@ public class BoundingBox {
 
     public double getHeight() {
         return (pageNumber.equals(lastPageNumber) && topY > bottomY) ? topY - bottomY : 0;
+    }
+
+    public double getContrastRatio() {
+        return contrastRatio;
+    }
+
+    public void setContrastRatio(double contrastRatio) {
+        this.contrastRatio = contrastRatio;
     }
 
     @Override
