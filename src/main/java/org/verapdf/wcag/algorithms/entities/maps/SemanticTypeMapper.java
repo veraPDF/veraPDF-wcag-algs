@@ -5,7 +5,7 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SemanticTypeMap {
+public class SemanticTypeMapper {
 
     private static Map<String, SemanticType> map = new HashMap<>();
 

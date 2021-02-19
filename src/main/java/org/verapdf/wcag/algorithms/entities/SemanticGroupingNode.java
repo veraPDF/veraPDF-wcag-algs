@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.entities;
 
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 /**
  * Allowed semantic types: PART, SECT, DIV, ASIDE, NON_STRUCT
@@ -8,9 +9,10 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 public class SemanticGroupingNode extends SemanticNode {
 
     public SemanticGroupingNode() {
+        setSemanticType(SemanticType.DIV);
     }
 
-    public SemanticGroupingNode(SemanticType semanticType) {
-        setSemanticType(semanticType);
+    public SemanticGroupingNode(BoundingBox bbox, SemanticType semanticType) {
+        super(bbox, semanticType);
     }
 }

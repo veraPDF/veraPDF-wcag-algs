@@ -6,12 +6,11 @@ import org.verapdf.wcag.algorithms.entities.SemanticSpan;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.entities.maps.AccumulatedNodeMapper;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,10 +21,10 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 
 	private static final double MERGE_PROBABILITY_THRESHOLD = 0.75;
 
-	private final Map<INode, INode> nodeToAccumulatedNodeMap;
+	private AccumulatedNodeMapper accumulatedNodeMapper;
 
 	public AccumulatedNodeConsumer() {
-		nodeToAccumulatedNodeMap = new HashMap<>();
+		accumulatedNodeMapper = new AccumulatedNodeMapper();
 	}
 
 	@Override
@@ -49,8 +48,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			for (int i = 0; i < numChildren - 1; ++i) {
 				lineProbability *= mergeProbabilities.get(i);
 			}
-			addAccumulatedNode(node, buildLineFromChildren(node, new SemanticChunkBoundaries(0, numChildren)),
-			                   lineProbability, SemanticType.SPAN);
+			updateNode(node, lineProbability, SemanticType.SPAN);
 			return;
 		}
 
@@ -67,30 +65,28 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 				paragraphProbability *= toParagraphMergeProbability(paragraph, currentText);
 			}
 		}
-		addAccumulatedNode(node, buildParagraphFromChildren(node), paragraphProbability, SemanticType.PARAGRAPH);
+		updateNode(node, paragraphProbability, SemanticType.PARAGRAPH);
 	}
 
 	private void acceptNodeWithLeq1Child(INode node) {
-		if (node.getChildren().isEmpty()) {
-			addAccumulatedNode(node, node, 1, node.getSemanticType());
+		List<INode> children = node.getChildren();
+		if (children.isEmpty()) {
+			updateNode(node, 1, node.getSemanticType());
 		} else {
-			INode child = node.getChildren().get(0);
-			addAccumulatedNode(node, nodeToAccumulatedNodeMap.get(child), child.getCorrectSemanticScore(),
-			                   child.getSemanticType());
+			INode child = children.get(0);
+			updateNode(node, child.getCorrectSemanticScore(), child.getSemanticType());
 		}
 	}
 
-	private void addAccumulatedNode(INode node, INode accumulatedNode, double correctSemanticScore,
-	                                SemanticType semanticType) {
+	private void updateNode(INode node, double correctSemanticScore, SemanticType semanticType) {
 		node.setCorrectSemanticScore(correctSemanticScore);
 		node.setSemanticType(semanticType);
-		node.setBoundingBox(accumulatedNode.getBoundingBox());
-		nodeToAccumulatedNodeMap.put(node, accumulatedNode);
+		node.setBoundingBox(accumulatedNodeMapper.get(node).getBoundingBox());
 	}
 
 	private INode buildSemanticChunkFromChildren(INode node, SemanticChunkBoundaries semanticChunkBoundaries) {
 		int numChunks = semanticChunkBoundaries.getEnd() - semanticChunkBoundaries.getStart();
-		return numChunks == 1 ? nodeToAccumulatedNodeMap.get(node.getChildren().get(semanticChunkBoundaries.getStart()))
+		return numChunks == 1 ? accumulatedNodeMapper.get(node.getChildren().get(semanticChunkBoundaries.getStart()))
 		                      : buildLineFromChildren(node, semanticChunkBoundaries);
 	}
 
@@ -104,8 +100,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		for (int i = 0; i < numChildren - 1; ++i) { // i is the right pointer
 			mergeProbabilities.add(i, 0d);
 
-			INode currentChild = nodeToAccumulatedNodeMap.get(children.get(i));
-			INode nextChild = nodeToAccumulatedNodeMap.get(children.get(i + 1));
+			INode currentChild = accumulatedNodeMapper.get(children.get(i));
+			INode nextChild = accumulatedNodeMapper.get(children.get(i + 1));
 
 			if (!SemanticType.SPAN.equals(currentChild.getSemanticType())) {
 				semanticChunksBoundaries.add(new SemanticChunkBoundaries(i, i + 1));
@@ -210,7 +206,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		BoundingBox minMaxBoundingBox = new BoundingBox();
 
 		for (int i = semanticChunkBoundaries.getStart(); i < semanticChunkBoundaries.getEnd(); ++i) {
-			INode chunk = nodeToAccumulatedNodeMap.get(children.get(i));
+			INode chunk = accumulatedNodeMapper.get(children.get(i));
 			minMaxBoundingBox.union(chunk.getBoundingBox());
 		}
 
@@ -219,12 +215,11 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 
 	private INode buildLineFromChildren(INode node, SemanticChunkBoundaries semanticChunkBoundaries) {
 		List<INode> children = node.getChildren();
-
 		double fontSize = 0;
 		double baseLine = 0;
 		StringBuilder stringBuilder = new StringBuilder();
 		for (int i = semanticChunkBoundaries.getStart(); i < semanticChunkBoundaries.getEnd(); ++i) {
-			SemanticSpan span = (SemanticSpan) nodeToAccumulatedNodeMap.get(children.get(i));
+			SemanticSpan span = (SemanticSpan) accumulatedNodeMapper.get(children.get(i));
 			TextChunk chunk = span.getTextChunks().get(0);
 			stringBuilder.append(chunk.getValue());
 			if (chunk.getFontSize() > fontSize) {
@@ -233,27 +228,10 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			}
 		}
 
-		int pageNumber = nodeToAccumulatedNodeMap.get(children.get(semanticChunkBoundaries.getStart())).getPageNumber();
 		TextChunk textChunk = new TextChunk(minMaxBoundingBox(node, semanticChunkBoundaries),
 											stringBuilder.toString(), fontSize, baseLine);
-		SemanticSpan semanticSpan = new SemanticSpan();
-		semanticSpan.setPageNumber(pageNumber);
-		semanticSpan.add(textChunk);
+		SemanticSpan semanticSpan = new SemanticSpan(textChunk);
 		return semanticSpan;
-	}
-
-	private INode buildParagraphFromChildren(INode node) {
-		INode firstChild = nodeToAccumulatedNodeMap.get(node.getChildren().get(0));
-		INode lastChild = nodeToAccumulatedNodeMap.get(node.getChildren().get(node.getChildren().size() - 1));
-		TextChunk firstLine = SemanticType.SPAN.equals(firstChild.getSemanticType())
-											? ((SemanticSpan) firstChild).getTextChunks().get(0)
-											: ((SemanticParagraph) firstChild).getFirstLine();
-		TextChunk lastLine = SemanticType.SPAN.equals(lastChild.getSemanticType())
-											? ((SemanticSpan) lastChild).getTextChunks().get(0)
-											: ((SemanticParagraph) lastChild).getLastLine();
-
-		return new SemanticParagraph(minMaxBoundingBox(node, new SemanticChunkBoundaries(0, node.getChildren().size())),
-														firstLine, lastLine);
 	}
 
 	private static class SemanticChunkBoundaries {

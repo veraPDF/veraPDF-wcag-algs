@@ -7,5 +7,4 @@ public class SemanticDocument extends SemanticNode {
     public SemanticDocument() {
         setSemanticType(SemanticType.DOCUMENT);
     }
-
 }
