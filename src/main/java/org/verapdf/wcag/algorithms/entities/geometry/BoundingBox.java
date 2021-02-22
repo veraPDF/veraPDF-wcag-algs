@@ -148,26 +148,26 @@ public class BoundingBox {
             return false;
         }
 
-        BoundingBox rectangle = (BoundingBox) o;
+        BoundingBox that = (BoundingBox) o;
 
-        if (!rectangle.pageNumber.equals(pageNumber)) {
-            return false;
-        }
-
-        if (!rectangle.lastPageNumber.equals(lastPageNumber)) {
+        if (!Objects.equals(pageNumber, that.pageNumber)) {
             return false;
         }
 
-        if (Math.abs(rectangle.leftX - leftX) > EPSILON) {
+        if (!Objects.equals(lastPageNumber, that.lastPageNumber)) {
             return false;
         }
-        if (Math.abs(rectangle.bottomY - bottomY) > EPSILON) {
+
+        if (Math.abs(that.leftX - leftX) > EPSILON) {
             return false;
         }
-        if (Math.abs(rectangle.rightX - rightX) > EPSILON) {
+        if (Math.abs(that.bottomY - bottomY) > EPSILON) {
             return false;
         }
-        return Math.abs(rectangle.topY - topY) > EPSILON;
+        if (Math.abs(that.rightX - rightX) > EPSILON) {
+            return false;
+        }
+        return Math.abs(that.topY - topY) > EPSILON;
     }
 
     public boolean overlaps(BoundingBox other) {
@@ -275,7 +275,7 @@ public class BoundingBox {
 
     public BoundingBox scale(double coeffX, double coeffY) {
         rightX = leftX + (rightX - leftX) * coeffX;
-        if (pageNumber != null && pageNumber.equals(lastPageNumber)) {
+        if (pageNumber == null || pageNumber.equals(lastPageNumber)) {
             topY = bottomY + (topY - bottomY) * coeffY;
         }
         return this;
