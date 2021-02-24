@@ -1,7 +1,6 @@
 package org.verapdf.wcag.algorithms.entities.maps;
 
 import org.verapdf.wcag.algorithms.entities.INode;
-import org.verapdf.wcag.algorithms.entities.SemanticGroupingNode;
 import org.verapdf.wcag.algorithms.entities.SemanticParagraph;
 import org.verapdf.wcag.algorithms.entities.SemanticSpan;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
@@ -45,7 +44,8 @@ public class AccumulatedNodeMapper {
                     break;
             }
         }
-        return new SemanticGroupingNode(childrenBoundingBox(node), node.getSemanticType());
+        // Accumulation principle is not defined
+        return node;
     }
 
     private INode buildSpanFromChildren(INode node) {
@@ -66,7 +66,8 @@ public class AccumulatedNodeMapper {
         TextChunk textChunk = new TextChunk(childrenBoundingBox(node),
                                             stringBuilder.toString(),
                                             fontSize, baseLine);
-        SemanticSpan semanticSpan = new SemanticSpan(textChunk);
+        INode semanticSpan = new SemanticSpan(textChunk);
+        semanticSpan.setCorrectSemanticScore(node.getCorrectSemanticScore());
         return semanticSpan;
     }
 
@@ -82,7 +83,9 @@ public class AccumulatedNodeMapper {
                 ? ((SemanticSpan) lastChild).getTextChunks().get(0)
                 : ((SemanticParagraph) lastChild).getLastLine();
 
-        return new SemanticParagraph(childrenBoundingBox(node), firstLine, lastLine);
+        INode semanticParagraph = new SemanticParagraph(childrenBoundingBox(node), firstLine, lastLine);
+        semanticParagraph.setCorrectSemanticScore(node.getCorrectSemanticScore());
+        return semanticParagraph;
     }
 
     public BoundingBox childrenBoundingBox(INode node) {
@@ -93,7 +96,6 @@ public class AccumulatedNodeMapper {
             INode accumulatedChild = get(child);
             bbox.union(accumulatedChild.getBoundingBox());
         }
-
         return bbox;
     }
 }

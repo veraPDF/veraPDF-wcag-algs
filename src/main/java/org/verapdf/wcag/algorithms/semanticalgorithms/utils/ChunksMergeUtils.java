@@ -113,7 +113,7 @@ public class ChunksMergeUtils {
 
 		double leftXDifference = Math.abs(x.getLeftX() - y.getLeftX());
 		double rightXDifference = Math.abs(x.getRightX() - y.getRightX());
-		double centerXDifference = Math.abs((x.getRightX() + x.getLeftX()) - (y.getRightX() + y.getLeftX())) / 2;
+		double centerXDifference = 0.5 * Math.abs((x.getRightX() + x.getLeftX()) - (y.getRightX() + y.getLeftX()));
 
 		double minDifference = Math.min(leftXDifference, rightXDifference);
 		minDifference = Math.min(minDifference, centerXDifference);

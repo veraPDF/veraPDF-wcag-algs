@@ -11,6 +11,10 @@ public interface INode {
 
 	void setSemanticType(SemanticType semanticType);
 
+	SemanticType getInitialSemanticType();
+
+	void setInitialSemanticType(SemanticType semanticType);
+
 	Double getCorrectSemanticScore();
 
 	void setCorrectSemanticScore(Double correctSemanticScore);
