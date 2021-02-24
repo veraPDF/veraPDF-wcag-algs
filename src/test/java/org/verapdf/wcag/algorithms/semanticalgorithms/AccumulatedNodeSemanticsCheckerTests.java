@@ -11,6 +11,8 @@ import java.io.IOException;
 
 class AccumulatedNodeSemanticsCheckerTests {
 
+	private static final double SEMANTIC_SCORE_TOLERANCE = 0.0001d;
+
 	private final ISemanticsChecker semanticsChecker;
 
 	public AccumulatedNodeSemanticsCheckerTests() {
@@ -22,7 +24,7 @@ class AccumulatedNodeSemanticsCheckerTests {
 		INode root = JsonToPdfTree.getPdfTreeRoot("/files/3.json");
 		ITree tree = new SemanticTree(root);
 		semanticsChecker.checkSemanticTree(tree);
-		Assertions.assertEquals(1d, tree.getRoot().getCorrectSemanticScore(), 0d);
+		Assertions.assertEquals(1d, tree.getRoot().getCorrectSemanticScore(), SEMANTIC_SCORE_TOLERANCE);
 	}
 
 	@Test
@@ -30,6 +32,6 @@ class AccumulatedNodeSemanticsCheckerTests {
 		INode root = JsonToPdfTree.getPdfTreeRoot("/files/0.json");
 		ITree tree = new SemanticTree(root);
 		semanticsChecker.checkSemanticTree(tree);
-		Assertions.assertEquals(0.042d, tree.getRoot().getCorrectSemanticScore(), 0.00001d);
+		Assertions.assertEquals(0.042d, tree.getRoot().getCorrectSemanticScore(), SEMANTIC_SCORE_TOLERANCE);
 	}
 }

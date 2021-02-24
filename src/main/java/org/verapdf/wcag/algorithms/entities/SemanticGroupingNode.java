@@ -12,7 +12,12 @@ public class SemanticGroupingNode extends SemanticNode {
         setSemanticType(SemanticType.DIV);
     }
 
-    public SemanticGroupingNode(BoundingBox bbox, SemanticType semanticType) {
-        super(bbox, semanticType);
+    public SemanticGroupingNode(SemanticType initialSemanticType) {
+        super(initialSemanticType);
+        setSemanticType(SemanticType.DIV);
+    }
+
+    public SemanticGroupingNode(BoundingBox bbox, SemanticType initialSemanticType, SemanticType semanticType) {
+        super(bbox, initialSemanticType, semanticType);
     }
 }

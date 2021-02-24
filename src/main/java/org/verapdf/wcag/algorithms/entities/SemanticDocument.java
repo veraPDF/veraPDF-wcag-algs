@@ -7,4 +7,9 @@ public class SemanticDocument extends SemanticNode {
     public SemanticDocument() {
         setSemanticType(SemanticType.DOCUMENT);
     }
+
+    public SemanticDocument(SemanticType initialSemanticType) {
+        super(initialSemanticType);
+        setSemanticType(SemanticType.DOCUMENT);
+    }
 }

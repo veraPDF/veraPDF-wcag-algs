@@ -15,13 +15,29 @@ public class SemanticSpan extends SemanticNode {
         textChunks = new ArrayList<>();
     }
 
+    public SemanticSpan(SemanticType initialSemanticType) {
+        super(initialSemanticType);
+        setSemanticType(SemanticType.SPAN);
+        textChunks = new ArrayList<>();
+    }
+
     public SemanticSpan(BoundingBox bbox) {
-        super(bbox, SemanticType.SPAN);
+        super(bbox, null, SemanticType.SPAN);
+        this.textChunks = new ArrayList<>();
+    }
+
+    public SemanticSpan(BoundingBox bbox, SemanticType initialSemanticType) {
+        super(bbox, initialSemanticType, SemanticType.SPAN);
         this.textChunks = new ArrayList<>();
     }
 
     public SemanticSpan(TextChunk textChunk) {
         this();
+        add(textChunk);
+    }
+
+    public SemanticSpan(TextChunk textChunk, SemanticType initialSemanticType) {
+        this(initialSemanticType);
         add(textChunk);
     }
 

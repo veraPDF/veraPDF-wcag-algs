@@ -1,7 +1,6 @@
 package org.verapdf.wcag.algorithms.entities.maps;
 
 import org.verapdf.wcag.algorithms.entities.INode;
-import org.verapdf.wcag.algorithms.entities.SemanticGroupingNode;
 import org.verapdf.wcag.algorithms.entities.SemanticParagraph;
 import org.verapdf.wcag.algorithms.entities.SemanticSpan;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
@@ -45,28 +44,18 @@ public class AccumulatedNodeMapper {
                     break;
             }
         }
-        return new SemanticGroupingNode(childrenBoundingBox(node), node.getSemanticType());
+        // Accumulation principle is not defined
+        return node;
     }
 
     private INode buildSpanFromChildren(INode node) {
         List<INode> children = node.getChildren();
-        double fontSize = 0;
-        double baseLine = 0;
-        StringBuilder stringBuilder = new StringBuilder();
-        for (INode child : children) {
-            SemanticSpan span = (SemanticSpan) get(child);
-            TextChunk chunk = span.getTextChunks().get(0);
-            stringBuilder.append(chunk.getValue());
-            if (chunk.getFontSize() > fontSize) {
-                fontSize = chunk.getFontSize();
-                baseLine = chunk.getBaseLine();
-            }
-        }
 
-        TextChunk textChunk = new TextChunk(childrenBoundingBox(node),
-                                            stringBuilder.toString(),
-                                            fontSize, baseLine);
-        SemanticSpan semanticSpan = new SemanticSpan(textChunk);
+        SemanticSpan semanticSpan = new SemanticSpan();
+        for (INode child : children) {
+            SemanticSpan childSpan = (SemanticSpan) get(child);
+            semanticSpan.addAll(childSpan.getTextChunks());
+        }
         return semanticSpan;
     }
 
@@ -82,7 +71,9 @@ public class AccumulatedNodeMapper {
                              ? ((SemanticSpan) lastChild).getTextChunks().get(0)
                              : SemanticType.PARAGRAPH.equals(lastChild.getSemanticType()) ? ((SemanticParagraph) lastChild).getLastLine() : new TextChunk();
 
-        return new SemanticParagraph(childrenBoundingBox(node), firstLine, lastLine);
+        INode semanticParagraph = new SemanticParagraph(childrenBoundingBox(node), firstLine, lastLine);
+        semanticParagraph.setCorrectSemanticScore(node.getCorrectSemanticScore());
+        return semanticParagraph;
     }
 
     public BoundingBox childrenBoundingBox(INode node) {
@@ -93,7 +84,6 @@ public class AccumulatedNodeMapper {
             INode accumulatedChild = get(child);
             bbox.union(accumulatedChild.getBoundingBox());
         }
-
         return bbox;
     }
 }
