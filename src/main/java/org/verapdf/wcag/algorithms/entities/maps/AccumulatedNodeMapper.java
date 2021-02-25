@@ -76,11 +76,11 @@ public class AccumulatedNodeMapper {
         INode lastChild = get(children.get(children.size() - 1));
 
         TextChunk firstLine = SemanticType.SPAN.equals(firstChild.getSemanticType())
-                ? ((SemanticSpan) firstChild).getTextChunks().get(0)
-                : ((SemanticParagraph) firstChild).getFirstLine();
+                              ? ((SemanticSpan) firstChild).getTextChunks().get(0)
+                              : SemanticType.PARAGRAPH.equals(firstChild.getSemanticType()) ? ((SemanticParagraph) firstChild).getFirstLine() : new TextChunk();
         TextChunk lastLine = SemanticType.SPAN.equals(lastChild.getSemanticType())
-                ? ((SemanticSpan) lastChild).getTextChunks().get(0)
-                : ((SemanticParagraph) lastChild).getLastLine();
+                             ? ((SemanticSpan) lastChild).getTextChunks().get(0)
+                             : SemanticType.PARAGRAPH.equals(lastChild.getSemanticType()) ? ((SemanticParagraph) lastChild).getLastLine() : new TextChunk();
 
         return new SemanticParagraph(childrenBoundingBox(node), firstLine, lastLine);
     }
