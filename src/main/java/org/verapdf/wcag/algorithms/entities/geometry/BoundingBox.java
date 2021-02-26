@@ -57,7 +57,10 @@ public class BoundingBox {
     }
 
     public void setPageNumber(int pageNumber) {
-        this.pageNumber = this.lastPageNumber = pageNumber;
+        this.pageNumber = pageNumber;
+        if (lastPageNumber == null || lastPageNumber < pageNumber) {
+            this.lastPageNumber = pageNumber;
+        }
     }
 
     public void setLastPageNumber(int lastPageNumber) {
@@ -320,6 +323,29 @@ public class BoundingBox {
         this.leftX = Math.min(left, right);
         this.rightX = Math.max(left, right);
         return this;
+    }
+
+    public String getLocation() {
+        if (pageNumber == null) {
+            return null;
+        }
+        StringBuilder location = new StringBuilder();
+        location.append("pages[");
+        location.append(getPageNumber());
+        if (!getPageNumber().equals(getLastPageNumber())) {
+            location.append("-");
+            location.append(getLastPageNumber());
+        }
+        location.append("]/boundingBox[");
+        location.append(getLeftX());
+        location.append(",");
+        location.append(getBottomY());
+        location.append(",");
+        location.append(getRightX());
+        location.append(",");
+        location.append(getTopY());
+        location.append("]");
+        return location.toString();
     }
 
     @Override
