@@ -12,6 +12,7 @@ public abstract class SemanticNode implements INode {
 	private Double correctSemanticScore;
 	private BoundingBox boundingBox;
 	private SemanticType semanticType;
+	private SemanticType initialSemanticType;
 	private final List<INode> children;
 
 	public SemanticNode() {
@@ -93,6 +94,16 @@ public abstract class SemanticNode implements INode {
 	@Override
 	public void setSemanticType(SemanticType semanticType) {
 		this.semanticType = semanticType;
+	}
+
+	@Override
+	public SemanticType getInitialSemanticType() {
+		return initialSemanticType;
+	}
+
+	@Override
+	public void setInitialSemanticType(SemanticType semanticType) {
+		this.initialSemanticType = semanticType;
 	}
 
 	@Override

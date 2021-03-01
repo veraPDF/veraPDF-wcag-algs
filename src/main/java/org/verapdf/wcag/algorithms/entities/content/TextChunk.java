@@ -3,6 +3,7 @@ package org.verapdf.wcag.algorithms.entities.content;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class TextChunk extends InfoChunk {
@@ -34,6 +35,11 @@ public class TextChunk extends InfoChunk {
         this.italicAngle = italicAngle;
         this.baseLine = baseLine;
         this.fontColor = fontColor.clone();
+    }
+
+    public TextChunk(TextChunk chunk) {
+        this(chunk.getBoundingBox(), chunk.value, chunk.fontName, chunk.fontSize,
+                chunk.fontWeight, chunk.italicAngle, chunk.baseLine, chunk.fontColor);
     }
 
     public String getValue() {
@@ -90,6 +96,31 @@ public class TextChunk extends InfoChunk {
 
     public void setFontColor(double[] fontColor) {
         this.fontColor = fontColor;
+    }
+
+    public void append(List<TextChunk> otherChunks) {
+        StringBuilder text = new StringBuilder(value);
+        for (TextChunk chunk : otherChunks) {
+            text.append(chunk.getValue());
+            getBoundingBox().union(chunk.getBoundingBox());
+            if (fontSize < chunk.getFontSize()) {
+                fontSize = chunk.getFontSize();
+            }
+            if (chunk.getBaseLine() < baseLine) {
+                baseLine = chunk.getBaseLine();
+            }
+        }
+        value = text.toString();
+    }
+
+    public void append(TextChunk chunk) {
+        value += chunk.getValue();
+        if (fontSize < chunk.getFontSize()) {
+            fontSize = chunk.getFontSize();
+        }
+        if (chunk.getBaseLine() < baseLine) {
+            baseLine = chunk.getBaseLine();
+        }
     }
 
     @Override
