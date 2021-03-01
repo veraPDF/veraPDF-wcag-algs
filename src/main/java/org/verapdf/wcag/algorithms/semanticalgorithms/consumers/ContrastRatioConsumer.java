@@ -6,9 +6,13 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.verapdf.wcag.algorithms.entities.INode;
+import org.verapdf.wcag.algorithms.entities.SemanticSpan;
+import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 import javax.imageio.ImageIO;
+import javax.xml.soap.Text;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -34,40 +38,41 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		return colorContrastMap;
 	}
 
-	private void calculateContrastRatio(INode node, INode parentNode) {
-		BufferedImage renderedPage = renderedPages.get(node.getPageNumber());
-		if (renderedPage == null) {
-			try {
-				renderedPage = renderPage(sourcePdfPath, node.getPageNumber());
-				renderedPages.put(node.getPageNumber(), renderedPage);
-				BoundingBox bBox = node.getBoundingBox();
-				double dpiScaling = ((double) RENDER_DPI) / ((double) PDF_DPI);
-				int x = (int) (Math.round(bBox.getLeftX()) * dpiScaling);
-				int y = (int) (Math.round(bBox.getTopY()) * dpiScaling);
-				int width = (int) (Math.round(bBox.getWidth()) * dpiScaling);
-				int height = (int) (Math.round(bBox.getHeight()) * dpiScaling);
-				BufferedImage targetBim = renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
-				double contrastRatio = getContrastRatio(targetBim);
-				node.setContrastRatio(contrastRatio);
-				parentNode.setContrastRatio(contrastRatio);
-				colorContrastMap.put(node, contrastRatio);
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-				//logger.error(e, e.getMessage());
-			}
-		}
-	}
-
 	@Override
 	public void accept(INode node) {
 		List<INode> children = node.getChildren();
 		//check if node is leaf
 		if (!children.isEmpty()) {
 			for (INode childNode : children) {
-				if (childNode.getChildren().isEmpty()) {
-					calculateContrastRatio(childNode, node);
+				if (childNode.getChildren().isEmpty() &&
+				    SemanticType.SPAN.equals(childNode.getSemanticType())) {
+					calculateContrastRatio((SemanticSpan) childNode);
 				}
+			}
+		}
+	}
+
+	private void calculateContrastRatio(SemanticSpan node) {
+		BufferedImage renderedPage = renderedPages.get(node.getPageNumber());
+		if (renderedPage == null) {
+			try {
+				renderedPage = renderPage(sourcePdfPath, node.getPageNumber());
+				renderedPages.put(node.getPageNumber(), renderedPage);
+				for (TextChunk textChunk : node.getTextChunks()) {
+					BoundingBox bBox = node.getBoundingBox();
+					double dpiScaling = ((double) RENDER_DPI) / ((double) PDF_DPI);
+					int x = (int) (Math.round(bBox.getLeftX()) * dpiScaling);
+					int y = (int) (Math.round(bBox.getTopY()) * dpiScaling);
+					int width = (int) (Math.round(bBox.getWidth()) * dpiScaling);
+					int height = (int) (Math.round(bBox.getHeight()) * dpiScaling);
+					BufferedImage targetBim = renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
+					double contrastRatio = getContrastRatio(targetBim);
+					textChunk.setContrastRatio(contrastRatio);
+				}
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+				//logger.error(e, e.getMessage());
 			}
 		}
 	}

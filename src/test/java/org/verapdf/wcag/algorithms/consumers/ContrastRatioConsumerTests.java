@@ -5,15 +5,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.verapdf.wcag.algorithms.entities.INode;
-import org.verapdf.wcag.algorithms.entities.ITree;
-import org.verapdf.wcag.algorithms.entities.JsonToPdfTree;
-import org.verapdf.wcag.algorithms.entities.SemanticTree;
+import org.verapdf.wcag.algorithms.entities.*;
+import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.semanticalgorithms.ContrastRatioChecker;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ContrastRatioConsumer;
 import sun.java2d.pipe.AAShapePipe;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -47,14 +47,14 @@ public class ContrastRatioConsumerTests {
 		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(SRC_DIR + srcPdfPath);
 
 		tree.forEach(contrastRatioConsumer);
-		//Map<INode, Double> contrastMap = contrastRatioConsumer.getColorContrastMap();
-		//Assertions.assertEquals(1, contrastMap.size());
 		tree.forEach(node -> {
-			if (node.getChildren().size() == 0) {
-				Assertions.assertTrue(node.getContrastRatio() >= ratioThreshold);
+			if (node.getChildren().size() == 0 && SemanticType.SPAN.equals(node.getSemanticType())) {
+				List<TextChunk> textChunks = ((SemanticSpan)(node)).getTextChunks();
+				for	(TextChunk chunk : textChunks)	{
+					Assertions.assertTrue(chunk.getContrastRatio() >= ratioThreshold);
+				}
 			}
 		});
-		//Assertions.assertEquals(1d, tree.getRoot().getCorrectSemanticScore(), 0d);
 	}
 
 	@ParameterizedTest(name = "{index}: ({0}, {1}, {2}) => {0}")
@@ -65,7 +65,13 @@ public class ContrastRatioConsumerTests {
 		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(SRC_DIR + srcPdfPath);
 
 		tree.forEach(contrastRatioConsumer);
-		tree.forEach(node -> Assertions.assertTrue(node.getContrastRatio() < ratioThreshold));
-		//Assertions.assertEquals(1d, tree.getRoot().getCorrectSemanticScore(), 0d);
+		tree.forEach(node -> {
+			if (node.getChildren().size() == 0 && SemanticType.SPAN.equals(node.getSemanticType())) {
+				List<TextChunk> textChunks = ((SemanticSpan)(node)).getTextChunks();
+				for	(TextChunk chunk : textChunks)	{
+					Assertions.assertTrue(chunk.getContrastRatio() < ratioThreshold);
+				}
+			}
+		});
 	}
 }

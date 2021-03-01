@@ -35,9 +35,5 @@ public interface INode {
 
 	void setBoundingBox(BoundingBox boundingBox);
 
-	double getContrastRatio();
-
-	void setContrastRatio(double contrastRatio);
-
 	List<INode> getChildren();
 }

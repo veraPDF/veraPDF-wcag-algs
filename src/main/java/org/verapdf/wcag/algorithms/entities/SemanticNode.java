@@ -96,16 +96,6 @@ public abstract class SemanticNode implements INode {
 	}
 
 	@Override
-	public double getContrastRatio() {
-		return this.boundingBox.getContrastRatio();
-	}
-
-	@Override
-	public void setContrastRatio(double contrastRatio) {
-		this.boundingBox.setContrastRatio(contrastRatio);
-	}
-
-	@Override
 	public List<INode> getChildren() {
 		return children;
 	}

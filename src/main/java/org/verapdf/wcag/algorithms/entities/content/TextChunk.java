@@ -13,6 +13,7 @@ public class TextChunk extends InfoChunk {
     private double italicAngle;
     private double baseLine;
     private double[] fontColor;
+    private double contrastRatio;
 
     public TextChunk() {
     }
@@ -90,6 +91,14 @@ public class TextChunk extends InfoChunk {
 
     public void setFontColor(double[] fontColor) {
         this.fontColor = fontColor;
+    }
+
+    public double getContrastRatio() {
+        return contrastRatio;
+    }
+
+    public void setContrastRatio(double contrastRatio) {
+        this.contrastRatio = contrastRatio;
     }
 
     @Override
