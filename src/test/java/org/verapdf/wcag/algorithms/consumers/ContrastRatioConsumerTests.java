@@ -18,6 +18,7 @@ public class ContrastRatioConsumerTests {
 	private final ContrastRatioConsumer contrastRatioConsumer = null;
 
 	private static final String SRC_DIR = "/files/colorcontrast/";
+	private static final String ROOT_DIR = "./src/test/resources/files/colorcontrast/";
 
 	public ContrastRatioConsumerTests() {
 	}
@@ -40,7 +41,7 @@ public class ContrastRatioConsumerTests {
 	void testColorContrastPass(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
 		INode root = JsonToPdfTree.getPdfTreeRoot(SRC_DIR + jsonPdfPath);
 		ITree tree = new SemanticTree(root);
-		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(SRC_DIR + srcPdfPath);
+		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath);
 
 		tree.forEach(contrastRatioConsumer);
 		tree.forEach(node -> {
@@ -58,7 +59,7 @@ public class ContrastRatioConsumerTests {
 	void testColorContrastFail(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
 		INode root = JsonToPdfTree.getPdfTreeRoot(SRC_DIR + jsonPdfPath);
 		ITree tree = new SemanticTree(root);
-		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(SRC_DIR + srcPdfPath);
+		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath);
 
 		tree.forEach(contrastRatioConsumer);
 		tree.forEach(node -> {

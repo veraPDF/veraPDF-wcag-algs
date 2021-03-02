@@ -10,6 +10,7 @@ import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -44,8 +45,7 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 	private void calculateContrastRatio(SemanticSpan node) {
 		BufferedImage renderedPage = renderedPages.get(node.getPageNumber());
 		if (renderedPage == null) {
-			try (PDDocument document = PDDocument.load(getClass().getResourceAsStream(
-					sourcePdfPath))) {
+			try (PDDocument document = PDDocument.load(new FileInputStream(sourcePdfPath))) {
 				renderedPage = renderPage(document, node.getPageNumber());
 				renderedPages.put(node.getPageNumber(), renderedPage);
 			}
@@ -53,20 +53,19 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 				e.printStackTrace();
 				logger.warning(e.getMessage());
 			}
-			finally {
-				if (renderedPage != null) {
-					for (TextChunk textChunk : node.getTextChunks()) {
-						BoundingBox bBox = node.getBoundingBox();
-						double dpiScaling = ((double) RENDER_DPI) / ((double) PDF_DPI);
-						int x = (int) (Math.round(bBox.getLeftX()) * dpiScaling);
-						int y = (int) (Math.round(bBox.getTopY()) * dpiScaling);
-						int width = (int) (Math.round(bBox.getWidth()) * dpiScaling);
-						int height = (int) (Math.round(bBox.getHeight()) * dpiScaling);
-						BufferedImage targetBim = renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
-						double contrastRatio = getContrastRatio(targetBim);
-						textChunk.setContrastRatio(contrastRatio);
-					}
-				}
+		}
+
+		if (renderedPage != null) {
+			for (TextChunk textChunk : node.getTextChunks()) {
+				BoundingBox bBox = textChunk.getBoundingBox();
+				double dpiScaling = ((double) RENDER_DPI) / ((double) PDF_DPI);
+				int x = (int) (Math.round(bBox.getLeftX()) * dpiScaling);
+				int y = (int) (Math.round(bBox.getTopY()) * dpiScaling);
+				int width = (int) (Math.round(bBox.getWidth()) * dpiScaling);
+				int height = (int) (Math.round(bBox.getHeight()) * dpiScaling);
+				BufferedImage targetBim = renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
+				double contrastRatio = getContrastRatio(targetBim);
+				textChunk.setContrastRatio(contrastRatio);
 			}
 		}
 	}
