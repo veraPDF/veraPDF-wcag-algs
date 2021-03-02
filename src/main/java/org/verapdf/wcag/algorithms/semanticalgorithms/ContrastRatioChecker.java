@@ -11,27 +11,42 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ContrastRatioChecker implements ISemanticsChecker {
+public class ContrastRatioChecker {
 
-	public void checkSemanticTree(ITree tree) {
-		Consumer<INode> v = new ContrastRatioConsumer(null);
+	/**
+	 * Traverses the document semantic tree and updates contrast ratio parameter of it's nodes. Uses pdf document
+	 * associated with the tree to determine contrast ratio by rendering it's pages.
+	 *
+	 * @param tree {@link ITree tree} with nodes to update with calculated contrast ratio
+	 * @param pdfName {@link String} path to the pdf document associated with given tree
+	 */
+	public void checkSemanticTree(ITree tree, String pdfName) {
+		Consumer<INode> v = new ContrastRatioConsumer(pdfName);
 		tree.forEach(v);
 	}
 
-	public Map<INode, Double> getNodesColorContrastMap(ITree tree, String sourcePdfPath) {
-		ContrastRatioConsumer v = new ContrastRatioConsumer(sourcePdfPath);
-		tree.forEach(v);
-		return v.getColorContrastMap();
+	/**
+	 * Determines contrast ratio of two color based on their relative luminance.
+	 * The resulting contrast ratio ranges from 1.0 to 21.0
+	 *
+	 * @param first relative luminance of the first color
+	 * @param second relative luminance of the first color
+	 * @return contrast ratio of the given colors
+	 */
+	public double getContrastRatio(double first, double second) {
+		double l1 = Math.max(first, second);
+		double l2 = Math.min(first, second);
+		return (l1 + 0.05) / (l2 + 0.05);
 	}
 
-	public boolean isTextContrastRatioCompliant(BufferedImage sourceTextImage, TextType type, boolean isHighVisibility) {
+	boolean isTextContrastRatioCompliant(BufferedImage sourceTextImage, TextType type, boolean isHighVisibility) {
 		List<DataPoint> localMaximums = findLocalMaximums(getLuminosityPresenceList(sourceTextImage));
 		double[] contrastColors = get2MostPresentElements(localMaximums);
 		double colorContrast = getContrastRatio(contrastColors[0], contrastColors[1]);
 		return isContrastRatioCompliant(colorContrast, type, isHighVisibility);
 	}
 
-	public boolean isContrastRatioCompliant(double colorContrast, TextType type, boolean isHighVisibility) {
+	private boolean isContrastRatioCompliant(double colorContrast, TextType type, boolean isHighVisibility) {
 		switch (type) {
 			case REGULAR:
 				return isHighVisibility ? colorContrast >= 7.0 : colorContrast >= 4.5;
@@ -43,12 +58,6 @@ public class ContrastRatioChecker implements ISemanticsChecker {
 				break;
 		}
 		return false;
-	}
-
-	public double getContrastRatio(double first, double second) {
-		double l1 = Math.max(first, second);
-		double l2 = Math.min(first, second);
-		return (l1 + 0.05) / (l2 + 0.05);
 	}
 
 	private double relativeLuminosity(Color color) {

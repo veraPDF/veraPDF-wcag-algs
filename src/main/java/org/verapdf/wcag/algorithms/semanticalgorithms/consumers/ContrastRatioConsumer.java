@@ -1,32 +1,26 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.SemanticSpan;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
-import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
-import javax.imageio.ImageIO;
-import javax.xml.soap.Text;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 public class ContrastRatioConsumer implements Consumer<INode> {
 
-	private Map<INode, Double> colorContrastMap = new HashMap<>();
 	private Map<Integer, BufferedImage> renderedPages = new HashMap<>();
 	private final String sourcePdfPath;
-	//private static final Logger logger = LoggerFactory.getLogger(ContrastRatioConsumer.class);
+	private static final Logger logger = Logger.getLogger(ContrastRatioConsumer.class.getCanonicalName());
 	private static final int RENDER_DPI = 144;
 	private static final int PDF_DPI = 72;
 
@@ -34,52 +28,50 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		this.sourcePdfPath = sourcePdfPath;
 	}
 
-	public Map<INode, Double> getColorContrastMap() {
-		return colorContrastMap;
-	}
-
 	@Override
 	public void accept(INode node) {
-		List<INode> children = node.getChildren();
-		//check if node is leaf
-		if (!children.isEmpty()) {
-			for (INode childNode : children) {
-				if (childNode.getChildren().isEmpty() &&
-				    SemanticType.SPAN.equals(childNode.getSemanticType())) {
-					calculateContrastRatio((SemanticSpan) childNode);
-				}
-			}
+		if (node.getChildren().isEmpty() && (node instanceof SemanticSpan)) {
+			calculateContrastRatio((SemanticSpan) node);
 		}
+	}
+
+	public double getContrastRatio(double first, double second) {
+		double l1 = Math.max(first, second);
+		double l2 = Math.min(first, second);
+		return (l1 + 0.05) / (l2 + 0.05);
 	}
 
 	private void calculateContrastRatio(SemanticSpan node) {
 		BufferedImage renderedPage = renderedPages.get(node.getPageNumber());
 		if (renderedPage == null) {
-			try {
-				renderedPage = renderPage(sourcePdfPath, node.getPageNumber());
+			try (PDDocument document = PDDocument.load(getClass().getResourceAsStream(
+					sourcePdfPath))) {
+				renderedPage = renderPage(document, node.getPageNumber());
 				renderedPages.put(node.getPageNumber(), renderedPage);
-				for (TextChunk textChunk : node.getTextChunks()) {
-					BoundingBox bBox = node.getBoundingBox();
-					double dpiScaling = ((double) RENDER_DPI) / ((double) PDF_DPI);
-					int x = (int) (Math.round(bBox.getLeftX()) * dpiScaling);
-					int y = (int) (Math.round(bBox.getTopY()) * dpiScaling);
-					int width = (int) (Math.round(bBox.getWidth()) * dpiScaling);
-					int height = (int) (Math.round(bBox.getHeight()) * dpiScaling);
-					BufferedImage targetBim = renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
-					double contrastRatio = getContrastRatio(targetBim);
-					textChunk.setContrastRatio(contrastRatio);
-				}
 			}
 			catch (IOException e) {
 				e.printStackTrace();
-				//logger.error(e, e.getMessage());
+				logger.warning(e.getMessage());
+			}
+			finally {
+				if (renderedPage != null) {
+					for (TextChunk textChunk : node.getTextChunks()) {
+						BoundingBox bBox = node.getBoundingBox();
+						double dpiScaling = ((double) RENDER_DPI) / ((double) PDF_DPI);
+						int x = (int) (Math.round(bBox.getLeftX()) * dpiScaling);
+						int y = (int) (Math.round(bBox.getTopY()) * dpiScaling);
+						int width = (int) (Math.round(bBox.getWidth()) * dpiScaling);
+						int height = (int) (Math.round(bBox.getHeight()) * dpiScaling);
+						BufferedImage targetBim = renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
+						double contrastRatio = getContrastRatio(targetBim);
+						textChunk.setContrastRatio(contrastRatio);
+					}
+				}
 			}
 		}
 	}
 
-	private BufferedImage renderPage(String sourcePdfPath, Integer pageNumber) throws IOException {
-		PDDocument document = PDDocument.load(getClass().getResourceAsStream(
-				sourcePdfPath));
+	private BufferedImage renderPage(PDDocument document, Integer pageNumber) throws IOException {
 		PDFRenderer pdfRenderer = new PDFRenderer(document);
 		return pdfRenderer.renderImageWithDPI(pageNumber, RENDER_DPI, ImageType.RGB);
 	}
@@ -88,12 +80,6 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		List<DataPoint> localMaximums = findLocalMaximums(getLuminosityPresenceList(image));
 		double[] contrastColors = get2MostPresentElements(localMaximums);
 		return getContrastRatio(contrastColors[0], contrastColors[1]);
-	}
-
-	public double getContrastRatio(double first, double second) {
-		double l1 = Math.max(first, second);
-		double l2 = Math.min(first, second);
-		return (l1 + 0.05) / (l2 + 0.05);
 	}
 
 	private double relativeLuminosity(Color color) {
@@ -117,7 +103,7 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				int rgb = bim.getRGB(i, j); //always returns TYPE_INT_ARGB
-				int alpha = (rgb >> 24) & 0xFF;// not used for now, should remove?
+				int alpha = (rgb >> 24) & 0xFF;
 				int red = (rgb >> 16) & 0xFF;
 				int green = (rgb >> 8) & 0xFF;
 				int blue = (rgb) & 0xFF;
