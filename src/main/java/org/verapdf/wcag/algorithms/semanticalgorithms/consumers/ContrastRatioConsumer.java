@@ -1,63 +1,84 @@
-package org.verapdf.wcag.algorithms.semanticalgorithms;
+package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.verapdf.wcag.algorithms.entities.INode;
-import org.verapdf.wcag.algorithms.entities.ITree;
-import org.verapdf.wcag.algorithms.entities.enums.TextType;
-import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ContrastRatioConsumer;
+import org.verapdf.wcag.algorithms.entities.SemanticSpan;
+import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
-public class ContrastRatioChecker {
+public class ContrastRatioConsumer implements Consumer<INode> {
 
-	/**
-	 * Traverses the document semantic tree and updates contrast ratio parameter of it's nodes. Uses pdf document
-	 * associated with the tree to determine contrast ratio by rendering it's pages.
-	 *
-	 * @param tree {@link ITree tree} with nodes to update with calculated contrast ratio
-	 * @param pdfName {@link String} path to the pdf document associated with given tree
-	 */
-	public void checkSemanticTree(ITree tree, String pdfName) {
-		Consumer<INode> v = new ContrastRatioConsumer(pdfName);
-		tree.forEach(v);
+	private Map<Integer, BufferedImage> renderedPages = new HashMap<>();
+	private final String sourcePdfPath;
+	private static final Logger logger = Logger.getLogger(ContrastRatioConsumer.class.getCanonicalName());
+	private static final int RENDER_DPI = 144;
+	private static final int PDF_DPI = 72;
+
+	public ContrastRatioConsumer(String sourcePdfPath) {
+		this.sourcePdfPath = sourcePdfPath;
 	}
 
-	/**
-	 * Determines contrast ratio of two color based on their relative luminance.
-	 * The resulting contrast ratio ranges from 1.0 to 21.0
-	 *
-	 * @param first relative luminance of the first color
-	 * @param second relative luminance of the first color
-	 * @return contrast ratio of the given colors
-	 */
+	@Override
+	public void accept(INode node) {
+		if (node.getChildren().isEmpty() && (node instanceof SemanticSpan)) {
+			calculateContrastRatio((SemanticSpan) node);
+		}
+	}
+
 	public double getContrastRatio(double first, double second) {
 		double l1 = Math.max(first, second);
 		double l2 = Math.min(first, second);
 		return (l1 + 0.05) / (l2 + 0.05);
 	}
 
-	boolean isTextContrastRatioCompliant(BufferedImage sourceTextImage, TextType type, boolean isHighVisibility) {
-		List<DataPoint> localMaximums = findLocalMaximums(getLuminosityPresenceList(sourceTextImage));
-		double[] contrastColors = get2MostPresentElements(localMaximums);
-		double colorContrast = getContrastRatio(contrastColors[0], contrastColors[1]);
-		return isContrastRatioCompliant(colorContrast, type, isHighVisibility);
+	private void calculateContrastRatio(SemanticSpan node) {
+		BufferedImage renderedPage = renderedPages.get(node.getPageNumber());
+		if (renderedPage == null) {
+			try (PDDocument document = PDDocument.load(new FileInputStream(sourcePdfPath))) {
+				renderedPage = renderPage(document, node.getPageNumber());
+				renderedPages.put(node.getPageNumber(), renderedPage);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+				logger.warning(e.getMessage());
+			}
+		}
+
+		if (renderedPage != null) {
+			for (TextChunk textChunk : node.getTextChunks()) {
+				BoundingBox bBox = textChunk.getBoundingBox();
+				double dpiScaling = ((double) RENDER_DPI) / ((double) PDF_DPI);
+				int x = (int) (Math.round(bBox.getLeftX()) * dpiScaling);
+				int y = (int) (Math.round(bBox.getTopY()) * dpiScaling);
+				int width = (int) (Math.round(bBox.getWidth()) * dpiScaling);
+				int height = (int) (Math.round(bBox.getHeight()) * dpiScaling);
+				BufferedImage targetBim = renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
+				double contrastRatio = getContrastRatio(targetBim);
+				textChunk.setContrastRatio(contrastRatio);
+			}
+		}
 	}
 
-	private boolean isContrastRatioCompliant(double colorContrast, TextType type, boolean isHighVisibility) {
-		switch (type) {
-			case REGULAR:
-				return isHighVisibility ? colorContrast >= 7.0 : colorContrast >= 4.5;
-			case LARGE:
-				return isHighVisibility ? colorContrast >= 4.5 : colorContrast >= 3.0;
-			case LOGO:
-				return true;
-			default:
-				break;
-		}
-		return false;
+	private BufferedImage renderPage(PDDocument document, Integer pageNumber) throws IOException {
+		PDFRenderer pdfRenderer = new PDFRenderer(document);
+		return pdfRenderer.renderImageWithDPI(pageNumber, RENDER_DPI, ImageType.RGB);
+	}
+
+	private double getContrastRatio(BufferedImage image) {
+		List<DataPoint> localMaximums = findLocalMaximums(getLuminosityPresenceList(image));
+		double[] contrastColors = get2MostPresentElements(localMaximums);
+		return getContrastRatio(contrastColors[0], contrastColors[1]);
 	}
 
 	private double relativeLuminosity(Color color) {
@@ -81,7 +102,7 @@ public class ContrastRatioChecker {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				int rgb = bim.getRGB(i, j); //always returns TYPE_INT_ARGB
-				int alpha = (rgb >> 24) & 0xFF;// not used for now, should remove?
+				int alpha = (rgb >> 24) & 0xFF;
 				int red = (rgb >> 16) & 0xFF;
 				int green = (rgb >> 8) & 0xFF;
 				int blue = (rgb) & 0xFF;
@@ -170,8 +191,7 @@ public class ContrastRatioChecker {
 
 		@Override
 		public int compareTo(DataPoint o) {
-			return Double.compare(this.value, ((DataPoint) o).value);
+			return Double.compare(this.value, o.value);
 		}
 	}
-
 }
