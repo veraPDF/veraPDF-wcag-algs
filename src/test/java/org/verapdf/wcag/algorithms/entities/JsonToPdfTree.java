@@ -3,6 +3,7 @@ package org.verapdf.wcag.algorithms.entities;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.entities.maps.SemanticTypeMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,9 +33,10 @@ public class JsonToPdfTree {
 			node = new SemanticSpan(new TextChunk(new BoundingBox(jsonNode.getPageNumber(), jsonNode.getBoundingBox()),
 												jsonNode.getValue(), jsonNode.getFontName(), jsonNode.getFontSize(),
 												jsonNode.getFontWeight(), jsonNode.getItalicAngle(), jsonNode.getBaseLine(),
-												jsonNode.getColor()));
+												jsonNode.getColor()),
+									SemanticTypeMapper.getSemanticType(pdfType));
 		} else {
-			node = new UnexpectedSemanticNode();
+			node = new UnexpectedSemanticNode(SemanticTypeMapper.getSemanticType(pdfType));
 		}
 
 		if (jsonNode.getChildren() != null) {

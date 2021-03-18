@@ -15,11 +15,22 @@ public class SemanticParagraph extends SemanticNode {
 	private TextChunk lastLine;
 
 	public SemanticParagraph() {
-		setSemanticType(SemanticType.SPAN);
+		setSemanticType(SemanticType.PARAGRAPH);
+	}
+
+	public SemanticParagraph(SemanticType initialSemanticType) {
+		super(initialSemanticType);
+		setSemanticType(SemanticType.PARAGRAPH);
 	}
 
 	public SemanticParagraph(BoundingBox bbox, TextChunk firstLine, TextChunk lastLine) {
-		super(bbox, SemanticType.PARAGRAPH);
+		super(bbox, null, SemanticType.PARAGRAPH);
+		this.firstLine = firstLine;
+		this.lastLine = lastLine;
+	}
+
+	public SemanticParagraph(BoundingBox bbox, TextChunk firstLine, TextChunk lastLine, SemanticType initialSemanticType) {
+		super(bbox, initialSemanticType, SemanticType.PARAGRAPH);
 		this.firstLine = firstLine;
 		this.lastLine = lastLine;
 	}
