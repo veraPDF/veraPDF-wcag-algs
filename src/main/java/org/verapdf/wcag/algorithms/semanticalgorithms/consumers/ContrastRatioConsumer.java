@@ -57,6 +57,10 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 
 		if (renderedPage != null) {
 			for (TextChunk textChunk : node.getTextChunks()) {
+				if ((textChunk.getValue() != null && textChunk.getValue().trim().length() == 0)) {
+					textChunk.setContrastRatio(Integer.MAX_VALUE);
+					continue;
+				}
 				BoundingBox bBox = textChunk.getBoundingBox();
 				double dpiScaling = ((double) RENDER_DPI) / ((double) PDF_DPI);
 				int x = (int) (Math.round(bBox.getLeftX()) * dpiScaling);
