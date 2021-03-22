@@ -54,7 +54,11 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			updateNode(node, 1, node.getSemanticType());
 		} else {
 			INode child = children.get(0);
-			updateNode(node, child.getCorrectSemanticScore(), child.getSemanticType());
+			if (child.getSemanticType() == SemanticType.SPAN && (!(child instanceof SemanticSpan) || node.getInitialSemanticType() == SemanticType.PARAGRAPH)) {
+				updateNode(node, child.getCorrectSemanticScore(), SemanticType.PARAGRAPH);
+			} else {
+				updateNode(node, child.getCorrectSemanticScore(), child.getSemanticType());
+			}
 		}
 	}
 
