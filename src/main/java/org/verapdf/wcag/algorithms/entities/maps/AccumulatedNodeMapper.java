@@ -56,6 +56,7 @@ public class AccumulatedNodeMapper {
             SemanticSpan childSpan = (SemanticSpan) get(child);
             semanticSpan.addAll(childSpan.getTextChunks());
         }
+        semanticSpan.setCorrectSemanticScore(node.getCorrectSemanticScore());
         return semanticSpan;
     }
 
