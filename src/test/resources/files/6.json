@@ -1,0 +1,22 @@
+{
+	"type": "Span",
+	"children": [
+		{
+			"type": "Span",
+			"children": [
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "the goal of enhancing the visual experience. In such a case, the background is not required for understanding the ",
+					"baseLine": 785.79916,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 9.96,
+					"boundingBox": [70.80296, 782.69164, 531.3394560000002, 796.01812],
+					"color": [0.0],
+					"fontName": "Calibri"
+				}
+			]
+		}
+	]
+}

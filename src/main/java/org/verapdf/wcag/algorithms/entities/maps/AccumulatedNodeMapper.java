@@ -28,7 +28,21 @@ public class AccumulatedNodeMapper {
         return nodeToAccumulatedNodeMap.get(node);
     }
 
-    private INode calculateAccumulatedNode(INode node) {
+    public void put(INode node, INode accumulatedNode) {
+        if (node == null) {
+            return;
+        }
+        nodeToAccumulatedNodeMap.put(node, accumulatedNode);
+    }
+
+    public void put(INode node) {
+        if (node == null) {
+            return;
+        }
+        nodeToAccumulatedNodeMap.put(node, calculateAccumulatedNode(node));
+    }
+
+    public INode calculateAccumulatedNode(INode node) {
         List<INode> children = node.getChildren();
         if (children.isEmpty()) {
             return node;
@@ -54,7 +68,7 @@ public class AccumulatedNodeMapper {
         SemanticSpan semanticSpan = new SemanticSpan();
         for (INode child : children) {
             SemanticSpan childSpan = (SemanticSpan) get(child);
-            semanticSpan.addAll(childSpan.getTextChunks());
+            semanticSpan.addAll(childSpan.getLines());
         }
         semanticSpan.setCorrectSemanticScore(node.getCorrectSemanticScore());
         return semanticSpan;
@@ -66,10 +80,10 @@ public class AccumulatedNodeMapper {
         INode lastChild = get(children.get(children.size() - 1));
 
         TextChunk firstLine = SemanticType.SPAN.equals(firstChild.getSemanticType())
-                              ? ((SemanticSpan) firstChild).getTextChunks().get(0)
+                              ? ((SemanticSpan) firstChild).getFirstLine()
                               : SemanticType.PARAGRAPH.equals(firstChild.getSemanticType()) ? ((SemanticParagraph) firstChild).getFirstLine() : new TextChunk();
         TextChunk lastLine = SemanticType.SPAN.equals(lastChild.getSemanticType())
-                             ? ((SemanticSpan) lastChild).getTextChunks().get(0)
+                             ? ((SemanticSpan) lastChild).getFirstLine()
                              : SemanticType.PARAGRAPH.equals(lastChild.getSemanticType()) ? ((SemanticParagraph) lastChild).getLastLine() : new TextChunk();
 
         INode semanticParagraph = new SemanticParagraph(childrenBoundingBox(node), firstLine, lastLine);

@@ -107,7 +107,7 @@ public class ChunksMergeUtils {
 		                             FONT_WHITESPACE_COMPARISON_THRESHOLD);
 	}
 
-	private static double mergeIndentationProbability(TextChunk x, TextChunk y) {
+	public static double mergeIndentationProbability(TextChunk x, TextChunk y) {
 		// We assume that x, y have approx the same fontSize
 		double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
 
