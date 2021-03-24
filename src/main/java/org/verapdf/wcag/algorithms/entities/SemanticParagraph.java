@@ -14,6 +14,15 @@ public class SemanticParagraph extends SemanticNode {
 	private TextChunk firstLine;
 	private TextChunk lastLine;
 
+	public SemanticParagraph(SemanticParagraph paragraph) {
+		super(paragraph.getBoundingBox(), paragraph.getInitialSemanticType(), paragraph.getSemanticType());
+		firstLine = paragraph.getFirstLine();
+		lastLine = paragraph.getLastLine();
+		enclosedBottom = paragraph.enclosedBottom;
+		enclosedTop = paragraph.enclosedTop;
+		indentation = paragraph.indentation;
+	}
+
 	public SemanticParagraph() {
 		setSemanticType(SemanticType.PARAGRAPH);
 	}

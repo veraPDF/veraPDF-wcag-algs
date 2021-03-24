@@ -27,10 +27,9 @@ public abstract class SemanticNode implements INode {
 	}
 
 	public SemanticNode(BoundingBox bbox, SemanticType initialSemanticType, SemanticType semanticType) {
+		this(initialSemanticType);
 		this.boundingBox = new BoundingBox(bbox);
 		this.semanticType = semanticType;
-		this.children = new ArrayList<>();
-		this.initialSemanticType = initialSemanticType;
 	}
 
 	@Override

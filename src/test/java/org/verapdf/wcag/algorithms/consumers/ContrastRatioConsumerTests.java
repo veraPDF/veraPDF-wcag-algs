@@ -46,7 +46,7 @@ public class ContrastRatioConsumerTests {
 		tree.forEach(contrastRatioConsumer);
 		tree.forEach(node -> {
 			if (node.getChildren().size() == 0 && SemanticType.SPAN.equals(node.getSemanticType())) {
-				List<TextChunk> textChunks = ((SemanticSpan)(node)).getTextChunks();
+				List<TextChunk> textChunks = ((SemanticSpan)(node)).getLines();
 				for	(TextChunk chunk : textChunks)	{
 					Assertions.assertTrue(chunk.getContrastRatio() >= ratioThreshold);
 				}
@@ -64,7 +64,7 @@ public class ContrastRatioConsumerTests {
 		tree.forEach(contrastRatioConsumer);
 		tree.forEach(node -> {
 			if (node.getChildren().size() == 0 && SemanticType.SPAN.equals(node.getSemanticType())) {
-				List<TextChunk> textChunks = ((SemanticSpan)(node)).getTextChunks();
+				List<TextChunk> textChunks = ((SemanticSpan)(node)).getLines();
 				for	(TextChunk chunk : textChunks)	{
 					Assertions.assertTrue(chunk.getContrastRatio() < ratioThreshold);
 				}

@@ -8,27 +8,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SemanticSpan extends SemanticNode {
-    private List<TextChunk> textChunks;
+    private List<TextChunk> lines;
+
+    public SemanticSpan(SemanticSpan span) {
+        super(span.getBoundingBox(), span.getInitialSemanticType(), span.getSemanticType());
+        lines = new ArrayList<>(span.getLines());
+    }
 
     public SemanticSpan() {
         setSemanticType(SemanticType.SPAN);
-        textChunks = new ArrayList<>();
+        lines = new ArrayList<>();
     }
 
     public SemanticSpan(SemanticType initialSemanticType) {
         super(initialSemanticType);
         setSemanticType(SemanticType.SPAN);
-        textChunks = new ArrayList<>();
+        lines = new ArrayList<>();
     }
 
     public SemanticSpan(BoundingBox bbox) {
-        super(bbox, null, SemanticType.SPAN);
-        this.textChunks = new ArrayList<>();
+        this(bbox, null);
     }
 
     public SemanticSpan(BoundingBox bbox, SemanticType initialSemanticType) {
         super(bbox, initialSemanticType, SemanticType.SPAN);
-        this.textChunks = new ArrayList<>();
+        this.lines = new ArrayList<>();
     }
 
     public SemanticSpan(TextChunk textChunk) {
@@ -42,7 +46,7 @@ public class SemanticSpan extends SemanticNode {
     }
 
     public void add(TextChunk textChunk) {
-        textChunks.add(textChunk);
+        lines.add(textChunk);
         getBoundingBox().union(textChunk.getBoundingBox());
     }
 
@@ -50,14 +54,39 @@ public class SemanticSpan extends SemanticNode {
         if (text == null || text.size() == 0) {
             return;
         }
-        textChunks.addAll(text);
+        lines.addAll(text);
         for (TextChunk textChunk : text) {
             getBoundingBox().union(textChunk.getBoundingBox());
         }
     }
 
-    public List<TextChunk> getTextChunks() {
-        return textChunks;
+    public List<TextChunk> getLines() {
+        return lines;
+    }
+
+    public int getLinesNumber() {
+        return lines.size();
+    }
+
+    public TextChunk getFirstLine() {
+        if (lines.size() != 0) {
+            return lines.get(0);
+        }
+        return null;
+    }
+
+    public TextChunk getSecondLine() {
+        if (lines.size() > 1) {
+            return lines.get(1);
+        }
+        return null;
+    }
+
+    public TextChunk getLastLine() {
+        if (lines.size() != 0) {
+            return lines.get(lines.size() - 1);
+        }
+        return null;
     }
 
     @Override
@@ -66,14 +95,14 @@ public class SemanticSpan extends SemanticNode {
             return false;
         }
         SemanticSpan that = (SemanticSpan) o;
-        return this.textChunks.equals(that.getTextChunks());
+        return this.lines.equals(that.getLines());
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + textChunks.size();
-        for (TextChunk textChunk : textChunks) {
+        result = 31 * result + lines.size();
+        for (TextChunk textChunk : lines) {
             result = 31 * result + textChunk.hashCode();
         }
         return result;
@@ -81,14 +110,14 @@ public class SemanticSpan extends SemanticNode {
 
     @Override
     public String toString() {
-        if (textChunks.size() == 0) {
+        if (lines.size() == 0) {
             return "SemanticSpan{}";
         }
         StringBuilder result = new StringBuilder("SemanticSpan{");
-        result.append(textChunks.get(0));
-        for (int i = 1; i < textChunks.size(); ++i) {
+        result.append(lines.get(0));
+        for (int i = 1; i < lines.size(); ++i) {
             result.append(", ");
-            result.append(textChunks.get(i));
+            result.append(lines.get(i));
         }
         result.append("}");
         return result.toString();

@@ -33,8 +33,7 @@ public class JsonToPdfTree {
 			node = new SemanticSpan(new TextChunk(new BoundingBox(jsonNode.getPageNumber(), jsonNode.getBoundingBox()),
 												jsonNode.getValue(), jsonNode.getFontName(), jsonNode.getFontSize(),
 												jsonNode.getFontWeight(), jsonNode.getItalicAngle(), jsonNode.getBaseLine(),
-												jsonNode.getColor()),
-									SemanticTypeMapper.getSemanticType(pdfType));
+												jsonNode.getColor()));
 		} else {
 			node = new UnexpectedSemanticNode(SemanticTypeMapper.getSemanticType(pdfType));
 		}
