@@ -75,9 +75,31 @@ public class SemanticSpan extends SemanticNode {
         return null;
     }
 
+    public void setFirstLine(TextChunk firstLine) {
+        if (lines.size() != 0) {
+            lines.set(0, firstLine);
+        } else {
+            lines.add(firstLine);
+        }
+    }
+
+    public void setLastLine(TextChunk lastLine) {
+        if (lines.size() != 0) {
+            lines.set(lines.size() - 1, lastLine);
+        } else {
+            lines.add(lastLine);
+        }
+    }
+
     public TextChunk getSecondLine() {
         if (lines.size() > 1) {
             return lines.get(1);
+        }
+        return null;
+    }
+    public TextChunk getPenultLine() {
+        if (lines.size() > 1) {
+            return lines.get(lines.size() - 2);
         }
         return null;
     }
