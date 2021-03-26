@@ -22,7 +22,7 @@ class DFSTreeNodeIteratorTests {
     public void testWithSingleNodeTree() {
         List<Integer> expectedList = new ArrayList<>();
 
-        INode root = new SemanticParagraph(new BoundingBox(1), null, null);
+        INode root = new SemanticParagraph(new BoundingBox(1));
         expectedList.add(1);
 
         ITree tree = new SemanticTree(root);
@@ -41,10 +41,10 @@ class DFSTreeNodeIteratorTests {
             expectedList.add(number);
         }
 
-        INode root = new SemanticParagraph(new BoundingBox(0), null, null);
+        INode root = new SemanticParagraph(new BoundingBox(0));
         INode node = root;
         for (int i = 1; i < expectedArray.length; ++i) {
-            INode child = new SemanticParagraph(new BoundingBox(i), null, null);
+            INode child = new SemanticParagraph(new BoundingBox(i));
             node.getChildren().add(child);
             node = child;
         }
@@ -66,7 +66,7 @@ class DFSTreeNodeIteratorTests {
 
         List<INode> nodeList = new ArrayList<>(expectedArray.length);
         for (int i = 0; i < expectedArray.length; ++i) {
-            nodeList.add(new SemanticParagraph(new BoundingBox(i), null, null));
+            nodeList.add(new SemanticParagraph(new BoundingBox(i)));
         }
         nodeList.get(0).getChildren().addAll(nodeList.subList(1, 4));
         nodeList.get(1).getChildren().add(nodeList.get(4));

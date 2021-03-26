@@ -29,7 +29,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	public void accept(INode node) {
 
 		if (node.getChildren().isEmpty()) {				;
-			updateNode(node, 1, node.getSemanticType());
+			updateNode(node, node, 1, node.getSemanticType());
 			return;
 		}
 
@@ -45,20 +45,6 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		}
 
 		acceptSemanticParagraph(node);
-	}
-
-	private void acceptNodeWithLeq1Child(INode node) {
-		List<INode> children = node.getChildren();
-		if (children.isEmpty()) {
-			updateNode(node, 1, node.getSemanticType());
-		} else {
-			INode child = children.get(0);
-			if (child.getSemanticType() == SemanticType.SPAN && (!(child instanceof SemanticSpan) || node.getInitialSemanticType() == SemanticType.PARAGRAPH)) {
-				updateNode(node, child.getCorrectSemanticScore(), SemanticType.PARAGRAPH);
-			} else {
-				updateNode(node, child.getCorrectSemanticScore(), child.getSemanticType());
-			}
-		}
 	}
 
 	private void acceptSemanticSpan(INode node) {
@@ -108,7 +94,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		TextChunk nextLine = secondSpan.getFirstLine();
 		double mergeProbability = ChunksMergeUtils.toLineMergeProbability(lastLine, nextLine);
 		if (mergeProbability < MERGE_PROBABILITY_THRESHOLD) {
-			if (span.getLines().size() != 1 && secondSpan.getLinesNumber() > 1) {
+			if (span.getLinesNumber() > 1 && secondSpan.getLinesNumber() > 1) {
 				mergeProbability = ChunksMergeUtils.toParagraphMergeProbability(lastLine, nextLine);
 			} else {
 				mergeProbability = ChunksMergeUtils.mergeLeadingProbability(lastLine, nextLine);
@@ -117,9 +103,12 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		} else {
 			lastLine = new TextChunk(lastLine);
 			lastLine.append(nextLine);
-			span.getLines().set(span.getLines().size() - 1, lastLine);
+			span.setLastLine(lastLine);
 			if (secondSpan.getLinesNumber() > 1) {
-				if (span.getLines().size() != 1 && secondSpan.getLinesNumber() > 2) {
+				if (span.getLinesNumber() > 2 && secondSpan.getLinesNumber() > 1) {
+					mergeProbability *= ChunksMergeUtils.mergeIndentationProbability(span.getPenultLine(), lastLine);
+				}
+				if (span.getLinesNumber() > 1 && secondSpan.getLinesNumber() > 2) {
 					mergeProbability *= ChunksMergeUtils.mergeIndentationProbability(lastLine, secondSpan.getSecondLine());
 				}
 				span.getLines().addAll(secondSpan.getLines().subList(1, secondSpan.getLinesNumber() - 1));
@@ -129,13 +118,10 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		return (secondSpan.getCorrectSemanticScore() == null) ? mergeProbability : (secondSpan.getCorrectSemanticScore() * mergeProbability);
 	}
 
-	private void updateNode(INode node, double correctSemanticScore, SemanticType semanticType) {
-		node.setSemanticType(semanticType);
-		INode accumulatedNode = accumulatedNodeMapper.calculateAccumulatedNode(node);
-		updateNode(node, accumulatedNode, correctSemanticScore, semanticType);
-	}
-
 	private void updateNode(INode node, INode accumulatedNode, double correctSemanticScore, SemanticType semanticType) {
+		if (accumulatedNode == null) {
+			return;
+		}
 		node.setCorrectSemanticScore(correctSemanticScore);
 		node.setSemanticType(semanticType);
 		node.setBoundingBox(accumulatedNode.getBoundingBox());
@@ -155,7 +141,6 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 				paragraphProbability *= toParagraphMergeProbability(paragraph, accumulatedChild);
 			}
 		}
-
 		updateNode(node, paragraph, paragraphProbability, SemanticType.PARAGRAPH);
 	}
 
@@ -166,8 +151,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		switch (node.getSemanticType()) {
 			case SPAN:
 				SemanticSpan span = (SemanticSpan) node;
-				List<TextChunk> text = span.getLines();
-				return new SemanticParagraph(span.getBoundingBox(), text.get(0), text.get(text.size() - 1));
+				return new SemanticParagraph(span.getBoundingBox(), span.getLines());
 			case PARAGRAPH:
 				return new SemanticParagraph((SemanticParagraph) node);
 			default:
@@ -197,65 +181,46 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		return false;
 	}
 
-	private double toParagraphMergeProbability(SemanticParagraph paragraph, SemanticSpan span) {
-		List<TextChunk> nextLines = span.getLines();
-		if (nextLines.size() == 0) {
+	private double toParagraphMergeProbability(SemanticParagraph paragraph, List<TextChunk> lines) {
+		if (lines.isEmpty()) {
 			return 1;
 		}
 		TextChunk lastLine = paragraph.getLastLine();
-		TextChunk nextLine = nextLines.get(0);
-
+		TextChunk nextLine = lines.get(0);
 		double mergeProbability = ChunksMergeUtils.toLineMergeProbability(lastLine, nextLine);
 		if (mergeProbability < MERGE_PROBABILITY_THRESHOLD) {
-			if (!isOneLineParagraph(paragraph) && nextLines.size() > 1) {
+			if (paragraph.getLines().size() > 1 && lines.size() > 1) {
 				mergeProbability = ChunksMergeUtils.toParagraphMergeProbability(lastLine, nextLine);
-				paragraph.setLastLine(nextLines.get(nextLines.size() - 1));
 			} else {
 				mergeProbability = ChunksMergeUtils.mergeLeadingProbability(lastLine, nextLine);
-				paragraph.setLastLine(nextLine);
 			}
+			paragraph.getLines().addAll(lines);
 		} else {
 			lastLine = new TextChunk(lastLine);
 			lastLine.append(nextLine);
-			if (isOneLineParagraph(paragraph)) {
-				paragraph.setFirstLine(lastLine);
-			}
 			paragraph.setLastLine(lastLine);
-			if (!isOneLineParagraph(paragraph) && nextLines.size() > 2) {
-				mergeProbability *= ChunksMergeUtils.mergeIndentationProbability(lastLine, nextLines.get(1));
-				paragraph.setLastLine(nextLines.get(nextLines.size() - 1));
-			} else if (nextLines.size() > 1) {
-				paragraph.setLastLine(nextLines.get(nextLines.size() - 1));
+			if (lines.size() > 1) {
+				if (paragraph.getLinesNumber() > 2 && lines.size() > 1) {
+					mergeProbability *= ChunksMergeUtils.mergeIndentationProbability(paragraph.getPenultLine(), lastLine);
+				}
+				if (paragraph.getLinesNumber() > 1 && lines.size() > 2) {
+					mergeProbability *= ChunksMergeUtils.mergeIndentationProbability(lastLine, lines.get(1));
+				}
+				paragraph.getLines().addAll(lines.subList(1, lines.size() - 1));
 			}
 		}
+		return mergeProbability;
+	}
+
+	private double toParagraphMergeProbability(SemanticParagraph paragraph, SemanticSpan span) {
+		double mergeProbability = toParagraphMergeProbability(paragraph, span.getLines());
 		paragraph.getBoundingBox().union(span.getBoundingBox());
 		return (span.getCorrectSemanticScore() == null) ? mergeProbability : (span.getCorrectSemanticScore() * mergeProbability);
 	}
 
 	private double toParagraphMergeProbability(SemanticParagraph paragraph1, SemanticParagraph paragraph2) {
+		double mergeProbability = toParagraphMergeProbability(paragraph1, paragraph2.getLines());
 		paragraph1.getBoundingBox().union(paragraph2.getBoundingBox());
-		double mergeProbability = ChunksMergeUtils.toLineMergeProbability(paragraph1.getLastLine(), paragraph2.getFirstLine());
-		if (mergeProbability < MERGE_PROBABILITY_THRESHOLD) {
-			if (isOneLineParagraph(paragraph1) || isOneLineParagraph(paragraph2)) {
-				mergeProbability = ChunksMergeUtils.mergeLeadingProbability(paragraph1.getFirstLine(), paragraph2.getFirstLine());
-			} else {
-				mergeProbability = ChunksMergeUtils.toParagraphMergeProbability(paragraph1.getLastLine(), paragraph2.getFirstLine());
-			}
-			paragraph1.setLastLine(paragraph2.getLastLine());
-		} else {
-			//ToDo: calculate mergeProbability
-			TextChunk newLine = new TextChunk(paragraph1.getLastLine());
-			newLine.append(paragraph2.getFirstLine());
-			if (isOneLineParagraph(paragraph1)) {
-				paragraph1.setFirstLine(newLine);
-			}
-			paragraph1.setLastLine(newLine);
-		}
-		mergeProbability *= (paragraph2.getCorrectSemanticScore() == null) ? 1 : paragraph2.getCorrectSemanticScore();
-		return mergeProbability;
-	}
-
-	private boolean isOneLineParagraph(SemanticParagraph paragraph) {
-		return paragraph.getFirstLine() == paragraph.getLastLine();
+		return (paragraph2.getCorrectSemanticScore() == null) ? mergeProbability : (paragraph2.getCorrectSemanticScore() * mergeProbability);
 	}
 }

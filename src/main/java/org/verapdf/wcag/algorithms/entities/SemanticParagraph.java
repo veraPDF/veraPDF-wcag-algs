@@ -4,6 +4,8 @@ import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class SemanticParagraph extends SemanticNode {
@@ -11,16 +13,14 @@ public class SemanticParagraph extends SemanticNode {
 	private boolean enclosedTop;
 	private boolean enclosedBottom;
 	private int indentation; // 0 - left, 1 - right, 2 - center
-	private TextChunk firstLine;
-	private TextChunk lastLine;
+	private List<TextChunk> lines;
 
 	public SemanticParagraph(SemanticParagraph paragraph) {
 		super(paragraph.getBoundingBox(), paragraph.getInitialSemanticType(), paragraph.getSemanticType());
-		firstLine = paragraph.getFirstLine();
-		lastLine = paragraph.getLastLine();
 		enclosedBottom = paragraph.enclosedBottom;
 		enclosedTop = paragraph.enclosedTop;
 		indentation = paragraph.indentation;
+		lines = new ArrayList<>(paragraph.getLines());
 	}
 
 	public SemanticParagraph() {
@@ -32,16 +32,19 @@ public class SemanticParagraph extends SemanticNode {
 		setSemanticType(SemanticType.PARAGRAPH);
 	}
 
-	public SemanticParagraph(BoundingBox bbox, TextChunk firstLine, TextChunk lastLine) {
+	public SemanticParagraph(BoundingBox bbox, List<TextChunk> lines) {
 		super(bbox, null, SemanticType.PARAGRAPH);
-		this.firstLine = firstLine;
-		this.lastLine = lastLine;
+		this.lines = new ArrayList<>(lines);
 	}
 
-	public SemanticParagraph(BoundingBox bbox, TextChunk firstLine, TextChunk lastLine, SemanticType initialSemanticType) {
+	public SemanticParagraph(BoundingBox bbox) {
+		super(bbox, null, SemanticType.PARAGRAPH);
+		this.lines = new ArrayList<>();
+	}
+
+	public SemanticParagraph(BoundingBox bbox, List<TextChunk> lines, SemanticType initialSemanticType) {
 		super(bbox, initialSemanticType, SemanticType.PARAGRAPH);
-		this.firstLine = firstLine;
-		this.lastLine = lastLine;
+		this.lines = new ArrayList<>(lines);
 	}
 
 	public boolean isEnclosedTop() {
@@ -60,20 +63,55 @@ public class SemanticParagraph extends SemanticNode {
 		this.enclosedBottom = enclosedBottom;
 	}
 
-	public TextChunk getFirstLine() {
-		return firstLine;
-	}
-
 	public void setFirstLine(TextChunk firstLine) {
-		this.firstLine = firstLine;
-	}
-
-	public TextChunk getLastLine() {
-		return lastLine;
+		if (lines.size() != 0) {
+			lines.set(0, firstLine);
+		} else {
+			lines.add(firstLine);
+		}
 	}
 
 	public void setLastLine(TextChunk lastLine) {
-		this.lastLine = lastLine;
+		if (lines.size() != 0) {
+			lines.set(lines.size() - 1, lastLine);
+		} else {
+			lines.add(lastLine);
+		}
+	}
+
+	public int getLinesNumber() {
+		return lines.size();
+	}
+
+	public List<TextChunk> getLines() {
+		return lines;
+	}
+
+	public TextChunk getFirstLine() {
+		if (lines.size() != 0) {
+			return lines.get(0);
+		}
+		return null;
+	}
+
+	public TextChunk getSecondLine() {
+		if (lines.size() > 1) {
+			return lines.get(1);
+		}
+		return null;
+	}
+	public TextChunk getPenultLine() {
+		if (lines.size() > 1) {
+			return lines.get(lines.size() - 2);
+		}
+		return null;
+	}
+
+	public TextChunk getLastLine() {
+		if (lines.size() != 0) {
+			return lines.get(lines.size() - 1);
+		}
+		return null;
 	}
 
 	public int getIndentation() {
@@ -94,25 +132,36 @@ public class SemanticParagraph extends SemanticNode {
 		return enclosedTop == that.enclosedTop
 		       && enclosedBottom == that.enclosedBottom
 		       && indentation == that.indentation
-		       && Objects.equals(firstLine, that.firstLine)
-		       && Objects.equals(lastLine, that.lastLine);
+		       && this.lines.equals(that.getLines());
 	}
 
 	@Override
 	public int hashCode() {
 		int result = super.hashCode();
-		result = 31 * result + Objects.hash(enclosedTop, enclosedBottom, indentation, firstLine);
+		result = 31 * result + lines.size();
+		for (TextChunk textChunk : lines) {
+			result = 31 * result + textChunk.hashCode();
+		}
+		result = 31 * result + Objects.hash(enclosedTop, enclosedBottom, indentation);
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return "SemanticParagraph{" +
-		       "enclosedTop=" + enclosedTop +
-		       ", enclosedBottom=" + enclosedBottom +
-		       ", indentation=" + indentation +
-		       ", firstLine=" + firstLine +
-		       ", lastLine=" + lastLine +
-		       '}';
+		StringBuilder result = new StringBuilder("SemanticParagraph{");
+		result.append("enclosedTop=");
+		result.append(enclosedTop);
+		result.append(", enclosedBottom=");
+		result.append(enclosedBottom);
+		result.append(", indentation=");
+		result.append(indentation);
+		result.append(", lines=[");
+		result.append(lines.get(0));
+		for (int i = 1; i < lines.size(); ++i) {
+			result.append(", ");
+			result.append(lines.get(i));
+		}
+		result.append("]}");
+		return result.toString();
 	}
 }

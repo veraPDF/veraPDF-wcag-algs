@@ -130,6 +130,7 @@ public class TextChunk extends InfoChunk {
         if (chunk.getBaseLine() < baseLine) {
             baseLine = chunk.getBaseLine();
         }
+        unionBoundingBox(chunk.getBoundingBox());
     }
 
     @Override
