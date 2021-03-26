@@ -8,6 +8,7 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.maps.AccumulatedNodeMapper;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -180,66 +181,45 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		return false;
 	}
 
-	private double toParagraphMergeProbability(SemanticParagraph paragraph, SemanticSpan span) {
-		if (span.getLinesNumber() == 0) {
+	private double toParagraphMergeProbability(SemanticParagraph paragraph, List<TextChunk> lines) {
+		if (lines.isEmpty()) {
 			return 1;
 		}
 		TextChunk lastLine = paragraph.getLastLine();
-		TextChunk nextLine = span.getFirstLine();
+		TextChunk nextLine = lines.get(0);
 		double mergeProbability = ChunksMergeUtils.toLineMergeProbability(lastLine, nextLine);
 		if (mergeProbability < MERGE_PROBABILITY_THRESHOLD) {
-			if (paragraph.getLines().size() != 1 && span.getLinesNumber() > 1) {
+			if (paragraph.getLines().size() > 1 && lines.size() > 1) {
 				mergeProbability = ChunksMergeUtils.toParagraphMergeProbability(lastLine, nextLine);
 			} else {
 				mergeProbability = ChunksMergeUtils.mergeLeadingProbability(lastLine, nextLine);
 			}
-			paragraph.getLines().addAll(span.getLines());
+			paragraph.getLines().addAll(lines);
 		} else {
 			lastLine = new TextChunk(lastLine);
 			lastLine.append(nextLine);
 			paragraph.setLastLine(lastLine);
-			if (span.getLinesNumber() > 1) {
-				if (paragraph.getLinesNumber() > 2 && span.getLinesNumber() > 1) {
+			if (lines.size() > 1) {
+				if (paragraph.getLinesNumber() > 2 && lines.size() > 1) {
 					mergeProbability *= ChunksMergeUtils.mergeIndentationProbability(paragraph.getPenultLine(), lastLine);
 				}
-				if (paragraph.getLinesNumber() > 1 && span.getLinesNumber() > 2) {
-					mergeProbability *= ChunksMergeUtils.mergeIndentationProbability(lastLine, span.getSecondLine());
+				if (paragraph.getLinesNumber() > 1 && lines.size() > 2) {
+					mergeProbability *= ChunksMergeUtils.mergeIndentationProbability(lastLine, lines.get(1));
 				}
-				paragraph.getLines().addAll(span.getLines().subList(1, span.getLinesNumber() - 1));
+				paragraph.getLines().addAll(lines.subList(1, lines.size() - 1));
 			}
 		}
+		return mergeProbability;
+	}
+
+	private double toParagraphMergeProbability(SemanticParagraph paragraph, SemanticSpan span) {
+		double mergeProbability = toParagraphMergeProbability(paragraph, span.getLines());
 		paragraph.getBoundingBox().union(span.getBoundingBox());
 		return (span.getCorrectSemanticScore() == null) ? mergeProbability : (span.getCorrectSemanticScore() * mergeProbability);
 	}
 
 	private double toParagraphMergeProbability(SemanticParagraph paragraph1, SemanticParagraph paragraph2) {
-		if (paragraph2.getLinesNumber() == 0) {
-			return 1;
-		}
-		TextChunk lastLine = paragraph1.getLastLine();
-		TextChunk nextLine = paragraph2.getFirstLine();
-		double mergeProbability = ChunksMergeUtils.toLineMergeProbability(lastLine, nextLine);
-		if (mergeProbability < MERGE_PROBABILITY_THRESHOLD) {
-			if (paragraph1.getLinesNumber() > 1 && paragraph2.getLinesNumber() > 1) {
-				mergeProbability = ChunksMergeUtils.toParagraphMergeProbability(lastLine, nextLine);
-			} else {
-				mergeProbability = ChunksMergeUtils.mergeLeadingProbability(lastLine, nextLine);
-			}
-			paragraph1.getLines().addAll(paragraph2.getLines());
-		} else {
-			lastLine = new TextChunk(lastLine);
-			lastLine.append(nextLine);
-			paragraph1.setLastLine(lastLine);
-			if (paragraph2.getLinesNumber() > 1) {
-				if (paragraph1.getLinesNumber() > 2 && paragraph2.getLinesNumber() > 1) {
-					mergeProbability *= ChunksMergeUtils.mergeIndentationProbability(paragraph1.getPenultLine(), lastLine);
-				}
-				if (paragraph1.getLinesNumber() > 1 && paragraph2.getLinesNumber() > 2) {
-					mergeProbability *= ChunksMergeUtils.mergeIndentationProbability(lastLine, paragraph2.getSecondLine());
-				}
-				paragraph1.getLines().addAll(paragraph2.getLines().subList(1, paragraph2.getLinesNumber() - 1));
-			}
-		}
+		double mergeProbability = toParagraphMergeProbability(paragraph1, paragraph2.getLines());
 		paragraph1.getBoundingBox().union(paragraph2.getBoundingBox());
 		return (paragraph2.getCorrectSemanticScore() == null) ? mergeProbability : (paragraph2.getCorrectSemanticScore() * mergeProbability);
 	}
