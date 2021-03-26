@@ -25,6 +25,8 @@ public class ContrastRatioConsumerTests {
 
 	static Stream<Arguments> contrastTestPassParams() {
 		return Stream.of(
+				Arguments.of("hyphen-large-pass.pdf", "hyphen-large-pass.json", 3.0),
+				Arguments.of("hyphen-regular-pass.pdf", "hyphen-regular-pass.json", 4.5),
 				Arguments.of("1.4.3-t01-pass-a.pdf", "1.4.3-t01-pass-a.json", 3.0),
 				Arguments.of("1.4.3-t02-pass-a.pdf", "1.4.3-t02-pass-a.json", 4.5),
 				Arguments.of("1.4.3-t03-pass-a.pdf", "1.4.3-t03-pass-a.json", 4.5));
@@ -32,6 +34,8 @@ public class ContrastRatioConsumerTests {
 
 	static Stream<Arguments> contrastTestFailParams() {
 		return Stream.of(
+				Arguments.of("hyphen-large-fail.pdf", "hyphen-large-fail.json", 3.0),
+				Arguments.of("hyphen-regular-fail.pdf", "hyphen-regular-fail.json", 4.5),
 				Arguments.of("1.4.3-t01-fail-a.pdf", "1.4.3-t01-fail-a.json", 3.0),
 				Arguments.of("1.4.3-t02-fail-a.pdf", "1.4.3-t02-fail-a.json", 4.5));
 	}
