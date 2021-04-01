@@ -4,7 +4,10 @@ public enum SemanticType {
 	DOCUMENT("Document"),
 	DIV("Div"),
 	PARAGRAPH("P"),
-	SPAN("Span");
+	SPAN("Span"),
+	TABLE("Table"),
+	TABLE_ROW("TR"),
+	TABLE_CELL("TD");
 
 	private String value;
 

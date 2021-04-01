@@ -176,10 +176,10 @@ public class ChunksMergeUtils {
 	}
 
 	private static boolean firstCharIsWhitespace(String str) {
-		return str.length() > 0 && str.charAt(0) == ' ';
+		return str.length() > 0 && Character.isSpaceChar(str.charAt(0));
 	}
 
 	private static double whitespaceSize(double fontSize) {
-		return fontSize / 4;
+		return TextChunkUtils.WHITE_SPACE_FACTOR * fontSize;
 	}
 } 
