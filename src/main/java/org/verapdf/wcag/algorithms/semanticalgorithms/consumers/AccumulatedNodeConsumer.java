@@ -37,6 +37,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		for (INode child : node.getChildren()) {
 			if (!(child instanceof SemanticSpan)) {
 				isLeafChild = false;
+				break;
 			}
 		}
 		if (isLeafChild && node.getInitialSemanticType() == SemanticType.SPAN) {
@@ -120,6 +121,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 
 	private void updateNode(INode node, INode accumulatedNode, double correctSemanticScore, SemanticType semanticType) {
 		if (accumulatedNode == null) {
+			node.setCorrectSemanticScore(0.0d);
 			return;
 		}
 		node.setCorrectSemanticScore(correctSemanticScore);

@@ -52,6 +52,16 @@ public class ChunksMergeUtils {
 			return 0;
 		}
 
+		if (x.getLastPageNumber() == null || y.getPageNumber() == null) {
+			return 0;
+		}
+		if (x.getLastPageNumber() < y.getPageNumber()) {
+			return 1;
+		}
+		if (!x.getLastPageNumber().equals(y.getPageNumber())) {
+			return 0;
+		}
+
 		double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
 		double baseLineDifference = Math.abs(x.getBaseLine() - y.getBaseLine());
 

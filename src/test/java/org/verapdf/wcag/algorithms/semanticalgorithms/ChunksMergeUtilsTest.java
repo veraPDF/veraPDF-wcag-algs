@@ -12,12 +12,12 @@ public class ChunksMergeUtilsTest {
     public void toChunkMergeProbabilityDifferentFontsTest() {
         TextChunk first = createTextChunk("the goa", "Calibri", 9.96,
                                                   400, 0, 85.79, new double[] {0},
-                                                  new double[] {70.8, 82.7, 101.4, 96.0});
+                                                  new double[] {70.8, 82.7, 101.4, 96.0}, 0, 0);
 
         TextChunk second = createTextChunk("l of enhancing the visual experience. In such a case, the background is not required for understanding the ",
                                                            "Times New Roman", 9.96,
                                                            400, 0, 85.79, new double[] {0},
-                                                           new double[] {101.4, 82.7, 531.4, 96.0});
+                                                           new double[] {101.4, 82.7, 531.4, 96.0}, 0, 0);
 
         double resultProbability = ChunksMergeUtils.toChunkMergeProbability(first, second);
         Assertions.assertEquals(0.0, resultProbability, 0.0001);
@@ -27,12 +27,12 @@ public class ChunksMergeUtilsTest {
     public void toChunkMergeProbabilityDifferentFontSizeTest() {
         TextChunk first = createTextChunk("the goa", "Calibri", 9.96,
                                                           400, 0, 85.79, new double[] {0},
-                                                          new double[] {70.8, 82.7, 101.4, 96.0});
+                                                          new double[] {70.8, 82.7, 101.4, 96.0}, 0, 0);
 
         TextChunk second = createTextChunk("l of enhancing the visual experience. In such a case, the background is not required for understanding the ",
                                                            "Times New Roman", 10.96,
                                                            400, 0, 85.79, new double[] {0},
-                                                           new double[] {101.4, 82.7, 531.4, 96.0});
+                                                           new double[] {101.4, 82.7, 531.4, 96.0}, 0, 0);
 
         double resultProbability = ChunksMergeUtils.toChunkMergeProbability(first, second);
         Assertions.assertEquals(0.0, resultProbability, 0.0001);
@@ -42,12 +42,12 @@ public class ChunksMergeUtilsTest {
     public void toChunkMergeProbabilityPassTest() {
         TextChunk first = createTextChunk("the goa", "Calibri", 9.96,
                 400, 0, 85.79, new double[] {0},
-                new double[] {70.8, 82.7, 101.4, 96.0});
+                new double[] {70.8, 82.7, 101.4, 96.0}, 0, 0);
 
         TextChunk second = createTextChunk("l of enhancing the visual experience. In such a case, the background is not required for understanding the ",
                                                            "Calibri", 9.96,
                                                            400, 0, 85.79, new double[] {0},
-                                                           new double[] {101.4, 82.7, 531.4, 96.0});
+                                                           new double[] {101.4, 82.7, 531.4, 96.0}, 0, 0);
 
         double resultProbability = ChunksMergeUtils.toChunkMergeProbability(first, second);
         Assertions.assertEquals(1.0, resultProbability, 0.0001);
@@ -57,12 +57,12 @@ public class ChunksMergeUtilsTest {
     public void toChunkMergeProbabilityDifferentColorTest() {
         TextChunk first =  createTextChunk("the goa", "Calibri", 9.96,
                                                            400, 0, 85.79, new double[] {0},
-                                                           new double[] {70.8, 82.7, 101.4, 96.0});
+                                                           new double[] {70.8, 82.7, 101.4, 96.0}, 0, 0);
 
         TextChunk second = createTextChunk("l of enhancing the visual experience. In such a case, the background is not required for understanding the ",
                                                            "Calibri", 9.96,
                                                            400, 0, 85.79, new double[] {1},
-                                                           new double[] {101.4, 82.7, 531.4, 96.0});
+                                                           new double[] {101.4, 82.7, 531.4, 96.0}, 0, 0);
 
         double resultProbability = ChunksMergeUtils.toChunkMergeProbability(first, second);
         Assertions.assertEquals(0.0, resultProbability, 0.0001);
@@ -72,12 +72,12 @@ public class ChunksMergeUtilsTest {
     public void toLineMergeProbabilityTest() {
         TextChunk first =  createTextChunk("the goa", "Calibri", 9.96,
                                                            400, 0, 85.79, new double[] {0},
-                                                           new double[] {70.8, 82.7, 101.4, 96.0});
+                                                           new double[] {70.8, 82.7, 101.4, 96.0}, 0, 0);
 
         TextChunk second = createTextChunk("l of enhancing the visual experience. In such a case, the background is not required for understanding the ",
                                                            "Calibri", 9.96,
                                                            400, 0, 85.79, new double[] {0},
-                                                           new double[] {101.4, 82.7, 531.4, 96.0});
+                                                           new double[] {101.4, 82.7, 531.4, 96.0}, 0, 0);
         double resultProbability = ChunksMergeUtils.toLineMergeProbability(first, second);
         Assertions.assertEquals(1.0, resultProbability, 0.0001);
     }
@@ -86,12 +86,12 @@ public class ChunksMergeUtilsTest {
     public void toParagraphMergeProbabilityTest() {
         TextChunk first =  createTextChunk("the goa", "Calibri", 9.96,
                                                            400, 0, 85.79, new double[] {0},
-                                                           new double[] {70.8, 82.7, 101.4, 96.0});
+                                                           new double[] {70.8, 82.7, 101.4, 96.0}, 0, 0);
 
         TextChunk second = createTextChunk("l of enhancing the visual experience. In such a case, the background is not required for understanding the ",
                                                            "Calibri", 9.96,
                                                            400, 0, 85.79, new double[] {0},
-                                                           new double[] {70.8, 102.7, 500.4, 116.0});
+                                                           new double[] {70.8, 102.7, 500.4, 116.0}, 0, 0);
 
         double resultProbability = ChunksMergeUtils.toParagraphMergeProbability(first, second);
         Assertions.assertEquals(1.0, resultProbability, 0.0001);
@@ -101,12 +101,12 @@ public class ChunksMergeUtilsTest {
     public void mergeLeadingProbabilityDifferentFontSizeTest() {
         TextChunk first = createTextChunk("the goa", "Calibri", 9.96,
                                                           400, 0, 85.79, new double[] {0},
-                                                          new double[] {70.8, 82.7, 101.4, 96.0});
+                                                          new double[] {70.8, 82.7, 101.4, 96.0}, 0, 0);
 
         TextChunk second = createTextChunk("l of enhancing the visual experience. In such a case, the background is not required for understanding the ",
                                                            "Calibri", 10.96,
                                                            400, 0, 85.79, new double[] {0},
-                                                           new double[] {70.8, 102.7, 500.4, 116.0});
+                                                           new double[] {70.8, 102.7, 500.4, 116.0}, 0, 0);
 
         double resultProbability = ChunksMergeUtils.toParagraphMergeProbability(first, second);
         Assertions.assertEquals(0.0, resultProbability, 0.0001);
@@ -116,12 +116,12 @@ public class ChunksMergeUtilsTest {
     public void mergeByCharSpacingProbabilityLastCharIsWhitespaceTest() {
         TextChunk first = createTextChunk("the goal ", "Calibri", 9.96,
                                                           400, 0, 85.79, new double[] {0},
-                                                          new double[] {70.8, 82.7, 109.4, 96.0});
+                                                          new double[] {70.8, 82.7, 109.4, 96.0}, 0, 0);
 
         TextChunk second = createTextChunk("of enhancing the visual experience. In such a case, the background is not required for understanding the ",
                                                            "Calibri", 9.96,
                                                            400, 0, 85.79, new double[] {0},
-                                                           new double[] {109.4, 82.7, 531.4, 96.0});
+                                                           new double[] {109.4, 82.7, 531.4, 96.0}, 0, 0);
 
         double resultProbability = ChunksMergeUtils.toLineMergeProbability(first, second);
         Assertions.assertEquals(1.0, resultProbability, 0.0001);
@@ -131,12 +131,12 @@ public class ChunksMergeUtilsTest {
     public void mergeByCharSpacingProbabilityLastCharIsWhitespaceMediumSpacingBetweenChunksTest() {
         TextChunk first = createTextChunk("the goal ", "Calibri", 9.96,
                                                           400, 0, 85.79, new double[] {0},
-                                                          new double[] {70.8, 82.7, 109.4, 96.0});
+                                                          new double[] {70.8, 82.7, 109.4, 96.0}, 0, 0);
 
         TextChunk second = createTextChunk("of enhancing the visual experience. In such a case, the background is not required for understanding the ",
                                                            "Calibri", 9.96,
                                                            400, 0, 85.79, new double[] {0},
-                                                           new double[] {110.4, 82.7, 531.4, 96.0});
+                                                           new double[] {110.4, 82.7, 531.4, 96.0}, 0, 0);
 
         double resultProbability = ChunksMergeUtils.toLineMergeProbability(first, second);
         Assertions.assertEquals(0.796, resultProbability, 0.0001);
@@ -146,19 +146,19 @@ public class ChunksMergeUtilsTest {
     public void mergeByCharSpacingProbabilityFirstCharIsWhitespaceTest() {
         TextChunk first = createTextChunk("the goal", "Calibri", 9.96,
                                                           400, 0, 85.79, new double[] {0},
-                                                          new double[] {70.8, 82.7, 105.4, 96.0});
+                                                          new double[] {70.8, 82.7, 105.4, 96.0}, 0, 0);
 
         TextChunk second = createTextChunk(" of enhancing the visual experience. In such a case, the background is not required for understanding the ",
                                                            "Calibri", 9.96,
                                                            400, 0, 85.79, new double[] {0},
-                                                           new double[] {105.4, 82.7, 531.4, 96.0});
+                                                           new double[] {105.4, 82.7, 531.4, 96.0}, 0, 0);
 
         double resultProbability = ChunksMergeUtils.toLineMergeProbability(first, second);
         Assertions.assertEquals(1.0, resultProbability, 0.0001);
     }
 
     public TextChunk createTextChunk(String text, String fontName, double fontSize, double fontWeight,
-                                                     double italicAngle, double baseLine, double[] fontColor, double[] boundingBox) {
+                                                     double italicAngle, double baseLine, double[] fontColor, double[] boundingBox, int pageNumber, int lastPageNumber) {
         TextChunk result = new TextChunk();
         if (text != null) {
             result.setValue(text);
@@ -175,7 +175,7 @@ public class ChunksMergeUtilsTest {
         result.setItalicAngle(italicAngle);
         result.setBaseLine(baseLine);
         result.setFontColor(fontColor);
-        result.setBoundingBox(new BoundingBox(boundingBox));
+        result.setBoundingBox(new BoundingBox(pageNumber, lastPageNumber, boundingBox));
         return result;
     }
 }
