@@ -75,13 +75,15 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 	}
 
 	private BufferedImage renderPage(PDDocument document, Integer pageNumber) throws IOException {
+		RenderingHints renderingHints = new RenderingHints(null);
+		renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		PDFRenderer pdfRenderer = new PDFRenderer(document);
+		pdfRenderer.setRenderingHints(renderingHints);
 		return pdfRenderer.renderImageWithDPI(pageNumber, RENDER_DPI, ImageType.RGB);
 	}
 
 	private double getContrastRatio(BufferedImage image) {
-		List<DataPoint> localMaximums = findLocalMaximums(getLuminosityPresenceList(image));
-		double[] contrastColors = get2MostPresentElements(localMaximums);
+		double[] contrastColors = get2MostPresentElements(getLuminosityPresenceList(image));
 		return getContrastRatio(contrastColors[0], contrastColors[1]);
 	}
 

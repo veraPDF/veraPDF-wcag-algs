@@ -1,0 +1,27 @@
+{
+  "type": "Document",
+  "children": [
+    {
+      "type": "Note",
+      "children": [
+        {
+          "type": "Span",
+          "children": [
+            {
+              "type": "TextChunk",
+              "pageNumber": 0,
+              "value": "-------",
+              "baseLine": 120.04,
+              "fontWeight": 400.0,
+              "italicAngle": 0.0,
+              "fontSize": 18,
+              "boundingBox": [100, 700, 195.65, 725.3],
+              "color": [0.0],
+              "fontName": "Calibri"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
