@@ -38,4 +38,7 @@ public interface INode {
 	void setBoundingBox(BoundingBox boundingBox);
 
 	List<INode> getChildren();
+
+	void addChild(INode child);
+
 }

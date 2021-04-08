@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SemanticSpan extends SemanticNode {
-    private List<TextChunk> lines;
+    private final List<TextChunk> lines;
 
     public SemanticSpan(SemanticSpan span) {
         super(span.getBoundingBox(), span.getInitialSemanticType(), span.getSemanticType());
