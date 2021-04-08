@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class SemanticTypeMapper {
 
-    private static Map<String, SemanticType> map = new HashMap<>();
+    private static final Map<String, SemanticType> map = new HashMap<>();
 
     static {
         map.put(SemanticType.PARAGRAPH.getValue(), SemanticType.PARAGRAPH);

@@ -113,6 +113,11 @@ public abstract class SemanticNode implements INode {
 	}
 
 	@Override
+	public void addChild(INode child) {
+		children.add(child);
+	}
+
+	@Override
 	public int hashCode() {
 		return Objects.hashCode(boundingBox);
 	}
