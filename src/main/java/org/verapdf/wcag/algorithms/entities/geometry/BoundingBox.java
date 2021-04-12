@@ -11,7 +11,7 @@ public class BoundingBox {
     private double rightX;
     private double topY;
 
-    private static double EPSILON = 1.e-18;
+    private final static double EPSILON = 1.e-18;
 
     public BoundingBox() {
         init(Double.MAX_VALUE, Double.MAX_VALUE, 0, 0);
@@ -174,20 +174,28 @@ public class BoundingBox {
     }
 
     public boolean overlaps(BoundingBox other) {
+        return overlaps(other, EPSILON);
+    }
+
+    public boolean overlaps(BoundingBox other, double eps) {
         if (pageNumber == null || other.pageNumber == null) {
             return false;
         }
-        return !notOverlaps(other);
+        return !notOverlaps(other, eps);
     }
 
     public boolean notOverlaps(BoundingBox other) {
+        return notOverlaps(other, EPSILON);
+    }
+
+    public boolean notOverlaps(BoundingBox other, double eps) {
         if (pageNumber == null || other.pageNumber == null) {
             return true;
         }
-        return leftX > (other.rightX + EPSILON) || (rightX + EPSILON) < other.leftX
+        return leftX > (other.rightX + eps) || (rightX + eps) < other.leftX
                 || pageNumber > other.lastPageNumber || lastPageNumber < other.pageNumber
-                || (bottomY > (other.topY + EPSILON) && lastPageNumber.equals(other.pageNumber))
-                || ((topY + EPSILON) < other.bottomY && pageNumber.equals(other.lastPageNumber));
+                || (bottomY > (other.topY + eps) && lastPageNumber.equals(other.pageNumber))
+                || ((topY + eps) < other.bottomY && pageNumber.equals(other.lastPageNumber));
     }
 
     public boolean contains(BoundingBox other) {

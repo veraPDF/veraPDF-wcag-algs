@@ -39,6 +39,11 @@ public interface INode {
 
 	List<INode> getChildren();
 
+	void setParent(INode node);
+
+	INode getParent();
+
+	boolean isRoot();
 	void addChild(INode child);
 
 }

@@ -1,0 +1,477 @@
+{
+	"type": "Sect",
+	"children": [
+		{
+			"type": "P",
+			"children": [
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Hieronder is een nagemaakte tabel. Dit is eigenlijk helemaal geen tabel, maar tekst opgemaakt met ",
+					"baseLine": 774.36,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.64, 770.676, 533.3987999999999, 786.84],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "tabs. Dit mag er niet doorheen komen.",
+					"baseLine": 760.5600000000001,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.64, 756.8760000000001, 240.48000000000008, 773.0400000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 760.5600000000001,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [240.60000000000002, 756.8760000000001, 243.60000000000002, 773.0400000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				}
+			]
+		},
+		{
+			"type": "P",
+			"children": [
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "   ",
+					"baseLine": 740.7600000000001,
+					"fontWeight": 700.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.640000000000015, 736.8240000000001, 65.64000000000001, 753.4320000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPS-BoldMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Header 1",
+					"baseLine": 740.7600000000001,
+					"fontWeight": 700.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [65.64000000000001, 736.8240000000001, 112.27200000000002, 753.4320000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPS-BoldMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 740.7600000000001,
+					"fontWeight": 700.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [112.44000000000003, 736.8240000000001, 115.44000000000003, 753.4320000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPS-BoldMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Header 2",
+					"baseLine": 740.7600000000001,
+					"fontWeight": 700.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [161.64000000000001, 736.8240000000001, 208.27200000000002, 753.4320000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPS-BoldMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 740.7600000000001,
+					"fontWeight": 700.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [208.44, 736.8240000000001, 211.44, 753.4320000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPS-BoldMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Header 3",
+					"baseLine": 740.7600000000001,
+					"fontWeight": 700.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [274.92, 736.8240000000001, 321.55199999999996, 753.4320000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPS-BoldMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 740.7600000000001,
+					"fontWeight": 700.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [321.72, 736.8240000000001, 324.72, 753.4320000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPS-BoldMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Header 4",
+					"baseLine": 740.7600000000001,
+					"fontWeight": 700.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [388.20000000000005, 736.8240000000001, 434.832, 753.4320000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPS-BoldMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 740.7600000000001,
+					"fontWeight": 700.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [435.00000000000006, 736.8240000000001, 438.00000000000006, 753.4320000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPS-BoldMT"
+				}
+			]
+		},
+		{
+			"type": "Figure"
+		},
+		{
+			"type": "P",
+			"children": [
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Cel 1",
+					"baseLine": 721.5600000000001,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.64000000000004, 717.8760000000001, 82.27200000000005, 734.0400000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 721.5600000000001,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [82.32000000000005, 717.8760000000001, 85.32000000000005, 734.0400000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Cel 2",
+					"baseLine": 721.5600000000001,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [147.36000000000004, 717.8760000000001, 172.99200000000005, 734.0400000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 721.5600000000001,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [173.04000000000005, 717.8760000000001, 176.04000000000005, 734.0400000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Cel 3",
+					"baseLine": 721.5600000000001,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [255.36000000000007, 717.8760000000001, 280.9920000000001, 734.0400000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 721.5600000000001,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [281.0400000000001, 717.8760000000001, 284.0400000000001, 734.0400000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Cel 4",
+					"baseLine": 721.5600000000001,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [362.6400000000001, 717.8760000000001, 388.2720000000001, 734.0400000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 721.5600000000001,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [388.3200000000001, 717.8760000000001, 391.3200000000001, 734.0400000000001],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				}
+			]
+		},
+		{
+			"type": "Figure"
+		},
+		{
+			"type": "P",
+			"children": [
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Cel 5",
+					"baseLine": 702.12,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.6400000000001, 698.436, 82.2720000000001, 714.6],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 702.12,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [82.3200000000001, 698.436, 85.3200000000001, 714.6],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Cel 6",
+					"baseLine": 702.12,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [147.3600000000001, 698.436, 172.9920000000001, 714.6],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 702.12,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [173.0400000000001, 698.436, 176.0400000000001, 714.6],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Cel 7",
+					"baseLine": 702.12,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [255.36000000000013, 698.436, 280.99200000000013, 714.6],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 702.12,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [281.04000000000013, 698.436, 284.04000000000013, 714.6],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Cel 8",
+					"baseLine": 702.12,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [362.6400000000001, 698.436, 388.2720000000001, 714.6],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 702.12,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [388.3200000000001, 698.436, 391.3200000000001, 714.6],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				}
+			]
+		},
+		{
+			"type": "Figure"
+		},
+		{
+			"type": "P",
+			"children": [
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Cel 9",
+					"baseLine": 682.68,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.6400000000001, 678.996, 82.2720000000001, 695.16],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 682.68,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [82.3200000000001, 678.996, 85.3200000000001, 695.16],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Cel 10",
+					"baseLine": 682.68,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [147.3600000000001, 678.996, 178.9920000000001, 695.16],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 682.68,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [179.0400000000001, 678.996, 182.0400000000001, 695.16],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Cel 11",
+					"baseLine": 682.68,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [255.36000000000013, 678.996, 286.08000000000015, 695.16],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 682.68,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [286.5600000000001, 678.996, 289.5600000000001, 695.16],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Cel 12",
+					"baseLine": 682.68,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [362.6400000000001, 678.996, 394.2720000000001, 695.16],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 682.68,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [394.3200000000001, 678.996, 397.3200000000001, 695.16],
+					"color": [0.0],
+					"fontName": "TimesNewRomanPSMT"
+				}
+			]
+		},
+		{
+			"type": "Figure"
+		},
+		{
+			"type": "Figure"
+		}
+	]
+}

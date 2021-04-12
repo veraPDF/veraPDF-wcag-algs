@@ -4,7 +4,7 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 /**
- * Allowed semantic types: PART, SECT, DIV, ASIDE, NON_STRUCT
+ * Allowed semantic types: PART, SECT, DIV, ASIDE, NON_STRUCT (TABLE ???)
  */
 public class SemanticGroupingNode extends SemanticNode {
 

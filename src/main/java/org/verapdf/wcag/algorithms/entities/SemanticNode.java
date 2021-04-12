@@ -13,6 +13,7 @@ public abstract class SemanticNode implements INode {
 	private BoundingBox boundingBox;
 	private SemanticType semanticType;
 
+	private INode parent = null;
 	private final List<INode> children;
 	private final SemanticType initialSemanticType;
 
@@ -115,6 +116,21 @@ public abstract class SemanticNode implements INode {
 	@Override
 	public void addChild(INode child) {
 		children.add(child);
+	}
+
+	@Override
+	public void setParent(INode node) {
+		parent = node;
+	}
+
+	@Override
+	public INode getParent() {
+		return parent;
+	}
+
+	@Override
+	public boolean isRoot() {
+		return parent == null;
 	}
 
 	@Override

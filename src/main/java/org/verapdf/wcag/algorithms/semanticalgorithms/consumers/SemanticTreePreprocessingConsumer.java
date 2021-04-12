@@ -12,6 +12,11 @@ public class SemanticTreePreprocessingConsumer implements Consumer<INode> {
     private static final Logger LOGGER = Logger.getLogger(SemanticTreePreprocessingConsumer.class.getCanonicalName());
 
     public void accept(INode node) {
+        // setup parent nodes for children
+        for (INode child : node.getChildren()) {
+            child.setParent(node);
+        }
+
         if (node.getInitialSemanticType() == null) {
             return;
         }
