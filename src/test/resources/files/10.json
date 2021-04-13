@@ -1,0 +1,41 @@
+{
+	"type": "P",
+	"children": [
+		{
+			"type": "TextChunk",
+			"pageNumber": 0,
+			"value": "Use these collections to insert tables, headers and footers, ",
+			"baseLine": 75.66,
+			"fontWeight": 400.0,
+			"italicAngle": 0.0,
+			"fontSize": 9,
+			"boundingBox": [336.6, 72.89699999999999, 552.7800000000001, 84.89399999999999],
+			"color": [0.0],
+			"fontName": "Calibri"
+		},
+		{
+			"type": "TextChunk",
+			"pageNumber": 0,
+			"value": "lists, and building blocks into your document. You create ",
+			"baseLine": 63.059999999999995,
+			"fontWeight": 400.0,
+			"italicAngle": 0.0,
+			"fontSize": 9,
+			"boundingBox": [336.6090000000001, 60.297, 545.4828000000002, 72.294],
+			"color": [0.0],
+			"fontName": "Calibri"
+		},
+		{
+			"type": "TextChunk",
+			"pageNumber": 1,
+			"value": "pictures, diagrams or/add diagrams - they are consistent. ",
+			"baseLine": 776.64,
+			"fontWeight": 400.0,
+			"italicAngle": 0.0,
+			"fontSize": 9,
+			"boundingBox": [85.08, 773.877, 296.094, 785.874],
+			"color": [0.0],
+			"fontName": "Calibri"
+		}
+	]
+}

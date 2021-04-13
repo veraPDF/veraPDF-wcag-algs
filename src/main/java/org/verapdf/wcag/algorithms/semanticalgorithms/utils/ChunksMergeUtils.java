@@ -47,6 +47,26 @@ public class ChunksMergeUtils {
 		return resultProbability;
 	}
 
+	public static double toColumnsMergeProbability(TextChunk x, TextChunk y) {
+		if (Math.abs(x.getFontSize() - y.getFontSize()) > 0.95) {
+			return 0;
+		}
+
+		if (x.getLastPageNumber() == null || y.getPageNumber() == null) {
+			return 0;
+		}
+
+		if (x.getLastPageNumber() > y.getPageNumber()) {
+			return 0;
+		}
+
+		if (x.getLastPageNumber().equals(y.getPageNumber()) && x.getRightX() > y.getLeftX()) {
+			return 0;
+		}
+
+		return mergeByFontSizeProbability(x, y);
+	}
+
 	public static double mergeLeadingProbability(TextChunk x, TextChunk y) {
 		if (Math.abs(x.getFontSize() - y.getFontSize()) > 0.95) {
 			return 0;

@@ -44,6 +44,7 @@ public interface INode {
 	INode getParent();
 
 	boolean isRoot();
+
 	void addChild(INode child);
 
 }

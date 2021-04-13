@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TextLine extends InfoChunk {
-    private List<TextChunk> textChunks = new ArrayList<>();
+    private final List<TextChunk> textChunks = new ArrayList<>();
     private double fontSize = 0d;
     private double baseLine = 0d;
 
