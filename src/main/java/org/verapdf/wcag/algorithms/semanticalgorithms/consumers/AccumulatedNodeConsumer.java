@@ -100,6 +100,10 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			} else {
 				mergeProbability = ChunksMergeUtils.mergeLeadingProbability(lastLine, nextLine);
 			}
+			double toColumnsMergeProbability = ChunksMergeUtils.toColumnsMergeProbability(lastLine, nextLine);
+			if (toColumnsMergeProbability > mergeProbability) {
+				mergeProbability = toColumnsMergeProbability;
+			}
 			span.getLines().addAll(secondSpan.getLines());
 		} else {
 			lastLine = new TextChunk(lastLine);
@@ -195,6 +199,10 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 				mergeProbability = ChunksMergeUtils.toParagraphMergeProbability(lastLine, nextLine);
 			} else {
 				mergeProbability = ChunksMergeUtils.mergeLeadingProbability(lastLine, nextLine);
+			}
+			double toColumnsMergeProbability = ChunksMergeUtils.toColumnsMergeProbability(lastLine, nextLine);
+			if (toColumnsMergeProbability > mergeProbability) {
+				mergeProbability = toColumnsMergeProbability;
 			}
 			paragraph.getLines().addAll(lines);
 		} else {

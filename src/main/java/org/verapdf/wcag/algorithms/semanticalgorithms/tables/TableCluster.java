@@ -69,7 +69,7 @@ public class TableCluster extends InfoChunk {
         int i = 0, j = 0;
         while (i < lines.size() && j < other.lines.size()) {
             TextLine line = lines.get(i);
-            TextLine otherLine = other.lines.get(i);
+            TextLine otherLine = other.lines.get(j);
             double baseLine = line.getBaseLine();
             double otherBaseLine = otherLine.getBaseLine();
             double tolerance = ONE_LINE_TOLERANCE_FACTOR * Math.max(line.getFontSize(), otherLine.getFontSize());

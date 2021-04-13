@@ -33,7 +33,11 @@ class AccumulatedNodeSemanticsCheckerTests {
 				Arguments.of("5.json", 1d, SemanticType.PARAGRAPH),
 				Arguments.of("6.json", 1d, SemanticType.PARAGRAPH),
 				Arguments.of("7.json", 1d, SemanticType.PARAGRAPH),
-				Arguments.of("8.json", 1d, SemanticType.PARAGRAPH));
+				Arguments.of("8.json", 1d, SemanticType.PARAGRAPH),
+				Arguments.of("9.json", 1d, SemanticType.PARAGRAPH),
+				Arguments.of("10.json", 1d, SemanticType.PARAGRAPH),
+				Arguments.of("11.json", 1d, SemanticType.PARAGRAPH));
+
 	}
 
 	@ParameterizedTest(name = "{index}: ({0}, {1}, {2}) => {0}")

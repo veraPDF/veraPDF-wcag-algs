@@ -1,0 +1,29 @@
+{
+	"type": "P",
+	"children": [
+		{
+			"type": "TextChunk",
+			"pageNumber": 0,
+			"value": "The collections on the Insert tab contain elements ",
+			"baseLine": 775.8,
+			"fontWeight": 400.0,
+			"italicAngle": 0.0,
+			"fontSize": 10.02,
+			"boundingBox": [85.08, 772.72386, 290.818656, 786.08052],
+			"color": [0.0],
+			"fontName": "Calibri"
+		},
+		{
+			"type": "TextChunk",
+			"pageNumber": 0,
+			"value": "that define the overall ap",
+			"baseLine": 775.8,
+			"fontWeight": 400.0,
+			"italicAngle": 0.0,
+			"fontSize": 10.02,
+			"boundingBox": [336.60204, 772.72386, 439.4773799999998, 786.08052],
+			"color": [0.0],
+			"fontName": "Calibri"
+		}
+	]
+}
