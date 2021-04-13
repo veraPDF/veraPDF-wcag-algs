@@ -1,0 +1,280 @@
+{
+	"type": "Document",
+	"children": [
+		{
+			"type": "P",
+			"children": [
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Dit document heeft een zwevend tekstvlak. Dit geeft problemen met leesvolgorde en mag niet door ",
+					"baseLine": 773.989,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.8, 770.3530000000001, 535.8399999999998, 785.773],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "de test komen.",
+					"baseLine": 760.189,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.8, 756.553, 126.388, 771.973],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				}
+			]
+		},
+		{
+			"type": "P"
+		},
+		{
+			"type": "P",
+			"children": [
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Hier kan nog andere tekst staan. Hier kan nog andere tekst staan. Hier kan nog andere tekst staan. ",
+					"baseLine": 732.589,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.8, 728.9530000000001, 527.4999999999999, 744.373],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Hier kan nog andere tekst staan. Hier kan nog andere tekst staan. Hier kan nog andere tekst staan. ",
+					"baseLine": 718.789,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.8, 715.153, 527.4999999999999, 730.573],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Hier kan nog andere tekst staan. Hier kan nog andere tekst staan. Hier kan nog andere tekst staan. ",
+					"baseLine": 704.989,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.8, 701.3530000000001, 527.4999999999999, 716.773],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Hier kan nog andere tekst staan. Hier kan nog andere tekst staan. Hier kan nog andere tekst staan. ",
+					"baseLine": 691.189,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.8, 687.553, 527.4999999999999, 702.973],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Hier kan nog andere tekst staan. Hier kan nog andere tekst",
+					"baseLine": 677.389,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.8, 673.753, 336.964, 689.173],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 677.389,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [337.0, 673.753, 340.0, 689.173],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "staan. Hier kan nog andere tekst staan. Hier kan nog andere",
+					"baseLine": 663.589,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.8, 659.9530000000001, 341.9559999999999, 675.373],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 663.589,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [342.0, 659.9530000000001, 345.0, 675.373],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "tekst staan. Hier kan nog andere tekst staan. Hier kan nog",
+					"baseLine": 649.789,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.8, 646.153, 332.632, 661.573],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 649.789,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [332.7, 646.153, 335.7, 661.573],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "andere tekst staan. Hier kan nog andere tekst staan. Hier kan",
+					"baseLine": 635.989,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.8, 632.3530000000001, 346.63599999999997, 647.773],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": " ",
+					"baseLine": 635.989,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [346.7, 632.3530000000001, 349.7, 647.773],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "nog andere tekst staan. Hier kan nog andere tekst staan. Hier kan nog andere tekst staan. Hier kan ",
+					"baseLine": 622.189,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.8, 618.553, 527.4999999999998, 633.973],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "nog andere tekst staan. Hier kan nog andere tekst staan. Hier kan nog andere tekst staan. Hier kan ",
+					"baseLine": 608.389,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.8, 604.753, 527.4999999999998, 620.173],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "nog andere tekst staan. Hier kan nog andere tekst staan. Hier kan nog andere tekst staan. Hier kan ",
+					"baseLine": 594.589,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.8, 590.9530000000001, 527.4999999999998, 606.373],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "nog andere tekst staan. Hier kan nog andere tekst staan. ",
+					"baseLine": 580.789,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.8, 577.153, 325.948, 592.573],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				}
+			]
+		},
+		{
+			"type": "P",
+			"children": [
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Dit is een zwevend tekstvak.",
+					"baseLine": 672.789,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [367.4, 669.153, 504.95599999999985, 684.573],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				}
+			]
+		},
+		{
+			"type": "P",
+			"children": [
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Zwevende elementen geven ",
+					"baseLine": 658.989,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [367.4, 655.3530000000001, 504.36799999999977, 670.773],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "problemen met leesvolgorde",
+					"baseLine": 645.189,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [367.4, 641.553, 503.97199999999987, 656.973],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				}
+			]
+		}
+	]
+}

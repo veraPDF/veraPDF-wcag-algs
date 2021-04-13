@@ -1,0 +1,138 @@
+{
+	"type": "Document",
+	"children": [
+		{
+			"type": "P",
+			"children": [
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Dit is geen echte lijst maar opgemaakte tekst. Dit mag niet door de test komen.",
+					"baseLine": 773.989,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.8, 770.3530000000001, 435.1600000000001, 785.773],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				}
+			]
+		},
+		{
+			"type": "P",
+			"children": [
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "1.",
+					"baseLine": 754.489,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [71.0, 750.8530000000001, 80.0, 766.273],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Eerste punt",
+					"baseLine": 754.489,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [90.5, 750.8530000000001, 144.8, 766.273],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				}
+			]
+		},
+		{
+			"type": "P",
+			"children": [
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "2.",
+					"baseLine": 740.689,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [71.0, 737.053, 80.0, 752.473],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Tweede punt",
+					"baseLine": 740.689,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [90.5, 737.053, 151.904, 752.473],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				}
+			]
+		},
+		{
+			"type": "P",
+			"children": [
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "3.",
+					"baseLine": 726.889,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [71.0, 723.253, 80.0, 738.673],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Derde punt",
+					"baseLine": 726.889,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [90.5, 723.253, 144.116, 738.673],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				}
+			]
+		},
+		{
+			"type": "P",
+			"children": [
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "4.",
+					"baseLine": 713.089,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [71.0, 709.4530000000001, 80.0, 724.873],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Vierde punt",
+					"baseLine": 713.089,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [90.5, 709.4530000000001, 146.70800000000003, 724.873],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				}
+			]
+		}
+	]
+}

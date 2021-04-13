@@ -47,4 +47,7 @@ public interface INode {
 
 	void addChild(INode child);
 
+	boolean isLeaf();
+
+	public NodeInfo getNodeInfo();
 }
