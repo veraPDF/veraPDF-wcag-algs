@@ -17,11 +17,14 @@ public abstract class SemanticNode implements INode {
 	private final List<INode> children;
 	private final SemanticType initialSemanticType;
 
+	public NodeInfo nodeInfo;
+
 	public SemanticNode() {
 		this(null);
 	}
 
 	public SemanticNode(SemanticType initialSemanticType) {
+		nodeInfo = new NodeInfo();
 		boundingBox = new BoundingBox();
 		this.children = new ArrayList<>();
 		this.initialSemanticType = initialSemanticType;
@@ -131,6 +134,16 @@ public abstract class SemanticNode implements INode {
 	@Override
 	public boolean isRoot() {
 		return parent == null;
+	}
+
+	@Override
+	public boolean isLeaf() {
+		return children.isEmpty();
+	}
+
+	@Override
+	public NodeInfo getNodeInfo() {
+		return nodeInfo;
 	}
 
 	@Override

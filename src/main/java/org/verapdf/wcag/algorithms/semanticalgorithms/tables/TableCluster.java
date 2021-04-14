@@ -3,7 +3,6 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
 import org.verapdf.wcag.algorithms.entities.content.InfoChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
-import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 import java.util.ArrayList;
 import java.util.List;

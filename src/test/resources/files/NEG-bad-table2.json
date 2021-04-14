@@ -1,0 +1,592 @@
+{
+	"type": "Document",
+	"children": [
+		{
+			"type": "P",
+			"children": [
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "Dit is een slecht gestructureerde tabel waarbij de eerste rij handmatig is opgemaakt. Dit mag er niet ",
+					"baseLine": 773.989,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.8, 770.3530000000001, 536.4039999999999, 785.773],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				},
+				{
+					"type": "TextChunk",
+					"pageNumber": 0,
+					"value": "doorheen komen.",
+					"baseLine": 760.189,
+					"fontWeight": 400.0,
+					"italicAngle": 0.0,
+					"fontSize": 12.0,
+					"boundingBox": [56.8, 756.553, 140.00799999999998, 771.973],
+					"color": [0.0, 0.0, 0.0],
+					"fontName": "LiberationSerif"
+				}
+			]
+		},
+		{
+			"type": "Table",
+			"children": [
+				{
+					"type": "TR",
+					"children": [
+						{
+							"type": "TD",
+							"children": [
+								{
+									"type": "P",
+									"children": [
+										{
+											"type": "TextChunk",
+											"pageNumber": 0,
+											"value": "Kolom 1",
+											"baseLine": 740.689,
+											"fontWeight": 700.0,
+											"italicAngle": 0.0,
+											"fontSize": 12.0,
+											"boundingBox": [95.2, 737.053, 138.796, 752.785],
+											"color": [0.0, 0.0, 0.0],
+											"fontName": "LiberationSerif-Bold"
+										}
+									]
+								}
+							]
+						},
+						{
+							"type": "TD",
+							"children": [
+								{
+									"type": "P",
+									"children": [
+										{
+											"type": "TextChunk",
+											"pageNumber": 0,
+											"value": "Kolom 2",
+											"baseLine": 740.689,
+											"fontWeight": 700.0,
+											"italicAngle": 0.0,
+											"fontSize": 12.0,
+											"boundingBox": [215.7, 737.053, 259.39200000000005, 752.785],
+											"color": [0.0, 0.0, 0.0],
+											"fontName": "LiberationSerif-Bold"
+										}
+									]
+								}
+							]
+						},
+						{
+							"type": "TD",
+							"children": [
+								{
+									"type": "P",
+									"children": [
+										{
+											"type": "TextChunk",
+											"pageNumber": 0,
+											"value": "Kolom 3",
+											"baseLine": 740.689,
+											"fontWeight": 700.0,
+											"italicAngle": 0.0,
+											"fontSize": 12.0,
+											"boundingBox": [336.2, 737.053, 379.892, 752.785],
+											"color": [0.0, 0.0, 0.0],
+											"fontName": "LiberationSerif-Bold"
+										}
+									]
+								}
+							]
+						},
+						{
+							"type": "TD",
+							"children": [
+								{
+									"type": "P",
+									"children": [
+										{
+											"type": "TextChunk",
+											"pageNumber": 0,
+											"value": "Kolom 4",
+											"baseLine": 740.689,
+											"fontWeight": 700.0,
+											"italicAngle": 0.0,
+											"fontSize": 12.0,
+											"boundingBox": [456.7, 737.053, 500.392, 752.785],
+											"color": [0.0, 0.0, 0.0],
+											"fontName": "LiberationSerif-Bold"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"type": "TR",
+					"children": [
+						{
+							"type": "TD",
+							"children": [
+								{
+									"type": "P",
+									"children": [
+										{
+											"type": "TextChunk",
+											"pageNumber": 0,
+											"value": "Inhoud van cel 1",
+											"baseLine": 726.889,
+											"fontWeight": 400.0,
+											"italicAngle": 0.0,
+											"fontSize": 12.0,
+											"boundingBox": [56.8, 723.253, 137.092, 738.673],
+											"color": [0.0, 0.0, 0.0],
+											"fontName": "LiberationSerif"
+										}
+									]
+								}
+							]
+						},
+						{
+							"type": "TD",
+							"children": [
+								{
+									"type": "P",
+									"children": [
+										{
+											"type": "TextChunk",
+											"pageNumber": 0,
+											"value": "Inhoud van cel 2",
+											"baseLine": 726.889,
+											"fontWeight": 400.0,
+											"italicAngle": 0.0,
+											"fontSize": 12.0,
+											"boundingBox": [177.3, 723.253, 257.59200000000004, 738.673],
+											"color": [0.0, 0.0, 0.0],
+											"fontName": "LiberationSerif"
+										}
+									]
+								}
+							]
+						},
+						{
+							"type": "TD",
+							"children": [
+								{
+									"type": "P",
+									"children": [
+										{
+											"type": "TextChunk",
+											"pageNumber": 0,
+											"value": "Inhoud van cel 3",
+											"baseLine": 726.889,
+											"fontWeight": 400.0,
+											"italicAngle": 0.0,
+											"fontSize": 12.0,
+											"boundingBox": [297.7, 723.253, 377.9919999999999, 738.673],
+											"color": [0.0, 0.0, 0.0],
+											"fontName": "LiberationSerif"
+										}
+									]
+								}
+							]
+						},
+						{
+							"type": "TD",
+							"children": [
+								{
+									"type": "P",
+									"children": [
+										{
+											"type": "TextChunk",
+											"pageNumber": 0,
+											"value": "Een tabel in een tabel",
+											"baseLine": 726.889,
+											"fontWeight": 400.0,
+											"italicAngle": 0.0,
+											"fontSize": 12.0,
+											"boundingBox": [418.2, 723.253, 521.3999999999999, 738.673],
+											"color": [0.0, 0.0, 0.0],
+											"fontName": "LiberationSerif"
+										}
+									]
+								},
+								{
+									"type": "Table",
+									"children": [
+										{
+											"type": "TR",
+											"children": [
+												{
+													"type": "TH",
+													"children": [
+														{
+															"type": "P",
+															"children": [
+																{
+																	"type": "TextChunk",
+																	"pageNumber": 0,
+																	"value": "K1",
+																	"baseLine": 713.089,
+																	"fontWeight": 700.0,
+																	"italicAngle": 0.0,
+																	"fontSize": 12.0,
+																	"boundingBox": [430.6, 709.4530000000001, 445.90000000000003, 725.1850000000001],
+																	"color": [0.0, 0.0, 0.0],
+																	"fontName": "LiberationSerif-Bold"
+																}
+															]
+														}
+													]
+												},
+												{
+													"type": "TH",
+													"children": [
+														{
+															"type": "P",
+															"children": [
+																{
+																	"type": "TextChunk",
+																	"pageNumber": 0,
+																	"value": "K2",
+																	"baseLine": 713.089,
+																	"fontWeight": 700.0,
+																	"italicAngle": 0.0,
+																	"fontSize": 12.0,
+																	"boundingBox": [470.8, 709.4530000000001, 486.1, 725.1850000000001],
+																	"color": [0.0, 0.0, 0.0],
+																	"fontName": "LiberationSerif-Bold"
+																}
+															]
+														}
+													]
+												},
+												{
+													"type": "TH",
+													"children": [
+														{
+															"type": "P",
+															"children": [
+																{
+																	"type": "TextChunk",
+																	"pageNumber": 0,
+																	"value": "K3",
+																	"baseLine": 713.089,
+																	"fontWeight": 700.0,
+																	"italicAngle": 0.0,
+																	"fontSize": 12.0,
+																	"boundingBox": [511.0, 709.4530000000001, 526.3, 725.1850000000001],
+																	"color": [0.0, 0.0, 0.0],
+																	"fontName": "LiberationSerif-Bold"
+																}
+															]
+														}
+													]
+												}
+											]
+										},
+										{
+											"type": "TR",
+											"children": [
+												{
+													"type": "TD",
+													"children": [
+														{
+															"type": "P",
+															"children": [
+																{
+																	"type": "TextChunk",
+																	"pageNumber": 0,
+																	"value": "C4-1",
+																	"baseLine": 699.289,
+																	"fontWeight": 400.0,
+																	"italicAngle": 0.0,
+																	"fontSize": 12.0,
+																	"boundingBox": [418.2, 695.653, 442.188, 711.073],
+																	"color": [0.0, 0.0, 0.0],
+																	"fontName": "LiberationSerif"
+																}
+															]
+														}
+													]
+												},
+												{
+													"type": "TD",
+													"children": [
+														{
+															"type": "P",
+															"children": [
+																{
+																	"type": "TextChunk",
+																	"pageNumber": 0,
+																	"value": "C4-2",
+																	"baseLine": 699.289,
+																	"fontWeight": 400.0,
+																	"italicAngle": 0.0,
+																	"fontSize": 12.0,
+																	"boundingBox": [458.4, 695.653, 482.388, 711.073],
+																	"color": [0.0, 0.0, 0.0],
+																	"fontName": "LiberationSerif"
+																}
+															]
+														}
+													]
+												},
+												{
+													"type": "TD",
+													"children": [
+														{
+															"type": "P",
+															"children": [
+																{
+																	"type": "TextChunk",
+																	"pageNumber": 0,
+																	"value": "C4-3",
+																	"baseLine": 699.289,
+																	"fontWeight": 400.0,
+																	"italicAngle": 0.0,
+																	"fontSize": 12.0,
+																	"boundingBox": [498.5, 695.653, 522.4879999999999, 711.073],
+																	"color": [0.0, 0.0, 0.0],
+																	"fontName": "LiberationSerif"
+																}
+															]
+														}
+													]
+												}
+											]
+										},
+										{
+											"type": "TR",
+											"children": [
+												{
+													"type": "TD",
+													"children": [
+														{
+															"type": "P",
+															"children": [
+																{
+																	"type": "TextChunk",
+																	"pageNumber": 0,
+																	"value": "C4-4",
+																	"baseLine": 685.489,
+																	"fontWeight": 400.0,
+																	"italicAngle": 0.0,
+																	"fontSize": 12.0,
+																	"boundingBox": [418.2, 681.8530000000001, 442.188, 697.273],
+																	"color": [0.0, 0.0, 0.0],
+																	"fontName": "LiberationSerif"
+																}
+															]
+														}
+													]
+												},
+												{
+													"type": "TD",
+													"children": [
+														{
+															"type": "P",
+															"children": [
+																{
+																	"type": "TextChunk",
+																	"pageNumber": 0,
+																	"value": "C4-5",
+																	"baseLine": 685.489,
+																	"fontWeight": 400.0,
+																	"italicAngle": 0.0,
+																	"fontSize": 12.0,
+																	"boundingBox": [458.4, 681.8530000000001, 482.388, 697.273],
+																	"color": [0.0, 0.0, 0.0],
+																	"fontName": "LiberationSerif"
+																}
+															]
+														}
+													]
+												},
+												{
+													"type": "TD",
+													"children": [
+														{
+															"type": "P",
+															"children": [
+																{
+																	"type": "TextChunk",
+																	"pageNumber": 0,
+																	"value": "C4-6",
+																	"baseLine": 685.489,
+																	"fontWeight": 400.0,
+																	"italicAngle": 0.0,
+																	"fontSize": 12.0,
+																	"boundingBox": [498.5, 681.8530000000001, 522.4879999999999, 697.273],
+																	"color": [0.0, 0.0, 0.0],
+																	"fontName": "LiberationSerif"
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									"type": "P"
+								}
+							]
+						}
+					]
+				},
+				{
+					"type": "TR",
+					"children": [
+						{
+							"type": "TD",
+							"children": [
+								{
+									"type": "P",
+									"children": [
+										{
+											"type": "TextChunk",
+											"pageNumber": 0,
+											"value": "Inhoud van cel 5",
+											"baseLine": 713.089,
+											"fontWeight": 400.0,
+											"italicAngle": 0.0,
+											"fontSize": 12.0,
+											"boundingBox": [56.8, 709.4530000000001, 137.092, 724.873],
+											"color": [0.0, 0.0, 0.0],
+											"fontName": "LiberationSerif"
+										}
+									]
+								}
+							]
+						},
+						{
+							"type": "TD",
+							"children": [
+								{
+									"type": "P",
+									"children": [
+										{
+											"type": "TextChunk",
+											"pageNumber": 0,
+											"value": "Inhoud van same",
+											"baseLine": 713.089,
+											"fontWeight": 400.0,
+											"italicAngle": 0.0,
+											"fontSize": 12.0,
+											"boundingBox": [177.3, 709.4530000000001, 265, 724.873],
+											"color": [0.0, 0.0, 0.0],
+											"fontName": "LiberationSerif"
+										}
+									]
+								}
+							]
+						},
+												{
+							"type": "TD",
+							"children": [
+								{
+									"type": "P",
+									"children": [
+										{
+											"type": "TextChunk",
+											"pageNumber": 0,
+											"value": "egde cel 6",
+											"baseLine": 713.089,
+											"fontWeight": 400.0,
+											"italicAngle": 0.0,
+											"fontSize": 12.0,
+											"boundingBox": [280, 709.4530000000001, 337.25999999999993, 724.873],
+											"color": [0.0, 0.0, 0.0],
+											"fontName": "LiberationSerif"
+										}
+									]
+								}
+							]
+						}
+
+					]
+				},
+				{
+					"type": "TR",
+					"children": [
+						{
+							"type": "TD",
+							"children": [
+								{
+									"type": "P",
+									"children": [
+										{
+											"type": "TextChunk",
+											"pageNumber": 0,
+											"value": "Inhoud van cel 7",
+											"baseLine": 699.289,
+											"fontWeight": 400.0,
+											"italicAngle": 0.0,
+											"fontSize": 12.0,
+											"boundingBox": [56.8, 695.653, 137.092, 711.073],
+											"color": [0.0, 0.0, 0.0],
+											"fontName": "LiberationSerif"
+										}
+									]
+								}
+							]
+						},
+						{
+							"type": "TD",
+							"children": [
+								{
+									"type": "P",
+									"children": [
+										{
+											"type": "TextChunk",
+											"pageNumber": 0,
+											"value": "Inhoud van cel 8",
+											"baseLine": 699.289,
+											"fontWeight": 400.0,
+											"italicAngle": 0.0,
+											"fontSize": 12.0,
+											"boundingBox": [177.3, 695.653, 257.59200000000004, 711.073],
+											"color": [0.0, 0.0, 0.0],
+											"fontName": "LiberationSerif"
+										}
+									]
+								}
+							]
+						},
+						{
+							"type": "TD",
+							"children": [
+								{
+									"type": "P",
+									"children": [
+										{
+											"type": "TextChunk",
+											"pageNumber": 0,
+											"value": "Inhoud van cel 9",
+											"baseLine": 699.289,
+											"fontWeight": 400.0,
+											"italicAngle": 0.0,
+											"fontSize": 12.0,
+											"boundingBox": [297.7, 695.653, 377.9919999999999, 711.073],
+											"color": [0.0, 0.0, 0.0],
+											"fontName": "LiberationSerif"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"type": "P"
+		}
+	]
+}
