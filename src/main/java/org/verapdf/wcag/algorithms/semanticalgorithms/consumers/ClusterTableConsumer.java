@@ -19,13 +19,17 @@ public class ClusterTableConsumer implements Consumer<INode> {
     private TableRecognitionArea recognitionArea;
 
     private List<INode> tables;
-    private INode currentTable;
+    private INode currentHeaders;
+    private INode currentTableContent;
 
     public  ClusterTableConsumer() {
         recognitionArea = new TableRecognitionArea();
 
         tables = new ArrayList<>();
-        currentTable = new SemanticGroupingNode(SemanticType.TABLE);
+        currentHeaders = new SemanticGroupingNode();
+        currentHeaders.setSemanticType(SemanticType.TABLE_ROW);
+        currentTableContent = new SemanticGroupingNode();
+        currentTableContent.setSemanticType(SemanticType.TABLE_ROW);
     }
 
     public List<INode> getTables() {
@@ -50,13 +54,14 @@ public class ClusterTableConsumer implements Consumer<INode> {
                     if (recognitionArea.isValid()) {
                         recognize();
                     }
-                    currentTable = new SemanticGroupingNode(SemanticType.TABLE);
+                    currentHeaders.getChildren().clear();
+                    currentTableContent.getChildren().clear();
                     recognitionArea = new TableRecognitionArea();
                     accept(node);
-
+                } else if (recognitionArea.hasCompleteHeaders()) {
+                    currentTableContent.addChild(node);
                 } else {
-                    // node.setSemanticType(SemanticType.TABLE_CELL);
-                    currentTable.getChildren().add(node);
+                    currentHeaders.addChild(node);
                 }
             }
         }
@@ -76,7 +81,11 @@ public class ClusterTableConsumer implements Consumer<INode> {
         // TODO: start recognition by cluster algorithm
 
         // if recognition was successful
-        tables.add(currentTable);
+        INode table = new SemanticGroupingNode();
+        table.setSemanticType(SemanticType.TABLE);
+        table.addChild(currentHeaders);
+        table.addChild(currentTableContent);
+        tables.add(table);
     }
 
     /**
@@ -119,6 +128,11 @@ public class ClusterTableConsumer implements Consumer<INode> {
 
             tableRoot.setSemanticType(SemanticType.TABLE);
             tableRoot.setCorrectSemanticScore(1.0);
+
+            for (INode header : table.getChildren().get(0).getChildren()) {
+                header.setSemanticType(SemanticType.TABLE_HEADER);
+                header.setCorrectSemanticScore(1.0);
+            }
 
             // clean up counters
             initTreeNodeInfo(tableRoot);

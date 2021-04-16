@@ -23,15 +23,17 @@ public class ClusterTableTests {
 
     static Stream<Arguments> clusterTableDetectionTestParams() {
         return Stream.of(
-                Arguments.of("NEG-fake-table.json", new int[] {16}, true),
-                Arguments.of("NEG-bad-table2.json", new int[] {23}, false),
-                Arguments.of("NEG-fake-list.json", new int[] {8}, true), // list should be distinguished from table
-                Arguments.of("NEG-floating-text-box.json", new int[] {}, false));
+                Arguments.of("NEG-fake-table.json", new int[][] {{4, 12}}, true),
+                Arguments.of("NEG-bad-table.json", new int[][] {{4, 18}}, false),
+                Arguments.of("NEG-bad-table2.json", new int[][] {{4, 19}}, false),
+                Arguments.of("NEG-fake-list.json", new int[][] {{2, 6}}, true), // list should be distinguished from table
+                Arguments.of("no-table.json", new int[][] {}, false),
+                Arguments.of("NEG-floating-text-box.json", new int[][] {}, false));
     }
 
     @ParameterizedTest(name = "{index}: ({0}, {1}, {2} ) => {0}")
     @MethodSource("clusterTableDetectionTestParams")
-    void testClusterTableDetection(String filename, int[] numCells, boolean checkRoot) throws IOException {
+    void testClusterTableDetection(String filename, int[][] numCells, boolean checkRoot) throws IOException {
         INode root = JsonToPdfTree.getPdfTreeRoot("/files/" + filename);
         ITree tree = new SemanticTree(root);
 
@@ -48,7 +50,11 @@ public class ClusterTableTests {
         }
         Assertions.assertEquals(numCells.length, resultTables.size());
         for (int i = 0; i < numCells.length; ++i) {
-            Assertions.assertEquals(numCells[i], resultTables.get(i).getChildren().size());
+            INode table = resultTables.get(i);
+            for (int j = 0; j < 2; ++j) {
+                INode subTable = table.getChildren().get(j);
+                Assertions.assertEquals(numCells[i][j], subTable.getChildren().size());
+            }
         }
     }
 
