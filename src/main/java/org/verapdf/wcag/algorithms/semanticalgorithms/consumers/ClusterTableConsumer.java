@@ -6,15 +6,16 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognitionArea;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public class ClusterTableConsumer implements Consumer<INode> {
 
     private static final Logger LOGGER = Logger.getLogger(AccumulatedNodeConsumer.class.getCanonicalName());
+    private static final Set<SemanticType> tableSemanticTypes = new HashSet<>(Arrays.asList(
+                                                        SemanticType.TABLE, SemanticType.TABLE_ROW,
+                                                        SemanticType.TABLE_HEADER, SemanticType.TABLE_CELL));
 
     private TableRecognitionArea recognitionArea;
 
@@ -95,15 +96,16 @@ public class ClusterTableConsumer implements Consumer<INode> {
      * The worst case is when all table roots are the same node - tree root
      */
     private void updateTreeWithRecognizedTables(INode root) {
-        initTreeNodeInfo(root);
+        initTreeNodeInfo(root, false);
 
         for (INode table : tables) {
             INode tableRoot = null;
             for (INode node : new SemanticTree(table)) {
-                if (!node.isLeaf()) {
+                if (!node.isLeaf() || node.isRoot()) {
                     continue;
                 }
 
+                node = node.getParent();
                 node.setSemanticType(SemanticType.TABLE_CELL);
                 node.setCorrectSemanticScore(1.0);
                 node.getNodeInfo().counter = 1;
@@ -126,16 +128,18 @@ public class ClusterTableConsumer implements Consumer<INode> {
                 }
             }
 
+            for (INode header : table.getChildren().get(0).getChildren()) {
+                if (!header.isRoot()) {
+                    header.getParent().setSemanticType(SemanticType.TABLE_HEADER);
+                    header.getParent().setCorrectSemanticScore(1.0);
+                }
+            }
+
             tableRoot.setSemanticType(SemanticType.TABLE);
             tableRoot.setCorrectSemanticScore(1.0);
 
-            for (INode header : table.getChildren().get(0).getChildren()) {
-                header.setSemanticType(SemanticType.TABLE_HEADER);
-                header.setCorrectSemanticScore(1.0);
-            }
-
             // clean up counters
-            initTreeNodeInfo(tableRoot);
+            initTreeNodeInfo(tableRoot, true);
             while (!tableRoot.isRoot()) {
                 tableRoot = tableRoot.getParent();
                 tableRoot.getNodeInfo().counter = 0;
@@ -143,7 +147,7 @@ public class ClusterTableConsumer implements Consumer<INode> {
         }
     }
 
-    private void initTreeNodeInfo(INode root) {
+    private void initTreeNodeInfo(INode root, boolean setupIntermediateTypes) {
         Stack<INode> nodeStack = new Stack<>();
         nodeStack.push(root);
 
@@ -156,6 +160,11 @@ public class ClusterTableConsumer implements Consumer<INode> {
                 nodeInfo.depth = 0;
             } else {
                 nodeInfo.depth = node.getParent().getNodeInfo().depth + 1;
+            }
+
+            if (setupIntermediateTypes && !node.isLeaf() &&
+                !tableSemanticTypes.contains(node.getSemanticType())) {
+                node.setSemanticType(SemanticType.TABLE_ROW);
             }
 
             for (INode child : node.getChildren()) {
