@@ -13,6 +13,7 @@ public class TableCluster extends InfoChunk {
 
     private List<TextLine> lines = new ArrayList<>();
     private TableCluster header = null;
+    private TableCluster lastHeader = null;
 
     public TableCluster() {
         header = null;
@@ -131,10 +132,21 @@ public class TableCluster extends InfoChunk {
 
     public void setHeader(TableCluster header) {
         this.header = header;
+        if (lastHeader == null) {
+            lastHeader = header;
+        }
+    }
+
+    public void setLastHeader(TableCluster lastHeader) {
+        this.lastHeader = lastHeader;
     }
 
     public TableCluster getHeader() {
         return header;
+    }
+
+    public TableCluster getLastHeader() {
+        return lastHeader;
     }
 
     public boolean isHeader() {

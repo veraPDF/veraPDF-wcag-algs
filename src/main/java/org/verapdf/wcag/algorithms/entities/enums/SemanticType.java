@@ -6,6 +6,7 @@ public enum SemanticType {
 	PARAGRAPH("P"),
 	SPAN("Span"),
 	TABLE("Table"),
+	TABLE_HEADER("TH"),
 	TABLE_ROW("TR"),
 	TABLE_CELL("TD");
 
