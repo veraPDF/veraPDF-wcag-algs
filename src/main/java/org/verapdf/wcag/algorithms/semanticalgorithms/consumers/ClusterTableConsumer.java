@@ -155,17 +155,21 @@ public class ClusterTableConsumer implements Consumer<INode> {
             INode node = nodeStack.pop();
             NodeInfo nodeInfo = node.getNodeInfo();
 
-            nodeInfo.counter = 0;
             if (node.isRoot()) {
                 nodeInfo.depth = 0;
             } else {
                 nodeInfo.depth = node.getParent().getNodeInfo().depth + 1;
             }
 
-            if (setupIntermediateTypes && !node.isLeaf() &&
-                !tableSemanticTypes.contains(node.getSemanticType())) {
-                node.setSemanticType(SemanticType.TABLE_ROW);
+            if (nodeInfo.counter != 0) {
+                nodeInfo.counter = 0;
+                if (setupIntermediateTypes && !node.isLeaf() &&
+                    !tableSemanticTypes.contains(node.getSemanticType())) {
+                    node.setSemanticType(SemanticType.TABLE_ROW);
+                    node.setCorrectSemanticScore(1.0);
+                }
             }
+
 
             for (INode child : node.getChildren()) {
                 nodeStack.push(child);
