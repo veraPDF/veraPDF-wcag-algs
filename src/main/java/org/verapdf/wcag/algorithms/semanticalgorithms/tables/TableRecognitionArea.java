@@ -164,6 +164,10 @@ public class TableRecognitionArea {
             // token belongs to both headers => join headers
 
             currentHeader.add(header);
+            if (token.getBaseLine() < baseLine) {
+                baseLine = token.getBaseLine();
+            }
+
             return true;
         }
         return false;
@@ -199,6 +203,9 @@ public class TableRecognitionArea {
         currentCluster.setHeader(firstHeader);
         currentCluster.setLastHeader(lastHeader);
         clusters.add(currentCluster);
+        if (currentCluster.getBaseLine() < baseLine) {
+            baseLine = currentCluster.getBaseLine();
+        }
         isValid = true;
     }
 

@@ -29,7 +29,11 @@ public class ClusterTableTests {
                 Arguments.of("NEG-bad-table2.json", new int[][] {{4, 19}}, false),
                 Arguments.of("NEG-fake-list.json", new int[][] {{2, 6}}, true), // list should be distinguished from table
                 Arguments.of("no-table.json", new int[][] {}, false),
-                Arguments.of("NEG-floating-text-box.json", new int[][] {}, false));
+                Arguments.of("NEG-floating-text-box.json", new int[][] {}, false),
+                Arguments.of("2columns2.json", new int[][] {}, false),
+//                Arguments.of("2columns3.json", new int[][] {}, false),
+                Arguments.of("POS-real-table.json", new int[][] {{4, 88}, {4, 128}}, false)
+                );
     }
 
     @ParameterizedTest(name = "{index}: ({0}, {1}, {2} ) => {0}")
