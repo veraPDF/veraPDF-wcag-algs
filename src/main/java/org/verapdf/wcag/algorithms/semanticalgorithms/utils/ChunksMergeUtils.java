@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextLine;
 
 import java.util.Arrays;
 
@@ -38,7 +39,11 @@ public class ChunksMergeUtils {
 		return resultProbability;
 	}
 
-	public static double toParagraphMergeProbability(TextChunk x, TextChunk y) {
+	public static double toLineMergeProbability(TextLine x, TextLine y) {
+		return toLineMergeProbability(x.getLastTextChunk(), y.getFirstTextChunk());
+	}
+
+	public static double toParagraphMergeProbability(TextLine x, TextLine y) {
 		double resultProbability = 1;
 
 		resultProbability *= mergeLeadingProbability(x, y);
@@ -47,7 +52,7 @@ public class ChunksMergeUtils {
 		return resultProbability;
 	}
 
-	public static double toColumnsMergeProbability(TextChunk x, TextChunk y) {
+	public static double toColumnsMergeProbability(TextLine x, TextLine y) {
 		if (Math.abs(x.getFontSize() - y.getFontSize()) > 0.95) {
 			return 0;
 		}
@@ -67,7 +72,7 @@ public class ChunksMergeUtils {
 		return mergeByFontSizeProbability(x, y);
 	}
 
-	public static double mergeLeadingProbability(TextChunk x, TextChunk y) {
+	public static double mergeLeadingProbability(TextLine x, TextLine y) {
 		if (Math.abs(x.getFontSize() - y.getFontSize()) > 0.95) {
 			return 0;
 		}
@@ -94,6 +99,16 @@ public class ChunksMergeUtils {
 	}
 
 	private static double mergeByFontSizeProbability(TextChunk x, TextChunk y) {
+		double fontSize1 = x.getFontSize();
+		double fontSize2 = y.getFontSize();
+
+		double ratio = fontSize1 < fontSize2 ? fontSize1 / fontSize2
+		                                     : fontSize2 / fontSize1;
+
+		return getUniformProbability(new double[]{1, 1}, ratio, FONT_SIZE_COMPARISON_THRESHOLD);
+	}
+
+	private static double mergeByFontSizeProbability(TextLine x, TextLine y) {
 		double fontSize1 = x.getFontSize();
 		double fontSize2 = y.getFontSize();
 
@@ -137,7 +152,7 @@ public class ChunksMergeUtils {
 		                             FONT_WHITESPACE_COMPARISON_THRESHOLD);
 	}
 
-	public static double mergeIndentationProbability(TextChunk x, TextChunk y) {
+	public static double mergeIndentationProbability(TextLine x, TextLine y) {
 		// We assume that x, y have approx the same fontSize
 		double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
 

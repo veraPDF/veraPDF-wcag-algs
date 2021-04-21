@@ -85,6 +85,17 @@ public class TextLine extends InfoChunk {
         getBoundingBox().union(line.getBoundingBox());
     }
 
+    public String getValue() {
+        if (textChunks.isEmpty()) {
+            return "";
+        }
+        StringBuilder result = new StringBuilder(textChunks.get(0).getValue());
+        for (int i = 1; i < textChunks.size(); ++i) {
+            result.append(textChunks.get(i).getValue());
+        }
+        return result.toString();
+    }
+
     @Override
     public String toString() {
         if (textChunks.isEmpty()) {
@@ -92,7 +103,7 @@ public class TextLine extends InfoChunk {
         }
         StringBuilder result = new StringBuilder(textChunks.get(0).getValue());
         for (int i = 1; i < textChunks.size(); ++i) {
-            result.append(' ').append(getTextChunks().get(i).getValue());
+            result.append(' ').append(textChunks.get(i).getValue());
         }
         return result.toString();
     }

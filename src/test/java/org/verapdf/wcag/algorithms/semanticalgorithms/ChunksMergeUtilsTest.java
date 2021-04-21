@@ -3,6 +3,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
 
@@ -84,14 +85,14 @@ public class ChunksMergeUtilsTest {
 
     @Test
     public void toParagraphMergeProbabilityTest() {
-        TextChunk first =  createTextChunk("the goa", "Calibri", 9.96,
+        TextLine first = new TextLine(createTextChunk("the goa", "Calibri", 9.96,
                                                            400, 0, 85.79, new double[] {0},
-                                                           new double[] {70.8, 82.7, 101.4, 96.0}, 0, 0);
+                                                           new double[] {70.8, 82.7, 101.4, 96.0}, 0, 0));
 
-        TextChunk second = createTextChunk("l of enhancing the visual experience. In such a case, the background is not required for understanding the ",
-                                                           "Calibri", 9.96,
-                                                           400, 0, 85.79, new double[] {0},
-                                                           new double[] {70.8, 102.7, 500.4, 116.0}, 0, 0);
+        TextLine second = new TextLine(createTextChunk("l of enhancing the visual experience. In such a case, the background is not required for understanding the ",
+                                                      "Calibri", 9.96,
+                                                      400, 0, 85.79, new double[] {0},
+                                                      new double[] {70.8, 102.7, 500.4, 116.0}, 0, 0));
 
         double resultProbability = ChunksMergeUtils.toParagraphMergeProbability(first, second);
         Assertions.assertEquals(1.0, resultProbability, 0.0001);
@@ -99,14 +100,14 @@ public class ChunksMergeUtilsTest {
 
     @Test
     public void mergeLeadingProbabilityDifferentFontSizeTest() {
-        TextChunk first = createTextChunk("the goa", "Calibri", 9.96,
+        TextLine first = new TextLine(createTextChunk("the goa", "Calibri", 9.96,
                                                           400, 0, 85.79, new double[] {0},
-                                                          new double[] {70.8, 82.7, 101.4, 96.0}, 0, 0);
+                                                          new double[] {70.8, 82.7, 101.4, 96.0}, 0, 0));
 
-        TextChunk second = createTextChunk("l of enhancing the visual experience. In such a case, the background is not required for understanding the ",
+        TextLine second = new TextLine(createTextChunk("l of enhancing the visual experience. In such a case, the background is not required for understanding the ",
                                                            "Calibri", 10.96,
                                                            400, 0, 85.79, new double[] {0},
-                                                           new double[] {70.8, 102.7, 500.4, 116.0}, 0, 0);
+                                                           new double[] {70.8, 102.7, 500.4, 116.0}, 0, 0));
 
         double resultProbability = ChunksMergeUtils.toParagraphMergeProbability(first, second);
         Assertions.assertEquals(0.0, resultProbability, 0.0001);
