@@ -123,7 +123,7 @@ public class BoundingBox {
     }
 
     public double getHeight() {
-        return (pageNumber.equals(lastPageNumber) && topY > bottomY) ? topY - bottomY : 0;
+        return (pageNumber != null && pageNumber.equals(lastPageNumber) && topY > bottomY) ? topY - bottomY : 0;
     }
 
     @Override

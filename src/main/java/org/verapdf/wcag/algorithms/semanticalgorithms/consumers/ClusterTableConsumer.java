@@ -2,6 +2,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
 import org.verapdf.wcag.algorithms.entities.*;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognitionArea;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
@@ -43,28 +44,31 @@ public class ClusterTableConsumer implements Consumer<INode> {
         if (node instanceof SemanticSpan) {
 
             SemanticSpan span = (SemanticSpan) node;
-            for (TextChunk chunk : span.getLines()) {
+            for (TextLine line : span.getLines()) {
+                for (TextChunk chunk : line.getTextChunks()) {
 
-                if (TextChunkUtils.isSpaceChunk(chunk)) {
-                    continue;
-                }
-
-                recognitionArea.addTokenToRecognitionArea(chunk);
-
-                if (recognitionArea.isComplete()) {
-                    if (recognitionArea.isValid()) {
-                        recognize();
+                    if (TextChunkUtils.isSpaceChunk(chunk)) {
+                        continue;
                     }
-                    currentHeaders.getChildren().clear();
-                    currentTableContent.getChildren().clear();
-                    recognitionArea = new TableRecognitionArea();
-                    accept(node);
-                } else if (recognitionArea.hasCompleteHeaders()) {
-                    currentTableContent.addChild(node);
-                } else {
-                    currentHeaders.addChild(node);
+
+                    recognitionArea.addTokenToRecognitionArea(chunk);
+
+                    if (recognitionArea.isComplete()) {
+                        if (recognitionArea.isValid()) {
+                            recognize();
+                        }
+                        currentHeaders.getChildren().clear();
+                        currentTableContent.getChildren().clear();
+                        recognitionArea = new TableRecognitionArea();
+                        accept(node);
+                    } else if (recognitionArea.hasCompleteHeaders()) {
+                        currentTableContent.addChild(node);
+                    } else {
+                        currentHeaders.addChild(node);
+                    }
                 }
             }
+
         }
 
         if (node.isRoot()) {

@@ -3,7 +3,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.SemanticParagraph;
 import org.verapdf.wcag.algorithms.entities.SemanticSpan;
-import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.maps.AccumulatedNodeMapper;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
@@ -91,8 +91,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		if (secondSpan.getLinesNumber() == 0) {
 			return 1;
 		}
-		TextChunk lastLine = span.getLastLine();
-		TextChunk nextLine = secondSpan.getFirstLine();
+		TextLine lastLine = span.getLastLine();
+		TextLine nextLine = secondSpan.getFirstLine();
 		double mergeProbability = ChunksMergeUtils.toLineMergeProbability(lastLine, nextLine);
 		if (mergeProbability < MERGE_PROBABILITY_THRESHOLD) {
 			if (span.getLinesNumber() > 1 && secondSpan.getLinesNumber() > 1) {
@@ -106,8 +106,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			}
 			span.getLines().addAll(secondSpan.getLines());
 		} else {
-			lastLine = new TextChunk(lastLine);
-			lastLine.append(nextLine);
+			lastLine = new TextLine(lastLine);
+			lastLine.add(nextLine);
 			span.setLastLine(lastLine);
 			if (secondSpan.getLinesNumber() > 1) {
 				if (span.getLinesNumber() > 2 && secondSpan.getLinesNumber() > 1) {
@@ -187,12 +187,12 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		return false;
 	}
 
-	private double toParagraphMergeProbability(SemanticParagraph paragraph, List<TextChunk> lines) {
+	private double toParagraphMergeProbability(SemanticParagraph paragraph, List<TextLine> lines) {
 		if (lines.isEmpty()) {
 			return 1;
 		}
-		TextChunk lastLine = paragraph.getLastLine();
-		TextChunk nextLine = lines.get(0);
+		TextLine lastLine = paragraph.getLastLine();
+		TextLine nextLine = lines.get(0);
 		double mergeProbability = ChunksMergeUtils.toLineMergeProbability(lastLine, nextLine);
 		if (mergeProbability < MERGE_PROBABILITY_THRESHOLD) {
 			if (paragraph.getLines().size() > 1 && lines.size() > 1) {
@@ -206,8 +206,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			}
 			paragraph.getLines().addAll(lines);
 		} else {
-			lastLine = new TextChunk(lastLine);
-			lastLine.append(nextLine);
+			lastLine = new TextLine(lastLine);
+			lastLine.add(nextLine);
 			paragraph.setLastLine(lastLine);
 			if (lines.size() > 1) {
 				if (paragraph.getLinesNumber() > 2 && lines.size() > 1) {

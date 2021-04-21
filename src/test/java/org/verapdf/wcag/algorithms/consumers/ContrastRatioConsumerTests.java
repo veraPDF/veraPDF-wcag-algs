@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.verapdf.wcag.algorithms.entities.*;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ContrastRatioConsumer;
 
@@ -50,9 +51,11 @@ public class ContrastRatioConsumerTests {
 		tree.forEach(contrastRatioConsumer);
 		tree.forEach(node -> {
 			if (node.getChildren().size() == 0 && SemanticType.SPAN.equals(node.getSemanticType())) {
-				List<TextChunk> textChunks = ((SemanticSpan)(node)).getLines();
-				for	(TextChunk chunk : textChunks)	{
-					Assertions.assertTrue(chunk.getContrastRatio() >= ratioThreshold);
+				List<TextLine> textLines = ((SemanticSpan)(node)).getLines();
+				for (TextLine line : textLines) {
+					for	(TextChunk chunk : line.getTextChunks())	{
+						Assertions.assertTrue(chunk.getContrastRatio() >= ratioThreshold);
+					}
 				}
 			}
 		});
@@ -68,9 +71,11 @@ public class ContrastRatioConsumerTests {
 		tree.forEach(contrastRatioConsumer);
 		tree.forEach(node -> {
 			if (node.getChildren().size() == 0 && SemanticType.SPAN.equals(node.getSemanticType())) {
-				List<TextChunk> textChunks = ((SemanticSpan)(node)).getLines();
-				for	(TextChunk chunk : textChunks)	{
-					Assertions.assertTrue(chunk.getContrastRatio() < ratioThreshold);
+				List<TextLine> textLines = ((SemanticSpan)(node)).getLines();
+				for (TextLine line : textLines) {
+					for	(TextChunk chunk : line.getTextChunks())	{
+						Assertions.assertTrue(chunk.getContrastRatio() < ratioThreshold);
+					}
 				}
 			}
 		});

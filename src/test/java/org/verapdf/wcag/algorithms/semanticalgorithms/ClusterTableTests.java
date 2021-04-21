@@ -9,6 +9,7 @@ import org.verapdf.wcag.algorithms.entities.ITree;
 import org.verapdf.wcag.algorithms.entities.JsonToPdfTree;
 import org.verapdf.wcag.algorithms.entities.SemanticTree;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.AccumulatedNodeConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ClusterTableConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.SemanticTreePreprocessingConsumer;
 
@@ -39,6 +40,9 @@ public class ClusterTableTests {
 
         Consumer<INode> semanticTreeValidator = new SemanticTreePreprocessingConsumer();
         tree.forEach(semanticTreeValidator);
+
+        Consumer<INode> paragraphValidator = new AccumulatedNodeConsumer();
+        tree.forEach(paragraphValidator);
 
         ClusterTableConsumer tableFinder = new ClusterTableConsumer();
         tree.forEach(tableFinder);

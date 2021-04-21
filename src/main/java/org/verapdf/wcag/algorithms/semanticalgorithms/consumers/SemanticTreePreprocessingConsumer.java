@@ -17,9 +17,6 @@ public class SemanticTreePreprocessingConsumer implements Consumer<INode> {
             child.setParent(node);
         }
 
-        if (node.getInitialSemanticType() == null) {
-            return;
-        }
         if (node instanceof SemanticSpan) {
             if (node.getChildren().size() != 0) {
                 LOGGER.log(Level.WARNING, "Text chunk cannot contain children: {}", node);

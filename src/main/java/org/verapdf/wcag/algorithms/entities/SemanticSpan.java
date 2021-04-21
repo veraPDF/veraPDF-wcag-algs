@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.entities;
 
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SemanticSpan extends SemanticNode {
-    private final List<TextChunk> lines;
+    private final List<TextLine> lines;
 
     public SemanticSpan(SemanticSpan span) {
         super(span.getBoundingBox(), span.getInitialSemanticType(), span.getSemanticType());
@@ -37,30 +38,30 @@ public class SemanticSpan extends SemanticNode {
 
     public SemanticSpan(TextChunk textChunk) {
         this();
-        add(textChunk);
+        add(new TextLine(textChunk));
     }
 
     public SemanticSpan(TextChunk textChunk, SemanticType initialSemanticType) {
         this(initialSemanticType);
-        add(textChunk);
+        add(new TextLine(textChunk));
     }
 
-    public void add(TextChunk textChunk) {
-        lines.add(textChunk);
-        getBoundingBox().union(textChunk.getBoundingBox());
+    public void add(TextLine textLine) {
+        lines.add(textLine);
+        getBoundingBox().union(textLine.getBoundingBox());
     }
 
-    public void addAll(List<TextChunk> text) {
+    public void addAll(List<TextLine> text) {
         if (text == null || text.size() == 0) {
             return;
         }
         lines.addAll(text);
-        for (TextChunk textChunk : text) {
-            getBoundingBox().union(textChunk.getBoundingBox());
+        for (TextLine textLine : text) {
+            getBoundingBox().union(textLine.getBoundingBox());
         }
     }
 
-    public List<TextChunk> getLines() {
+    public List<TextLine> getLines() {
         return lines;
     }
 
@@ -68,14 +69,14 @@ public class SemanticSpan extends SemanticNode {
         return lines.size();
     }
 
-    public TextChunk getFirstLine() {
+    public TextLine getFirstLine() {
         if (lines.size() != 0) {
             return lines.get(0);
         }
         return null;
     }
 
-    public void setFirstLine(TextChunk firstLine) {
+    public void setFirstLine(TextLine firstLine) {
         if (lines.size() != 0) {
             lines.set(0, firstLine);
         } else {
@@ -83,7 +84,7 @@ public class SemanticSpan extends SemanticNode {
         }
     }
 
-    public void setLastLine(TextChunk lastLine) {
+    public void setLastLine(TextLine lastLine) {
         if (lines.size() != 0) {
             lines.set(lines.size() - 1, lastLine);
         } else {
@@ -91,20 +92,20 @@ public class SemanticSpan extends SemanticNode {
         }
     }
 
-    public TextChunk getSecondLine() {
+    public TextLine getSecondLine() {
         if (lines.size() > 1) {
             return lines.get(1);
         }
         return null;
     }
-    public TextChunk getPenultLine() {
+    public TextLine getPenultLine() {
         if (lines.size() > 1) {
             return lines.get(lines.size() - 2);
         }
         return null;
     }
 
-    public TextChunk getLastLine() {
+    public TextLine getLastLine() {
         if (lines.size() != 0) {
             return lines.get(lines.size() - 1);
         }
@@ -124,8 +125,8 @@ public class SemanticSpan extends SemanticNode {
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + lines.size();
-        for (TextChunk textChunk : lines) {
-            result = 31 * result + textChunk.hashCode();
+        for (TextLine textLine : lines) {
+            result = 31 * result + textLine.hashCode();
         }
         return result;
     }
