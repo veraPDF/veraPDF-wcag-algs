@@ -25,11 +25,17 @@ public class ClusterTableConsumer implements Consumer<INode> {
     private INode currentTableContent;
 
     public  ClusterTableConsumer() {
+        tables = new ArrayList<>();
+
+        init();
+    }
+
+    private void init() {
         recognitionArea = new TableRecognitionArea();
 
-        tables = new ArrayList<>();
         currentHeaders = new SemanticGroupingNode();
         currentHeaders.setSemanticType(SemanticType.TABLE_ROW);
+
         currentTableContent = new SemanticGroupingNode();
         currentTableContent.setSemanticType(SemanticType.TABLE_ROW);
     }
@@ -57,9 +63,7 @@ public class ClusterTableConsumer implements Consumer<INode> {
                         if (recognitionArea.isValid()) {
                             recognize();
                         }
-                        currentHeaders.getChildren().clear();
-                        currentTableContent.getChildren().clear();
-                        recognitionArea = new TableRecognitionArea();
+                        init();
                         accept(node);
                     } else if (recognitionArea.hasCompleteHeaders()) {
                         currentTableContent.addChild(node);
@@ -173,7 +177,6 @@ public class ClusterTableConsumer implements Consumer<INode> {
                     node.setCorrectSemanticScore(1.0);
                 }
             }
-
 
             for (INode child : node.getChildren()) {
                 nodeStack.push(child);
