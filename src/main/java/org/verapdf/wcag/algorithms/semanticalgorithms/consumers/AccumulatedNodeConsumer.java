@@ -57,7 +57,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 				span = buildSpanFromNode(accumulatedChild);
 				spanProbability = accumulatedChild.getCorrectSemanticScore();
 			} else {
-				spanProbability *= toSpanMergeProbability(span, accumulatedChild);
+				spanProbability = Math.min(spanProbability, toSpanMergeProbability(span, accumulatedChild));
 			}
 		}
 		updateNode(node, span, spanProbability, SemanticType.SPAN);
@@ -111,16 +111,16 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			span.setLastLine(lastLine);
 			if (secondSpan.getLinesNumber() > 1) {
 				if (span.getLinesNumber() > 2 && secondSpan.getLinesNumber() > 1) {
-					mergeProbability *= ChunksMergeUtils.mergeIndentationProbability(span.getPenultLine(), lastLine);
+					mergeProbability *= ChunksMergeUtils.toParagraphMergeProbability(span.getPenultLine(), lastLine);
 				}
 				if (span.getLinesNumber() > 1 && secondSpan.getLinesNumber() > 2) {
-					mergeProbability *= ChunksMergeUtils.mergeIndentationProbability(lastLine, secondSpan.getSecondLine());
+					mergeProbability *= ChunksMergeUtils.toParagraphMergeProbability(lastLine, secondSpan.getSecondLine());
 				}
 				span.getLines().addAll(secondSpan.getLines().subList(1, secondSpan.getLinesNumber() - 1));
 			}
 		}
 		span.getBoundingBox().union(secondSpan.getBoundingBox());
-		return (secondSpan.getCorrectSemanticScore() == null) ? mergeProbability : (secondSpan.getCorrectSemanticScore() * mergeProbability);
+		return (secondSpan.getCorrectSemanticScore() == null) ? mergeProbability : (Math.min(mergeProbability, secondSpan.getCorrectSemanticScore()));
 	}
 
 	private void updateNode(INode node, INode accumulatedNode, double correctSemanticScore, SemanticType semanticType) {
@@ -144,7 +144,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 				paragraph = buildParagraphFromNode(accumulatedChild);
 				paragraphProbability = accumulatedChild.getCorrectSemanticScore();
 			} else {
-				paragraphProbability *= toParagraphMergeProbability(paragraph, accumulatedChild);
+				paragraphProbability = Math.min(paragraphProbability, toParagraphMergeProbability(paragraph, accumulatedChild));
 			}
 		}
 		updateNode(node, paragraph, paragraphProbability, SemanticType.PARAGRAPH);
@@ -211,10 +211,10 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			paragraph.setLastLine(lastLine);
 			if (lines.size() > 1) {
 				if (paragraph.getLinesNumber() > 2 && lines.size() > 1) {
-					mergeProbability *= ChunksMergeUtils.mergeIndentationProbability(paragraph.getPenultLine(), lastLine);
+					mergeProbability *= ChunksMergeUtils.toParagraphMergeProbability(paragraph.getPenultLine(), lastLine);
 				}
 				if (paragraph.getLinesNumber() > 1 && lines.size() > 2) {
-					mergeProbability *= ChunksMergeUtils.mergeIndentationProbability(lastLine, lines.get(1));
+					mergeProbability *= ChunksMergeUtils.toParagraphMergeProbability(lastLine, lines.get(1));
 				}
 				paragraph.getLines().addAll(lines.subList(1, lines.size() - 1));
 			}
@@ -225,12 +225,12 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	private double toParagraphMergeProbability(SemanticParagraph paragraph, SemanticSpan span) {
 		double mergeProbability = toParagraphMergeProbability(paragraph, span.getLines());
 		paragraph.getBoundingBox().union(span.getBoundingBox());
-		return (span.getCorrectSemanticScore() == null) ? mergeProbability : (span.getCorrectSemanticScore() * mergeProbability);
+		return (span.getCorrectSemanticScore() == null) ? mergeProbability : (Math.min(span.getCorrectSemanticScore(), mergeProbability));
 	}
 
 	private double toParagraphMergeProbability(SemanticParagraph paragraph1, SemanticParagraph paragraph2) {
 		double mergeProbability = toParagraphMergeProbability(paragraph1, paragraph2.getLines());
 		paragraph1.getBoundingBox().union(paragraph2.getBoundingBox());
-		return (paragraph2.getCorrectSemanticScore() == null) ? mergeProbability : (paragraph2.getCorrectSemanticScore() * mergeProbability);
+		return (paragraph2.getCorrectSemanticScore() == null) ? mergeProbability : (Math.min(paragraph2.getCorrectSemanticScore(), mergeProbability));
 	}
 }
