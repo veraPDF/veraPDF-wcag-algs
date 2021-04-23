@@ -16,6 +16,7 @@ public class ChunksMergeUtils {
 	private static final double[] DEFAULT_FONT_LEADING_INTERVAL = {0, 1.5};
 
 	private static final double TO_LINE_PROBABILITY_THRESHOLD = 0.75;
+	private static final double[] NORMAL_LINE_PROBABILITY_PARAMS = {2, 0.033};
 	private static final double[] SUPERSCRIPT_PROBABILITY_PARAMS = {0.69438, 1.70575, 1.43819};
 	private static final double[] SUBSCRIPT_PROBABILITY_PARAMS = {0.71932, 1.0483, 0.37555};
 	private static final double SUPERSCRIPT_BASELINE_THRESHOLD = 0.1;
@@ -39,18 +40,20 @@ public class ChunksMergeUtils {
 	}
 
 	public static double toLineMergeProbability(TextChunk x, TextChunk y) {
+		double baseLineDiff = x.getBaseLine() - y.getBaseLine();
+		double fontSizeDiff = x.getFontSize() - y.getFontSize();
+		double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
+
+		baseLineDiff /= maxFontSize;
+		fontSizeDiff /= maxFontSize;
+
 		double charSpacingProbability = mergeByCharSpacingProbability(x, y);
-		double resultProbability = charSpacingProbability * mergeYAlmostNestedProbability(x, y);
+		double resultProbability = charSpacingProbability *
+				mergeNormalLineProbability(Math.abs(baseLineDiff), Math.abs(fontSizeDiff),
+						NORMAL_LINE_PROBABILITY_PARAMS);
 
 		if (resultProbability < TO_LINE_PROBABILITY_THRESHOLD &&
 			charSpacingProbability > TO_LINE_PROBABILITY_THRESHOLD) {
-
-			double baseLineDiff = x.getBaseLine() - y.getBaseLine();
-			double fontSizeDiff = x.getFontSize() - y.getFontSize();
-			double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
-
-			baseLineDiff /= maxFontSize;
-			fontSizeDiff /= maxFontSize;
 
 			double superscriptProbability = charSpacingProbability;
 			double subscriptProbability = charSpacingProbability;
@@ -81,9 +84,20 @@ public class ChunksMergeUtils {
 	}
 
 	/**
+	 * Calculates linear function: 1 - ax - by
+	 * @param x : first argument (baseline difference)
+	 * @param y : second argument (fontsize difference)
+	 * @param params : array of coefficients a, b
+	 * @return function result
+	 */
+	private static double mergeNormalLineProbability(double x, double y, double[] params) {
+		return 1 - params[0] * x - params[1] * y;
+	}
+
+	/**
 	 * Calculates quadratic function: 1 - ax^2 - by^2 + cxy
-	 * @param x : first argument
-	 * @param y : second argument
+	 * @param x : first argument (baseline difference)
+	 * @param y : second argument (fontsize difference)
 	 * @param params : array of coefficients a, b, c
 	 * @return function result
 	 */
