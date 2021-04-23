@@ -12,7 +12,7 @@ import java.util.List;
 public class TableRecognitionArea {
     private static final double MERGE_PROBABILITY_THRESHOLD = 0.75;
     private static final double NEXT_LINE_TOLERANCE_FACTOR = 1.05;
-    private static final double ONE_LINE_TOLERANCE_FACTOR = 0.2;
+    private static final double ONE_LINE_TOLERANCE_FACTOR = 0.9;
     private static final double TABLE_GAP_FACTOR = 5.0;
 
     private double adaptiveNextLineToleranceFactor;

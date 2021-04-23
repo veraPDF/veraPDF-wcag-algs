@@ -36,7 +36,9 @@ class AccumulatedNodeSemanticsCheckerTests {
 				Arguments.of("8.json", 1d, SemanticType.PARAGRAPH),
 				Arguments.of("9.json", 1d, SemanticType.PARAGRAPH),
 				Arguments.of("10.json", 1d, SemanticType.PARAGRAPH),
-				Arguments.of("11.json", 1d, SemanticType.PARAGRAPH));
+				Arguments.of("superscript1.json", 0.8228d, SemanticType.PARAGRAPH),
+				Arguments.of("11.json", 1d, SemanticType.PARAGRAPH),
+				Arguments.of("12.json", 0.9885d, SemanticType.PARAGRAPH));
 
 	}
 

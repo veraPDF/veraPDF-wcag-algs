@@ -15,6 +15,15 @@ public class ChunksMergeUtils {
 	private static final double[] DEFAULT_FONT_CHAR_SPACING_INTERVAL = {0, 0.33};
 	private static final double[] DEFAULT_FONT_LEADING_INTERVAL = {0, 1.5};
 
+	private static final double TO_LINE_PROBABILITY_THRESHOLD = 0.75;
+	private static final double[] NORMAL_LINE_PROBABILITY_PARAMS = {2, 0.033};
+	private static final double[] SUPERSCRIPT_PROBABILITY_PARAMS = {0.69438, 1.70575, 1.43819};
+	private static final double[] SUBSCRIPT_PROBABILITY_PARAMS = {0.71932, 1.0483, 0.37555};
+	private static final double SUPERSCRIPT_BASELINE_THRESHOLD = 0.1;
+	private static final double SUPERSCRIPT_FONTSIZE_THRESHOLD = 0.1;
+	private static final double SUBSCRIPT_BASELINE_THRESHOLD = 0.1;
+	private static final double SUBSCRIPT_FONTSIZE_THRESHOLD = 0.1;
+
 	private ChunksMergeUtils() {
 	}
 
@@ -31,12 +40,70 @@ public class ChunksMergeUtils {
 	}
 
 	public static double toLineMergeProbability(TextChunk x, TextChunk y) {
-		double resultProbability = 1;
+		double baseLineDiff = x.getBaseLine() - y.getBaseLine();
+		double fontSizeDiff = x.getFontSize() - y.getFontSize();
+		double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
 
-		resultProbability *= mergeByCharSpacingProbability(x, y);
-		resultProbability *= mergeYAlmostNestedProbability(x, y);
+		baseLineDiff /= maxFontSize;
+		fontSizeDiff /= maxFontSize;
+
+		double charSpacingProbability = mergeByCharSpacingProbability(x, y);
+		double resultProbability = charSpacingProbability *
+				mergeNormalLineProbability(Math.abs(baseLineDiff), Math.abs(fontSizeDiff),
+						NORMAL_LINE_PROBABILITY_PARAMS);
+
+		if (resultProbability < TO_LINE_PROBABILITY_THRESHOLD &&
+			charSpacingProbability > TO_LINE_PROBABILITY_THRESHOLD) {
+
+			double superscriptProbability = charSpacingProbability;
+			double subscriptProbability = charSpacingProbability;
+
+			if ((fontSizeDiff > SUPERSCRIPT_FONTSIZE_THRESHOLD &&
+					baseLineDiff < -SUPERSCRIPT_BASELINE_THRESHOLD) ||
+					(fontSizeDiff < -SUPERSCRIPT_FONTSIZE_THRESHOLD &&
+							baseLineDiff > SUPERSCRIPT_BASELINE_THRESHOLD)) {
+
+				superscriptProbability *= toLineProbabilityFunction(Math.abs(baseLineDiff), Math.abs(fontSizeDiff), SUPERSCRIPT_PROBABILITY_PARAMS);
+			} else {
+				superscriptProbability = 0.0;
+			}
+			if ((fontSizeDiff > SUBSCRIPT_FONTSIZE_THRESHOLD &&
+					baseLineDiff > SUBSCRIPT_BASELINE_THRESHOLD) ||
+					(fontSizeDiff < -SUBSCRIPT_FONTSIZE_THRESHOLD &&
+							baseLineDiff < -SUBSCRIPT_BASELINE_THRESHOLD)) {
+
+				subscriptProbability *= toLineProbabilityFunction(Math.abs(baseLineDiff), Math.abs(fontSizeDiff), SUBSCRIPT_PROBABILITY_PARAMS);
+			} else {
+				subscriptProbability = 0.0;
+			}
+
+			return Math.max(resultProbability, Math.max(superscriptProbability, subscriptProbability));
+		}
 
 		return resultProbability;
+	}
+
+	/**
+	 * Calculates linear function: 1 - ax - by
+	 * @param x : first argument (baseline difference)
+	 * @param y : second argument (fontsize difference)
+	 * @param params : array of coefficients a, b
+	 * @return function result
+	 */
+	private static double mergeNormalLineProbability(double x, double y, double[] params) {
+		return 1 - params[0] * x - params[1] * y;
+	}
+
+	/**
+	 * Calculates quadratic function: 1 - ax^2 - by^2 + cxy
+	 * @param x : first argument (baseline difference)
+	 * @param y : second argument (fontsize difference)
+	 * @param params : array of coefficients a, b, c
+	 * @return function result
+	 */
+	private static double toLineProbabilityFunction(double x, double y, double[] params) {
+		double result = 1 - params[0] * x * x - (params[1] * y - params[2] * x) * y;
+		return result;
 	}
 
 	public static double toLineMergeProbability(TextLine x, TextLine y) {
