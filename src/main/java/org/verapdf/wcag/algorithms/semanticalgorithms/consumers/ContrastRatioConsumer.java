@@ -67,8 +67,8 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 					double dpiScaling = ((double) RENDER_DPI) / ((double) PDF_DPI);
 					int x = (int) (Math.round(bBox.getLeftX()) * dpiScaling);
 					int y = (int) (Math.round(bBox.getTopY()) * dpiScaling);
-					int width = (int) (Math.round(bBox.getWidth()) * dpiScaling);
-					int height = (int) (Math.round(bBox.getHeight()) * dpiScaling);
+					int width = getIntegerBBoxValueForProcessing(bBox.getWidth(), dpiScaling);
+					int height = getIntegerBBoxValueForProcessing(bBox.getHeight(), dpiScaling);
 					BufferedImage targetBim = renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
 					double contrastRatio = getContrastRatio(targetBim);
 					textChunk.setContrastRatio(contrastRatio);
@@ -76,6 +76,15 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 
 			}
 		}
+	}
+
+	private int getIntegerBBoxValueForProcessing(double initialValue, double dpiScaling) {
+		int result = (int) (Math.round(initialValue * dpiScaling));
+		if (result <= 0) {
+			result = 1;
+			logger.warning("The resulting target buffered image width is <= 0. Fall back to " + result);
+		}
+		return result;
 	}
 
 	private BufferedImage renderPage(PDDocument document, Integer pageNumber) throws IOException {
