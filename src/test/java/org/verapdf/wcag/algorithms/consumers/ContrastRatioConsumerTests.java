@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.consumers;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -8,6 +9,7 @@ import org.verapdf.wcag.algorithms.entities.*;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ContrastRatioConsumer;
 
 import java.io.IOException;
@@ -79,5 +81,27 @@ public class ContrastRatioConsumerTests {
 				}
 			}
 		});
+	}
+
+	@Test
+	void bBoxWidthZeroValueTest() {
+		SemanticSpan nodeToCheck = new SemanticSpan();
+		nodeToCheck.add(new TextLine(new TextChunk(new BoundingBox(0, new double [] {100, 100, 100.1, 120}), ".", 14, 118)));
+		nodeToCheck.setPageNumber(0);
+		Assertions.assertEquals(0.1, nodeToCheck.getLines().get(0).getTextChunks().get(0).getBoundingBox().getWidth(), 0.0001);
+		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + "1.4.3-t02-fail-a.pdf");
+		contrastRatioConsumer.accept(nodeToCheck);
+		Assertions.assertEquals(0.1, nodeToCheck.getLines().get(0).getTextChunks().get(0).getBoundingBox().getWidth(), 0.0001);
+	}
+
+	@Test
+	void bBoxHeightZeroValueTest() {
+		SemanticSpan nodeToCheck = new SemanticSpan();
+		nodeToCheck.add(new TextLine(new TextChunk(new BoundingBox(0, new double [] {100, 100, 110, 100.1}), ".", 14, 118)));
+		nodeToCheck.setPageNumber(0);
+		Assertions.assertEquals(0.1, nodeToCheck.getLines().get(0).getTextChunks().get(0).getBoundingBox().getHeight(), 0.0001);
+		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + "1.4.3-t02-fail-a.pdf");
+		contrastRatioConsumer.accept(nodeToCheck);
+		Assertions.assertEquals(0.1, nodeToCheck.getLines().get(0).getTextChunks().get(0).getBoundingBox().getHeight(), 0.0001);
 	}
 }
