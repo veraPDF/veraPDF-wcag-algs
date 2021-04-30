@@ -10,9 +10,9 @@ public class ChunksMergeUtils {
 	private static final double FLOATING_POINT_OPERATIONS_EPS = 1e-7;
 	private static final double FONT_METRIC_UNIVERSAL_TEMPORARY_THRESHOLD = 0.1;
 	private static final double FONT_SIZE_COMPARISON_THRESHOLD = 0.05;
-	private static final double FONT_WHITESPACE_COMPARISON_THRESHOLD = 0.1;
+	private static final double FONT_WHITESPACE_COMPARISON_THRESHOLD = 0.33;
 	private static final double FONT_LEADING_INTERVAL_STANDARD = 1;
-	private static final double[] DEFAULT_FONT_CHAR_SPACING_INTERVAL = {0, 0.33};
+	private static final double[] DEFAULT_FONT_CHAR_SPACING_INTERVAL = {0, 0.67};
 	private static final double[] DEFAULT_FONT_LEADING_INTERVAL = {0, 1.5};
 
 	private static final double TO_LINE_PROBABILITY_THRESHOLD = 0.75;
@@ -203,16 +203,16 @@ public class ChunksMergeUtils {
 
 		double leftChunkRightX = x.getRightX();
 		double rightChunkLeftX = y.getLeftX();
-		double distanceBetweenChunks = Math.abs(leftChunkRightX - rightChunkLeftX);
 
 		if (lastCharIsWhitespace(x.getValue())) {
-			distanceBetweenChunks += whitespaceSize(x.getFontSize());
+			leftChunkRightX -= whitespaceSize(x.getFontSize());
 		}
 
 		if (firstCharIsWhitespace(y.getValue())) {
-			distanceBetweenChunks += whitespaceSize(y.getFontSize());
+			rightChunkLeftX += whitespaceSize(y.getFontSize());
 		}
 
+		double distanceBetweenChunks = Math.abs(leftChunkRightX - rightChunkLeftX);
 		double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
 
 		return getUniformProbability(DEFAULT_FONT_CHAR_SPACING_INTERVAL, distanceBetweenChunks / maxFontSize,
