@@ -32,7 +32,12 @@ public class ClusterTableTests {
                 Arguments.of("NEG-floating-text-box.json", new int[][] {}, false),
                 Arguments.of("2columns2.json", new int[][] {}, false),
                 Arguments.of("2columns3.json", new int[][] {}, false),
-                Arguments.of("POS-real-table.json", new int[][] {{4, 88}, {4, 128}}, false)
+                Arguments.of("NEG-bad-table3.json", new int[][] {{2, 5}}, true),
+//                Arguments.of("NEG-bad-table3-full.json", new int[][] {{2, 5}, {2, 4}, {2, 5}, {2, 5}, {2, 5}, {2, 5}}, false),
+                Arguments.of("real-table.json", new int[][] {{4, 88}, {4, 128}}, false),
+//                Arguments.of("fake-table1.json", new int[][] {}, false),
+                Arguments.of("fake-table2.json", new int[][] {{4, 88}, {4, 128}}, false),
+                Arguments.of("fake-table3.json", new int[][] {}, false)
                 );
     }
 

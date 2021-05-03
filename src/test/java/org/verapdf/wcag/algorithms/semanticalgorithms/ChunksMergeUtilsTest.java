@@ -140,7 +140,7 @@ public class ChunksMergeUtilsTest {
                                                            new double[] {110.4, 82.7, 531.4, 96.0}, 0, 0);
 
         double resultProbability = ChunksMergeUtils.toLineMergeProbability(first, second);
-        Assertions.assertEquals(0.796, resultProbability, 0.0001);
+        Assertions.assertEquals(1.0, resultProbability, 0.0001);
     }
 
     @Test

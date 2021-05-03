@@ -42,6 +42,10 @@ public class TableRecognitionArea {
         return boundingBox.getPageNumber();
     }
 
+    public BoundingBox getBoundingBox() {
+        return boundingBox;
+    }
+
     public boolean hasCompleteHeaders() {
         return hasCompleteHeaders;
     }
@@ -75,7 +79,9 @@ public class TableRecognitionArea {
         if (hasCompleteHeaders) {
             addCluster(token);
         } else {
-            if (baseLine - token.getBaseLine() > adaptiveNextLineToleranceFactor * token.getFontSize()) {
+            if (checkHeadersArea(token)) {
+                expandHeaders(token);
+            } else {
                 hasCompleteHeaders = true;
                 if (headers.size() < 2) {
                     isComplete = true;
@@ -83,10 +89,22 @@ public class TableRecognitionArea {
                     sortHeaders();
                     addCluster(token);
                 }
-            } else {
-                expandHeaders(token);
             }
         }
+    }
+
+    private boolean checkHeadersArea(TextChunk token) {
+        if (headers.isEmpty()) {
+            return true;
+        }
+        if (baseLine - token.getBaseLine() > adaptiveNextLineToleranceFactor * token.getFontSize()) {
+            return false;
+        }
+        if (token.getBottomY() > boundingBox.getTopY() + TABLE_GAP_FACTOR * token.getFontSize()) {
+            return false;
+        }
+
+        return true;
     }
 
     private void expandHeaders(TextChunk token) {
@@ -94,6 +112,7 @@ public class TableRecognitionArea {
             TableCluster header = new TableCluster(token);
             header.setHeader(header);
             headers.add(header);
+            boundingBox = new BoundingBox(token.getBoundingBox());
             baseLine = token.getBaseLine();
             return;
         }
@@ -116,6 +135,7 @@ public class TableRecognitionArea {
             TableCluster header = new TableCluster(token);
             header.setHeader(header);
             headers.add(header);
+            boundingBox.union(token.getBoundingBox());
             if (token.getBaseLine() < baseLine) {
                 baseLine = token.getBaseLine();
             }
@@ -164,6 +184,7 @@ public class TableRecognitionArea {
             // token belongs to both headers => join headers
 
             currentHeader.add(header);
+            boundingBox.union(token.getBoundingBox());
             if (token.getBaseLine() < baseLine) {
                 baseLine = token.getBaseLine();
             }
@@ -203,6 +224,7 @@ public class TableRecognitionArea {
         currentCluster.setHeader(firstHeader);
         currentCluster.setLastHeader(lastHeader);
         clusters.add(currentCluster);
+        boundingBox.union(currentCluster.getBoundingBox());
         if (currentCluster.getBaseLine() < baseLine) {
             baseLine = currentCluster.getBaseLine();
         }
