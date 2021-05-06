@@ -5,6 +5,7 @@ import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognitionArea;
+import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableToken;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.*;
@@ -57,7 +58,8 @@ public class ClusterTableConsumer implements Consumer<INode> {
                         continue;
                     }
 
-                    recognitionArea.addTokenToRecognitionArea(chunk);
+                    TableToken token = new TableToken(chunk, node);
+                    recognitionArea.addTokenToRecognitionArea(token);
 
                     if (recognitionArea.isComplete()) {
                         if (recognitionArea.isValid()) {
@@ -85,9 +87,6 @@ public class ClusterTableConsumer implements Consumer<INode> {
     }
 
     private void recognize() {
-        // System.out.println(recognitionArea);
-
-        // TODO: start recognition by cluster algorithm
 
         // if recognition was successful
         INode table = new SemanticGroupingNode();

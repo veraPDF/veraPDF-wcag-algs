@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
 
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
 
@@ -14,6 +15,7 @@ public class TableRecognitionArea {
     private static final double NEXT_LINE_TOLERANCE_FACTOR = 1.05;
     private static final double ONE_LINE_TOLERANCE_FACTOR = 0.9;
     private static final double TABLE_GAP_FACTOR = 5.0;
+    private static final double HEADERS_PROBABILITY_THRESHOLD = 0.75;
 
     private double adaptiveNextLineToleranceFactor;
 
@@ -62,6 +64,10 @@ public class TableRecognitionArea {
         return headers;
     }
 
+    public List<TableCluster> getClusters() {
+        return clusters;
+    }
+
     public void  addTokenToRecognitionArea(TextChunk token) {
         if (isComplete) {
             return;
@@ -79,21 +85,66 @@ public class TableRecognitionArea {
         if (hasCompleteHeaders) {
             addCluster(token);
         } else {
-            if (checkHeadersArea(token)) {
+            if (belongsToHeadersArea(token)) {
                 expandHeaders(token);
             } else {
                 hasCompleteHeaders = true;
-                if (headers.size() < 2) {
-                    isComplete = true;
-                } else {
+                if (checkHeaders()) {
                     sortHeaders();
                     addCluster(token);
+                } else {
+                    isComplete = true;
                 }
             }
         }
     }
 
-    private boolean checkHeadersArea(TextChunk token) {
+    private boolean checkHeaders() {
+        if (headers.size() < 2) {
+            return false;
+        }
+
+        double avrFirstBaseLine = 0.0;
+        double avrLastBaseLine = 0.0;
+        double avrCenter = 0.0;
+        for (TableCluster header : headers) {
+            TextLine firstLine = header.getFirstLine();
+            TextLine lastLine = header.getLastLine();
+            avrFirstBaseLine += firstLine.getBaseLine();
+            avrLastBaseLine += lastLine.getBaseLine();
+            avrCenter += 0.5 * (firstLine.getBaseLine() + lastLine.getBaseLine());
+        }
+        avrFirstBaseLine /= headers.size();
+        avrLastBaseLine /= headers.size();
+        avrCenter /= headers.size();
+
+        double maxTopDeviation = 0.0;
+        double maxBottomDeviation = 0.0;
+        double maxCenterDeviation = 0.0;
+        for (TableCluster header : headers) {
+            TextLine firstLine = header.getFirstLine();
+            TextLine lastLine = header.getLastLine();
+            double fontSize = firstLine.getFontSize();
+            double topDeviation = Math.abs(avrFirstBaseLine - firstLine.getBaseLine()) / fontSize;
+            double bottomDeviation = Math.abs(avrLastBaseLine - lastLine.getBaseLine()) / fontSize;
+            double centerDeviation = Math.abs(avrCenter -0.5 * (firstLine.getBaseLine() + lastLine.getBaseLine())) / fontSize;
+
+            if (maxTopDeviation < topDeviation) {
+                maxTopDeviation = topDeviation;
+            }
+            if (maxBottomDeviation < bottomDeviation) {
+                maxBottomDeviation = bottomDeviation;
+            }
+            if (maxCenterDeviation < centerDeviation) {
+                maxCenterDeviation = centerDeviation;
+            }
+        }
+
+        double headersProbability = 1.0 - Math.min(Math.min(maxTopDeviation, maxBottomDeviation), maxCenterDeviation);
+        return headersProbability > HEADERS_PROBABILITY_THRESHOLD;
+    }
+
+    private boolean belongsToHeadersArea(TextChunk token) {
         if (headers.isEmpty()) {
             return true;
         }
@@ -152,7 +203,7 @@ public class TableRecognitionArea {
         if (baseLineDiff < ONE_LINE_TOLERANCE_FACTOR * token.getFontSize() &&
                 ChunksMergeUtils.toLineMergeProbability(header.getLastToken(), token) > MERGE_PROBABILITY_THRESHOLD) {
             // token can be appended to the last line of the header
-            header.add(token);
+            header.mergeWithoutRowNumbers(token);
             if (token.getBaseLine() < baseLine) {
                 baseLine = token.getBaseLine();
             }
@@ -167,7 +218,7 @@ public class TableRecognitionArea {
                 adaptiveNextLineToleranceFactor = lineSpacingFactor * NEXT_LINE_TOLERANCE_FACTOR;
             }
 
-            header.add(token, true);
+            header.mergeWithoutRowNumbers(token, true);
             if (token.getBaseLine() < baseLine) {
                 baseLine = token.getBaseLine();
             }
@@ -183,7 +234,7 @@ public class TableRecognitionArea {
         if (headerBBox.getLeftX() < token.getRightX() && token.getLeftX() < headerBBox.getRightX()) {
             // token belongs to both headers => join headers
 
-            currentHeader.add(header);
+            currentHeader.mergeWithoutRowNumbers(header);
             boundingBox.union(token.getBoundingBox());
             if (token.getBaseLine() < baseLine) {
                 baseLine = token.getBaseLine();
