@@ -1,22 +1,14 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
 
-import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class TableRecognitionArea {
-    private static final double MERGE_PROBABILITY_THRESHOLD = 0.75;
-    private static final double NEXT_LINE_TOLERANCE_FACTOR = 1.05;
-    private static final double ONE_LINE_TOLERANCE_FACTOR = 0.9;
-    private static final double TABLE_GAP_FACTOR = 5.0;
-    private static final double HEADERS_PROBABILITY_THRESHOLD = 0.75;
-
     private double adaptiveNextLineToleranceFactor;
 
     private boolean hasCompleteHeaders;
@@ -28,7 +20,7 @@ public class TableRecognitionArea {
     double baseLine;
 
     public TableRecognitionArea() {
-        adaptiveNextLineToleranceFactor = NEXT_LINE_TOLERANCE_FACTOR;
+        adaptiveNextLineToleranceFactor = TableUtils.NEXT_LINE_TOLERANCE_FACTOR;
         hasCompleteHeaders = isComplete = isValid = false;
         headers = new ArrayList<>();
         clusters = new ArrayList<>();
@@ -68,7 +60,7 @@ public class TableRecognitionArea {
         return clusters;
     }
 
-    public void  addTokenToRecognitionArea(TextChunk token) {
+    public void  addTokenToRecognitionArea(TableToken token) {
         if (isComplete) {
             return;
         }
@@ -90,7 +82,7 @@ public class TableRecognitionArea {
             } else {
                 hasCompleteHeaders = true;
                 if (checkHeaders()) {
-                    sortHeaders();
+                    TableUtils.sortHeadersLeftToRight(headers);
                     addCluster(token);
                 } else {
                     isComplete = true;
@@ -127,7 +119,7 @@ public class TableRecognitionArea {
             double fontSize = firstLine.getFontSize();
             double topDeviation = Math.abs(avrFirstBaseLine - firstLine.getBaseLine()) / fontSize;
             double bottomDeviation = Math.abs(avrLastBaseLine - lastLine.getBaseLine()) / fontSize;
-            double centerDeviation = Math.abs(avrCenter -0.5 * (firstLine.getBaseLine() + lastLine.getBaseLine())) / fontSize;
+            double centerDeviation = Math.abs(avrCenter - 0.5 * (firstLine.getBaseLine() + lastLine.getBaseLine())) / fontSize;
 
             if (maxTopDeviation < topDeviation) {
                 maxTopDeviation = topDeviation;
@@ -141,24 +133,24 @@ public class TableRecognitionArea {
         }
 
         double headersProbability = 1.0 - Math.min(Math.min(maxTopDeviation, maxBottomDeviation), maxCenterDeviation);
-        return headersProbability > HEADERS_PROBABILITY_THRESHOLD;
+        return headersProbability > TableUtils.HEADERS_PROBABILITY_THRESHOLD;
     }
 
-    private boolean belongsToHeadersArea(TextChunk token) {
+    private boolean belongsToHeadersArea(TableToken token) {
         if (headers.isEmpty()) {
             return true;
         }
         if (baseLine - token.getBaseLine() > adaptiveNextLineToleranceFactor * token.getFontSize()) {
             return false;
         }
-        if (token.getBottomY() > boundingBox.getTopY() + TABLE_GAP_FACTOR * token.getFontSize()) {
+        if (token.getBottomY() > boundingBox.getTopY() + TableUtils.TABLE_GAP_FACTOR * token.getFontSize()) {
             return false;
         }
 
         return true;
     }
 
-    private void expandHeaders(TextChunk token) {
+    private void expandHeaders(TableToken token) {
         if (headers.isEmpty()) {
             TableCluster header = new TableCluster(token);
             header.setHeader(header);
@@ -195,13 +187,13 @@ public class TableRecognitionArea {
         }
     }
 
-    private boolean expandHeader(TableCluster header, TextChunk token) {
+    private boolean expandHeader(TableCluster header, TableToken token) {
         double headerBaseLine = header.getBaseLine();
         double tokenBaseLine = token.getBaseLine();
         double baseLineDiff = Math.abs(headerBaseLine - tokenBaseLine);
 
-        if (baseLineDiff < ONE_LINE_TOLERANCE_FACTOR * token.getFontSize() &&
-                ChunksMergeUtils.toLineMergeProbability(header.getLastToken(), token) > MERGE_PROBABILITY_THRESHOLD) {
+        if (baseLineDiff < TableUtils.ONE_LINE_TOLERANCE_FACTOR * token.getFontSize() &&
+                ChunksMergeUtils.toLineMergeProbability(header.getLastToken(), token) > TableUtils.MERGE_PROBABILITY_THRESHOLD) {
             // token can be appended to the last line of the header
             header.mergeWithoutRowNumbers(token);
             if (token.getBaseLine() < baseLine) {
@@ -215,7 +207,7 @@ public class TableRecognitionArea {
             // token belongs to the next line of the header
             double lineSpacingFactor = baseLineDiff / token.getFontSize();
             if (adaptiveNextLineToleranceFactor < lineSpacingFactor) {
-                adaptiveNextLineToleranceFactor = lineSpacingFactor * NEXT_LINE_TOLERANCE_FACTOR;
+                adaptiveNextLineToleranceFactor = lineSpacingFactor * TableUtils.NEXT_LINE_TOLERANCE_FACTOR;
             }
 
             header.mergeWithoutRowNumbers(token, true);
@@ -228,7 +220,7 @@ public class TableRecognitionArea {
         return false;
     }
 
-    private boolean joinHeaders(TableCluster currentHeader, TableCluster header, TextChunk token) {
+    private boolean joinHeaders(TableCluster currentHeader, TableCluster header, TableToken token) {
         BoundingBox headerBBox = header.getBoundingBox();
 
         if (headerBBox.getLeftX() < token.getRightX() && token.getLeftX() < headerBBox.getRightX()) {
@@ -245,14 +237,8 @@ public class TableRecognitionArea {
         return false;
     }
 
-    private void sortHeaders() {
-        Collections.sort(headers, (Comparator.<TableCluster>
-                        comparingDouble(header1 -> header1.getLeftX())
-                        .thenComparingDouble(header2 -> header2.getLeftX())));
-    }
-
-    private void addCluster(TextChunk token) {
-        if (baseLine - token.getBaseLine() > TABLE_GAP_FACTOR * token.getFontSize()) {
+    private void addCluster(TableToken token) {
+        if (baseLine - token.getBaseLine() > TableUtils.TABLE_GAP_FACTOR * token.getFontSize()) {
             isComplete = true;
             return;
         }
@@ -262,14 +248,11 @@ public class TableRecognitionArea {
         TableCluster lastHeader = null;
         BoundingBox tokenBBox = token.getBoundingBox();
         for (TableCluster header : headers) {
-            BoundingBox headerBBox = header.getBoundingBox();
-            if (headerBBox.getLeftX() < token.getRightX() && token.getLeftX() < headerBBox.getRightX()) {
+            if (TableUtils.stronglyOverlapping(header, token)) {
                 if (firstHeader == null) {
                     firstHeader = header;
-                    lastHeader = header;
-                } else {
-                    lastHeader = header;
                 }
+                lastHeader = header;
             }
         }
         currentCluster.setHeader(firstHeader);
