@@ -4,6 +4,8 @@ import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 
 public class TextChunkUtils {
 
+    private TextChunkUtils() {}
+
     public static final double WHITE_SPACE_FACTOR = 0.25;
 
     public static boolean isSpaceChunk(TextChunk chunk) {

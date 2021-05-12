@@ -5,19 +5,23 @@ import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class TableCluster extends InfoChunk {
 
     private static final double ONE_LINE_TOLERANCE_FACTOR = 0.2;
 
-    private List<TextLine> lines = new ArrayList<>();
     private TableCluster header = null;
     private TableCluster lastHeader = null;
 
-    public TableCluster() {
-        header = null;
-    }
+    private List<TextLine> lines = new ArrayList<>();
+
+    private List<Integer> rowNumbers;
+    private Integer colNumber = null;
+    private Integer lastColNumber = null;
+
+    public TableCluster() {}
 
     public TableCluster(TextChunk chunk) {
         this(new TextLine(chunk));
@@ -25,8 +29,45 @@ public class TableCluster extends InfoChunk {
 
     public TableCluster(TextLine line) {
         super(line.getBoundingBox());
+        rowNumbers = new ArrayList<>();
         lines.add(line);
+        rowNumbers.add(null);
         header = null;
+    }
+
+    public void setRowNumber(int lineNumber, int rowNumber) {
+        if (lineNumber < lines.size()) {
+            rowNumbers.set(lineNumber, rowNumber);
+        }
+    }
+
+    public Integer getRowNumber(int lineNumber) {
+        if (lineNumber < lines.size()) {
+            return rowNumbers.get(lineNumber);
+        }
+        return null;
+    }
+
+    public void setColNumber(int colNumber) {
+        this.colNumber = colNumber;
+        if (lastColNumber == null || lastColNumber < colNumber) {
+            lastColNumber = colNumber;
+        }
+    }
+
+    public Integer getColNumber() {
+        return colNumber;
+    }
+
+    public void setLastColNumber(int lastColNumber) {
+        this.lastColNumber = lastColNumber;
+        if (colNumber == null || lastColNumber < colNumber) {
+            colNumber = lastColNumber;
+        }
+    }
+
+    public Integer getLastColNumber() {
+        return lastColNumber;
     }
 
     public double getBaseLine() {
@@ -36,26 +77,28 @@ public class TableCluster extends InfoChunk {
         return lines.get(lines.size() - 1).getBaseLine();
     }
 
-    public void add(TextChunk chunk) {
-        add(chunk, false);
+    public void mergeWithoutRowNumbers(TextChunk chunk) {
+        mergeWithoutRowNumbers(chunk, false);
     }
 
-    public void add(TextChunk chunk, boolean newLine) {
+    public void mergeWithoutRowNumbers(TextChunk chunk, boolean newLine) {
         if (newLine || lines.isEmpty()) {
             lines.add(new TextLine(chunk));
+            rowNumbers.add(null);
         } else {
             lines.get(lines.size() - 1).add(chunk);
         }
         getBoundingBox().union(chunk.getBoundingBox());
     }
 
-    public void add(TextLine line) {
-        add(line, false);
+    public void mergeWithoutRowNumbers(TextLine line) {
+        mergeWithoutRowNumbers(line, false);
     }
 
-    public void add(TextLine line, boolean newLine) {
+    public void mergeWithoutRowNumbers(TextLine line, boolean newLine) {
         if (newLine || lines.isEmpty()) {
             lines.add(line);
+            rowNumbers.add(null);
         } else {
             TextLine lastLine = lines.get(lines.size() - 1);
             lastLine.add(line);
@@ -63,7 +106,7 @@ public class TableCluster extends InfoChunk {
         getBoundingBox().union(line.getBoundingBox());
     }
 
-    public void add(TableCluster other) {
+    public void mergeWithoutRowNumbers(TableCluster other) {
         List<TextLine> result = new ArrayList<>();
 
         int i = 0, j = 0;
@@ -95,6 +138,7 @@ public class TableCluster extends InfoChunk {
             result.add(other.lines.get(j));
         }
         lines = result;
+        rowNumbers = new ArrayList<>(Collections.nCopies(result.size(), null));
         getBoundingBox().union(other.getBoundingBox());
     }
 
