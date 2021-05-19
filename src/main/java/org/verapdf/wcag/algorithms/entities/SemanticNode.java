@@ -2,6 +2,7 @@ package org.verapdf.wcag.algorithms.entities;
 
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public abstract class SemanticNode implements INode {
 
 	public SemanticNode(BoundingBox bbox, SemanticType initialSemanticType, SemanticType semanticType) {
 		this(initialSemanticType);
-		this.boundingBox = new BoundingBox(bbox);
+		this.boundingBox = new MultiBoundingBox(bbox);
 		this.semanticType = semanticType;
 	}
 
@@ -93,7 +94,11 @@ public abstract class SemanticNode implements INode {
 
 	@Override
 	public void setBoundingBox(BoundingBox bbox) {
-		boundingBox.init(bbox);
+		if (bbox instanceof MultiBoundingBox) {
+			boundingBox = new MultiBoundingBox(bbox);
+		} else {
+			boundingBox = new BoundingBox(bbox);
+		}
 	}
 
 	@Override

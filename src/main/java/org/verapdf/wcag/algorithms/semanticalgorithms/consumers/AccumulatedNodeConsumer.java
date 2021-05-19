@@ -28,7 +28,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	@Override
 	public void accept(INode node) {
 
-		if (node.getChildren().isEmpty()) {				;
+		if (node.getChildren().isEmpty()) {
 			updateNode(node, node, 1, node.getSemanticType());
 			return;
 		}
