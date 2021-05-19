@@ -4,12 +4,12 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class BoundingBox {
-    private Integer pageNumber;
-    private Integer lastPageNumber;
-    private double leftX;
-    private double bottomY;
-    private double rightX;
-    private double topY;
+    protected Integer pageNumber;
+    protected Integer lastPageNumber;
+    protected double leftX;
+    protected double bottomY;
+    protected double rightX;
+    protected double topY;
 
     private final static double EPSILON = 1.e-18;
 
