@@ -1,121 +1,137 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
 
-import org.verapdf.wcag.algorithms.entities.content.InfoChunk;
-import org.verapdf.wcag.algorithms.entities.content.TextChunk;
-import org.verapdf.wcag.algorithms.entities.content.TextLine;
+ import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-public class TableCluster extends InfoChunk {
+public class TableCluster extends TextInfoChunk {
 
-    private static final double ONE_LINE_TOLERANCE_FACTOR = 0.2;
+    private Integer id = null;
 
     private TableCluster header = null;
-    private TableCluster lastHeader = null;
-
-    private List<TextLine> lines = new ArrayList<>();
-
-    private List<Integer> rowNumbers;
     private Integer colNumber = null;
-    private Integer lastColNumber = null;
 
-    public TableCluster() {}
+    private List<TableRow> rows = new ArrayList<>();
 
-    public TableCluster(TextChunk chunk) {
-        this(new TextLine(chunk));
-    }
+    private TableClusterGap minLeftGap = null;
+    private TableClusterGap minRightGap = null;
 
-    public TableCluster(TextLine line) {
-        super(line.getBoundingBox());
-        rowNumbers = new ArrayList<>();
-        lines.add(line);
-        rowNumbers.add(null);
-        header = null;
-    }
+    public enum Side {
+        LEFT,
+        RIGHT;
 
-    public void setRowNumber(int lineNumber, int rowNumber) {
-        if (lineNumber < lines.size()) {
-            rowNumbers.set(lineNumber, rowNumber);
+        public static Side opposite(Side side) {
+            if (side == LEFT) {
+                return RIGHT;
+            } else {
+                return LEFT;
+            }
         }
     }
 
-    public Integer getRowNumber(int lineNumber) {
-        if (lineNumber < lines.size()) {
-            return rowNumbers.get(lineNumber);
-        }
-        return null;
+    public TableCluster() {
+    }
+
+    public TableCluster(TableToken token) {
+        this(new TableRow(token));
+    }
+
+    public TableCluster(TableRow row) {
+        super(row.getBoundingBox(), row.getFontSize(), row.getBaseLine());
+        rows.add(row);
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setMinLeftGap(TableClusterGap leftGap) {
+        minLeftGap = leftGap;
+    }
+
+    public TableClusterGap getMinLeftGap() {
+        return minLeftGap;
+    }
+
+    public void setMinRightGap(TableClusterGap rightGap) {
+        minRightGap = rightGap;
+    }
+
+    public TableClusterGap getMinRightGap() {
+        return minRightGap;
+    }
+
+    public void setRowNumber(int rowIndex, int rowNumber) {
+        rows.get(rowIndex).setRowNumber(rowNumber);
+    }
+
+    public Integer getRowNumber(int rowIndex) {
+        return rows.get(rowIndex).getRowNumber();
     }
 
     public void setColNumber(int colNumber) {
         this.colNumber = colNumber;
-        if (lastColNumber == null || lastColNumber < colNumber) {
-            lastColNumber = colNumber;
-        }
     }
 
     public Integer getColNumber() {
         return colNumber;
     }
 
-    public void setLastColNumber(int lastColNumber) {
-        this.lastColNumber = lastColNumber;
-        if (colNumber == null || lastColNumber < colNumber) {
-            colNumber = lastColNumber;
-        }
+    public void add(TableToken token) {
+        add(token, false);
     }
 
-    public Integer getLastColNumber() {
-        return lastColNumber;
-    }
-
-    public double getBaseLine() {
-        if (lines.isEmpty()) {
-            return 0d;
-        }
-        return lines.get(lines.size() - 1).getBaseLine();
-    }
-
-    public void mergeWithoutRowNumbers(TextChunk chunk) {
-        mergeWithoutRowNumbers(chunk, false);
-    }
-
-    public void mergeWithoutRowNumbers(TextChunk chunk, boolean newLine) {
-        if (newLine || lines.isEmpty()) {
-            lines.add(new TextLine(chunk));
-            rowNumbers.add(null);
+    public void add(TableToken token, boolean newLine) {
+        if (newLine || rows.isEmpty()) {
+            rows.add(new TableRow(token));
         } else {
-            lines.get(lines.size() - 1).add(chunk);
+            rows.get(rows.size() - 1).add(token);
         }
-        getBoundingBox().union(chunk.getBoundingBox());
+        if (fontSize < token.getFontSize()) {
+            fontSize = token.getFontSize();
+        }
+        if (baseLine < token.getBaseLine()) {
+            baseLine = token.getBaseLine();
+        }
+        getBoundingBox().union(token.getBoundingBox());
     }
 
-    public void mergeWithoutRowNumbers(TextLine line) {
-        mergeWithoutRowNumbers(line, false);
+    public void add(TableRow row) {
+        add(row, false);
     }
 
-    public void mergeWithoutRowNumbers(TextLine line, boolean newLine) {
-        if (newLine || lines.isEmpty()) {
-            lines.add(line);
-            rowNumbers.add(null);
+    public void add(TableRow row, boolean newLine) {
+        if (newLine || rows.isEmpty()) {
+            rows.add(row);
         } else {
-            TextLine lastLine = lines.get(lines.size() - 1);
-            lastLine.add(line);
+            TableRow lastLine = rows.get(rows.size() - 1);
+            lastLine.add(row);
         }
-        getBoundingBox().union(line.getBoundingBox());
+        if (fontSize < row.getFontSize()) {
+            fontSize = row.getFontSize();
+        }
+        if (row.getBaseLine() < baseLine) {
+            baseLine = row.getBaseLine();
+        }
+        getBoundingBox().union(row.getBoundingBox());
     }
 
     public void mergeWithoutRowNumbers(TableCluster other) {
-        List<TextLine> result = new ArrayList<>();
+        List<TableRow> result = new ArrayList<>();
 
         int i = 0, j = 0;
-        while (i < lines.size() && j < other.lines.size()) {
-            TextLine line = lines.get(i);
-            TextLine otherLine = other.lines.get(j);
+        while (i < rows.size() && j < other.rows.size()) {
+            TableRow line = rows.get(i);
+            TableRow otherLine = other.rows.get(j);
             double baseLine = line.getBaseLine();
             double otherBaseLine = otherLine.getBaseLine();
-            double tolerance = ONE_LINE_TOLERANCE_FACTOR * Math.max(line.getFontSize(), otherLine.getFontSize());
+            double tolerance = TableUtils.ONE_LINE_TOLERANCE_FACTOR * Math.min(line.getFontSize(), otherLine.getFontSize());
 
             if (baseLine > otherBaseLine + tolerance) {
                 result.add(line);
@@ -124,88 +140,219 @@ public class TableCluster extends InfoChunk {
                 result.add(otherLine);
                 ++j;
             } else {
-                TextLine unitedLine = new TextLine(line);
+                TableRow unitedLine = new TableRow(line);
                 unitedLine.add(otherLine);
                 result.add(unitedLine);
                 ++i;
                 ++j;
             }
         }
-        for (; i < lines.size(); ++i) {
-            result.add(lines.get(i));
+        for (; i < rows.size(); ++i) {
+            result.add(rows.get(i));
         }
-        for (; j < other.lines.size(); ++j) {
-            result.add(other.lines.get(j));
+        for (; j < other.rows.size(); ++j) {
+            result.add(other.rows.get(j));
         }
-        lines = result;
-        rowNumbers = new ArrayList<>(Collections.nCopies(result.size(), null));
+
+        if (fontSize < other.getFontSize()) {
+            fontSize = other.getFontSize();
+        }
+        if (other.getBaseLine() < baseLine) {
+            baseLine = other.getBaseLine();
+        }
         getBoundingBox().union(other.getBoundingBox());
     }
 
-    public List<TextLine> getLines() {
-        return lines;
+    public List<TableRow> getRows() {
+        return rows;
     }
 
-    public TextLine getFirstLine() {
-        if (lines.isEmpty()) {
+    public TableRow getFirstRow() {
+        if (rows.isEmpty()) {
             return null;
         }
-        return lines.get(0);
+        return rows.get(0);
     }
 
-    public TextLine getLastLine() {
-        if (lines.isEmpty()) {
+    public TableRow getLastRow() {
+        if (rows.isEmpty()) {
             return null;
         }
-        return lines.get(lines.size() - 1);
+        return rows.get(rows.size() - 1);
     }
 
     public TextChunk getFirstToken() {
-        if (lines.isEmpty()) {
+        if (rows.isEmpty()) {
             return null;
         }
-        return lines.get(0).getFirstTextChunk();
+        return rows.get(0).getFirstTextChunk();
     }
 
     public TextChunk getLastToken() {
-        if (lines.isEmpty()) {
+        if (rows.isEmpty()) {
             return null;
         }
-        return lines.get(lines.size() - 1).getLastTextChunk();
+        return rows.get(rows.size() - 1).getLastTextChunk();
     }
 
     public void setHeader(TableCluster header) {
         this.header = header;
-        if (lastHeader == null) {
-            lastHeader = header;
-        }
-    }
-
-    public void setLastHeader(TableCluster lastHeader) {
-        this.lastHeader = lastHeader;
     }
 
     public TableCluster getHeader() {
         return header;
     }
 
-    public TableCluster getLastHeader() {
-        return lastHeader;
-    }
-
     public boolean isHeader() {
         return this == header;
     }
 
+    public void updateMinGaps() {
+        updateMinGap(Side.LEFT);
+        updateMinGap(Side.RIGHT);
+    }
+
+    public void updateMinGap(Side side) {
+        Map<TableCluster, Double> gapsMap = new HashMap<>();
+        Map<TableCluster, Integer> countersMap = new HashMap<>();
+        for (TableRow row : rows) {
+            TableClusterGap rowGap = (side == Side.LEFT) ? row.getLeftGap() : row.getRightGap();
+            if (rowGap != null) {
+                if (gapsMap.containsKey(rowGap.getLink())) {
+                    gapsMap.put(rowGap.getLink(), gapsMap.get(rowGap.getLink()) + rowGap.getGap());
+                    countersMap.put(rowGap.getLink(), countersMap.get(rowGap.getLink()) + 1);
+                } else {
+                    gapsMap.put(rowGap.getLink(), rowGap.getGap());
+                    countersMap.put(rowGap.getLink(), 1);
+                }
+            }
+        }
+        if (gapsMap.isEmpty()) {
+            return;
+        }
+
+        TableClusterGap minGap = (side == Side.LEFT) ? minLeftGap : minRightGap;
+        if (minGap == null) {
+            minGap = new TableClusterGap(null, Double.MAX_VALUE);
+            if (side == Side.LEFT) {
+                minLeftGap = minGap;
+            } else {
+                minRightGap = minGap;
+            }
+        }
+        minGap.setGap(Double.MAX_VALUE);
+        for (Map.Entry<TableCluster, Double> gapEntry : gapsMap.entrySet()) {
+            double gap = gapEntry.getValue() / countersMap.get(gapEntry.getKey());
+            if (gap < minGap.getGap()) {
+                minGap.setLink(gapEntry.getKey());
+                minGap.setGap(gapEntry.getValue());
+            }
+        }
+    }
+
+    public void merge(TableCluster other, boolean update) {
+
+        if (header == null) {
+            header = other.getHeader();
+        }
+
+        for (TableRow row : rows) {
+            if (row.getLeftGap() != null && row.getLeftGap().getLink() == other) {
+                row.setLeftGap(null);
+            }
+            if (row.getRightGap() != null && row.getRightGap().getLink() == other) {
+                row.setRightGap(null);
+            }
+        }
+
+        Set<TableCluster> leftSet = new HashSet<>();
+        Set<TableCluster> rightSet = new HashSet<>();
+
+        for (TableRow row : other.getRows()) {
+            if (row.getLeftGap() != null) {
+                if (row.getLeftGap().getLink() == this) {
+                    row.setLeftGap(null);
+                } else {
+                    leftSet.add(row.getLeftGap().getLink());
+                }
+            }
+            if (row.getRightGap() != null) {
+                if (row.getRightGap().getLink() == this) {
+                    row.setRightGap(null);
+                } else {
+                    rightSet.add(row.getRightGap().getLink());
+                }
+            }
+            rows.add(row);
+        }
+
+        // update right gaps for the clusters to the left
+        for (TableCluster leftCluster : leftSet) {
+            for (TableRow row : leftCluster.getRows()) {
+                if (row.getRightGap() != null && row.getRightGap().getLink() == other) {
+                    row.getRightGap().setLink(this);
+                }
+            }
+            if (update) {
+                TableClusterGap rightGap = leftCluster.getMinRightGap();
+                if (rightGap != null && (rightGap.getLink() == this || rightGap.getLink() == other)) {
+                    leftCluster.updateMinGap(Side.RIGHT);
+                }
+            }
+        }
+
+        // update left gaps for the clusters to the right
+        for (TableCluster rightCluster : rightSet) {
+            for (TableRow row : rightCluster.getRows()) {
+                if (row.getLeftGap() != null && row.getLeftGap().getLink() == other) {
+                    row.getLeftGap().setLink(this);
+                }
+            }
+            if (update) {
+                TableClusterGap leftGap = rightCluster.getMinLeftGap();
+                if (leftGap != null && (leftGap.getLink() == this || leftGap.getLink() == other)) {
+                    rightCluster.updateMinGap(Side.LEFT);
+                }
+            }
+        }
+
+        // update merged cluster min gaps
+        if (update) {
+            if (leftSet.size() > 0) {
+                updateMinGap(Side.LEFT);
+            }
+            if (rightSet.size() > 0) {
+                updateMinGap(Side.RIGHT);
+            }
+        }
+
+        if (fontSize < other.getFontSize()) {
+            fontSize = other.getFontSize();
+        }
+        if (other.getBaseLine() < baseLine) {
+            baseLine = other.getBaseLine();
+        }
+        getBoundingBox().union(other.getBoundingBox());
+    }
+
     @Override
     public String toString() {
-        if (lines.isEmpty()) {
+        if (rows.isEmpty()) {
             return "";
         }
-        StringBuilder result = new StringBuilder(lines.get(0).toString());
-        for (int i = 1; i < lines.size(); ++i) {
-            result.append('\n').append(lines.get(i));
+        StringBuilder result = new StringBuilder(rows.get(0).toString());
+        for (int i = 1; i < rows.size(); ++i) {
+            result.append('\n').append(rows.get(i));
         }
         return result.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        if (id == null) {
+            return super.hashCode();
+        } else {
+            return id;
+        }
     }
 }

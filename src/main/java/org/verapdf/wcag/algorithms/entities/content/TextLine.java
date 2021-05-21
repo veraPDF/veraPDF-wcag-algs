@@ -3,34 +3,20 @@ package org.verapdf.wcag.algorithms.entities.content;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextLine extends InfoChunk {
+public class TextLine extends TextInfoChunk {
     private final List<TextChunk> textChunks = new ArrayList<>();
-    private double fontSize = 0d;
-    private double baseLine = 0d;
 
     public TextLine() {
     }
 
     public TextLine(TextChunk chunk) {
-        super(chunk.getBoundingBox());
+        super(chunk.getBoundingBox(), chunk.getFontSize(), chunk.getBaseLine());
         textChunks.add(chunk);
-        fontSize = chunk.getFontSize();
-        baseLine = chunk.getBaseLine();
     }
 
     public TextLine(TextLine line) {
-        super(line.getBoundingBox());
+        super(line.getBoundingBox(), line.getFontSize(), line.getBaseLine());
         textChunks.addAll(line.getTextChunks());
-        fontSize = line.getFontSize();
-        baseLine = line.getBaseLine();
-    }
-
-    public double getFontSize() {
-        return fontSize;
-    }
-
-    public double getBaseLine() {
-        return baseLine;
     }
 
     public List<TextChunk> getTextChunks() {

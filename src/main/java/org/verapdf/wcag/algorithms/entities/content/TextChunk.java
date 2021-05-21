@@ -6,13 +6,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class TextChunk extends InfoChunk {
+public class TextChunk extends TextInfoChunk {
     private String value;
     private String fontName;
-    private double fontSize;
     private double fontWeight;
     private double italicAngle;
-    private double baseLine;
     private double[] fontColor;
     private double contrastRatio;
 
@@ -20,21 +18,17 @@ public class TextChunk extends InfoChunk {
     }
 
     public TextChunk(BoundingBox bbox, String value, double fontSize, double baseLine) {
-        super(bbox);
+        super(bbox, fontSize, baseLine);
         this.value = value;
-        this.fontSize = fontSize;
-        this.baseLine = baseLine;
     }
 
     public TextChunk(BoundingBox bbox, String value, String fontName, double fontSize,
                      double fontWeight, double italicAngle, double baseLine, double[] fontColor) {
-        super(bbox);
+        super(bbox, fontSize, baseLine);
         this.value = value;
         this.fontName = fontName;
-        this.fontSize = fontSize;
         this.fontWeight = fontWeight;
         this.italicAngle = italicAngle;
-        this.baseLine = baseLine;
         this.fontColor = fontColor.clone();
     }
 
@@ -59,14 +53,6 @@ public class TextChunk extends InfoChunk {
         this.fontName = fontName;
     }
 
-    public double getFontSize() {
-        return fontSize;
-    }
-
-    public void setFontSize(double fontSize) {
-        this.fontSize = fontSize;
-    }
-
     public double getFontWeight() {
         return fontWeight;
     }
@@ -81,14 +67,6 @@ public class TextChunk extends InfoChunk {
 
     public void setItalicAngle(double italicAngle) {
         this.italicAngle = italicAngle;
-    }
-
-    public double getBaseLine() {
-        return baseLine;
-    }
-
-    public void setBaseLine(double baseLine) {
-        this.baseLine = baseLine;
     }
 
     public double[] getFontColor() {

@@ -5,6 +5,7 @@ import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognitionArea;
+import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognizer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableToken;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
@@ -87,6 +88,8 @@ public class ClusterTableConsumer implements Consumer<INode> {
     }
 
     private void recognize() {
+        TableRecognizer recognizer = new TableRecognizer(recognitionArea);
+        recognizer.recognize();
 
         // if recognition was successful
         INode table = new SemanticGroupingNode();

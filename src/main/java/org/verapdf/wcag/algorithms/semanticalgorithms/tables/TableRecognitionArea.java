@@ -1,6 +1,5 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
 
-import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
@@ -82,7 +81,7 @@ public class TableRecognitionArea {
             } else {
                 hasCompleteHeaders = true;
                 if (checkHeaders()) {
-                    TableUtils.sortHeadersLeftToRight(headers);
+                    TableUtils.sortClustersLeftToRight(headers);
                     addCluster(token);
                 } else {
                     isComplete = true;
@@ -100,8 +99,8 @@ public class TableRecognitionArea {
         double avrLastBaseLine = 0.0;
         double avrCenter = 0.0;
         for (TableCluster header : headers) {
-            TextLine firstLine = header.getFirstLine();
-            TextLine lastLine = header.getLastLine();
+            TableRow firstLine = header.getFirstRow();
+            TableRow lastLine = header.getLastRow();
             avrFirstBaseLine += firstLine.getBaseLine();
             avrLastBaseLine += lastLine.getBaseLine();
             avrCenter += 0.5 * (firstLine.getBaseLine() + lastLine.getBaseLine());
@@ -114,8 +113,8 @@ public class TableRecognitionArea {
         double maxBottomDeviation = 0.0;
         double maxCenterDeviation = 0.0;
         for (TableCluster header : headers) {
-            TextLine firstLine = header.getFirstLine();
-            TextLine lastLine = header.getLastLine();
+            TableRow firstLine = header.getFirstRow();
+            TableRow lastLine = header.getLastRow();
             double fontSize = firstLine.getFontSize();
             double topDeviation = Math.abs(avrFirstBaseLine - firstLine.getBaseLine()) / fontSize;
             double bottomDeviation = Math.abs(avrLastBaseLine - lastLine.getBaseLine()) / fontSize;
@@ -195,7 +194,7 @@ public class TableRecognitionArea {
         if (baseLineDiff < TableUtils.ONE_LINE_TOLERANCE_FACTOR * token.getFontSize() &&
                 ChunksMergeUtils.toLineMergeProbability(header.getLastToken(), token) > TableUtils.MERGE_PROBABILITY_THRESHOLD) {
             // token can be appended to the last line of the header
-            header.mergeWithoutRowNumbers(token);
+            header.add(token);
             if (token.getBaseLine() < baseLine) {
                 baseLine = token.getBaseLine();
             }
@@ -210,7 +209,7 @@ public class TableRecognitionArea {
                 adaptiveNextLineToleranceFactor = lineSpacingFactor * TableUtils.NEXT_LINE_TOLERANCE_FACTOR;
             }
 
-            header.mergeWithoutRowNumbers(token, true);
+            header.add(token, true);
             if (token.getBaseLine() < baseLine) {
                 baseLine = token.getBaseLine();
             }
@@ -244,19 +243,16 @@ public class TableRecognitionArea {
         }
 
         TableCluster currentCluster = new TableCluster(token);
-        TableCluster firstHeader = null;
-        TableCluster lastHeader = null;
-        BoundingBox tokenBBox = token.getBoundingBox();
+        TableCluster closestHeader = null;
         for (TableCluster header : headers) {
-            if (TableUtils.stronglyOverlapping(header, token)) {
-                if (firstHeader == null) {
-                    firstHeader = header;
+            if (TableUtils.areStrongContaining(header, token)) {
+                if (closestHeader == null) {
+                    closestHeader = header;
+                    break;
                 }
-                lastHeader = header;
             }
         }
-        currentCluster.setHeader(firstHeader);
-        currentCluster.setLastHeader(lastHeader);
+        currentCluster.setHeader(closestHeader);
         clusters.add(currentCluster);
         boundingBox.union(currentCluster.getBoundingBox());
         if (currentCluster.getBaseLine() < baseLine) {
