@@ -12,6 +12,11 @@ public class SemanticTypeMapper {
     static {
         map.put(SemanticType.PARAGRAPH.getValue(), SemanticType.PARAGRAPH);
         map.put(SemanticType.SPAN.getValue(), SemanticType.SPAN);
+        map.put(SemanticType.FORM.getValue(), SemanticType.FORM);
+        map.put(SemanticType.LINK.getValue(), SemanticType.LINK);
+        map.put(SemanticType.ANNOT.getValue(), SemanticType.ANNOT);
+        map.put(SemanticType.HEADING.getValue(), SemanticType.HEADING);
+        map.put(SemanticType.NUMBER_HEADING.getValue(), SemanticType.NUMBER_HEADING);
     }
 
     public static boolean containsType(String type) {
