@@ -19,7 +19,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 
 	private static final double MERGE_PROBABILITY_THRESHOLD = 0.75;
 
-	private AccumulatedNodeMapper accumulatedNodeMapper;
+	private final AccumulatedNodeMapper accumulatedNodeMapper;
 
 	public AccumulatedNodeConsumer() {
 		accumulatedNodeMapper = new AccumulatedNodeMapper();
@@ -52,6 +52,9 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		double spanProbability = 1;
 		SemanticSpan span  = null;
 		for (INode child : node.getChildren()) {
+			if (SemanticType.isIgnoredStandardType(child.getInitialSemanticType())) {
+				continue;
+			}
 			INode accumulatedChild = accumulatedNodeMapper.get(child);
 			if (span == null) {
 				span = buildSpanFromNode(accumulatedChild);
@@ -139,6 +142,9 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		double paragraphProbability = 1;
 		SemanticParagraph paragraph = null;
 		for (INode child : node.getChildren()) {
+			if (SemanticType.isIgnoredStandardType(child.getInitialSemanticType())) {
+				continue;
+			}
 			INode accumulatedChild = accumulatedNodeMapper.get(child);
 			if (paragraph == null) {
 				paragraph = buildParagraphFromNode(accumulatedChild);

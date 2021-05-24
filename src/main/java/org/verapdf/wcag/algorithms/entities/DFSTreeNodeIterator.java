@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 class DFSTreeNodeIterator implements Iterator<INode> {
 
-	private INode root;
+	private final INode root;
 	private int childIndex;
 	private DFSTreeNodeIterator innerCurrentIterator;
 
