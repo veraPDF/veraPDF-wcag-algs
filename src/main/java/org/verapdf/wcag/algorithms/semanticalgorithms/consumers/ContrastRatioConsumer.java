@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ContrastRatioConsumer implements Consumer<INode> {
@@ -69,9 +70,13 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 					int y = (int) (Math.round(bBox.getTopY()) * dpiScaling);
 					int width = getIntegerBBoxValueForProcessing(bBox.getWidth(), dpiScaling);
 					int height = getIntegerBBoxValueForProcessing(bBox.getHeight(), dpiScaling);
-					BufferedImage targetBim = renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
-					double contrastRatio = getContrastRatio(targetBim);
-					textChunk.setContrastRatio(contrastRatio);
+					try {
+						BufferedImage targetBim = renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
+						double contrastRatio = getContrastRatio(targetBim);
+						textChunk.setContrastRatio(contrastRatio);
+					} catch (Exception e) {
+						logger.log(Level.WARNING, e.getMessage());
+					}
 				}
 
 			}
