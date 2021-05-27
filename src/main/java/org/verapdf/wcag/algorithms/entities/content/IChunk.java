@@ -12,6 +12,8 @@ public interface IChunk {
 
     double getTopY();
 
+    double getCenterX();
+
     void setPageNumber(int pageNumber);
 
     Integer getPageNumber();

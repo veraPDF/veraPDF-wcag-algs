@@ -36,6 +36,11 @@ public abstract class InfoChunk implements IChunk {
     }
 
     @Override
+    public double getCenterX() {
+        return 0.5 * (boundingBox.getLeftX() + boundingBox.getRightX());
+    }
+
+    @Override
     public void setLastPageNumber(int lastPageNumber) {
         boundingBox.setLastPageNumber(lastPageNumber);
     }

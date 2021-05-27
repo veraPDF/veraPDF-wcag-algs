@@ -1,13 +1,18 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
-import org.verapdf.wcag.algorithms.entities.content.InfoChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableCluster;
+import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableClusterGap;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class TableUtils {
+    private static final double TOLERANCE_FACTOR = 0.33;
+
+    public static final double EPSILON = 1.e-18;
+
     public static final double MERGE_PROBABILITY_THRESHOLD = 0.75;
     public static final double HEADERS_PROBABILITY_THRESHOLD = 0.75;
 
@@ -17,44 +22,89 @@ public class TableUtils {
 
     private TableUtils() {}
 
-    public static boolean stronglyOverlapping(InfoChunk chunk1, InfoChunk chunk2) {
-        double center1 = 0.5 * (chunk1.getLeftX() + chunk1.getRightX());
-        double center2 = 0.5 * (chunk2.getLeftX() + chunk2.getRightX());
+    public static boolean areStrongContaining(TextInfoChunk chunk1, TextInfoChunk chunk2) {
+        return isAnyContaining(chunk1, chunk2) && areStrongCenterOverlapping(chunk1, chunk2);
+    }
 
-        if (center1 < chunk2.getRightX() && center1 > chunk2.getLeftX()) {
+    public static boolean isAnyContaining(TextInfoChunk chunk1, TextInfoChunk chunk2) {
+        return (isContaining(chunk1, chunk2) || isContaining(chunk2, chunk1));
+    }
+
+    public static boolean isContaining(TextInfoChunk first, TextInfoChunk second) {
+        double tol = TOLERANCE_FACTOR * Math.min(first.getFontSize(), second.getFontSize());
+        return (second.getLeftX() + tol > first.getLeftX() && second.getRightX() < first.getRightX() + tol);
+
+    }
+
+    public static boolean areStrongCenterOverlapping(TextInfoChunk chunk1, TextInfoChunk chunk2) {
+        double tol = TOLERANCE_FACTOR * Math.min(chunk1.getFontSize(), chunk2.getFontSize());
+        double center1 = chunk1.getCenterX();
+        double center2 = chunk2.getCenterX();
+
+        if (center1 + tol > chunk2.getRightX() || center1 < chunk2.getLeftX() + tol) {
+            return false;
+        }
+        if (center2 + tol > chunk1.getRightX() || center2 < chunk1.getLeftX() + tol) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean areCenterOverlapping(TextInfoChunk chunk1, TextInfoChunk chunk2) {
+        double tol = TOLERANCE_FACTOR * Math.min(chunk1.getFontSize(), chunk2.getFontSize());
+        double center1 = chunk1.getCenterX();
+        double center2 = chunk2.getCenterX();
+
+        if (center1 + tol < chunk2.getRightX() && center1 > chunk2.getLeftX() + tol) {
             return true;
         }
-        if (center2 < chunk1.getRightX() && center2 > chunk1.getRightX()) {
+        if (center2 + tol < chunk1.getRightX() && center2 > chunk1.getLeftX() + tol) {
             return true;
         }
         return false;
     }
 
-    public static void sortHeadersLeftToRight(List<TableCluster> headers) {
-        Collections.sort(headers, (Comparator.<TableCluster>
-                comparingDouble(header1 -> header1.getLeftX())
-                .thenComparingDouble(header2 -> header2.getLeftX())));
+    public static boolean areOverlapping(TextInfoChunk chunk1, TextInfoChunk chunk2) {
+        double tol = TOLERANCE_FACTOR * Math.min(chunk1.getFontSize(), chunk2.getFontSize());
+        return (chunk1.getLeftX() + tol < chunk2.getRightX() && chunk2.getLeftX() + tol < chunk1.getRightX());
     }
 
-    static public void sortClusters(List<TableCluster> clusters) {
-        Collections.sort(clusters, new Comparator<TableCluster>() {
-            @Override
-            public int compare(TableCluster c1, TableCluster c2) {
-                double fontSize = Math.max(c1.getFirstLine().getFontSize(),
-                        c2.getFirstLine().getFontSize());
-                double baseLineTolerance = fontSize * TableUtils.ONE_LINE_TOLERANCE_FACTOR;
+    public static void sortClustersLeftToRight(List<TableCluster> clusters) {
+        Collections.sort(clusters, Comparator.comparingDouble(TableCluster::getLeftX));
+    }
 
-                if (c1.getBaseLine() > c2.getBaseLine() + baseLineTolerance) {
-                    return -1;
-                }
-                if (c2.getBaseLine() > c1.getBaseLine() + baseLineTolerance) {
-                    return 1;
-                }
-                if (c1.getLeftX() < c2.getLeftX()) {
-                    return -1;
-                }
-                return 1;
+    static public void sortClustersUpToBottom(List<TableCluster> clusters) {
+        Collections.sort(clusters, Comparator.comparingDouble(TableCluster::getBaseLine).reversed());
+    }
+
+    static public boolean isWeakCluster(TableCluster cluster, List<TableCluster> headers) {
+        if (cluster.getHeader() != null) {
+            return false;
+        }
+
+        TableClusterGap gap = cluster.getMinLeftGap();
+        while (gap != null && gap.getLink().getHeader() == null) {
+            gap = gap.getLink().getMinLeftGap();
+        }
+        TableCluster leftHeader = (gap == null) ? null : gap.getLink().getHeader();
+
+        gap = cluster.getMinRightGap();
+        while (gap != null && gap.getLink().getHeader() == null) {
+            gap = gap.getLink().getMinRightGap();
+        }
+        TableCluster rightHeader = (gap == null) ? null : gap.getLink().getHeader();
+
+        if (leftHeader == null) {
+            if (rightHeader == null || rightHeader.getColNumber() > 0) {
+                return true;
             }
-        });
+        } else {
+            if (rightHeader == null || rightHeader.getColNumber() < headers.size() - 1) {
+                return true;
+            } else if (rightHeader.getColNumber() - leftHeader.getColNumber() > 1) {
+                return true;
+            }
+        }
+        return false;
     }
 }
