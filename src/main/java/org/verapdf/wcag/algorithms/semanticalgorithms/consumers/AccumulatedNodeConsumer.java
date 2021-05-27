@@ -1,8 +1,11 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
 import org.verapdf.wcag.algorithms.entities.INode;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 import org.verapdf.wcag.algorithms.entities.SemanticParagraph;
 import org.verapdf.wcag.algorithms.entities.SemanticSpan;
+import org.verapdf.wcag.algorithms.entities.SemanticHeading;
+import org.verapdf.wcag.algorithms.entities.SemanticNumberHeading;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.maps.AccumulatedNodeMapper;
@@ -42,10 +45,14 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		}
 		if (isLeafChild && node.getInitialSemanticType() == SemanticType.SPAN) {
 			acceptSemanticSpan(node);
-			return;
+		} else {
+			acceptSemanticParagraph(node);
 		}
 
-		acceptSemanticParagraph(node);
+		if (!isLeafChild) {
+			acceptChildrenSemanticHeading(node);
+		}
+
 	}
 
 	private void acceptSemanticSpan(INode node) {
@@ -239,4 +246,36 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		paragraph1.getBoundingBox().union(paragraph2.getBoundingBox());
 		return (paragraph2.getCorrectSemanticScore() == null) ? mergeProbability : (Math.min(paragraph2.getCorrectSemanticScore(), mergeProbability));
 	}
+
+	private void acceptChildrenSemanticHeading(INode node) {
+		if (node.getChildren().size() == 1) {
+			return;
+		}
+		acceptSemanticHeading(node.getChildren().get(0), null, node.getChildren().get(1));
+		for (int i = 1; i < node.getChildren().size() - 1; i++) {
+			acceptSemanticHeading(node.getChildren().get(i), node.getChildren().get(i - 1), node.getChildren().get(i + 1));
+		}
+		acceptSemanticHeading(node.getChildren().get(node.getChildren().size() - 1), node.getChildren().get(node.getChildren().size() - 2), null);
+	}
+
+	private void acceptSemanticHeading(INode node, INode previousNode, INode nextNode) {
+		double headingProbability = NodeUtils.headingProbability(accumulatedNodeMapper.get(node), accumulatedNodeMapper.get(previousNode), accumulatedNodeMapper.get(nextNode));
+		if (headingProbability >= MERGE_PROBABILITY_THRESHOLD) {
+			INode accumulatedNode = accumulatedNodeMapper.get(node);
+			if (node.getInitialSemanticType() == SemanticType.NUMBER_HEADING) {
+				if (accumulatedNode instanceof SemanticSpan) {
+					updateNode(node, new SemanticNumberHeading((SemanticSpan)accumulatedNode), headingProbability * node.getCorrectSemanticScore(), SemanticType.NUMBER_HEADING);
+				} else if (accumulatedNode instanceof SemanticParagraph) {
+					updateNode(node, new SemanticNumberHeading((SemanticParagraph)accumulatedNode), headingProbability * node.getCorrectSemanticScore(), SemanticType.NUMBER_HEADING);
+				}
+			} else {
+				if (accumulatedNode instanceof SemanticSpan) {
+					updateNode(node, new SemanticHeading((SemanticSpan)accumulatedNode), headingProbability * node.getCorrectSemanticScore(), SemanticType.HEADING);
+				} else if (accumulatedNode instanceof SemanticParagraph) {
+					updateNode(node, new SemanticHeading((SemanticParagraph)accumulatedNode), headingProbability * node.getCorrectSemanticScore(), SemanticType.HEADING);
+				}
+			}
+		}
+	}
+
 }

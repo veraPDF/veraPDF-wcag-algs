@@ -26,7 +26,7 @@ public enum SemanticType {
 	}
 
 	public static boolean isIgnoredStandardType(SemanticType type) {
-		return type == ANNOT || type == FORM || type == LINK;
+		return type == ANNOT || type == FORM;
 	}
 
 }
