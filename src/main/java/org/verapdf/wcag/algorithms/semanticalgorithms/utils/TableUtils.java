@@ -9,10 +9,11 @@ import java.util.Comparator;
 import java.util.List;
 
 public class TableUtils {
-    private static final double TOLERANCE_FACTOR = 0.33;
+    private static final double WITH_TOLERANCE_FACTOR = 0.33;
 
     public static final double EPSILON = 1.e-18;
 
+    public static final double TABLE_PROBABILITY_THRESHOLD = 0.75;
     public static final double MERGE_PROBABILITY_THRESHOLD = 0.75;
     public static final double HEADERS_PROBABILITY_THRESHOLD = 0.75;
 
@@ -31,13 +32,13 @@ public class TableUtils {
     }
 
     public static boolean isContaining(TextInfoChunk first, TextInfoChunk second) {
-        double tol = TOLERANCE_FACTOR * Math.min(first.getFontSize(), second.getFontSize());
+        double tol = WITH_TOLERANCE_FACTOR * Math.min(first.getFontSize(), second.getFontSize());
         return (second.getLeftX() + tol > first.getLeftX() && second.getRightX() < first.getRightX() + tol);
 
     }
 
     public static boolean areStrongCenterOverlapping(TextInfoChunk chunk1, TextInfoChunk chunk2) {
-        double tol = TOLERANCE_FACTOR * Math.min(chunk1.getFontSize(), chunk2.getFontSize());
+        double tol = WITH_TOLERANCE_FACTOR * Math.min(chunk1.getFontSize(), chunk2.getFontSize());
         double center1 = chunk1.getCenterX();
         double center2 = chunk2.getCenterX();
 
@@ -51,7 +52,7 @@ public class TableUtils {
     }
 
     public static boolean areCenterOverlapping(TextInfoChunk chunk1, TextInfoChunk chunk2) {
-        double tol = TOLERANCE_FACTOR * Math.min(chunk1.getFontSize(), chunk2.getFontSize());
+        double tol = WITH_TOLERANCE_FACTOR * Math.min(chunk1.getFontSize(), chunk2.getFontSize());
         double center1 = chunk1.getCenterX();
         double center2 = chunk2.getCenterX();
 
@@ -65,7 +66,7 @@ public class TableUtils {
     }
 
     public static boolean areOverlapping(TextInfoChunk chunk1, TextInfoChunk chunk2) {
-        double tol = TOLERANCE_FACTOR * Math.min(chunk1.getFontSize(), chunk2.getFontSize());
+        double tol = WITH_TOLERANCE_FACTOR * Math.min(chunk1.getFontSize(), chunk2.getFontSize());
         return (chunk1.getLeftX() + tol < chunk2.getRightX() && chunk2.getLeftX() + tol < chunk1.getRightX());
     }
 
@@ -106,5 +107,9 @@ public class TableUtils {
             }
         }
         return false;
+    }
+
+    static public double getRowGapFactor(TextInfoChunk tokenRow, TextInfoChunk nextTokenRow) {
+        return (tokenRow.getBaseLine() - nextTokenRow.getBaseLine()) / nextTokenRow.getFontSize();
     }
 }

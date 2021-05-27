@@ -4,9 +4,10 @@ import org.verapdf.wcag.algorithms.entities.*;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognitionArea;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognizer;
-import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableToken;
+import org.verapdf.wcag.algorithms.entities.tables.TableToken;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.*;
@@ -21,13 +22,15 @@ public class ClusterTableConsumer implements Consumer<INode> {
                                                         SemanticType.TABLE_HEADER, SemanticType.TABLE_CELL));
 
     private TableRecognitionArea recognitionArea;
+    private List<Table> tables;
 
-    private List<INode> tables;
-    private INode currentHeaders;
-    private INode currentTableContent;
+    private List<INode> tableNodes;
+    private INode currentHeaderNodes;
+    private INode currentTableBodyNodes;
 
     public  ClusterTableConsumer() {
         tables = new ArrayList<>();
+        tableNodes = new ArrayList<>();
 
         init();
     }
@@ -35,15 +38,19 @@ public class ClusterTableConsumer implements Consumer<INode> {
     private void init() {
         recognitionArea = new TableRecognitionArea();
 
-        currentHeaders = new SemanticGroupingNode();
-        currentHeaders.setSemanticType(SemanticType.TABLE_ROW);
+        currentHeaderNodes = new SemanticGroupingNode();
+        currentHeaderNodes.setSemanticType(SemanticType.TABLE_ROW);
 
-        currentTableContent = new SemanticGroupingNode();
-        currentTableContent.setSemanticType(SemanticType.TABLE_ROW);
+        currentTableBodyNodes = new SemanticGroupingNode();
+        currentTableBodyNodes.setSemanticType(SemanticType.TABLE_ROW);
     }
 
-    public List<INode> getTables() {
+    public List<Table> getTables() {
         return tables;
+    }
+
+    public List<INode> getTableNodes() {
+        return tableNodes;
     }
 
     @Override
@@ -69,9 +76,9 @@ public class ClusterTableConsumer implements Consumer<INode> {
                         init();
                         accept(node);
                     } else if (recognitionArea.hasCompleteHeaders()) {
-                        currentTableContent.addChild(node);
+                        currentTableBodyNodes.addChild(node);
                     } else {
-                        currentHeaders.addChild(node);
+                        currentHeaderNodes.addChild(node);
                     }
                 }
             }
@@ -90,13 +97,18 @@ public class ClusterTableConsumer implements Consumer<INode> {
     private void recognize() {
         TableRecognizer recognizer = new TableRecognizer(recognitionArea);
         recognizer.recognize();
+        Table recognizedTable = recognizer.getTable();
 
-        // if recognition was successful
-        INode table = new SemanticGroupingNode();
-        table.setSemanticType(SemanticType.TABLE);
-        table.addChild(currentHeaders);
-        table.addChild(currentTableContent);
-        tables.add(table);
+        if (recognizedTable != null) {
+
+            tables.add(recognizedTable);
+
+            INode table = new SemanticGroupingNode();
+            table.setSemanticType(SemanticType.TABLE);
+            table.addChild(currentHeaderNodes);
+            table.addChild(currentTableBodyNodes);
+            tableNodes.add(table);
+        }
     }
 
     /**
@@ -108,7 +120,7 @@ public class ClusterTableConsumer implements Consumer<INode> {
     private void updateTreeWithRecognizedTables(INode root) {
         initTreeNodeInfo(root, false);
 
-        for (INode table : tables) {
+        for (INode table : tableNodes) {
             INode tableRoot = null;
             for (INode node : new SemanticTree(table)) {
                 if (!node.isLeaf() || node.isRoot()) {
