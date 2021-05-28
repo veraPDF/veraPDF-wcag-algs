@@ -10,10 +10,10 @@ import java.util.Objects;
 
 public class SemanticParagraph extends SemanticNode {
 
-	private boolean enclosedTop;
-	private boolean enclosedBottom;
-	private int indentation; // 0 - left, 1 - right, 2 - center
-	private List<TextLine> lines;
+	protected boolean enclosedTop;
+	protected boolean enclosedBottom;
+	protected int indentation; // 0 - left, 1 - right, 2 - center
+	protected List<TextLine> lines;
 
 	public SemanticParagraph(SemanticParagraph paragraph) {
 		super(paragraph.getBoundingBox(), paragraph.getInitialSemanticType(), paragraph.getSemanticType());

@@ -24,6 +24,9 @@ public class SemanticTypeMapper {
     }
 
     public static SemanticType getSemanticType(String type) {
+        if (type.matches("^H[1-9][0-9]*$")) {
+            return SemanticType.NUMBER_HEADING;
+        }
         return map.get(type);
     }
 
