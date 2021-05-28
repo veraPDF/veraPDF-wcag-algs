@@ -38,37 +38,13 @@ public class TextLine extends TextInfoChunk {
     }
 
     public void add(TextChunk chunk) {
-        if (textChunks.isEmpty()) {
-            fontSize = chunk.getFontSize();
-            baseLine = chunk.getBaseLine();
-        } else {
-            if (chunk.getBaseLine() < baseLine) {
-                baseLine = chunk.getBaseLine();
-            }
-            if (fontSize < chunk.getFontSize()) {
-                fontSize = chunk.getFontSize();
-            }
-        }
-
         textChunks.add(chunk);
-        getBoundingBox().union(chunk.getBoundingBox());
+        super.add(chunk);
     }
 
     public void add(TextLine line) {
-        if (textChunks.isEmpty()) {
-            fontSize = line.getFontSize();
-            baseLine = line.getBaseLine();
-        } else {
-            if (line.getBaseLine() < baseLine) {
-                baseLine = line.getBaseLine();
-            }
-            if (fontSize < line.getFontSize()) {
-                fontSize = line.getFontSize();
-            }
-        }
-
         textChunks.addAll(line.getTextChunks());
-        getBoundingBox().union(line.getBoundingBox());
+        super.add(line);
     }
 
     public String getValue() {

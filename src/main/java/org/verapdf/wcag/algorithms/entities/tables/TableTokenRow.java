@@ -1,22 +1,23 @@
-package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
+package org.verapdf.wcag.algorithms.entities.tables;
 
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
+import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableClusterGap;
 
 import java.util.Objects;
 
-public class TableRow extends TextLine {
+public class TableTokenRow extends TextLine {
     private Integer rowNumber = null;
     private TableClusterGap leftGap = null;
     private TableClusterGap rightGap = null;
 
-    public TableRow() {
+    public TableTokenRow() {
     }
 
-    public TableRow(TableToken token) {
+    public TableTokenRow(TableToken token) {
         super(token);
     }
 
-    public TableRow(TableRow row) {
+    public TableTokenRow(TableTokenRow row) {
         super(row);
         rowNumber = row.getRowNumber();
         leftGap = row.getLeftGap();

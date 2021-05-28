@@ -1,4 +1,4 @@
-package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
+package org.verapdf.wcag.algorithms.entities.tables;
 
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;

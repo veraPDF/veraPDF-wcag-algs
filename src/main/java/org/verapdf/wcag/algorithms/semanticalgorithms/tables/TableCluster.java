@@ -1,19 +1,21 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
 
- import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
+import org.verapdf.wcag.algorithms.entities.tables.TableToken;
+import org.verapdf.wcag.algorithms.entities.tables.TableTokenRow;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 
 import java.util.*;
 
 public class TableCluster extends TextInfoChunk {
 
-    private Integer id = null;
+    private Long id = null;
 
     private TableCluster header = null;
     private Integer colNumber = null;
 
-    private List<TableRow> rows = new ArrayList<>();
+    private List<TableTokenRow> rows = new ArrayList<>();
 
     private TableClusterGap minLeftGap = null;
     private TableClusterGap minRightGap = null;
@@ -35,19 +37,19 @@ public class TableCluster extends TextInfoChunk {
     }
 
     public TableCluster(TableToken token) {
-        this(new TableRow(token));
+        this(new TableTokenRow(token));
     }
 
-    public TableCluster(TableRow row) {
+    public TableCluster(TableTokenRow row) {
         super(row.getBoundingBox(), row.getFontSize(), row.getBaseLine());
         rows.add(row);
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -89,46 +91,34 @@ public class TableCluster extends TextInfoChunk {
 
     public void add(TableToken token, boolean newLine) {
         if (newLine || rows.isEmpty()) {
-            rows.add(new TableRow(token));
+            rows.add(new TableTokenRow(token));
         } else {
             rows.get(rows.size() - 1).add(token);
         }
-        if (fontSize < token.getFontSize()) {
-            fontSize = token.getFontSize();
-        }
-        if (baseLine < token.getBaseLine()) {
-            baseLine = token.getBaseLine();
-        }
-        getBoundingBox().union(token.getBoundingBox());
+        super.add(token);
     }
 
-    public void add(TableRow row) {
+    public void add(TableTokenRow row) {
         add(row, false);
     }
 
-    public void add(TableRow row, boolean newLine) {
+    public void add(TableTokenRow row, boolean newLine) {
         if (newLine || rows.isEmpty()) {
             rows.add(row);
         } else {
-            TableRow lastLine = rows.get(rows.size() - 1);
+            TableTokenRow lastLine = rows.get(rows.size() - 1);
             lastLine.add(row);
         }
-        if (fontSize < row.getFontSize()) {
-            fontSize = row.getFontSize();
-        }
-        if (row.getBaseLine() < baseLine) {
-            baseLine = row.getBaseLine();
-        }
-        getBoundingBox().union(row.getBoundingBox());
+        super.add(row);
     }
 
     public void mergeWithoutRowNumbers(TableCluster other) {
-        List<TableRow> result = new ArrayList<>();
+        List<TableTokenRow> result = new ArrayList<>();
 
         int i = 0, j = 0;
         while (i < rows.size() && j < other.rows.size()) {
-            TableRow line = rows.get(i);
-            TableRow otherLine = other.rows.get(j);
+            TableTokenRow line = rows.get(i);
+            TableTokenRow otherLine = other.rows.get(j);
             double baseLine = line.getBaseLine();
             double otherBaseLine = otherLine.getBaseLine();
             double tolerance = TableUtils.ONE_LINE_TOLERANCE_FACTOR * Math.min(line.getFontSize(), otherLine.getFontSize());
@@ -140,7 +130,7 @@ public class TableCluster extends TextInfoChunk {
                 result.add(otherLine);
                 ++j;
             } else {
-                TableRow unitedLine = new TableRow(line);
+                TableTokenRow unitedLine = new TableTokenRow(line);
                 unitedLine.add(otherLine);
                 result.add(unitedLine);
                 ++i;
@@ -153,28 +143,21 @@ public class TableCluster extends TextInfoChunk {
         for (; j < other.rows.size(); ++j) {
             result.add(other.rows.get(j));
         }
-
-        if (fontSize < other.getFontSize()) {
-            fontSize = other.getFontSize();
-        }
-        if (other.getBaseLine() < baseLine) {
-            baseLine = other.getBaseLine();
-        }
-        getBoundingBox().union(other.getBoundingBox());
+        super.add(other);
     }
 
-    public List<TableRow> getRows() {
+    public List<TableTokenRow> getRows() {
         return rows;
     }
 
-    public TableRow getFirstRow() {
+    public TableTokenRow getFirstRow() {
         if (rows.isEmpty()) {
             return null;
         }
         return rows.get(0);
     }
 
-    public TableRow getLastRow() {
+    public TableTokenRow getLastRow() {
         if (rows.isEmpty()) {
             return null;
         }
@@ -215,7 +198,7 @@ public class TableCluster extends TextInfoChunk {
     public void updateMinGap(Side side) {
         Map<TableCluster, Double> gapsMap = new HashMap<>();
         Map<TableCluster, Integer> countersMap = new HashMap<>();
-        for (TableRow row : rows) {
+        for (TableTokenRow row : rows) {
             TableClusterGap rowGap = (side == Side.LEFT) ? row.getLeftGap() : row.getRightGap();
             if (rowGap != null) {
                 if (gapsMap.containsKey(rowGap.getLink())) {
@@ -256,7 +239,7 @@ public class TableCluster extends TextInfoChunk {
             header = other.getHeader();
         }
 
-        for (TableRow row : rows) {
+        for (TableTokenRow row : rows) {
             if (row.getLeftGap() != null && row.getLeftGap().getLink() == other) {
                 row.setLeftGap(null);
             }
@@ -268,7 +251,7 @@ public class TableCluster extends TextInfoChunk {
         Set<TableCluster> leftSet = new HashSet<>();
         Set<TableCluster> rightSet = new HashSet<>();
 
-        for (TableRow row : other.getRows()) {
+        for (TableTokenRow row : other.getRows()) {
             if (row.getLeftGap() != null) {
                 if (row.getLeftGap().getLink() == this) {
                     row.setLeftGap(null);
@@ -288,7 +271,7 @@ public class TableCluster extends TextInfoChunk {
 
         // update right gaps for the clusters to the left
         for (TableCluster leftCluster : leftSet) {
-            for (TableRow row : leftCluster.getRows()) {
+            for (TableTokenRow row : leftCluster.getRows()) {
                 if (row.getRightGap() != null && row.getRightGap().getLink() == other) {
                     row.getRightGap().setLink(this);
                 }
@@ -303,7 +286,7 @@ public class TableCluster extends TextInfoChunk {
 
         // update left gaps for the clusters to the right
         for (TableCluster rightCluster : rightSet) {
-            for (TableRow row : rightCluster.getRows()) {
+            for (TableTokenRow row : rightCluster.getRows()) {
                 if (row.getLeftGap() != null && row.getLeftGap().getLink() == other) {
                     row.getLeftGap().setLink(this);
                 }
@@ -325,14 +308,30 @@ public class TableCluster extends TextInfoChunk {
                 updateMinGap(Side.RIGHT);
             }
         }
+        super.add(other);
+    }
 
-        if (fontSize < other.getFontSize()) {
-            fontSize = other.getFontSize();
+    public void sortAndMergeRows() {
+        if (rows.isEmpty()) {
+            return;
         }
-        if (other.getBaseLine() < baseLine) {
-            baseLine = other.getBaseLine();
+
+        Collections.sort(rows, Comparator.comparingInt(TableTokenRow::getRowNumber).
+                thenComparingDouble(TableTokenRow::getLeftX));
+
+        List<TableTokenRow> result = new ArrayList<>();
+        TableTokenRow currentRow = rows.get(0);
+        result.add(currentRow);
+        for (int i = 1; i < rows.size(); ++i) {
+            TableTokenRow row = rows.get(i);
+            if (row.getRowNumber() == currentRow.getRowNumber()) {
+                currentRow.add(row);
+            } else {
+                currentRow = row;
+                result.add(currentRow);
+            }
         }
-        getBoundingBox().union(other.getBoundingBox());
+        rows = result;
     }
 
     @Override
@@ -349,10 +348,6 @@ public class TableCluster extends TextInfoChunk {
 
     @Override
     public int hashCode() {
-        if (id == null) {
-            return super.hashCode();
-        } else {
-            return id;
-        }
+        return Objects.hashCode(id);
     }
 }

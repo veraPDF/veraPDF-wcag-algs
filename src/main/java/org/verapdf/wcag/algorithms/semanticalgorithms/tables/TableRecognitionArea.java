@@ -1,6 +1,8 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
 
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.entities.tables.TableToken;
+import org.verapdf.wcag.algorithms.entities.tables.TableTokenRow;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 
@@ -23,7 +25,7 @@ public class TableRecognitionArea {
         hasCompleteHeaders = isComplete = isValid = false;
         headers = new ArrayList<>();
         clusters = new ArrayList<>();
-        baseLine = 0d;
+        baseLine = Double.MAX_VALUE;
         boundingBox = new BoundingBox();
     }
 
@@ -81,7 +83,6 @@ public class TableRecognitionArea {
             } else {
                 hasCompleteHeaders = true;
                 if (checkHeaders()) {
-                    TableUtils.sortClustersLeftToRight(headers);
                     addCluster(token);
                 } else {
                     isComplete = true;
@@ -99,8 +100,8 @@ public class TableRecognitionArea {
         double avrLastBaseLine = 0.0;
         double avrCenter = 0.0;
         for (TableCluster header : headers) {
-            TableRow firstLine = header.getFirstRow();
-            TableRow lastLine = header.getLastRow();
+            TableTokenRow firstLine = header.getFirstRow();
+            TableTokenRow lastLine = header.getLastRow();
             avrFirstBaseLine += firstLine.getBaseLine();
             avrLastBaseLine += lastLine.getBaseLine();
             avrCenter += 0.5 * (firstLine.getBaseLine() + lastLine.getBaseLine());
@@ -113,8 +114,8 @@ public class TableRecognitionArea {
         double maxBottomDeviation = 0.0;
         double maxCenterDeviation = 0.0;
         for (TableCluster header : headers) {
-            TableRow firstLine = header.getFirstRow();
-            TableRow lastLine = header.getLastRow();
+            TableTokenRow firstLine = header.getFirstRow();
+            TableTokenRow lastLine = header.getLastRow();
             double fontSize = firstLine.getFontSize();
             double topDeviation = Math.abs(avrFirstBaseLine - firstLine.getBaseLine()) / fontSize;
             double bottomDeviation = Math.abs(avrLastBaseLine - lastLine.getBaseLine()) / fontSize;
@@ -242,21 +243,11 @@ public class TableRecognitionArea {
             return;
         }
 
-        TableCluster currentCluster = new TableCluster(token);
-        TableCluster closestHeader = null;
-        for (TableCluster header : headers) {
-            if (TableUtils.areStrongContaining(header, token)) {
-                if (closestHeader == null) {
-                    closestHeader = header;
-                    break;
-                }
-            }
-        }
-        currentCluster.setHeader(closestHeader);
-        clusters.add(currentCluster);
-        boundingBox.union(currentCluster.getBoundingBox());
-        if (currentCluster.getBaseLine() < baseLine) {
-            baseLine = currentCluster.getBaseLine();
+        TableCluster cluster = new TableCluster(token);
+        clusters.add(cluster);
+        boundingBox.union(cluster.getBoundingBox());
+        if (cluster.getBaseLine() < baseLine) {
+            baseLine = cluster.getBaseLine();
         }
         isValid = true;
     }

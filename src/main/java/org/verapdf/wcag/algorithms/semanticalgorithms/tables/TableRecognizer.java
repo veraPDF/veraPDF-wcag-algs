@@ -1,17 +1,21 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
 
+import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.tables.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 
 import java.util.*;
 
 public class TableRecognizer {
 
+    private Long clusterCounter = 0l;
+
     private List<TableCluster> headers;
     private List<TableCluster> clusters;
     private Map<TableCluster, TableCluster> columns;
-    private Integer numRows;
+    private Integer numRows = null;
 
-    private int clusterCounter = 0;
+    private Table table = null;
 
     public TableRecognizer(TableRecognitionArea recognitionArea) {
         headers = recognitionArea.getHeaders();
@@ -24,6 +28,7 @@ public class TableRecognizer {
         calculateInitialColumns();
         mergeWeakClusters();
         mergeClustersByMinGaps();
+        postprocess();
     }
 
     private void mergeClustersByMinGaps() {
@@ -159,7 +164,7 @@ public class TableRecognizer {
         }
         List<TableCluster> cleanClusters = new ArrayList<>();
         for (TableCluster cluster : clusters) {
-            for (TableRow row : cluster.getRows()) {
+            for (TableTokenRow row : cluster.getRows()) {
                 TableCluster cleanCluster = new TableCluster(row);
                 cleanCluster.setHeader(cluster.getHeader());
                 cleanCluster.setId(generateClusterId());
@@ -193,16 +198,10 @@ public class TableRecognizer {
     }
 
     private void setupColNumbers() {
+        TableUtils.sortClustersLeftToRight(headers);
         for (int i = 0; i < headers.size(); ++i) {
             TableCluster header = headers.get(i);
             header.setColNumber(i);
-        }
-
-        for (TableCluster cluster : clusters) {
-            TableCluster header = cluster.getHeader();
-            if (header != null) {
-                cluster.setColNumber(header.getColNumber());
-            }
         }
     }
 
@@ -280,9 +279,70 @@ public class TableRecognizer {
         return actualClusters;
     }
 
-    private int generateClusterId() {
-        int id = clusterCounter;
-        clusterCounter++;
+    public Table getTable() {
+        return table;
+    }
+
+    public void postprocess() {
+        if (headers.size() < clusters.size()) {
+            return;
+        }
+        for (TableCluster cluster : clusters) {
+            TableCluster header = cluster.getHeader();
+            if (header == null || header.getColNumber() == null) {
+                return;
+            }
+        }
+        table = constructTable();
+    }
+
+    private void updateColumns() {
+        for (TableCluster cluster : clusters) {
+            cluster.sortAndMergeRows();
+            cluster.setColNumber(cluster.getHeader().getColNumber());
+        }
+    }
+
+    private Table constructTable() {
+        updateColumns();
+        Table table = new Table(headers);
+
+        List<Integer> rowIds = new ArrayList<>(Collections.nCopies(headers.size(), 0));
+        for (TableCluster cluster : clusters) {
+            rowIds.add(cluster.getFirstRow().getRowNumber());
+        }
+        for (int i = 1; i < numRows; ++i) {
+            TableRow tableRow = new TableRow(SemanticType.TABLE_BODY);
+            for (Map.Entry<TableCluster, TableCluster> entry : columns.entrySet()) {
+                TableCluster column = entry.getValue();
+                if (column == null || rowIds.get(column.getColNumber()) >= column.getRows().size()) {
+                    tableRow.add(new TableCell(SemanticType.TABLE_CELL));
+                    continue;
+                }
+
+                int rowId = rowIds.get(column.getColNumber());
+                Integer rowNumber = column.getRows().get(rowId).getRowNumber();
+                if (rowNumber == null || rowNumber <= i) {
+                    if (rowNumber == i) {
+                        tableRow.add(new TableCell(column.getRows().get(rowId), SemanticType.TABLE_CELL));
+                    }
+                    rowIds.set(column.getColNumber(), rowId + 1);
+                } else {
+                    tableRow.add(new TableCell(SemanticType.TABLE_CELL));
+                }
+            }
+            table.add(tableRow);
+        }
+        table.updateTableRows();
+
+        if (table.getValidationScore() < TableUtils.TABLE_PROBABILITY_THRESHOLD) {
+            return null;
+        }
+        return table;
+    }
+
+    private Long generateClusterId() {
+        Long id = clusterCounter++;
         return id;
     }
 }

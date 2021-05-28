@@ -85,30 +85,18 @@ public class TextChunk extends TextInfoChunk {
         this.contrastRatio = contrastRatio;
     }
     
-    public void append(List<TextChunk> otherChunks) {
+    public void addAll(List<TextChunk> otherChunks) {
         StringBuilder text = new StringBuilder(value);
         for (TextChunk chunk : otherChunks) {
             text.append(chunk.getValue());
-            getBoundingBox().union(chunk.getBoundingBox());
-            if (fontSize < chunk.getFontSize()) {
-                fontSize = chunk.getFontSize();
-            }
-            if (chunk.getBaseLine() < baseLine) {
-                baseLine = chunk.getBaseLine();
-            }
+            super.add(chunk);
         }
         value = text.toString();
     }
 
-    public void append(TextChunk chunk) {
+    public void add(TextChunk chunk) {
         value += chunk.getValue();
-        if (fontSize < chunk.getFontSize()) {
-            fontSize = chunk.getFontSize();
-        }
-        if (chunk.getBaseLine() < baseLine) {
-            baseLine = chunk.getBaseLine();
-        }
-        unionBoundingBox(chunk.getBoundingBox());
+        super.add(chunk);
     }
 
     @Override

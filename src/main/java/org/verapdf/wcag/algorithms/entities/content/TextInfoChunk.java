@@ -4,7 +4,7 @@ import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 public abstract class TextInfoChunk extends InfoChunk {
     protected double fontSize = 0d;
-    protected double baseLine = 0d;
+    protected double baseLine = Double.MAX_VALUE;
 
     public TextInfoChunk() {
     }
@@ -33,5 +33,15 @@ public abstract class TextInfoChunk extends InfoChunk {
 
     public double getBaseLine() {
         return baseLine;
+    }
+
+    protected void add(TextInfoChunk chunk) {
+        if (fontSize < chunk.getFontSize()) {
+            fontSize = chunk.getFontSize();
+        }
+        if (chunk.getBaseLine() < baseLine) {
+            baseLine = chunk.getBaseLine();
+        }
+        unionBoundingBox(chunk.getBoundingBox());
     }
 }
