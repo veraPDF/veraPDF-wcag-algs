@@ -12,6 +12,7 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ClusterTableConsumer implements Consumer<INode> {
 
@@ -119,7 +120,7 @@ public class ClusterTableConsumer implements Consumer<INode> {
     private void updateTreeWithRecognizedTables(INode root) {
         initTreeNodeInfo(root);
         for (Table table : tables) {
-            INode tableRoot = updateTreeWithRecognizedTable(table);
+            INode tableRoot = updateTreeWithRecognizedTable(table, root);
 
             if (tableRoot != null) {
                 tableRoot.setSemanticType(SemanticType.TABLE);
@@ -128,10 +129,10 @@ public class ClusterTableConsumer implements Consumer<INode> {
         }
     }
 
-    private INode updateTreeWithRecognizedTable(Table table) {
-        Map<SemanticType, List<INode>> rowNodes = new HashMap<>();
-        rowNodes.put(SemanticType.TABLE_HEADERS, new ArrayList<>());
-        rowNodes.put(SemanticType.TABLE_BODY, new ArrayList<>());
+    private INode updateTreeWithRecognizedTable(Table table, INode root) {
+        Map<SemanticType, Set<INode>> rowNodes = new HashMap<>();
+        rowNodes.put(SemanticType.TABLE_HEADERS, new HashSet<>());
+        rowNodes.put(SemanticType.TABLE_BODY, new HashSet<>());
         for (TableRow row : table.getRows()) {
             INode rowNode = updateTreeWithRecognizedTableRow(row, table.getId());
 
@@ -140,16 +141,17 @@ public class ClusterTableConsumer implements Consumer<INode> {
                 rowNode.setCorrectSemanticScore(1.0);
 
                 SemanticType rowType = row.getSemanticType();
-                List<INode> nodes = rowNodes.get(rowType);
+                Set<INode> nodes = rowNodes.get(rowType);
                 if (nodes != null) {
                     nodes.add(rowNode);
                 }
             }
         }
-        List<INode> localRoots = new ArrayList<>();
-        for (Map.Entry<SemanticType, List<INode>> entry : rowNodes.entrySet()) {
+
+        Set<INode> localRoots = new HashSet<>();
+        for (Map.Entry<SemanticType, Set<INode>> entry : rowNodes.entrySet()) {
             SemanticType type = entry.getKey();
-            List<INode> rows = entry.getValue();
+            Set<INode> rows = entry.getValue();
 
             INode localRoot = findLocalRoot(rows);
             if (localRoot != null) {
@@ -163,22 +165,24 @@ public class ClusterTableConsumer implements Consumer<INode> {
         if (localRoots.isEmpty()) {
             return null;
         }
-        if (localRoots.size() == 1 || localRoots.get(0) == localRoots.get(1)) {
-            return localRoots.get(0);
+        if (localRoots.size() == 1) {
+            return localRoots.iterator().next();
         }
-        if (localRoots.get(0).getNodeInfo().depth < localRoots.get(1).getNodeInfo().depth &&
-                isAncestorFor(localRoots.get(0), localRoots.get(1))) {
-            return localRoots.get(0);
-        } else if (localRoots.get(1).getNodeInfo().depth < localRoots.get(0).getNodeInfo().depth &&
-                isAncestorFor(localRoots.get(1), localRoots.get(0))) {
-            return localRoots.get(1);
+
+        List<INode> localRootsList = localRoots.stream().collect(Collectors.toList());
+        if (localRootsList.get(0).getNodeInfo().depth < localRootsList.get(1).getNodeInfo().depth &&
+                isAncestorFor(localRootsList.get(0), localRootsList.get(1))) {
+            return localRootsList.get(0);
+        } else if (localRootsList.get(1).getNodeInfo().depth < localRootsList.get(0).getNodeInfo().depth &&
+                isAncestorFor(localRootsList.get(1), localRootsList.get(0))) {
+            return localRootsList.get(1);
         } else {
             return findLocalRoot(localRoots);
         }
     }
 
     private INode updateTreeWithRecognizedTableRow(TableRow row, Long id) {
-        List<INode> cellNodes = new ArrayList<>();
+        Set<INode> cellNodes = new HashSet<>();
         for (TableCell cell : row.getCells()) {
             INode cellNode = updateTreeWithRecognizedCell(cell);
 
@@ -196,7 +200,7 @@ public class ClusterTableConsumer implements Consumer<INode> {
     }
 
     private INode updateTreeWithRecognizedCell(TableCell cell) {
-        List<INode> tableLeafNodes = new ArrayList<>();
+        Set<INode> tableLeafNodes = new HashSet<>();
         for (TableTokenRow tokenRow : cell.getContent()) {
             for (TextChunk chunk : tokenRow.getTextChunks()) {
                 if (chunk instanceof TableToken) {
@@ -210,17 +214,18 @@ public class ClusterTableConsumer implements Consumer<INode> {
         return findLocalRoot(tableLeafNodes);
     }
 
-    private INode findLocalRoot(List<INode> nodes) {
+    private INode findLocalRoot(Set<INode> nodes) {
+
         INode localRoot = null;
         for (INode node : nodes) {
-            if (!node.isRoot()) {
-                node = node.getParent();
-            }
 
-            if (localRoot == null) {
+            if (node.isRoot()) {
                 localRoot = node;
+                break;
             }
-            node.getNodeInfo().counter++;
+            if (localRoot == null) {
+                localRoot = node.getParent();
+            }
 
             while (!node.isRoot()) {
                 INode parent = node.getParent();
