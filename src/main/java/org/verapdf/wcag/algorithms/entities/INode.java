@@ -13,6 +13,10 @@ public interface INode {
 
 	SemanticType getInitialSemanticType();
 
+	void setRecognizedStructureId(Long id);
+
+	Long getRecognizedStructureId();
+
 	Double getCorrectSemanticScore();
 
 	void setCorrectSemanticScore(Double correctSemanticScore);

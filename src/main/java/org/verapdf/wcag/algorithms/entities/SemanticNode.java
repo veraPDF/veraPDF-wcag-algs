@@ -13,6 +13,7 @@ public abstract class SemanticNode implements INode {
 	private Double correctSemanticScore;
 	private BoundingBox boundingBox;
 	private SemanticType semanticType;
+	private Long recognizedStructureId = null;
 
 	private INode parent = null;
 	private final List<INode> children;
@@ -45,6 +46,16 @@ public abstract class SemanticNode implements INode {
 	@Override
 	public void setCorrectSemanticScore(Double correctSemanticScore) {
 		this.correctSemanticScore = correctSemanticScore;
+	}
+
+	@Override
+	public Long getRecognizedStructureId() {
+		return recognizedStructureId;
+	}
+
+	@Override
+	public void setRecognizedStructureId(Long id) {
+		recognizedStructureId = id;
 	}
 
 	@Override

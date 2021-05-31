@@ -4,10 +4,9 @@ import org.verapdf.wcag.algorithms.entities.*;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
-import org.verapdf.wcag.algorithms.entities.tables.Table;
+import org.verapdf.wcag.algorithms.entities.tables.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognitionArea;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognizer;
-import org.verapdf.wcag.algorithms.entities.tables.TableToken;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.*;
@@ -112,64 +111,174 @@ public class ClusterTableConsumer implements Consumer<INode> {
     }
 
     /**
-     * main algorithm complexity: max{ O(t * h), O(N) },
+     * main algorithm complexity for each table: max{ O(t * h), O(N) },
      * where N - number of nodes, h - tree height, t - number of table cells
-     * node info initialization: O(T * N), where T - number of tables.
+     * node info initialization: O(M), where M - tree size.
      * The worst case is when all table roots are the same node - tree root
      */
     private void updateTreeWithRecognizedTables(INode root) {
-        initTreeNodeInfo(root, false);
+        initTreeNodeInfo(root);
+        for (Table table : tables) {
+            INode tableRoot = updateTreeWithRecognizedTable(table);
 
-        for (INode table : tableNodes) {
-            INode tableRoot = null;
-            for (INode node : new SemanticTree(table)) {
-                if (!node.isLeaf() || node.isRoot()) {
-                    continue;
-                }
-
-                node = node.getParent();
-                node.setSemanticType(SemanticType.TABLE_CELL);
-                node.setCorrectSemanticScore(1.0);
-                node.getNodeInfo().counter = 1;
-                if (tableRoot == null) {
-                    tableRoot = node;
-                }
-
-                while (!node.isRoot()) {
-                    INode parent = node.getParent();
-                    NodeInfo parentInfo = parent.getNodeInfo();
-
-                    parentInfo.counter++;
-                    if (parentInfo.counter > 1) {
-                        if (parentInfo.depth < tableRoot.getNodeInfo().depth) {
-                            tableRoot = parent;
-                        }
-                        break;
-                    }
-                    node = parent;
-                }
-            }
-
-            for (INode header : table.getChildren().get(0).getChildren()) {
-                if (!header.isRoot()) {
-                    header.getParent().setSemanticType(SemanticType.TABLE_HEADER);
-                    header.getParent().setCorrectSemanticScore(1.0);
-                }
-            }
-
-            tableRoot.setSemanticType(SemanticType.TABLE);
-            tableRoot.setCorrectSemanticScore(1.0);
-
-            // clean up counters
-            initTreeNodeInfo(tableRoot, true);
-            while (!tableRoot.isRoot()) {
-                tableRoot = tableRoot.getParent();
-                tableRoot.getNodeInfo().counter = 0;
+            if (tableRoot != null) {
+                tableRoot.setSemanticType(SemanticType.TABLE);
+                tableRoot.setCorrectSemanticScore(1.0);
             }
         }
     }
 
-    private void initTreeNodeInfo(INode root, boolean setupIntermediateTypes) {
+    private INode updateTreeWithRecognizedTable(Table table) {
+        Map<SemanticType, List<INode>> rowNodes = new HashMap<>();
+        rowNodes.put(SemanticType.TABLE_HEADERS, new ArrayList<>());
+        rowNodes.put(SemanticType.TABLE_BODY, new ArrayList<>());
+        for (TableRow row : table.getRows()) {
+            INode rowNode = updateTreeWithRecognizedTableRow(row, table.getId());
+
+            if (rowNode != null) {
+                rowNode.setSemanticType(SemanticType.TABLE_ROW);
+                rowNode.setCorrectSemanticScore(1.0);
+
+                SemanticType rowType = row.getSemanticType();
+                List<INode> nodes = rowNodes.get(rowType);
+                if (nodes != null) {
+                    nodes.add(rowNode);
+                }
+            }
+        }
+        List<INode> localRoots = new ArrayList<>();
+        for (Map.Entry<SemanticType, List<INode>> entry : rowNodes.entrySet()) {
+            SemanticType type = entry.getKey();
+            List<INode> rows = entry.getValue();
+
+            INode localRoot = findLocalRoot(rows);
+            if (localRoot != null) {
+                if (!isTableNode(localRoot)) {
+                    localRoot.setSemanticType(type);
+                    localRoot.setCorrectSemanticScore(1.0);
+                }
+                localRoots.add(localRoot);
+            }
+        }
+        if (localRoots.isEmpty()) {
+            return null;
+        }
+        if (localRoots.size() == 1 || localRoots.get(0) == localRoots.get(1)) {
+            return localRoots.get(0);
+        }
+        if (localRoots.get(0).getNodeInfo().depth < localRoots.get(1).getNodeInfo().depth &&
+                isAncestorFor(localRoots.get(0), localRoots.get(1))) {
+            return localRoots.get(0);
+        } else if (localRoots.get(1).getNodeInfo().depth < localRoots.get(0).getNodeInfo().depth &&
+                isAncestorFor(localRoots.get(1), localRoots.get(0))) {
+            return localRoots.get(1);
+        } else {
+            return findLocalRoot(localRoots);
+        }
+    }
+
+    private INode updateTreeWithRecognizedTableRow(TableRow row, Long id) {
+        List<INode> cellNodes = new ArrayList<>();
+        for (TableCell cell : row.getCells()) {
+            INode cellNode = updateTreeWithRecognizedCell(cell);
+
+            if (cellNode != null) {
+
+                cellNode.setSemanticType(cell.getSemanticType());
+                cellNode.setCorrectSemanticScore(1.0);
+                cellNode.setRecognizedStructureId(id);
+
+                cellNodes.add(cellNode);
+            }
+        }
+
+        return findLocalRoot(cellNodes);
+    }
+
+    private INode updateTreeWithRecognizedCell(TableCell cell) {
+        List<INode> tableLeafNodes = new ArrayList<>();
+        for (TableTokenRow tokenRow : cell.getContent()) {
+            for (TextChunk chunk : tokenRow.getTextChunks()) {
+                if (chunk instanceof TableToken) {
+                    TableToken token = (TableToken) chunk;
+                    if (token.getNode() != null) {
+                        tableLeafNodes.add(token.getNode());
+                    }
+                }
+            }
+        }
+        return findLocalRoot(tableLeafNodes);
+    }
+
+    private INode findLocalRoot(List<INode> nodes) {
+        INode localRoot = null;
+        for (INode node : nodes) {
+            if (!node.isRoot()) {
+                node = node.getParent();
+            }
+
+            if (localRoot == null) {
+                localRoot = node;
+            }
+            node.getNodeInfo().counter++;
+
+            while (!node.isRoot()) {
+                INode parent = node.getParent();
+                NodeInfo parentInfo = parent.getNodeInfo();
+
+                parentInfo.counter++;
+                if (parentInfo.counter > 1) {
+                    if (parentInfo.depth < localRoot.getNodeInfo().depth) {
+                        localRoot = parent;
+                    }
+                    break;
+                }
+                node = parent;
+            }
+        }
+        initTreeCounters(localRoot);
+
+        return localRoot;
+    }
+
+    private boolean isAncestorFor(INode first, INode second) {
+        while (!second.isRoot()) {
+            second = second.getParent();
+            if (second == first) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isTableNode(INode node) {
+        return tableSemanticTypes.contains(node.getSemanticType());
+    }
+
+    private void initTreeCounters(INode root) {
+        if (root == null) {
+            return;
+        }
+        Stack<INode> nodeStack = new Stack<>();
+        nodeStack.push(root);
+
+        while (!nodeStack.isEmpty()) {
+            INode node = nodeStack.pop();
+            NodeInfo nodeInfo = node.getNodeInfo();
+
+            nodeInfo.counter = 0;
+            for (INode child : node.getChildren()) {
+                nodeStack.push(child);
+            }
+        }
+
+        while (!root.isRoot()) {
+            root = root.getParent();
+            root.getNodeInfo().counter = 0;
+        }
+    }
+
+    private void initTreeNodeInfo(INode root) {
         Stack<INode> nodeStack = new Stack<>();
         nodeStack.push(root);
 
@@ -182,15 +291,7 @@ public class ClusterTableConsumer implements Consumer<INode> {
             } else {
                 nodeInfo.depth = node.getParent().getNodeInfo().depth + 1;
             }
-
-            if (nodeInfo.counter != 0) {
-                nodeInfo.counter = 0;
-                if (setupIntermediateTypes && !node.isLeaf() &&
-                    !tableSemanticTypes.contains(node.getSemanticType())) {
-                    node.setSemanticType(SemanticType.TABLE_ROW);
-                    node.setCorrectSemanticScore(1.0);
-                }
-            }
+            nodeInfo.counter = 0;
 
             for (INode child : node.getChildren()) {
                 nodeStack.push(child);

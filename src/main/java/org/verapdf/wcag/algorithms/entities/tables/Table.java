@@ -43,6 +43,10 @@ public class Table extends InfoChunk {
         return rows;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public void add(TableRow row) {
         rows.add(row);
         getBoundingBox().union(row.getBoundingBox());
