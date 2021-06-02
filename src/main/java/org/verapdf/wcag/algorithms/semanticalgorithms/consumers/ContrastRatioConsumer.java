@@ -4,10 +4,11 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.verapdf.wcag.algorithms.entities.INode;
-import org.verapdf.wcag.algorithms.entities.SemanticSpan;
+import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -33,8 +34,8 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 
 	@Override
 	public void accept(INode node) {
-		if (node.getChildren().isEmpty() && (node instanceof SemanticSpan)) {
-			calculateContrastRatio((SemanticSpan) node);
+		if (node.getChildren().isEmpty() && (node instanceof SemanticTextNode)) {
+			calculateContrastRatio((SemanticTextNode) node);
 		}
 	}
 
@@ -44,7 +45,7 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		return (l1 + 0.05) / (l2 + 0.05);
 	}
 
-	private void calculateContrastRatio(SemanticSpan node) {
+	private void calculateContrastRatio(SemanticTextNode node) {
 		BufferedImage renderedPage = renderedPages.get(node.getPageNumber());
 		if (renderedPage == null) {
 			try (PDDocument document = PDDocument.load(new FileInputStream(sourcePdfPath))) {
@@ -60,7 +61,7 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		if (renderedPage != null) {
 			for (TextLine textLine : node.getLines()) {
 				for (TextChunk textChunk : textLine.getTextChunks()) {
-					if ((textChunk.getValue() != null && textChunk.getValue().trim().length() == 0)) {
+					if ((textChunk.getValue() != null && TextChunkUtils.isSpaceChunk(textChunk))) {
 						textChunk.setContrastRatio(Integer.MAX_VALUE);
 						continue;
 					}

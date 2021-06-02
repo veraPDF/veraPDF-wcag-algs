@@ -2,14 +2,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.SemanticHeading;
-import org.verapdf.wcag.algorithms.entities.SemanticParagraph;
-import org.verapdf.wcag.algorithms.entities.SemanticSpan;
-import org.verapdf.wcag.algorithms.entities.content.TextChunk;
-import org.verapdf.wcag.algorithms.entities.content.TextLine;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 
 public class NodeUtils {
 
@@ -36,10 +29,10 @@ public class NodeUtils {
 		if (neighborNode == null) {
 			return 1.0;
 		}
-		if (!(node instanceof SemanticSpan || node instanceof SemanticParagraph)) {
+		if (!(node instanceof SemanticTextNode)) {
 			return 0.0;
 		}
-		if (!(neighborNode instanceof SemanticSpan || neighborNode instanceof SemanticParagraph)) {
+		if (!(neighborNode instanceof SemanticTextNode)) {
 			return 0.0;
 		}
 		double probability = 0.0;
@@ -52,98 +45,22 @@ public class NodeUtils {
 		return Math.min(probability, 1.0);
 	}
 
-	public static double getFontWeight(List<TextLine> lines) {
-		Map<Double, Double> weightMap = new HashMap<>();
-		for (TextLine line : lines) {
-			for (TextChunk chunk : line.getTextChunks()) {
-				Double weight = chunk.getFontWeight();
-				Double weightLength = weightMap.get(weight);
-				if (weightLength == null) {
-					weightMap.put(weight, chunk.getBoundingBox().getWidth());
-				} else {
-					weightMap.put(weight, weightLength + chunk.getBoundingBox().getWidth());
-				}
-			}
-		}
-		double commonWeight = 0.0;
-		double commonWeightLength = 0.0;
-		for (Map.Entry<Double, Double> weight : weightMap.entrySet()) {
-			if (commonWeightLength < weight.getValue()) {
-				commonWeightLength = weight.getValue();
-				commonWeight = weight.getKey();
-			}
-		}
-		return commonWeight;
-	}
-
 	public static Double getFontWeight(INode node) {
 		if (node == null) {
 			return null;
 		}
-		if (node instanceof SemanticSpan) {
-			return getFontWeight(((SemanticSpan)node).getLines());
-		} else if (node instanceof SemanticParagraph) {
-			return getFontWeight(((SemanticParagraph)node).getLines());
+		if (node instanceof SemanticTextNode) {
+			return (((SemanticTextNode)node).getFontWeight());
 		}
 		return null;
-	}
-
-	public static double getFontSize(List<TextLine> lines) {
-		Map<Double, Double> sizeMap = new HashMap<>();
-		for (TextLine line : lines) {
-			for (TextChunk chunk : line.getTextChunks()) {
-				Double size = chunk.getFontSize();
-				Double sizeLength = sizeMap.get(size);
-				if (sizeLength == null) {
-					sizeMap.put(size, chunk.getBoundingBox().getWidth());
-				} else {
-					sizeMap.put(size, sizeLength + chunk.getBoundingBox().getWidth());
-				}
-			}
-		}
-		double commonSize = 0.0;
-		double commonSizeLength = 0.0;
-		for (Map.Entry<Double, Double> weight : sizeMap.entrySet()) {
-			if (commonSizeLength < weight.getValue()) {
-				commonSizeLength = weight.getValue();
-				commonSize = weight.getKey();
-			}
-		}
-		return commonSize;
 	}
 
 	public static Double getFontSize(INode node) {
 		if (node == null) {
 			return null;
 		}
-		if (node instanceof SemanticSpan) {
-			return getFontSize(((SemanticSpan)node).getLines());
-		} else if (node instanceof SemanticParagraph) {
-			return getFontSize(((SemanticParagraph)node).getLines());
-		}
-		return null;
-	}
-
-	public static TextLine getFirstLine(INode node) {
-		if (node == null) {
-			return null;
-		}
-		if (node instanceof SemanticSpan) {
-			return ((SemanticSpan)node).getFirstLine();
-		} else if (node instanceof SemanticParagraph) {
-			return ((SemanticParagraph)node).getFirstLine();
-		}
-		return null;
-	}
-
-	public static TextLine getLastLine(INode node) {
-		if (node == null) {
-			return null;
-		}
-		if (node instanceof SemanticSpan) {
-			return ((SemanticSpan)node).getLastLine();
-		} else if (node instanceof SemanticParagraph) {
-			return ((SemanticParagraph)node).getLastLine();
+		if (node instanceof SemanticTextNode) {
+			return (((SemanticTextNode)node).getFontSize());
 		}
 		return null;
 	}

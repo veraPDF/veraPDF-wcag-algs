@@ -22,7 +22,10 @@ public abstract class SemanticNode implements INode {
 	public NodeInfo nodeInfo;
 
 	public SemanticNode() {
-		this(null);
+		nodeInfo = new NodeInfo();
+		boundingBox = new BoundingBox();
+		this.children = new ArrayList<>();
+		this.initialSemanticType = null;
 	}
 
 	public SemanticNode(SemanticType initialSemanticType) {
@@ -33,9 +36,22 @@ public abstract class SemanticNode implements INode {
 	}
 
 	public SemanticNode(BoundingBox bbox, SemanticType initialSemanticType, SemanticType semanticType) {
-		this(initialSemanticType);
-		this.boundingBox = new MultiBoundingBox(bbox);
+		this(bbox, initialSemanticType);
 		this.semanticType = semanticType;
+	}
+
+	public SemanticNode(BoundingBox bbox, SemanticType initialSemanticType) {
+		this.nodeInfo = new NodeInfo();
+		this.children = new ArrayList<>();
+		this.boundingBox = new MultiBoundingBox(bbox);
+		this.initialSemanticType = initialSemanticType;
+	}
+
+	public SemanticNode(BoundingBox bbox) {
+		this.nodeInfo = new NodeInfo();
+		this.children = new ArrayList<>();
+		this.boundingBox = new MultiBoundingBox(bbox);
+		this.initialSemanticType = null;
 	}
 
 	@Override

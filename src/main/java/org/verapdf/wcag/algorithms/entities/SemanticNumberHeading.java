@@ -19,6 +19,11 @@ public class SemanticNumberHeading extends SemanticHeading {
 		setSemanticType(SemanticType.NUMBER_HEADING);
 	}
 
+	public SemanticNumberHeading(SemanticTextNode textNode) {
+		super(textNode);
+		setSemanticType(SemanticType.NUMBER_HEADING);
+	}
+
 	public SemanticNumberHeading(SemanticSpan span) {
 		super(span);
 		setSemanticType(SemanticType.NUMBER_HEADING);
