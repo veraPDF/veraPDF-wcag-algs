@@ -4,7 +4,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.verapdf.wcag.algorithms.entities.INode;
-import org.verapdf.wcag.algorithms.entities.SemanticSpan;
+import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
@@ -34,8 +34,8 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 
 	@Override
 	public void accept(INode node) {
-		if (node.getChildren().isEmpty() && (node instanceof SemanticSpan)) {
-			calculateContrastRatio((SemanticSpan) node);
+		if (node.getChildren().isEmpty() && (node instanceof SemanticTextNode)) {
+			calculateContrastRatio((SemanticTextNode) node);
 		}
 	}
 
@@ -45,7 +45,7 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		return (l1 + 0.05) / (l2 + 0.05);
 	}
 
-	private void calculateContrastRatio(SemanticSpan node) {
+	private void calculateContrastRatio(SemanticTextNode node) {
 		BufferedImage renderedPage = renderedPages.get(node.getPageNumber());
 		if (renderedPage == null) {
 			try (PDDocument document = PDDocument.load(new FileInputStream(sourcePdfPath))) {

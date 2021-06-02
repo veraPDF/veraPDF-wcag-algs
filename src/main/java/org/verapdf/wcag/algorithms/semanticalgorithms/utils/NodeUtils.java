@@ -2,8 +2,6 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.SemanticHeading;
-import org.verapdf.wcag.algorithms.entities.SemanticParagraph;
-import org.verapdf.wcag.algorithms.entities.SemanticSpan;
 import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 
 public class NodeUtils {
@@ -31,10 +29,10 @@ public class NodeUtils {
 		if (neighborNode == null) {
 			return 1.0;
 		}
-		if (!(node instanceof SemanticSpan || node instanceof SemanticParagraph)) {
+		if (!(node instanceof SemanticTextNode)) {
 			return 0.0;
 		}
-		if (!(neighborNode instanceof SemanticSpan || neighborNode instanceof SemanticParagraph)) {
+		if (!(neighborNode instanceof SemanticTextNode)) {
 			return 0.0;
 		}
 		double probability = 0.0;
@@ -51,7 +49,7 @@ public class NodeUtils {
 		if (node == null) {
 			return null;
 		}
-		if (node instanceof SemanticSpan || node instanceof SemanticParagraph) {
+		if (node instanceof SemanticTextNode) {
 			return (((SemanticTextNode)node).getFontWeight());
 		}
 		return null;
@@ -61,7 +59,7 @@ public class NodeUtils {
 		if (node == null) {
 			return null;
 		}
-		if (node instanceof SemanticSpan || node instanceof SemanticParagraph) {
+		if (node instanceof SemanticTextNode) {
 			return (((SemanticTextNode)node).getFontSize());
 		}
 		return null;

@@ -56,10 +56,10 @@ public class ClusterTableConsumer implements Consumer<INode> {
     @Override
     public void accept(INode node) {
 
-        if (node instanceof SemanticSpan) {
+        if ((node instanceof SemanticTextNode) && node.getChildren().isEmpty()) {
 
-            SemanticSpan span = (SemanticSpan) node;
-            for (TextLine line : span.getLines()) {
+            SemanticTextNode textNode = (SemanticTextNode) node;
+            for (TextLine line : textNode.getLines()) {
                 for (TextChunk chunk : line.getTextChunks()) {
 
                     if (TextChunkUtils.isSpaceChunk(chunk)) {
