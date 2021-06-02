@@ -8,6 +8,7 @@ import org.verapdf.wcag.algorithms.entities.SemanticSpan;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -60,7 +61,7 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		if (renderedPage != null) {
 			for (TextLine textLine : node.getLines()) {
 				for (TextChunk textChunk : textLine.getTextChunks()) {
-					if ((textChunk.getValue() != null && textChunk.getValue().trim().length() == 0)) {
+					if ((textChunk.getValue() != null && TextChunkUtils.isSpaceChunk(textChunk))) {
 						textChunk.setContrastRatio(Integer.MAX_VALUE);
 						continue;
 					}

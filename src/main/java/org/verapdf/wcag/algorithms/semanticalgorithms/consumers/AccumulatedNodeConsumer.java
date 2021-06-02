@@ -32,7 +32,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	public void accept(INode node) {
 
 		if (node.getChildren().isEmpty()) {
-			updateNode(node, node, 1, node.getSemanticType());
+			updateNode(node, node, 1.0, node.getSemanticType());
 			return;
 		}
 
