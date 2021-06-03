@@ -78,7 +78,9 @@ public class SemanticParagraph extends SemanticTextNode {
 		if (!super.equals(o)) {
 			return false;
 		}
-
+		if (!(o instanceof SemanticParagraph)) {
+			return false;
+		}
 		SemanticParagraph that = (SemanticParagraph) o;
 		return enclosedTop == that.enclosedTop
 		       && enclosedBottom == that.enclosedBottom

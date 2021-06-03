@@ -116,6 +116,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			}
 			span.getLines().addAll(secondSpan.getLines());
 		} else {
+			lastLine.setNotFullLine();
+			nextLine.setNotFullLine();
 			lastLine = new TextLine(lastLine);
 			lastLine.add(nextLine);
 			span.setLastLine(lastLine);
@@ -219,6 +221,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			}
 			paragraph.getLines().addAll(lines);
 		} else {
+			lastLine.setNotFullLine();
+			nextLine.setNotFullLine();
 			lastLine = new TextLine(lastLine);
 			lastLine.add(nextLine);
 			paragraph.setLastLine(lastLine);

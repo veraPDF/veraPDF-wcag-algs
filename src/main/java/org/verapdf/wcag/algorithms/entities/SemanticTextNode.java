@@ -147,6 +147,12 @@ public class SemanticTextNode extends SemanticNode {
         return commonWeight;
     }
 
+    public boolean hasFullLines() {
+        if (getLinesNumber() != 0) {
+            return getFirstLine().isFullLine() && getLastLine().isFullLine();
+        }
+        return true;
+    }
 
     public double getFontSize() {
         Map<Double, Double> sizeMap = new HashMap<>();
@@ -175,6 +181,9 @@ public class SemanticTextNode extends SemanticNode {
     @Override
     public boolean equals(Object o) {
         if (!super.equals(o)) {
+            return false;
+        }
+        if (!(o instanceof SemanticTextNode)) {
             return false;
         }
         SemanticTextNode that = (SemanticTextNode) o;
