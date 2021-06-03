@@ -96,13 +96,13 @@ public class ClusterTableConsumer implements Consumer<INode> {
             INode tableRoot = updateTreeWithRecognizedTable(table, root);
 
             if (tableRoot != null) {
-                tableRoot.setSemanticType(SemanticType.TABLE);
-                tableRoot.setCorrectSemanticScore(1.0);
                 if (isTableNode(tableRoot) && tableRoot.getRecognizedStructureId() != table.getId()) {
                     tableRoot.setRecognizedStructureId(null);
                 } else {
                     tableRoot.setRecognizedStructureId(table.getId());
                 }
+                tableRoot.setSemanticType(SemanticType.TABLE);
+                tableRoot.setCorrectSemanticScore(1.0);
             }
         }
     }
@@ -115,14 +115,14 @@ public class ClusterTableConsumer implements Consumer<INode> {
             INode rowNode = updateTreeWithRecognizedTableRow(row, table.getId());
 
             if (rowNode != null) {
-                rowNode.setSemanticType(SemanticType.TABLE_ROW);
-                rowNode.setCorrectSemanticScore(1.0);
-
                 if (isTableNode(rowNode) && rowNode.getRecognizedStructureId() != table.getId()) {
                     rowNode.setRecognizedStructureId(null);
                 } else {
                     rowNode.setRecognizedStructureId(table.getId());
                 }
+
+                rowNode.setSemanticType(SemanticType.TABLE_ROW);
+                rowNode.setCorrectSemanticScore(1.0);
 
                 SemanticType rowType = row.getSemanticType();
                 Set<INode> nodes = rowNodes.get(rowType);
@@ -140,9 +140,9 @@ public class ClusterTableConsumer implements Consumer<INode> {
             INode localRoot = findLocalRoot(rows);
             if (localRoot != null) {
                 if (!isTableNode(localRoot)) {
+                    localRoot.setRecognizedStructureId(table.getId());
                     localRoot.setSemanticType(type);
                     localRoot.setCorrectSemanticScore(1.0);
-                    localRoot.setRecognizedStructureId(table.getId());
                 } else if (localRoot.getRecognizedStructureId() != table.getId()) {
                     localRoot.setRecognizedStructureId(null);
                 }
@@ -175,14 +175,14 @@ public class ClusterTableConsumer implements Consumer<INode> {
 
             if (cellNode != null) {
 
-                cellNode.setSemanticType(cell.getSemanticType());
-                cellNode.setCorrectSemanticScore(1.0);
-
                 if (isTableNode(cellNode) && cellNode.getRecognizedStructureId() != id) {
                     cellNode.setRecognizedStructureId(null);
                 } else {
                     cellNode.setRecognizedStructureId(id);
                 }
+
+                cellNode.setSemanticType(cell.getSemanticType());
+                cellNode.setCorrectSemanticScore(1.0);
 
                 cellNodes.add(cellNode);
             }
