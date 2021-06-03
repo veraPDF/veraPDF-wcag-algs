@@ -24,33 +24,17 @@ public class ClusterTableConsumer implements Consumer<INode> {
     private TableRecognitionArea recognitionArea;
     private List<Table> tables;
 
-    private List<INode> tableNodes;
-    private INode currentHeaderNodes;
-    private INode currentTableBodyNodes;
-
     public  ClusterTableConsumer() {
         tables = new ArrayList<>();
-        tableNodes = new ArrayList<>();
-
         init();
     }
 
     private void init() {
         recognitionArea = new TableRecognitionArea();
-
-        currentHeaderNodes = new SemanticGroupingNode();
-        currentHeaderNodes.setSemanticType(SemanticType.TABLE_ROW);
-
-        currentTableBodyNodes = new SemanticGroupingNode();
-        currentTableBodyNodes.setSemanticType(SemanticType.TABLE_ROW);
     }
 
     public List<Table> getTables() {
         return tables;
-    }
-
-    public List<INode> getTableNodes() {
-        return tableNodes;
     }
 
     @Override
@@ -75,10 +59,6 @@ public class ClusterTableConsumer implements Consumer<INode> {
                         }
                         init();
                         accept(node);
-                    } else if (recognitionArea.hasCompleteHeaders()) {
-                        currentTableBodyNodes.addChild(node);
-                    } else {
-                        currentHeaderNodes.addChild(node);
                     }
                 }
             }
@@ -100,14 +80,7 @@ public class ClusterTableConsumer implements Consumer<INode> {
         Table recognizedTable = recognizer.getTable();
 
         if (recognizedTable != null) {
-
             tables.add(recognizedTable);
-
-            INode table = new SemanticGroupingNode();
-            table.setSemanticType(SemanticType.TABLE);
-            table.addChild(currentHeaderNodes);
-            table.addChild(currentTableBodyNodes);
-            tableNodes.add(table);
         }
     }
 
@@ -125,6 +98,11 @@ public class ClusterTableConsumer implements Consumer<INode> {
             if (tableRoot != null) {
                 tableRoot.setSemanticType(SemanticType.TABLE);
                 tableRoot.setCorrectSemanticScore(1.0);
+                if (isTableNode(tableRoot) && tableRoot.getRecognizedStructureId() != table.getId()) {
+                    tableRoot.setRecognizedStructureId(null);
+                } else {
+                    tableRoot.setRecognizedStructureId(table.getId());
+                }
             }
         }
     }
@@ -139,6 +117,12 @@ public class ClusterTableConsumer implements Consumer<INode> {
             if (rowNode != null) {
                 rowNode.setSemanticType(SemanticType.TABLE_ROW);
                 rowNode.setCorrectSemanticScore(1.0);
+
+                if (isTableNode(rowNode) && rowNode.getRecognizedStructureId() != table.getId()) {
+                    rowNode.setRecognizedStructureId(null);
+                } else {
+                    rowNode.setRecognizedStructureId(table.getId());
+                }
 
                 SemanticType rowType = row.getSemanticType();
                 Set<INode> nodes = rowNodes.get(rowType);
@@ -158,6 +142,9 @@ public class ClusterTableConsumer implements Consumer<INode> {
                 if (!isTableNode(localRoot)) {
                     localRoot.setSemanticType(type);
                     localRoot.setCorrectSemanticScore(1.0);
+                    localRoot.setRecognizedStructureId(table.getId());
+                } else if (localRoot.getRecognizedStructureId() != table.getId()) {
+                    localRoot.setRecognizedStructureId(null);
                 }
                 localRoots.add(localRoot);
             }
@@ -190,7 +177,12 @@ public class ClusterTableConsumer implements Consumer<INode> {
 
                 cellNode.setSemanticType(cell.getSemanticType());
                 cellNode.setCorrectSemanticScore(1.0);
-                cellNode.setRecognizedStructureId(id);
+
+                if (isTableNode(cellNode) && cellNode.getRecognizedStructureId() != id) {
+                    cellNode.setRecognizedStructureId(null);
+                } else {
+                    cellNode.setRecognizedStructureId(id);
+                }
 
                 cellNodes.add(cellNode);
             }
