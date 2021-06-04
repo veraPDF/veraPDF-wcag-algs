@@ -52,6 +52,9 @@ public class Table extends InfoChunk {
         getBoundingBox().union(row.getBoundingBox());
     }
 
+    /*
+    TODO: add comments
+     */
     public void updateTableRows() {
         if (rows.size() < 2) {
             return;
