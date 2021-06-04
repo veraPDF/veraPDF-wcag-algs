@@ -1,12 +1,12 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
+import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
+import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableCluster;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableClusterGap;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class TableUtils {
     private static final double WITH_TOLERANCE_FACTOR = 0.33;
@@ -21,8 +21,19 @@ public class TableUtils {
     public static final double ONE_LINE_TOLERANCE_FACTOR = 0.9;
     public static final double TABLE_GAP_FACTOR = 5.0;
 
+    private static final Set<SemanticType> tableSemanticTypes = new HashSet<>(Arrays.asList(
+            SemanticType.TABLE, SemanticType.TABLE_ROW,
+            SemanticType.TABLE_HEADER, SemanticType.TABLE_CELL));
+
     private TableUtils() {}
 
+    static public boolean isTableNode(INode node) {
+        return tableSemanticTypes.contains(node.getSemanticType());
+    }
+
+    /*
+    TODO: add comments
+     */
     public static boolean areStrongContaining(TextInfoChunk chunk1, TextInfoChunk chunk2) {
         return isAnyContaining(chunk1, chunk2) && areStrongCenterOverlapping(chunk1, chunk2);
     }

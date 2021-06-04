@@ -7,6 +7,7 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.tables.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognitionArea;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognizer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.*;
@@ -17,9 +18,6 @@ import java.util.stream.Collectors;
 public class ClusterTableConsumer implements Consumer<INode> {
 
     private static final Logger LOGGER = Logger.getLogger(AccumulatedNodeConsumer.class.getCanonicalName());
-    private static final Set<SemanticType> tableSemanticTypes = new HashSet<>(Arrays.asList(
-                                                        SemanticType.TABLE, SemanticType.TABLE_ROW,
-                                                        SemanticType.TABLE_HEADER, SemanticType.TABLE_CELL));
 
     private TableRecognitionArea recognitionArea;
     private List<Table> tables;
@@ -96,7 +94,7 @@ public class ClusterTableConsumer implements Consumer<INode> {
             INode tableRoot = updateTreeWithRecognizedTable(table, root);
 
             if (tableRoot != null) {
-                if (isTableNode(tableRoot) && tableRoot.getRecognizedStructureId() != table.getId()) {
+                if (TableUtils.isTableNode(tableRoot) && tableRoot.getRecognizedStructureId() != table.getId()) {
                     tableRoot.setRecognizedStructureId(null);
                 } else {
                     tableRoot.setRecognizedStructureId(table.getId());
@@ -115,7 +113,7 @@ public class ClusterTableConsumer implements Consumer<INode> {
             INode rowNode = updateTreeWithRecognizedTableRow(row, table.getId());
 
             if (rowNode != null) {
-                if (isTableNode(rowNode) && rowNode.getRecognizedStructureId() != table.getId()) {
+                if (TableUtils.isTableNode(rowNode) && rowNode.getRecognizedStructureId() != table.getId()) {
                     rowNode.setRecognizedStructureId(null);
                 } else {
                     rowNode.setRecognizedStructureId(table.getId());
@@ -139,7 +137,7 @@ public class ClusterTableConsumer implements Consumer<INode> {
 
             INode localRoot = findLocalRoot(rows);
             if (localRoot != null) {
-                if (!isTableNode(localRoot)) {
+                if (!TableUtils.isTableNode(localRoot)) {
                     localRoot.setRecognizedStructureId(table.getId());
                     localRoot.setSemanticType(type);
                     localRoot.setCorrectSemanticScore(1.0);
@@ -169,26 +167,34 @@ public class ClusterTableConsumer implements Consumer<INode> {
     }
 
     private INode updateTreeWithRecognizedTableRow(TableRow row, Long id) {
-        Set<INode> cellNodes = new HashSet<>();
+        Map<INode, SemanticType> cellNodes = new HashMap<>();
         for (TableCell cell : row.getCells()) {
             INode cellNode = updateTreeWithRecognizedCell(cell);
 
             if (cellNode != null) {
-
-                if (isTableNode(cellNode) && cellNode.getRecognizedStructureId() != id) {
-                    cellNode.setRecognizedStructureId(null);
-                } else {
-                    cellNode.setRecognizedStructureId(id);
-                }
-
-                cellNode.setSemanticType(cell.getSemanticType());
-                cellNode.setCorrectSemanticScore(1.0);
-
-                cellNodes.add(cellNode);
+                cellNodes.put(cellNode, cell.getSemanticType());
             }
         }
 
-        return findLocalRoot(cellNodes);
+        INode rowNode = findLocalRoot(cellNodes.keySet());
+
+        for (Map.Entry<INode, SemanticType> entry : cellNodes.entrySet()) {
+            INode cellNode = entry.getKey();
+            while (cellNode.getParent() != rowNode && cellNode.getParent().getChildren().size() == 1) {
+                cellNode = cellNode.getParent();
+            }
+
+            if (TableUtils.isTableNode(cellNode) && cellNode.getRecognizedStructureId() != id) {
+                cellNode.setRecognizedStructureId(null);
+            } else {
+                cellNode.setRecognizedStructureId(id);
+            }
+
+            cellNode.setSemanticType(entry.getValue());
+            cellNode.setCorrectSemanticScore(1.0);
+        }
+
+        return rowNode;
     }
 
     private INode updateTreeWithRecognizedCell(TableCell cell) {
@@ -246,10 +252,6 @@ public class ClusterTableConsumer implements Consumer<INode> {
             }
         }
         return false;
-    }
-
-    private boolean isTableNode(INode node) {
-        return tableSemanticTypes.contains(node.getSemanticType());
     }
 
     private void initTreeCounters(INode root) {

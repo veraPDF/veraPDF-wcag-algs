@@ -195,6 +195,9 @@ public class TableCluster extends TextInfoChunk {
         updateMinGap(Side.RIGHT);
     }
 
+    /*
+    TODO: add comments
+     */
     public void updateMinGap(Side side) {
         Map<TableCluster, Double> gapsMap = new HashMap<>();
         Map<TableCluster, Integer> countersMap = new HashMap<>();
@@ -233,6 +236,9 @@ public class TableCluster extends TextInfoChunk {
         }
     }
 
+    /*
+    TODO: add comment
+     */
     public void merge(TableCluster other, boolean update) {
 
         if (header == null) {

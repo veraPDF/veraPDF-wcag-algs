@@ -111,6 +111,9 @@ public class TableRecognizer {
         }
     }
 
+    /*
+    TODO: add comments
+     */
     private void mergeWeakClusters() {
         int position = getNextWeakCluster(0);
         while (position < clusters.size()) {

@@ -17,6 +17,12 @@ public class SemanticTypeMapper {
         map.put(SemanticType.ANNOT.getValue(), SemanticType.ANNOT);
         map.put(SemanticType.HEADING.getValue(), SemanticType.HEADING);
         map.put(SemanticType.NUMBER_HEADING.getValue(), SemanticType.NUMBER_HEADING);
+        map.put(SemanticType.TABLE.getValue(), SemanticType.TABLE);
+        map.put(SemanticType.TABLE_HEADERS.getValue(), SemanticType.TABLE_HEADERS);
+        map.put(SemanticType.TABLE_BODY.getValue(), SemanticType.TABLE_BODY);
+        map.put(SemanticType.TABLE_ROW.getValue(), SemanticType.TABLE_ROW);
+        map.put(SemanticType.TABLE_HEADER.getValue(), SemanticType.TABLE_HEADER);
+        map.put(SemanticType.TABLE_CELL.getValue(), SemanticType.TABLE_CELL);
     }
 
     public static boolean containsType(String type) {
