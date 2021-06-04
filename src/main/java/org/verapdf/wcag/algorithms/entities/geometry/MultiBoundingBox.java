@@ -139,4 +139,7 @@ public class MultiBoundingBox extends BoundingBox {
         boundingBoxes.add(new BoundingBox(this));
     }
 
+    public List<BoundingBox> getBoundingBoxes() {
+        return boundingBoxes;
+    }
 }

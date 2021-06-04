@@ -5,6 +5,7 @@ import java.util.List;
 
 public class TextLine extends TextInfoChunk {
     private final List<TextChunk> textChunks = new ArrayList<>();
+    private boolean fullLine = true;
 
     public TextLine() {
     }
@@ -56,6 +57,14 @@ public class TextLine extends TextInfoChunk {
             result.append(textChunks.get(i).getValue());
         }
         return result.toString();
+    }
+
+    public void setNotFullLine() {
+        fullLine = false;
+    }
+
+    public boolean isFullLine() {
+        return fullLine;
     }
 
     @Override
