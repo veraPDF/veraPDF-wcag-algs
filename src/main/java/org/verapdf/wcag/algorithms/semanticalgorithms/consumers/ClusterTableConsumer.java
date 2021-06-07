@@ -130,6 +130,11 @@ public class ClusterTableConsumer implements Consumer<INode> {
             }
         }
 
+        Set<INode> headersNodes = rowNodes.get(SemanticType.TABLE_HEADERS);
+        if (headersNodes.size() == 1 && headersNodes.equals(rowNodes.get(SemanticType.TABLE_BODY))) {
+            return headersNodes.iterator().next();
+        }
+
         Set<INode> localRoots = new HashSet<>();
         for (Map.Entry<SemanticType, Set<INode>> entry : rowNodes.entrySet()) {
             SemanticType type = entry.getKey();
