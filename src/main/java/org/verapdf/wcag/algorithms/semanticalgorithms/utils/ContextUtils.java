@@ -50,6 +50,9 @@ public class ContextUtils {
 		public void serialize(BoundingBox bbox, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
 			    throws IOException {
 			jsonGenerator.writeStartObject();
+			jsonGenerator.writeFieldName("bbox");
+			jsonGenerator.writeStartArray();
+			jsonGenerator.writeStartObject();
 			jsonGenerator.writeNumberField("p", bbox.getPageNumber());
 			jsonGenerator.writeFieldName("rect");
 			jsonGenerator.writeStartArray();
@@ -57,6 +60,8 @@ public class ContextUtils {
 			jsonGenerator.writeNumber(FORMATTER.format(bbox.getBottomY()));
 			jsonGenerator.writeNumber(FORMATTER.format(bbox.getRightX()));
 			jsonGenerator.writeNumber(FORMATTER.format(bbox.getTopY()));
+			jsonGenerator.writeEndArray();
+			jsonGenerator.writeEndObject();
 			jsonGenerator.writeEndArray();
 			jsonGenerator.writeEndObject();
 		}
@@ -75,7 +80,16 @@ public class ContextUtils {
 			jsonGenerator.writeFieldName("bbox");
 			jsonGenerator.writeStartArray();
 			for (BoundingBox bbox : multiBBox.getBoundingBoxes()) {
-				jsonGenerator.writeObject(bbox);
+				jsonGenerator.writeStartObject();
+				jsonGenerator.writeNumberField("p", bbox.getPageNumber());
+				jsonGenerator.writeFieldName("rect");
+				jsonGenerator.writeStartArray();
+				jsonGenerator.writeNumber(FORMATTER.format(bbox.getLeftX()));
+				jsonGenerator.writeNumber(FORMATTER.format(bbox.getBottomY()));
+				jsonGenerator.writeNumber(FORMATTER.format(bbox.getRightX()));
+				jsonGenerator.writeNumber(FORMATTER.format(bbox.getTopY()));
+				jsonGenerator.writeEndArray();
+				jsonGenerator.writeEndObject();
 			}
 			jsonGenerator.writeEndArray();
 			jsonGenerator.writeEndObject();
