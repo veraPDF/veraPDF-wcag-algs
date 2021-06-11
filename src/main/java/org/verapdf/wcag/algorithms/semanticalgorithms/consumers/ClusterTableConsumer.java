@@ -185,7 +185,7 @@ public class ClusterTableConsumer implements Consumer<INode> {
 
         for (Map.Entry<INode, SemanticType> entry : cellNodes.entrySet()) {
             INode cellNode = entry.getKey();
-            while (cellNode.getParent() != rowNode && cellNode.getParent().getChildren().size() == 1) {
+            while (cellNode.getParent() != null && cellNode.getParent() != rowNode && cellNode.getParent().getChildren().size() == 1) {
                 cellNode = cellNode.getParent();
             }
 

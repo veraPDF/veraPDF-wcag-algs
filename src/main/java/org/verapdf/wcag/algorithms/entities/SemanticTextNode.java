@@ -4,6 +4,7 @@ import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -127,12 +128,14 @@ public class SemanticTextNode extends SemanticNode {
         Map<Double, Double> weightMap = new HashMap<>();
         for (TextLine line : lines) {
             for (TextChunk chunk : line.getTextChunks()) {
-                Double weight = chunk.getFontWeight();
-                Double weightLength = weightMap.get(weight);
-                if (weightLength == null) {
-                    weightMap.put(weight, chunk.getBoundingBox().getWidth());
-                } else {
-                    weightMap.put(weight, weightLength + chunk.getBoundingBox().getWidth());
+                if (!TextChunkUtils.isSpaceChunk(chunk)) {
+                    Double weight = chunk.getFontWeight();
+                    Double weightLength = weightMap.get(weight);
+                    if (weightLength == null) {
+                        weightMap.put(weight, chunk.getBoundingBox().getWidth());
+                    } else {
+                        weightMap.put(weight, weightLength + chunk.getBoundingBox().getWidth());
+                    }
                 }
             }
         }
@@ -158,12 +161,14 @@ public class SemanticTextNode extends SemanticNode {
         Map<Double, Double> sizeMap = new HashMap<>();
         for (TextLine line : lines) {
             for (TextChunk chunk : line.getTextChunks()) {
-                Double size = chunk.getFontSize();
-                Double sizeLength = sizeMap.get(size);
-                if (sizeLength == null) {
-                    sizeMap.put(size, chunk.getBoundingBox().getWidth());
-                } else {
-                    sizeMap.put(size, sizeLength + chunk.getBoundingBox().getWidth());
+                if (!TextChunkUtils.isSpaceChunk(chunk)) {
+                    Double size = chunk.getFontSize();
+                    Double sizeLength = sizeMap.get(size);
+                    if (sizeLength == null) {
+                        sizeMap.put(size, chunk.getBoundingBox().getWidth());
+                    } else {
+                        sizeMap.put(size, sizeLength + chunk.getBoundingBox().getWidth());
+                    }
                 }
             }
         }
@@ -176,6 +181,17 @@ public class SemanticTextNode extends SemanticNode {
             }
         }
         return commonSize;
+    }
+
+    public boolean isSpaceNode() {
+        for (TextLine line : lines) {
+            for (TextChunk chunk : line.getTextChunks()) {
+                if (!TextChunkUtils.isSpaceChunk(chunk)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override
