@@ -1,5 +1,7 @@
 package org.verapdf.wcag.algorithms.entities.geometry;
 
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ContextUtils;
+
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -334,26 +336,7 @@ public class BoundingBox {
     }
 
     public String getLocation() {
-        if (pageNumber == null) {
-            return null;
-        }
-        StringBuilder location = new StringBuilder();
-        location.append("pages[");
-        location.append(getPageNumber());
-        if (!getPageNumber().equals(getLastPageNumber())) {
-            location.append("-");
-            location.append(getLastPageNumber());
-        }
-        location.append("]/boundingBox[");
-        location.append(getLeftX());
-        location.append(",");
-        location.append(getBottomY());
-        location.append(",");
-        location.append(getRightX());
-        location.append(",");
-        location.append(getTopY());
-        location.append("]");
-        return location.toString();
+        return ContextUtils.getContext(this);
     }
 
     @Override

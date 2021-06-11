@@ -5,12 +5,14 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 import org.verapdf.wcag.algorithms.entities.SemanticParagraph;
 import org.verapdf.wcag.algorithms.entities.SemanticSpan;
 import org.verapdf.wcag.algorithms.entities.SemanticHeading;
+import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.SemanticNumberHeading;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.maps.AccumulatedNodeMapper;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -252,14 +254,25 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	}
 
 	private void acceptChildrenSemanticHeading(INode node) {
-		if (node.getChildren().size() == 1) {
+		List<INode> children = new ArrayList<>();
+		for (INode child : node.getChildren()) {
+			if (child != null) {
+				INode accumulatedChild = accumulatedNodeMapper.get(child);
+				if (accumulatedChild instanceof SemanticTextNode) {
+					if (!((SemanticTextNode)accumulatedChild).isSpaceNode()) {
+						children.add(child);
+					}
+				}
+			}
+		}
+		if (children.size() <= 1) {
 			return;
 		}
-		acceptSemanticHeading(node.getChildren().get(0), null, node.getChildren().get(1));
-		for (int i = 1; i < node.getChildren().size() - 1; i++) {
-			acceptSemanticHeading(node.getChildren().get(i), node.getChildren().get(i - 1), node.getChildren().get(i + 1));
+		acceptSemanticHeading(children.get(0), null, children.get(1));
+		for (int i = 1; i < children.size() - 1; i++) {
+			acceptSemanticHeading(children.get(i), children.get(i - 1), children.get(i + 1));
 		}
-		acceptSemanticHeading(node.getChildren().get(node.getChildren().size() - 1), node.getChildren().get(node.getChildren().size() - 2), null);
+		acceptSemanticHeading(children.get(children.size() - 1), children.get(children.size() - 2), null);
 	}
 
 	private void acceptSemanticHeading(INode node, INode previousNode, INode nextNode) {
