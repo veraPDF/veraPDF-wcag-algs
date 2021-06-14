@@ -63,6 +63,22 @@ public class ContrastRatioConsumerTests {
 		});
 	}
 
+	static Stream<Arguments> contrastCompletedWithoutExceptionsParams() {
+		return Stream.of(
+				Arguments.of("bbox-outside-page.pdf", "bbox-outside-page.json", 4.5));
+	}
+
+	@ParameterizedTest(name = "{index}: ({0}, {1}, {2}) => {0}")
+	@MethodSource("contrastCompletedWithoutExceptionsParams")
+	void testColorContrastCompletedWithoutExceptions(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
+		INode root = JsonToPdfTree.getPdfTreeRoot(SRC_DIR + jsonPdfPath);
+		ITree tree = new SemanticTree(root);
+		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath);
+
+		tree.forEach(contrastRatioConsumer);
+		Assertions.assertTrue(true);
+	}
+
 	@ParameterizedTest(name = "{index}: ({0}, {1}, {2}) => {0}")
 	@MethodSource("contrastTestFailParams")
 	void testColorContrastFail(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
