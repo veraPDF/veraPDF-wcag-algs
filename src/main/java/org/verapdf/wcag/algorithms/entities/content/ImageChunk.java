@@ -11,4 +11,15 @@ public class ImageChunk extends InfoChunk {
 		super(bbox);
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder("ImageChunk{");
+		result.append("pageNumber=");
+		result.append(getBoundingBox().getPageNumber());
+		result.append(", boundingBox=");
+		result.append(getBoundingBox());
+		result.append("}");
+		return result.toString();
+	}
+
 }

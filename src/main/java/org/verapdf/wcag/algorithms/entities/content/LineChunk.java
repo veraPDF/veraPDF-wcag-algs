@@ -19,7 +19,6 @@ public class LineChunk extends InfoChunk {
 		this.startY = startY;
 		this.endX = endX;
 		this.endY = endY;
-
 	}
 
 	public double getStartX() {

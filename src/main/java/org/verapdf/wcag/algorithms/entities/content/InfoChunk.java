@@ -37,7 +37,7 @@ public abstract class InfoChunk implements IChunk {
 
     @Override
     public double getCenterX() {
-        return 0.5 * (boundingBox.getLeftX() + boundingBox.getRightX());
+        return boundingBox.getCenterX();
     }
 
     @Override

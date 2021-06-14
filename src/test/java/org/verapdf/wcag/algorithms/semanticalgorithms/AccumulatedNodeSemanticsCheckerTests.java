@@ -9,6 +9,8 @@ import org.verapdf.wcag.algorithms.entities.ITree;
 import org.verapdf.wcag.algorithms.entities.JsonToPdfTree;
 import org.verapdf.wcag.algorithms.entities.SemanticTree;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.maps.SemanticTypeMapper;
+import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.AccumulatedNodeConsumer;
 
 import java.io.IOException;
 import java.util.stream.Stream;
@@ -55,5 +57,31 @@ class AccumulatedNodeSemanticsCheckerTests {
 		semanticsChecker.checkSemanticTree(tree);
 		Assertions.assertEquals(probability, tree.getRoot().getCorrectSemanticScore(), SEMANTIC_SCORE_TOLERANCE);
 		Assertions.assertEquals(semanticType, tree.getRoot().getSemanticType());
+	}
+
+	static Stream<Arguments> treeSemanticCorrectnessTestParams() {
+		return Stream.of(
+				Arguments.of("caption1.json"),
+				Arguments.of("caption2.json"),
+				Arguments.of("caption3.json"),
+				Arguments.of("caption4.json"));
+	}
+
+	@ParameterizedTest(name = "{index}: ({0}) => {0}")
+	@MethodSource("treeSemanticCorrectnessTestParams")
+	void testTreeSemanticCorrectness(String jsonPdfPath) throws IOException {
+		INode root = JsonToPdfTree.getPdfTreeRoot("/files/" + jsonPdfPath);
+		ITree tree = new SemanticTree(root);
+		semanticsChecker.checkSemanticTree(tree);
+		testTreeStructure(tree);
+	}
+
+	private void testTreeStructure(ITree tree) {
+		for (INode node : tree) {
+			if (node.getInitialSemanticType() != null && SemanticTypeMapper.containsType(node.getInitialSemanticType().getValue())) {
+				Assertions.assertEquals(node.getInitialSemanticType(), node.getSemanticType());
+				Assertions.assertTrue(node.getCorrectSemanticScore() >= AccumulatedNodeConsumer.MERGE_PROBABILITY_THRESHOLD);
+			}
+		}
 	}
 }

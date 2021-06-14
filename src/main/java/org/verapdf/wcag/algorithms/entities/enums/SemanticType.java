@@ -14,6 +14,7 @@ public enum SemanticType {
 	FORM("Form"),
 	LINK("Link"),
 	ANNOT("Annot"),
+	CAPTION("Caption"),
 	NUMBER_HEADING("Hn"),
 	HEADING("H");
 

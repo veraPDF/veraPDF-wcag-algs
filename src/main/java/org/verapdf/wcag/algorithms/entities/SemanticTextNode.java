@@ -110,6 +110,7 @@ public class SemanticTextNode extends SemanticNode {
         }
         return null;
     }
+
     public TextLine getPenultLine() {
         if (lines.size() > 1) {
             return lines.get(lines.size() - 2);
@@ -122,6 +123,24 @@ public class SemanticTextNode extends SemanticNode {
             return lines.get(lines.size() - 1);
         }
         return null;
+    }
+
+    public double getFirstBaseline() {
+        if (!isEmpty()) {
+            return lines.get(0).getBaseLine();
+        }
+        return 0.0;
+    }
+
+    public double getLastBaseline() {
+        if (!isEmpty()) {
+            return lines.get(lines.size() - 1).getBaseLine();
+        }
+        return 0.0;
+    }
+
+    public boolean isEmpty() {
+        return lines.isEmpty();
     }
 
     public double getFontWeight() {
@@ -151,7 +170,7 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     public boolean hasFullLines() {
-        if (getLinesNumber() != 0) {
+        if (!isEmpty()) {
             return getFirstLine().isFullLine() && getLastLine().isFullLine();
         }
         return true;
@@ -219,9 +238,9 @@ public class SemanticTextNode extends SemanticNode {
     @Override
     public String toString() {
         if (lines.size() == 0) {
-            return "SemanticSpan{}";
+            return "SemanticTextNode{}";
         }
-        StringBuilder result = new StringBuilder("SemanticSpan{");
+        StringBuilder result = new StringBuilder("SemanticTextNode{");
         result.append(lines.get(0));
         for (int i = 1; i < lines.size(); ++i) {
             result.append(", ");
