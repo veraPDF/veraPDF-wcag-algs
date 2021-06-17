@@ -1,0 +1,46 @@
+{
+  "type":"Part",
+  "children":[
+    {
+      "type":"Figure",
+      "children":[
+        {
+          "type":"ImageChunk",
+          "pageNumber":0,
+          "boundingBox":[
+            198.6,
+            553.889,
+            396.7,
+            751.989
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Caption",
+      "children": [
+        {
+          "type":"TextChunk",
+          "pageNumber":0,
+          "value":"Figuur 1: ODT icoontje",
+          "baseLine":542.589,
+          "fontWeight":400.0,
+          "italicAngle":0.0,
+          "fontSize":12.0,
+          "boundingBox":[
+            241.1,
+            538.9530000000001,
+            354.46399999999994,
+            554.373
+          ],
+          "fontName":"LiberationSerif",
+          "color":[
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    }
+  ]
+}

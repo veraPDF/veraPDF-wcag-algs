@@ -248,7 +248,7 @@ public class ChunksMergeUtils {
 		return getUniformProbability(new double[]{0, 0}, ratio, FONT_METRIC_UNIVERSAL_TEMPORARY_THRESHOLD);
 	}
 
-	private static double getUniformProbability(double[] probability1Interval, double point,
+	public static double getUniformProbability(double[] probability1Interval, double point,
 	                                            double initIntervalLength) {
 		if (point + FLOATING_POINT_OPERATIONS_EPS > probability1Interval[0]
 		    && point < probability1Interval[1] + FLOATING_POINT_OPERATIONS_EPS) {

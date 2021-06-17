@@ -280,6 +280,10 @@ public class BoundingBox {
         return rightX;
     }
 
+    public double getCenterX() {
+        return 0.5 * (leftX + rightX);
+    }
+
     public boolean isEmpty() {
         return pageNumber == null
                 ||leftX > (rightX + EPSILON) || lastPageNumber < pageNumber
