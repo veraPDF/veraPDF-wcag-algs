@@ -78,7 +78,7 @@ class AccumulatedNodeSemanticsCheckerTests {
 
 	private void testTreeStructure(ITree tree) {
 		for (INode node : tree) {
-			if (node.getInitialSemanticType() != null && SemanticTypeMapper.containsType(node.getInitialSemanticType().getValue())) {
+			if (node.getInitialSemanticType() != null && SemanticTypeMapper.containsType(node.getInitialSemanticType())) {
 				Assertions.assertEquals(node.getInitialSemanticType(), node.getSemanticType());
 				Assertions.assertTrue(node.getCorrectSemanticScore() >= AccumulatedNodeConsumer.MERGE_PROBABILITY_THRESHOLD);
 			}
