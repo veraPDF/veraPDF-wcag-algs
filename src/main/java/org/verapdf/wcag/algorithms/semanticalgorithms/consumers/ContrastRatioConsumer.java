@@ -67,10 +67,25 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 					}
 					BoundingBox bBox = textChunk.getBoundingBox();
 					double dpiScaling = ((double) RENDER_DPI) / ((double) PDF_DPI);
-					int x = (int) (Math.round(bBox.getLeftX()) * dpiScaling);
-					int y = (int) (Math.round(bBox.getTopY()) * dpiScaling);
-					int width = getIntegerBBoxValueForProcessing(bBox.getWidth(), dpiScaling);
-					int height = getIntegerBBoxValueForProcessing(bBox.getHeight(), dpiScaling);
+					int renderedPageWidth = renderedPage.getRaster().getWidth();
+					int renderedPageHeight = renderedPage.getRaster().getHeight();
+					BoundingBox pageBBox = new BoundingBox(node.getPageNumber(),0, 0, renderedPageWidth, renderedPageHeight);
+
+					BoundingBox scaledBBox = new BoundingBox(node.getPageNumber(), bBox.getLeftX() * dpiScaling,
+					                                         bBox.getBottomY() * dpiScaling,
+					                                         bBox.getRightX() * dpiScaling,
+					                                         bBox.getTopY() * dpiScaling);
+					boolean isOverlappingBox = scaledBBox.overlaps(pageBBox);
+					if (isOverlappingBox) {
+						scaledBBox = scaledBBox.cross(pageBBox);
+					} else if (!pageBBox.contains(scaledBBox)) {
+						textChunk.setContrastRatio(Integer.MAX_VALUE);
+						return;
+					}
+					int x = (int) (Math.round(scaledBBox.getLeftX()));
+					int y = (int) (Math.round(scaledBBox.getTopY()));
+					int width = getIntegerBBoxValueForProcessing(scaledBBox.getWidth(), 1);
+					int height = getIntegerBBoxValueForProcessing(scaledBBox.getHeight(), 1);
 					try {
 						BufferedImage targetBim = renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
 						double contrastRatio = getContrastRatio(targetBim);
