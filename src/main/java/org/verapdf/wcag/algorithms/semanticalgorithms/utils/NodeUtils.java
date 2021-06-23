@@ -136,8 +136,9 @@ public class NodeUtils {
 		    textNode.getPageNumber() == null || imageNode.getLastPageNumber() == null) {
 			return 0.0;
 		}
-		if (!textNode.getLastPageNumber().equals(imageNode.getPageNumber())) {
-			return 1.0;
+		if (!textNode.getPageNumber().equals(textNode.getLastPageNumber()) ||
+		    !textNode.getPageNumber().equals(imageNode.getPageNumber())) {
+			return 0.0;
 		}
 		double firstBaseline = textNode.getFirstBaseline();
 		double lastBaseline = textNode.getLastBaseline();

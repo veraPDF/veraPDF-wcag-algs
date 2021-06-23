@@ -15,6 +15,10 @@ public enum SemanticType {
 	LINK("Link"),
 	ANNOT("Annot"),
 	CAPTION("Caption"),
+	LIST("L"),
+	LIST_LABEL("Lbl"),
+	LIST_BODY("LBody"),
+	LIST_ITEM("Li"),
 	NUMBER_HEADING("Hn"),
 	HEADING("H");
 

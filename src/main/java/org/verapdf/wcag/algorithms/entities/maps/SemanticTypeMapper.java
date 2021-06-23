@@ -17,6 +17,10 @@ public class SemanticTypeMapper {
         map.put(SemanticType.ANNOT.getValue(), SemanticType.ANNOT);
         map.put(SemanticType.HEADING.getValue(), SemanticType.HEADING);
         map.put(SemanticType.NUMBER_HEADING.getValue(), SemanticType.NUMBER_HEADING);
+        map.put(SemanticType.LIST.getValue(), SemanticType.LIST);
+        map.put(SemanticType.LIST_ITEM.getValue(), SemanticType.LIST_ITEM);
+        map.put(SemanticType.LIST_BODY.getValue(), SemanticType.LIST_BODY);
+        map.put(SemanticType.LIST_LABEL.getValue(), SemanticType.LIST_LABEL);
         map.put(SemanticType.TABLE.getValue(), SemanticType.TABLE);
         map.put(SemanticType.TABLE_HEADERS.getValue(), SemanticType.TABLE_HEADERS);
         map.put(SemanticType.TABLE_BODY.getValue(), SemanticType.TABLE_BODY);
@@ -28,6 +32,10 @@ public class SemanticTypeMapper {
 
     public static boolean containsType(String type) {
         return map.containsKey(type);
+    }
+
+    public static boolean containsType(SemanticType type) {
+        return map.containsValue(type);
     }
 
     public static SemanticType getSemanticType(String type) {
