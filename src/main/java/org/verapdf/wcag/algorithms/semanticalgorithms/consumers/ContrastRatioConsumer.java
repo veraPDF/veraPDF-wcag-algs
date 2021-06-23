@@ -27,6 +27,7 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 	private static final Logger logger = Logger.getLogger(ContrastRatioConsumer.class.getCanonicalName());
 	private static final int RENDER_DPI = 144;
 	private static final int PDF_DPI = 72;
+	private static final double LUMINOSITY_DIFFERENCE = 0.0001;
 
 	public ContrastRatioConsumer(String sourcePdfPath) {
 		this.sourcePdfPath = sourcePdfPath;
@@ -91,12 +92,10 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 	private double [] convertCmykToRgb(double [] cmykColorComponentArray) {
 		double [] result = new double[3];
 		if (cmykColorComponentArray.length == 4) {
-			double red = (1 - cmykColorComponentArray[0]) * (1 - cmykColorComponentArray[3]);
-			double green = (1 - cmykColorComponentArray[1]) * (1 - cmykColorComponentArray[3]);
-			double blue = (1 - cmykColorComponentArray[2]) * (1 - cmykColorComponentArray[3]);
-			result[0] = red;
-			result[1] = green;
-			result[2] = blue;
+			double black = 1 - cmykColorComponentArray[3];
+			for (int i = 0; i < 3; i++) {
+				result[i] = (1 - cmykColorComponentArray[i]) * black;
+			}
 		}
 		return result;
 	}
@@ -105,21 +104,35 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		Color res = null;
 		if (colorComponentArray != null) {
 			if (colorComponentArray.length == 1) {
-				res = new Color((int)(colorComponentArray[0] * 255),
-				                (int)(colorComponentArray[0] * 255),
-				                (int) (colorComponentArray[0] * 255));
+				int grayscaleValue =  convertDoubleColorValueToRgbInteger(colorComponentArray[0]);
+				res = new Color(grayscaleValue,
+				                grayscaleValue,
+				                grayscaleValue);
 			} else if (colorComponentArray.length == 3) {
-				res = new Color((int)(colorComponentArray[0] * 255),
-				                (int)(colorComponentArray[1] * 255),
-				                (int)(colorComponentArray[2] * 255));
+				res = makeRgbColorFromDoubleValues(colorComponentArray);
 			} else if (colorComponentArray.length == 4) {
 				double [] convertedRgbColor = convertCmykToRgb(colorComponentArray);
-				res = new Color((int)(convertedRgbColor[0] * 255),
-				                    (int)(convertedRgbColor[1] * 255),
-				                    (int)(convertedRgbColor[2] * 255));
+				res = makeRgbColorFromDoubleValues(convertedRgbColor);
 			}
 		}
 		return res;
+	}
+
+	private Color makeRgbColorFromDoubleValues(double [] colorComponentArray) {
+		assert colorComponentArray.length == 3;
+		return new Color(convertDoubleColorValueToRgbInteger(colorComponentArray[0]),
+		                 convertDoubleColorValueToRgbInteger(colorComponentArray[1]),
+		                 convertDoubleColorValueToRgbInteger(colorComponentArray[2]));
+	}
+
+	private int convertDoubleColorValueToRgbInteger(double value) {
+		int result = (int) Math.floor(value * 256);
+		if (result > 255) {
+			result = 255;
+		} else if (result < 0) {
+			result = 0;
+		}
+		return result;
 	}
 
 	private int getIntegerBBoxValueForProcessing(double initialValue, double dpiScaling) {
@@ -140,15 +153,14 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 	}
 
 	private double getContrastRatio(BufferedImage image, Color textColor) {
-		double epsilon = 0.0001;
 		double textLuminosity = 0;
 		if (textColor != null) {
 			textLuminosity = relativeLuminosity(textColor);
 		}
 		double[] contrastColors = get2MostPresentElements(getLuminosityPresenceList(image));
-		if (Math.abs(textLuminosity - contrastColors[0]) <= epsilon) {
+		if (Math.abs(textLuminosity - contrastColors[0]) <= LUMINOSITY_DIFFERENCE) {
 			return getContrastRatio(textLuminosity, contrastColors[1]);
-		} else if ((Math.abs(textLuminosity - contrastColors[1]) <= epsilon) || textColor != null) {
+		} else if ((Math.abs(textLuminosity - contrastColors[1]) <= LUMINOSITY_DIFFERENCE) || textColor != null) {
 			return getContrastRatio(textLuminosity, contrastColors[0]);
 		} else {
 			return getContrastRatio(contrastColors[0], contrastColors[1]);

@@ -37,7 +37,6 @@ public class ContrastRatioConsumerTests {
 				//TODO fix problem with incorrect contrast detection in case on real contrast ratio 1:1 and
 				// extra color pixels on the edges of the bbox
 				Arguments.of("contrast-fail-black-on-black.pdf", "contrast-fail-black-on-black.json", 4.5));
-
 	}
 
 	static Stream<Arguments> contrastTestFailParams() {
