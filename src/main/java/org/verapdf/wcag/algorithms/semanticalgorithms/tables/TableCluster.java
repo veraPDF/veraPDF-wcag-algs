@@ -1,14 +1,16 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
 
+import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
-import org.verapdf.wcag.algorithms.entities.tables.TableToken;
+import org.verapdf.wcag.algorithms.entities.tables.ITableToken;
+import org.verapdf.wcag.algorithms.entities.tables.TableTextToken;
 import org.verapdf.wcag.algorithms.entities.tables.TableTokenRow;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 
 import java.util.*;
 
-public class TableCluster extends TextInfoChunk {
+public class TableCluster extends TextInfoChunk implements ITableToken {
 
     private Long id = null;
 
@@ -36,7 +38,7 @@ public class TableCluster extends TextInfoChunk {
     public TableCluster() {
     }
 
-    public TableCluster(TableToken token) {
+    public TableCluster(TableTextToken token) {
         this(new TableTokenRow(token));
     }
 
@@ -85,11 +87,11 @@ public class TableCluster extends TextInfoChunk {
         return colNumber;
     }
 
-    public void add(TableToken token) {
+    public void add(TableTextToken token) {
         add(token, false);
     }
 
-    public void add(TableToken token, boolean newLine) {
+    public void add(TableTextToken token, boolean newLine) {
         if (newLine || rows.isEmpty()) {
             rows.add(new TableTokenRow(token));
         } else {
@@ -338,6 +340,16 @@ public class TableCluster extends TextInfoChunk {
             }
         }
         rows = result;
+    }
+
+    @Override
+    public double getHeight() {
+        return fontSize;
+    }
+
+    @Override
+    public INode getNode() {
+        return null;
     }
 
     @Override
