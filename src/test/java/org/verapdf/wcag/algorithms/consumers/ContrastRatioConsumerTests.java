@@ -33,10 +33,7 @@ public class ContrastRatioConsumerTests {
 				Arguments.of("hyphen-regular-pass.pdf", "hyphen-regular-pass.json", 4.5),
 				Arguments.of("1.4.3-t01-pass-a.pdf", "1.4.3-t01-pass-a.json", 3.0),
 				Arguments.of("1.4.3-t02-pass-a.pdf", "1.4.3-t02-pass-a.json", 4.5),
-				Arguments.of("1.4.3-t03-pass-a.pdf", "1.4.3-t03-pass-a.json", 4.5),
-				//TODO fix problem with incorrect contrast detection in case on real contrast ratio 1:1 and
-				// extra color pixels on the edges of the bbox
-				Arguments.of("contrast-fail-black-on-black.pdf", "contrast-fail-black-on-black.json", 4.5));
+				Arguments.of("1.4.3-t03-pass-a.pdf", "1.4.3-t03-pass-a.json", 4.5));
 	}
 
 	static Stream<Arguments> contrastTestFailParams() {
@@ -47,7 +44,8 @@ public class ContrastRatioConsumerTests {
 				Arguments.of("1.4.3-t02-fail-a.pdf", "1.4.3-t02-fail-a.json", 4.5),
 				Arguments.of("contrast-fail-white-on-white.pdf", "contrast-fail-white-on-white.json", 4.5),
 				Arguments.of("contrast-fail-gray-on-gray.pdf", "contrast-fail-gray-on-gray.json", 4.5),
-				Arguments.of("contrast-fail-white-on-gray.pdf", "contrast-fail-white-on-gray.json", 4.5));
+				Arguments.of("contrast-fail-white-on-gray.pdf", "contrast-fail-white-on-gray.json", 4.5),
+				Arguments.of("contrast-fail-black-on-black.pdf", "contrast-fail-black-on-black.json", 4.5));
 	}
 
 	@ParameterizedTest(name = "{index}: ({0}, {1}, {2}) => {0}")
