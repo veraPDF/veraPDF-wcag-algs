@@ -172,14 +172,24 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		if (textColor != null) {
 			textLuminosity = relativeLuminosity(textColor);
 		}
-		double[] contrastColors = get2MostPresentElements(getLuminosityPresenceList(image));
+		double [] contrastColors = get2MostPresentElements(getLuminosityPresenceList(image));
 		if (Math.abs(textLuminosity - contrastColors[0]) <= LUMINOSITY_DIFFERENCE) {
-			return getContrastRatio(textLuminosity, contrastColors[1]);
+			return getMinimumContrastRatio(image, textLuminosity, contrastColors);
 		} else if ((Math.abs(textLuminosity - contrastColors[1]) <= LUMINOSITY_DIFFERENCE) || textColor != null) {
 			return getContrastRatio(textLuminosity, contrastColors[0]);
 		} else {
 			return getContrastRatio(contrastColors[0], contrastColors[1]);
 		}
+	}
+	private double getMinimumContrastRatio(BufferedImage image, double textLuminosity, double [] contrastColors) {
+		int width = image.getWidth();
+		int height = image.getHeight();
+		BufferedImage centeredImage = image.getSubimage(width / 4, height / 4, width / 2, height / 2);
+		double [] centeredImageContrastColors = get2MostPresentElements(getLuminosityPresenceList(centeredImage));
+		double result = Math.min(getContrastRatio(textLuminosity, contrastColors[1]),
+		                         getContrastRatio(textLuminosity, centeredImageContrastColors[0]));
+
+		return result;
 	}
 
 	private double getContrastRatio(BufferedImage image) {
