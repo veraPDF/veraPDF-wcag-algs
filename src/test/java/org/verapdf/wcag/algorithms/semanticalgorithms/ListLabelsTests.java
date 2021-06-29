@@ -17,9 +17,10 @@ public class ListLabelsTests {
     static Stream<Arguments> listTestParams() {
         return Stream.of(
                 Arguments.of(new String[]{" 1", "2", "3"}, true),
+                Arguments.of(new String[]{" ", " ", " ", " "}, false),
+                Arguments.of(new String[]{"", "", "", ""}, false),
                 Arguments.of(new String[]{"i", "ii", "iii", "iv"}, true),
                 Arguments.of(new String[]{"ii", "iii"}, true),
-                Arguments.of(new String[]{" 1", "2", "3"}, true),
                 Arguments.of(new String[]{"i", "ii", "iii", "iv", "v"}, true),
                 Arguments.of(new String[]{"i", "ii", "iii", "iiii"}, false),
                 Arguments.of(new String[]{"", "1", "2"}, false),
@@ -51,6 +52,8 @@ public class ListLabelsTests {
                 Arguments.of(new String[]{"-1-", "-2-", "-3-"}, true),
                 Arguments.of(new String[]{"-2-", "-3-", "-4-"}, true),
                 Arguments.of(new String[]{"-9-", "-10-", "-11-"}, true),
+                Arguments.of(new String[]{"-a-", "-a-", "-a-"}, false),
+                Arguments.of(new String[]{"--", "--", "--"}, false),
                 Arguments.of(new String[]{"CHAPTER 1", "CHAPTER 2", "CHAPTER 3"}, true),
                 Arguments.of(new String[]{"CHAPTER I", "CHAPTER II", "CHAPTER III"}, true),
                 Arguments.of(new String[]{"(A).", "(B).", "(C)."}, true),

@@ -40,13 +40,13 @@ class AccumulatedNodeSemanticsCheckerTests {
 				Arguments.of("10.json", 1d, SemanticType.PARAGRAPH),
 				Arguments.of("11.json", 1d, SemanticType.PARAGRAPH),
 				Arguments.of("12.json", 0.9885d, SemanticType.PARAGRAPH),
-				Arguments.of("subscript1.json", 0.8843d, SemanticType.PARAGRAPH),
-				Arguments.of("superscript1.json", 0.8228d, SemanticType.PARAGRAPH),
-				Arguments.of("superscript2.json", 0.8228d, SemanticType.PARAGRAPH),
-				Arguments.of("superscript3.json", 0.8228d, SemanticType.PARAGRAPH),
-				Arguments.of("superscript4.json", 0.8228d, SemanticType.PARAGRAPH),
-				Arguments.of("superscript5.json", 0.8228d, SemanticType.PARAGRAPH),
-				Arguments.of("superscript6.json", 0.8228d, SemanticType.PARAGRAPH));
+				Arguments.of("subscript/subscript1.json", 0.8843d, SemanticType.PARAGRAPH),
+				Arguments.of("superscript/superscript1.json", 0.8228d, SemanticType.PARAGRAPH),
+				Arguments.of("superscript/superscript2.json", 0.8228d, SemanticType.PARAGRAPH),
+				Arguments.of("superscript/superscript3.json", 0.8228d, SemanticType.PARAGRAPH),
+				Arguments.of("superscript/superscript4.json", 0.8228d, SemanticType.PARAGRAPH),
+				Arguments.of("superscript/superscript5.json", 0.8228d, SemanticType.PARAGRAPH),
+				Arguments.of("superscript/superscript6.json", 0.8228d, SemanticType.PARAGRAPH));
 	}
 
 	@ParameterizedTest(name = "{index}: ({0}, {1}, {2}) => {0}")
@@ -61,10 +61,12 @@ class AccumulatedNodeSemanticsCheckerTests {
 
 	static Stream<Arguments> treeSemanticCorrectnessTestParams() {
 		return Stream.of(
-				Arguments.of("caption1.json"),
-				Arguments.of("caption2.json"),
-				Arguments.of("caption3.json"),
-				Arguments.of("caption4.json"));
+				Arguments.of("headings/Heading2.json"),
+				Arguments.of("headings/Heading3.json"),
+				Arguments.of("captions/caption1.json"),
+				Arguments.of("captions/caption2.json"),
+				Arguments.of("captions/caption3.json"),
+				Arguments.of("captions/caption4.json"));
 	}
 
 	@ParameterizedTest(name = "{index}: ({0}) => {0}")

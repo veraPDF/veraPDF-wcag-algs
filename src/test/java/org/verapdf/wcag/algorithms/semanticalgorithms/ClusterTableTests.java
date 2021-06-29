@@ -26,7 +26,6 @@ public class ClusterTableTests {
                 Arguments.of("NEG-fake-table.json", new int[][] {{4, 4}}, false),
                 Arguments.of("NEG-bad-table.json", new int[][] {{4, 5}}, false),
                 Arguments.of("NEG-bad-table2.json", new int[][] {{4, 5}}, false),
-                Arguments.of("NEG-fake-list.json", new int[][] {{2, 4}}, false), // list should be distinguished from table
                 Arguments.of("no-table.json", new int[][] {}, false),
                 Arguments.of("NEG-floating-text-box.json", new int[][] {}, false),
                 Arguments.of("2columns2.json", new int[][] {}, false),

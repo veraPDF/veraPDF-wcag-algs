@@ -8,11 +8,11 @@ import java.util.*;
 
 public class TableRecognizer {
 
-    private Long clusterCounter = 0l;
+    private Long clusterCounter = 0L;
 
-    private List<TableCluster> headers;
+    private final List<TableCluster> headers;
     private List<TableCluster> clusters;
-    private Map<TableCluster, TableCluster> columns;
+    private final Map<TableCluster, TableCluster> columns;
     private Integer numRows = null;
 
     private Table table = null;
@@ -230,8 +230,7 @@ public class TableRecognizer {
     private List<TableCluster> mergeInitialClusters(List<List<TableCluster>> clusterRows) {
         List<TableCluster> initialClusters = new ArrayList<>();
 
-        for (int i = 0; i < clusterRows.size(); ++i) {
-            List<TableCluster> clusterRow = clusterRows.get(i);
+        for (List<TableCluster> clusterRow : clusterRows) {
             TableUtils.sortClustersLeftToRight(clusterRow);
 
             for (int j = 0; j < clusterRow.size(); ++j) {
@@ -345,7 +344,6 @@ public class TableRecognizer {
     }
 
     private Long generateClusterId() {
-        Long id = clusterCounter++;
-        return id;
+        return clusterCounter++;
     }
 }

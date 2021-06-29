@@ -60,7 +60,7 @@ public class NodeUtils {
 	}
 
 	private static double getLineSizeHeadingProbability(SemanticTextNode textNode) {
-		return 1 - HEADING_PROBABILITY_PARAMS[3] * textNode.getLinesNumber() * textNode.getLinesNumber();
+		return Math.max(0, 1 - HEADING_PROBABILITY_PARAMS[3] * (textNode.getLinesNumber() - 1) * (textNode.getLinesNumber() - 1));
 	}
 
 	public static double captionProbability(INode node, INode neighborNode) {

@@ -1,0 +1,816 @@
+{
+   "type": "Document",
+   "children": [
+      {
+         "type": "P",
+         "children": [
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "Dyslexic users find it unusually difficult ",
+               "baseLine": 612.11340332,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  608.33340332,
+                  408.1318542596349,
+                  622.49790332
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "to learn to read. They find it difficult to ",
+               "baseLine": 599.51342773,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  595.73342773,
+                  408.468904269085,
+                  609.89792773
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "recognise and process written text. As",
+               "baseLine": 586.91339111,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  583.13339111,
+                  401.57565422844993,
+                  597.29789111
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "Span",
+               "children": [
+                  {
+                     "type": "TextChunk",
+                     "pageNumber": 14,
+                     "value": "-",
+                     "baseLine": 586.91339111,
+                     "fontWeight": 400.0,
+                     "italicAngle": 0.0,
+                     "fontSize": 10.5,
+                     "boundingBox": [
+                        401.6164856,
+                        583.13339111,
+                        405.3544856,
+                        597.29789111
+                     ],
+                     "fontName": "MinionPro-Regular",
+                     "color": [
+                        0.0,
+                        0.0,
+                        0.0
+                     ]
+                  }
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "sistive technologies such as specialised ",
+               "baseLine": 574.31341552,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  570.5334155200001,
+                  409.5840042312852,
+                  584.69791552
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "screen readers can help them overcome ",
+               "baseLine": 561.7133789,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  557.9333789,
+                  408.5707542370599,
+                  572.0978789
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "this. These read content aloud and high",
+               "baseLine": 549.11340332,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  545.33340332,
+                  401.7100542517598,
+                  559.49790332
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "Span",
+               "children": [
+                  {
+                     "type": "TextChunk",
+                     "pageNumber": 14,
+                     "value": "-",
+                     "baseLine": 549.11340332,
+                     "fontWeight": 400.0,
+                     "italicAngle": 0.0,
+                     "fontSize": 10.5,
+                     "boundingBox": [
+                        401.6164856,
+                        545.33340332,
+                        405.3544856,
+                        559.49790332
+                     ],
+                     "fontName": "MinionPro-Regular",
+                     "color": [
+                        0.0,
+                        0.0,
+                        0.0
+                     ]
+                  }
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "light the same section of text on the ",
+               "baseLine": 536.51342773,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  532.73342773,
+                  410.49960424262514,
+                  546.89792773
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "screen. This gives the reader a cue, facil",
+               "baseLine": 523.91339111,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  520.13339111,
+                  401.7174042590049,
+                  534.29789111
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "Span",
+               "children": [
+                  {
+                     "type": "TextChunk",
+                     "pageNumber": 14,
+                     "value": "-",
+                     "baseLine": 523.91339111,
+                     "fontWeight": 400.0,
+                     "italicAngle": 0.0,
+                     "fontSize": 10.5,
+                     "boundingBox": [
+                        401.6164856,
+                        520.13339111,
+                        405.3544856,
+                        534.29789111
+                     ],
+                     "fontName": "MinionPro-Regular",
+                     "color": [
+                        0.0,
+                        0.0,
+                        0.0
+                     ]
+                  }
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "itates comprehension and helps them to ",
+               "baseLine": 511.313385,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  507.533385,
+                  408.22425423118005,
+                  521.6978849999999
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "improve their reading skills and master ",
+               "baseLine": 498.71340942,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  494.93340942000003,
+                  408.39540426446496,
+                  509.09790942
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "written language.",
+               "baseLine": 486.11340332,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  482.33340332,
+                  309.4003542359051,
+                  496.49790332
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            }
+         ]
+      },
+      {
+         "type": "H2",
+         "children": [
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "Easier reading and navigation on ",
+               "baseLine": 460.91339111,
+               "fontWeight": 700.0,
+               "italicAngle": 0.0,
+               "fontSize": 13.0,
+               "boundingBox": [
+                  235.27560424,
+                  457.66339111,
+                  385.59980423792007,
+                  473.36739111
+               ],
+               "fontName": "MyriadPro-BoldCond",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "mobile devices",
+               "baseLine": 448.313385,
+               "fontWeight": 700.0,
+               "italicAngle": 0.0,
+               "fontSize": 13.0,
+               "boundingBox": [
+                  235.27560424,
+                  445.063385,
+                  301.8265042342799,
+                  460.767385
+               ],
+               "fontName": "MyriadPro-BoldCond",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            }
+         ]
+      },
+      {
+         "type": "P",
+         "children": [
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "PDF/UA specifies the technical require",
+               "baseLine": 435.71340942,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  431.93340942000003,
+                  401.5756542487149,
+                  446.09790942
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "Span",
+               "children": [
+                  {
+                     "type": "TextChunk",
+                     "pageNumber": 14,
+                     "value": "-",
+                     "baseLine": 435.71340942,
+                     "fontWeight": 400.0,
+                     "italicAngle": 0.0,
+                     "fontSize": 10.5,
+                     "boundingBox": [
+                        401.6164856,
+                        431.93340942000003,
+                        405.3544856,
+                        446.09790942
+                     ],
+                     "fontName": "MinionPro-Regular",
+                     "color": [
+                        0.0,
+                        0.0,
+                        0.0
+                     ]
+                  }
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "ments for assistive technology to ful",
+               "baseLine": 423.11340332,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  419.33340332,
+                  401.7447042506052,
+                  433.49790332
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "Span",
+               "children": [
+                  {
+                     "type": "TextChunk",
+                     "pageNumber": 14,
+                     "value": "-",
+                     "baseLine": 423.11340332,
+                     "fontWeight": 400.0,
+                     "italicAngle": 0.0,
+                     "fontSize": 10.5,
+                     "boundingBox": [
+                        401.6164856,
+                        419.33340332,
+                        405.3544856,
+                        433.49790332
+                     ],
+                     "fontName": "MinionPro-Regular",
+                     "color": [
+                        0.0,
+                        0.0,
+                        0.0
+                     ]
+                  }
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "ly interact with PDF documents using ",
+               "baseLine": 410.51339721,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  406.73339721,
+                  409.7236542366398,
+                  420.89789721
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "PDF/UA-compliant PDF software. As ",
+               "baseLine": 397.91339111,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  394.13339111000005,
+                  411.5727042455651,
+                  408.29789111
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "long as the assistive technology and PDF ",
+               "baseLine": 385.313385,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  381.533385,
+                  407.53125423411984,
+                  395.697885
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "software used is fully compliant with the ",
+               "baseLine": 372.71340942,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  368.93340942000003,
+                  407.37165425385984,
+                  383.09790942
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "standard, the result for disabled users is ",
+               "baseLine": 360.11340332,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  356.33340332,
+                  408.1329042383202,
+                  370.49790332
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "a high-quality reading and navigational ",
+               "baseLine": 347.51339721,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  343.73339721,
+                  408.27780425228497,
+                  357.89789721
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "experience. The standard will also ben",
+               "baseLine": 334.91339111,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  331.13339111000005,
+                  401.74575424881994,
+                  345.29789111
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "Span",
+               "children": [
+                  {
+                     "type": "TextChunk",
+                     "pageNumber": 14,
+                     "value": "-",
+                     "baseLine": 334.91339111,
+                     "fontWeight": 400.0,
+                     "italicAngle": 0.0,
+                     "fontSize": 10.5,
+                     "boundingBox": [
+                        401.6164856,
+                        331.13339111000005,
+                        405.3544856,
+                        345.29789111
+                     ],
+                     "fontName": "MinionPro-Regular",
+                     "color": [
+                        0.0,
+                        0.0,
+                        0.0
+                     ]
+                  }
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "efit other users, however; anyone who ",
+               "baseLine": 322.313385,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  318.533385,
+                  409.9998042689801,
+                  332.697885
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "reads documents on mobile devices, for ",
+               "baseLine": 309.71340942,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  305.93340942000003,
+                  408.31560424735,
+                  320.09790942
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "example, will appreciate PDF content ",
+               "baseLine": 297.11340332,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  293.33340332,
+                  410.94690425690516,
+                  307.49790332
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "automatically adjusting itself to a read",
+               "baseLine": 284.51339721,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  280.73339721,
+                  401.71950427465,
+                  294.89789721
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "Span",
+               "children": [
+                  {
+                     "type": "TextChunk",
+                     "pageNumber": 14,
+                     "value": "-",
+                     "baseLine": 284.51339721,
+                     "fontWeight": 400.0,
+                     "italicAngle": 0.0,
+                     "fontSize": 10.5,
+                     "boundingBox": [
+                        401.6164856,
+                        280.73339721,
+                        405.3544856,
+                        294.89789721
+                     ],
+                     "fontName": "MinionPro-Regular",
+                     "color": [
+                        0.0,
+                        0.0,
+                        0.0
+                     ]
+                  }
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "er-friendly size without affecting the se",
+               "baseLine": 271.91339111,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  268.13339111000005,
+                  401.56305418771,
+                  282.29789111
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            },
+            {
+               "type": "Span",
+               "children": [
+                  {
+                     "type": "TextChunk",
+                     "pageNumber": 14,
+                     "value": "-",
+                     "baseLine": 271.91339111,
+                     "fontWeight": 400.0,
+                     "italicAngle": 0.0,
+                     "fontSize": 10.5,
+                     "boundingBox": [
+                        401.6164856,
+                        268.13339111000005,
+                        405.3544856,
+                        282.29789111
+                     ],
+                     "fontName": "MinionPro-Regular",
+                     "color": [
+                        0.0,
+                        0.0,
+                        0.0
+                     ]
+                  }
+               ]
+            },
+            {
+               "type": "TextChunk",
+               "pageNumber": 14,
+               "value": "mantic structure.",
+               "baseLine": 259.313385,
+               "fontWeight": 400.0,
+               "italicAngle": 0.0,
+               "fontSize": 10.5,
+               "boundingBox": [
+                  235.27560424,
+                  255.53338499999998,
+                  309.01605423023506,
+                  269.697885
+               ],
+               "fontName": "MinionPro-Regular",
+               "color": [
+                  0.0,
+                  0.0,
+                  0.0
+               ]
+            }
+         ]
+      }
+   ]
+}

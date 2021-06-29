@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 
 public class ContrastRatioConsumer implements Consumer<INode> {
 
-	private Map<Integer, BufferedImage> renderedPages = new HashMap<>();
+	private final Map<Integer, BufferedImage> renderedPages = new HashMap<>();
 	private final String sourcePdfPath;
 	private static final Logger logger = Logger.getLogger(ContrastRatioConsumer.class.getCanonicalName());
 	private static final int RENDER_DPI = 144;

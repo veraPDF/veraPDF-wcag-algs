@@ -331,6 +331,9 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	}
 
 	private void acceptSemanticCaption(INode node, INode neighborNode) {
+		if (node.getSemanticType() == SemanticType.HEADING || node.getSemanticType() == SemanticType.NUMBER_HEADING) {
+			return;
+		}
 		INode accumulatedNode = accumulatedNodeMapper.get(node);
 		double captionProbability = NodeUtils.captionProbability(accumulatedNode, accumulatedNodeMapper.get(neighborNode));
 		if (captionProbability >= MERGE_PROBABILITY_THRESHOLD) {

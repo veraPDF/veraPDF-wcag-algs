@@ -48,6 +48,10 @@ public class TableTokenRow extends TextLine {
         return rightGap;
     }
 
+    public String getString() {
+        return super.toString();
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder(Objects.toString(rowNumber));
