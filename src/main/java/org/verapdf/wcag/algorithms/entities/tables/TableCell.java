@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TableCell extends TextInfoChunk {
-    private List<TableTokenRow> content;
+    private final List<TableTokenRow> content;
     private SemanticType semanticType = null;
 
     public TableCell() {
@@ -75,5 +75,13 @@ public class TableCell extends TextInfoChunk {
         }
         content.addAll(other.getContent());
         super.add(other);
+    }
+
+    public String getString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (TableTokenRow tokenRow : content) {
+            stringBuilder.append(tokenRow.getString());
+        }
+        return stringBuilder.toString();
     }
 }

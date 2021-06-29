@@ -170,7 +170,7 @@ public class ContrastRatioChecker {
 
 		@Override
 		public int compareTo(DataPoint o) {
-			return Double.compare(this.value, ((DataPoint) o).value);
+			return Double.compare(this.value, o.value);
 		}
 	}
 

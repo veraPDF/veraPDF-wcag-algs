@@ -4,9 +4,13 @@ import org.verapdf.wcag.algorithms.entities.*;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.lists.ListElement;
+import org.verapdf.wcag.algorithms.entities.lists.ListItem;
+import org.verapdf.wcag.algorithms.entities.lists.PDFList;
 import org.verapdf.wcag.algorithms.entities.tables.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognitionArea;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognizer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
@@ -20,10 +24,12 @@ public class ClusterTableConsumer implements Consumer<INode> {
     private static final Logger LOGGER = Logger.getLogger(AccumulatedNodeConsumer.class.getCanonicalName());
 
     private TableRecognitionArea recognitionArea;
-    private List<Table> tables;
+    private final List<Table> tables;
+    private final List<PDFList> lists;
 
     public  ClusterTableConsumer() {
         tables = new ArrayList<>();
+        lists = new ArrayList<>();
         init();
     }
 
@@ -33,6 +39,10 @@ public class ClusterTableConsumer implements Consumer<INode> {
 
     public List<Table> getTables() {
         return tables;
+    }
+
+    public List<PDFList> getLists() {
+        return lists;
     }
 
     @Override
@@ -70,9 +80,8 @@ public class ClusterTableConsumer implements Consumer<INode> {
 
         if (node.isRoot()) {
             if (recognitionArea.isValid()) {
-                List<INode> restNodes = new ArrayList<>();
 
-                restNodes.addAll(recognize());
+                List<INode> restNodes = new ArrayList<>(recognize());
                 init();
 
                 restNodes.add(node);
@@ -80,8 +89,8 @@ public class ClusterTableConsumer implements Consumer<INode> {
                     accept(restNode);
                 }
             }
-
             updateTreeWithRecognizedTables(node);
+            updateTreeWithRecognizedLists(node);
         }
     }
 
@@ -95,7 +104,11 @@ public class ClusterTableConsumer implements Consumer<INode> {
         Table recognizedTable = recognizer.getTable();
 
         if (recognizedTable != null) {
-            tables.add(recognizedTable);
+            if (ListUtils.isList(recognizedTable)) {
+                lists.add(new PDFList(recognizedTable));
+            } else {
+                tables.add(recognizedTable);
+            }
             return recognizedTable.getRestNodes();
         }
 
@@ -225,6 +238,94 @@ public class ClusterTableConsumer implements Consumer<INode> {
     private INode updateTreeWithRecognizedCell(TableCell cell) {
         Set<INode> tableLeafNodes = new HashSet<>();
         for (TableTokenRow tokenRow : cell.getContent()) {
+            for (TextChunk chunk : tokenRow.getTextChunks()) {
+                if (chunk instanceof TableTextToken) {
+                    TableTextToken token = (TableTextToken) chunk;
+                    if (token.getNode() != null) {
+                        tableLeafNodes.add(token.getNode());
+                    }
+                }
+            }
+        }
+        return findLocalRoot(tableLeafNodes);
+    }
+
+    private void updateTreeWithRecognizedLists(INode root) {
+        initTreeNodeInfo(root);
+        for (PDFList list : lists) {
+            INode listRoot = updateTreeWithRecognizedList(list);
+            if (listRoot != null) {
+                if (ListUtils.isListNode(listRoot) && listRoot.getRecognizedStructureId() != list.getId()) {
+                    listRoot.setRecognizedStructureId(null);
+                } else {
+                    listRoot.setRecognizedStructureId(list.getId());
+                }
+                listRoot.setSemanticType(SemanticType.LIST);
+                listRoot.setCorrectSemanticScore(1.0);
+            }
+        }
+    }
+
+    private INode updateTreeWithRecognizedList(PDFList list) {
+        Set<INode> nodes = new HashSet<>();
+        for (ListItem item : list.getListItems()) {
+            INode itemNode = updateTreeWithRecognizedListItem(item, list.getId());
+            if (itemNode != null) {
+                if (ListUtils.isListNode(itemNode) && itemNode.getRecognizedStructureId() != list.getId()) {
+                    itemNode.setRecognizedStructureId(null);
+                } else {
+                    itemNode.setRecognizedStructureId(list.getId());
+                }
+                itemNode.setSemanticType(SemanticType.LIST_ITEM);
+                itemNode.setCorrectSemanticScore(1.0);
+                nodes.add(itemNode);
+            }
+        }
+        if (nodes.size() == 1) {
+            return nodes.iterator().next();
+        }
+        return findLocalRoot(nodes);
+    }
+
+    private INode updateTreeWithRecognizedListItem(ListItem item, Long id) {
+        Map<INode, SemanticType> elementsNodes = new HashMap<>();
+        INode labelNode = updateTreeWithRecognizedListElement(item.getLabel());
+        if (labelNode != null) {
+            elementsNodes.put(labelNode, item.getLabel().getSemanticType());
+        }
+        INode bodyNode = updateTreeWithRecognizedListElement(item.getBody());
+        if (bodyNode != null) {
+            elementsNodes.put(bodyNode, item.getBody().getSemanticType());
+        }
+
+        if (labelNode != null && bodyNode != null && labelNode.equals(bodyNode)) {
+            return labelNode;
+        }
+
+        INode itemNode = findLocalRoot(elementsNodes.keySet());
+
+        for (Map.Entry<INode, SemanticType> entry : elementsNodes.entrySet()) {
+            INode elementNode = entry.getKey();
+            while (elementNode.getParent() != null && elementNode.getParent() != itemNode && elementNode.getParent().getChildren().size() == 1) {
+                elementNode = elementNode.getParent();
+            }
+
+            if (ListUtils.isListNode(elementNode) && elementNode.getRecognizedStructureId() != id) {
+                elementNode.setRecognizedStructureId(null);
+            } else {
+                elementNode.setRecognizedStructureId(id);
+            }
+
+            elementNode.setSemanticType(entry.getValue());
+            elementNode.setCorrectSemanticScore(1.0);
+        }
+
+        return itemNode;
+    }
+
+    private INode updateTreeWithRecognizedListElement(ListElement listElement) {
+        Set<INode> tableLeafNodes = new HashSet<>();
+        for (TableTokenRow tokenRow : listElement.getContent()) {
             for (TextChunk chunk : tokenRow.getTextChunks()) {
                 if (chunk instanceof TableTextToken) {
                     TableTextToken token = (TableTextToken) chunk;

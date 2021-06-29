@@ -11,12 +11,12 @@ import java.util.*;
 
 public class Table extends InfoChunk {
 
-    private static Long tableCounter = 0l;
+    private static Long tableCounter = 0L;
     private static final double ROW_GAP_DIFF_TOLERANCE = 0.35; // Sensitive parameter !!!
     private static final double ROW_WIDTH_FACTOR = 1.2; // Validation parameter
     private static final double INTER_TABLE_GAP_FACTOR = 2.0; // Parameter for table separation
 
-    private Long id = tableCounter++;
+    private final Long id = tableCounter++;
     private List<TableRow> rows;
 
     private Double validationScore = null;

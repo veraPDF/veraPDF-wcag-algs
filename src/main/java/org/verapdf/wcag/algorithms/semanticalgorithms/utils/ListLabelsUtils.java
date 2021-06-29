@@ -23,9 +23,12 @@ public class ListLabelsUtils {
 		}
 		for (int i = 0; i < labels.size(); i++) {
 			labels.set(i, labels.get(i).trim());//isSpaceCharacter
+			if (labels.get(i).isEmpty()) {
+				return false;
+			}
 		}
 		if (isEqualsLabels(labels)) {
-			return true;
+			return labels.get(0).length() == 1;
 		}
 		int commonStartLength = getCommonStartLength(labels.get(0), labels.get(1));
 		int commonEndLength = getCommonEndLength(labels.get(0), labels.get(1));

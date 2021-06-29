@@ -7,6 +7,7 @@ public enum SemanticType {
 	SPAN("Span"),
 	TABLE("Table"),
 	TABLE_HEADERS("THead"),
+	TABLE_FOOTER("TFoot"),
 	TABLE_BODY("TBody"),
 	TABLE_ROW("TR"),
 	TABLE_HEADER("TH"),
@@ -18,7 +19,7 @@ public enum SemanticType {
 	LIST("L"),
 	LIST_LABEL("Lbl"),
 	LIST_BODY("LBody"),
-	LIST_ITEM("Li"),
+	LIST_ITEM("LI"),
 	NUMBER_HEADING("Hn"),
 	HEADING("H");
 
