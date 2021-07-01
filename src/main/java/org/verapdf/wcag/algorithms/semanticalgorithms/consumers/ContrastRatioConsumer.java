@@ -27,7 +27,7 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 	private static final Logger logger = Logger.getLogger(ContrastRatioConsumer.class.getCanonicalName());
 	private static final int RENDER_DPI = 144;
 	private static final int PDF_DPI = 72;
-	private static final double LUMINOSITY_DIFFERENCE = 0.0001;
+	private static final double LUMINOSITY_DIFFERENCE = 0.001;
 
 	public ContrastRatioConsumer(String sourcePdfPath) {
 		this.sourcePdfPath = sourcePdfPath;
