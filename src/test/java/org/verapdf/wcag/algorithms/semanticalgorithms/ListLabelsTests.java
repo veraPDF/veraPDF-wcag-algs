@@ -24,6 +24,7 @@ public class ListLabelsTests {
                 Arguments.of(new String[]{"i", "ii", "iii", "iv", "v"}, true),
                 Arguments.of(new String[]{"i", "ii", "iii", "iiii"}, false),
                 Arguments.of(new String[]{"", "1", "2"}, false),
+                Arguments.of(new String[]{"1", "", "2"}, true),
                 Arguments.of(new String[]{"-1-", "-2-", "-2-"}, false),
                 Arguments.of(new String[]{"-i-", "-ii-", "-iii-"}, true),
                 Arguments.of(new String[]{"--", "-i-", "-ii-"}, false),

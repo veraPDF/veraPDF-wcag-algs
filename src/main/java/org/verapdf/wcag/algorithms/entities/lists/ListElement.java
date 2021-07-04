@@ -33,6 +33,12 @@ public class ListElement extends TextInfoChunk {
         super.add(row);
     }
 
+    public void add(TableCell cell) {
+        for (TableTokenRow tableTokenRow : cell.getContent()) {
+            add(tableTokenRow);
+        }
+    }
+
     public List<TableTokenRow> getContent() {
         return content;
     }

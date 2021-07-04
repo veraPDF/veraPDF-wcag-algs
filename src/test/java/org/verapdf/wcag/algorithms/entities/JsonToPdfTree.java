@@ -9,6 +9,7 @@ import org.verapdf.wcag.algorithms.entities.maps.SemanticTypeMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 public class JsonToPdfTree {
 
@@ -18,7 +19,7 @@ public class JsonToPdfTree {
 	public static INode getPdfTreeRoot(String jsonFileName) throws IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		InputStream jsonFileInputStream = JsonToPdfTree.class.getResourceAsStream(jsonFileName);
-		JsonNode jsonRoot = objectMapper.readValue(new InputStreamReader(jsonFileInputStream), JsonNode.class);
+		JsonNode jsonRoot = objectMapper.readValue(new InputStreamReader(jsonFileInputStream, StandardCharsets.UTF_8), JsonNode.class);
 		return getPdfNode(jsonRoot);
 	}
 
