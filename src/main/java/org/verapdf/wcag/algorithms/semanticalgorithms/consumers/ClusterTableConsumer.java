@@ -31,6 +31,7 @@ public class ClusterTableConsumer implements Consumer<INode> {
         tables = new ArrayList<>();
         lists = new ArrayList<>();
         init();
+        Table.updateTableCounter();
     }
 
     private void init() {

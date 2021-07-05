@@ -5,7 +5,7 @@ import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import java.util.Objects;
 
 public abstract class InfoChunk implements IChunk {
-    private BoundingBox boundingBox;
+    private final BoundingBox boundingBox;
 
     public InfoChunk() {
         boundingBox = new BoundingBox();

@@ -21,7 +21,7 @@ public class Table extends InfoChunk {
 
     private Double validationScore = null;
 
-    private List<INode> restNodes;
+    private final List<INode> restNodes;
 
     public Table(List<TableCluster> headers) {
         rows = new ArrayList<>();
@@ -266,5 +266,9 @@ public class Table extends InfoChunk {
 
     public List<INode> getRestNodes() {
         return restNodes;
+    }
+
+    public static void updateTableCounter() {
+        tableCounter = 0L;
     }
 }

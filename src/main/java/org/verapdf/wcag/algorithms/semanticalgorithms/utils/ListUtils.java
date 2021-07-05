@@ -5,14 +5,13 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.tables.TableCell;
 import org.verapdf.wcag.algorithms.entities.tables.TableRow;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListLabelsUtils;
 
 import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
-
-import static org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListLabelsUtils.isListLabels;
 
 public class ListUtils {
 
@@ -34,7 +33,7 @@ public class ListUtils {
 			TableCell cell = cells.get(0);
 			labels.add(cell.getString());
 		}
-		return isListLabels(labels);
+		return ListLabelsUtils.isListLabels(labels);
 	}
 
 }

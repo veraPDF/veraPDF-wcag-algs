@@ -17,15 +17,22 @@ public class ListLabelsUtils {
 	private static final String LOWER_CASE_ENGLISH_LETTER_REGEX = "[a-z]+";
 	private static final String ARABIC_NUMBER_REGEX = "\\d+";
 
-	public static boolean isListLabels(List<String> labels) {
-		if (labels.size() < 2) {
+	public static boolean isListLabels(List<String> listLabels) {
+		if (listLabels.size() < 2) {
 			return false;
 		}
-		for (int i = 0; i < labels.size(); i++) {
-			labels.set(i, labels.get(i).trim());//isSpaceCharacter
-			if (labels.get(i).isEmpty()) {
-				return false;
+		if (listLabels.get(0).trim().isEmpty()) {
+			return false;
+		}
+		List<String> labels = new ArrayList<>(listLabels.size());
+		for (String listLabel : listLabels) {
+			String label = listLabel.trim();//isSpaceCharacter
+			if (!label.isEmpty()) {
+				labels.add(label);
 			}
+		}
+		if (labels.size() < 2) {
+			return false;
 		}
 		if (isEqualsLabels(labels)) {
 			return labels.get(0).length() == 1;
