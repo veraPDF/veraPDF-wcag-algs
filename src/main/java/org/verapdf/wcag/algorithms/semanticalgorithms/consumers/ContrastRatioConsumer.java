@@ -174,6 +174,9 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		}
 		double[] contrastColors = get2MostPresentElements(getLuminosityPresenceList(image));
 		if (Math.abs(textLuminosity - contrastColors[0]) <= LUMINOSITY_DIFFERENCE) {
+			if (contrastColors[1] == -1) {
+				return 1;
+			}
 			return getContrastRatio(textLuminosity, contrastColors[1]);
 		} else if ((Math.abs(textLuminosity - contrastColors[1]) <= LUMINOSITY_DIFFERENCE) || textColor != null) {
 			return getContrastRatio(textLuminosity, contrastColors[0]);
