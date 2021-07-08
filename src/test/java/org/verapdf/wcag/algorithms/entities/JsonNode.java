@@ -15,6 +15,7 @@ public class JsonNode {
 	private double baseLine;
 	private int pageNumber;
 	private double[] color;
+	private String fontColorSpace;
 	private double[] boundingBox;
 	private List<JsonNode> children;
 
@@ -93,6 +94,14 @@ public class JsonNode {
 		this.color = color;
 	}
 
+	public String getFontColorSpace() {
+		return fontColorSpace;
+	}
+
+	public void setFontColorSpace(String fontColorSpace) {
+		this.fontColorSpace = fontColorSpace;
+	}
+
 	public double[] getBoundingBox() {
 		return boundingBox;
 	}
@@ -118,7 +127,7 @@ public class JsonNode {
 			return false;
 		}
 		JsonNode jsonNode = (JsonNode) o;
-		return Double.compare(jsonNode.fontSize, fontSize) == 0 && fontWeight == jsonNode.fontWeight && Double.compare(jsonNode.italicAngle, italicAngle) == 0 && Double.compare(jsonNode.baseLine, baseLine) == 0 && pageNumber == jsonNode.pageNumber && Objects.equals(type, jsonNode.type) && Objects.equals(value, jsonNode.value) && Objects.equals(fontName, jsonNode.fontName) && Arrays.equals(color, jsonNode.color) && Arrays.equals(boundingBox, jsonNode.boundingBox) && Objects.equals(children, jsonNode.children);
+		return Double.compare(jsonNode.fontSize, fontSize) == 0 && fontWeight == jsonNode.fontWeight && Double.compare(jsonNode.italicAngle, italicAngle) == 0 && Double.compare(jsonNode.baseLine, baseLine) == 0 && pageNumber == jsonNode.pageNumber && Objects.equals(type, jsonNode.type) && Objects.equals(value, jsonNode.value) && Objects.equals(fontName, jsonNode.fontName) && Arrays.equals(color, jsonNode.color) && Objects.equals(fontColorSpace, jsonNode.fontColorSpace) && Arrays.equals(boundingBox, jsonNode.boundingBox) && Objects.equals(children, jsonNode.children);
 	}
 
 	@Override
@@ -141,6 +150,7 @@ public class JsonNode {
 		       ", baseLine=" + baseLine +
 		       ", pageNumber=" + pageNumber +
 		       ", color=" + Arrays.toString(color) +
+		       ", fontColorSpace='" + fontColorSpace + '\'' +
 		       ", boundingBox=" + Arrays.toString(boundingBox) +
 		       ", children=" + children +
 		       '}';
