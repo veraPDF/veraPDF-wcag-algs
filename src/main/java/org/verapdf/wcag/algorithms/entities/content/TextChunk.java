@@ -12,6 +12,7 @@ public class TextChunk extends TextInfoChunk {
     private double fontWeight;
     private double italicAngle;
     private double[] fontColor;
+    private String fontColorSpace;
     private double contrastRatio;
 
     public TextChunk() {
@@ -23,18 +24,19 @@ public class TextChunk extends TextInfoChunk {
     }
 
     public TextChunk(BoundingBox bbox, String value, String fontName, double fontSize,
-                     double fontWeight, double italicAngle, double baseLine, double[] fontColor) {
+                     double fontWeight, double italicAngle, double baseLine, double[] fontColor, String fontColorSpace) {
         super(bbox, fontSize, baseLine);
         this.value = value;
         this.fontName = fontName;
         this.fontWeight = fontWeight;
         this.italicAngle = italicAngle;
         this.fontColor = fontColor.clone();
+        this.fontColorSpace = fontColorSpace;
     }
 
     public TextChunk(TextChunk chunk) {
         this(chunk.getBoundingBox(), chunk.value, chunk.fontName, chunk.fontSize,
-                chunk.fontWeight, chunk.italicAngle, chunk.baseLine, chunk.fontColor);
+                chunk.fontWeight, chunk.italicAngle, chunk.baseLine, chunk.fontColor, chunk.fontColorSpace);
     }
 
     public String getValue() {
@@ -84,6 +86,14 @@ public class TextChunk extends TextInfoChunk {
     public void setContrastRatio(double contrastRatio) {
         this.contrastRatio = contrastRatio;
     }
+
+    public String getFontColorSpace() {
+        return fontColorSpace;
+    }
+
+    public void setFontColorSpace(String fontColorSpace) {
+        this.fontColorSpace = fontColorSpace;
+    }
     
     public void addAll(List<TextChunk> otherChunks) {
         StringBuilder text = new StringBuilder(value);
@@ -111,6 +121,7 @@ public class TextChunk extends TextInfoChunk {
                 && Double.compare(that.baseLine, baseLine) == 0
                 && Objects.equals(value, that.value)
                 && Objects.equals(fontName, that.fontName)
+                && Objects.equals(fontColorSpace, that.fontColorSpace)
                 && Arrays.equals(fontColor, that.fontColor);
     }
 
@@ -131,6 +142,7 @@ public class TextChunk extends TextInfoChunk {
                 ", italicAngle=" + italicAngle +
                 ", baseLine=" + baseLine +
                 ", fontColor=" + Arrays.toString(fontColor) +
+                ", fontColorSpace='" + fontColorSpace + '\'' +
                 '}';
     }
 }
