@@ -18,6 +18,7 @@ public class TableRecognitionArea {
     private List<TableCluster> headers;
     private List<TableCluster> clusters;
     BoundingBox boundingBox;
+    double headersBaseLine;
     double baseLine;
 
     public TableRecognitionArea() {
@@ -25,6 +26,7 @@ public class TableRecognitionArea {
         hasCompleteHeaders = isComplete = isValid = false;
         headers = new ArrayList<>();
         clusters = new ArrayList<>();
+        headersBaseLine = Double.MAX_VALUE;
         baseLine = Double.MAX_VALUE;
         boundingBox = new BoundingBox();
     }
@@ -72,6 +74,7 @@ public class TableRecognitionArea {
             boundingBox.setPageNumber(token.getPageNumber());
         } else if (!boundingBox.getPageNumber().equals(token.getPageNumber())) {
             hasCompleteHeaders = isComplete = true;
+            headersBaseLine = baseLine;
             return;
         }
 
@@ -82,6 +85,7 @@ public class TableRecognitionArea {
                 expandHeaders(token);
             } else {
                 hasCompleteHeaders = true;
+                headersBaseLine = baseLine;
                 if (checkHeaders()) {
                     addCluster(token);
                 } else {
@@ -206,15 +210,17 @@ public class TableRecognitionArea {
         if (headerBBox.getLeftX() < token.getRightX() && token.getLeftX() < headerBBox.getRightX()) {
             // token belongs to the next line of the header
             double lineSpacingFactor = baseLineDiff / token.getFontSize();
-            if (adaptiveNextLineToleranceFactor < lineSpacingFactor) {
-                adaptiveNextLineToleranceFactor = lineSpacingFactor * TableUtils.NEXT_LINE_TOLERANCE_FACTOR;
-            }
+            if (lineSpacingFactor < TableUtils.NEXT_LINE_MAX_TOLERANCE_FACTOR) {
+                if (adaptiveNextLineToleranceFactor < lineSpacingFactor) {
+                    adaptiveNextLineToleranceFactor = lineSpacingFactor * TableUtils.NEXT_LINE_TOLERANCE_FACTOR;
+                }
 
-            header.add(token, true);
-            if (token.getBaseLine() < baseLine) {
-                baseLine = token.getBaseLine();
+                header.add(token, true);
+                if (token.getBaseLine() < baseLine) {
+                    baseLine = token.getBaseLine();
+                }
+                return true;
             }
-            return true;
         }
 
         return false;
@@ -238,7 +244,8 @@ public class TableRecognitionArea {
     }
 
     private void addCluster(TableTextToken token) {
-        if (baseLine - token.getBaseLine() > TableUtils.TABLE_GAP_FACTOR * token.getFontSize()) {
+        if (baseLine - token.getBaseLine() > TableUtils.TABLE_GAP_FACTOR * token.getFontSize() ||
+                headersBaseLine < token.getBaseLine()) {
             isComplete = true;
             return;
         }

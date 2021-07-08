@@ -95,10 +95,6 @@ public class ClusterTableConsumer implements Consumer<INode> {
         }
     }
 
-    private void accept(ITableToken token) {
-
-    }
-
     private List<INode> recognize() {
         TableRecognizer recognizer = new TableRecognizer(recognitionArea);
         recognizer.recognize();
