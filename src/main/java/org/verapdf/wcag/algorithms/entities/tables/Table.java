@@ -166,8 +166,8 @@ public class Table extends InfoChunk {
             for (TableCell cell : row.getCells()) {
                 for (TableTokenRow tableTokenRow : cell.getContent()) {
                     for (TextChunk chunk : tableTokenRow.getTextChunks()) {
-                        if (chunk instanceof TableTextToken) {
-                            INode node = ((TableTextToken) chunk).getNode();
+                        if (chunk instanceof TableToken) {
+                            INode node = ((TableToken) chunk).getNode();
                             if (!nodeSet.contains(node)) {
                                 restNodes.add(node);
                                 nodeSet.add(node);
@@ -219,12 +219,14 @@ public class Table extends InfoChunk {
 
                 TextChunk firstChunk = tokenRow.getFirstTextChunk();
                 TextChunk secondChunk = nextTokenRow.getFirstTextChunk();
-                double styleFactor = firstChunk.getFontName().equals(secondChunk.getFontName()) ? 1.0 : 1.2;
-                styleFactor *= Math.max(firstCell.getFontSize(), secondCell.getFontSize()) / Math.min(firstCell.getFontSize(), secondCell.getFontSize());
-                styleFactor *= Math.max(firstChunk.getFontWeight(), secondChunk.getFontWeight()) / Math.min(firstChunk.getFontWeight(), secondChunk.getFontWeight());
-                styleFactor *= Math.max(firstChunk.getItalicAngle(), secondChunk.getItalicAngle()) / Math.min(firstChunk.getItalicAngle(), secondChunk.getItalicAngle());
-                if (maxStyleFactor < styleFactor) {
-                    maxStyleFactor = styleFactor;
+                if (firstChunk.getValue() != "") {
+                    double styleFactor = firstChunk.getFontName().equals(secondChunk.getFontName()) ? 1.0 : 1.2;
+                    styleFactor *= Math.max(firstCell.getFontSize(), secondCell.getFontSize()) / Math.min(firstCell.getFontSize(), secondCell.getFontSize());
+                    styleFactor *= Math.max(firstChunk.getFontWeight(), secondChunk.getFontWeight()) / Math.min(firstChunk.getFontWeight(), secondChunk.getFontWeight());
+                    styleFactor *= Math.max(firstChunk.getItalicAngle(), secondChunk.getItalicAngle()) / Math.min(firstChunk.getItalicAngle(), secondChunk.getItalicAngle());
+                    if (maxStyleFactor < styleFactor) {
+                        maxStyleFactor = styleFactor;
+                    }
                 }
             }
         }
