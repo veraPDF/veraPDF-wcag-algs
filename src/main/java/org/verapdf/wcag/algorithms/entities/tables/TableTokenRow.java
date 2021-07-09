@@ -13,7 +13,7 @@ public class TableTokenRow extends TextLine {
     public TableTokenRow() {
     }
 
-    public TableTokenRow(TableTextToken token) {
+    public TableTokenRow(TableToken token) {
         super(token);
     }
 

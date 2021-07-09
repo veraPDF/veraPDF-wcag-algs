@@ -37,7 +37,7 @@ public class ClusterTableTests {
                 Arguments.of("fake-table2.json", new int[][] {{4, 5}, {4, 9}}, false),
                 Arguments.of("fake-table2-fix.json", new int[][] {{4, 5}, {4, 9}}, true),
                 Arguments.of("fake-table3.json", new int[][] {}, false),
-                Arguments.of("two-tables.json", new int[][] {{5, 6}, {4, 10}}, false),
+                Arguments.of("three-tables.json", new int[][] {{5, 6}, {4, 10}, {5, 4}}, false), // third table contains images
                 Arguments.of("PDFUA-Ref-2-05_BookChapter-german.json", new int[][] {{2, 24}}, false), // contents page is recognized as table, table on 6th page is not recognized
                 Arguments.of("PDFUA-Ref-2-02_Invoice.json", new int[][] {{4, 9}}, false)
                 );

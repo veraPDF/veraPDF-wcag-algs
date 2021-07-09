@@ -49,34 +49,27 @@ public class ClusterTableConsumer implements Consumer<INode> {
     @Override
     public void accept(INode node) {
 
-        if ((node instanceof SemanticTextNode) && node.getChildren().isEmpty()) {
+        if (node.getChildren().isEmpty()) {
+            if (node instanceof SemanticTextNode) {
 
-            SemanticTextNode textNode = (SemanticTextNode) node;
-            for (TextLine line : textNode.getLines()) {
-                for (TextChunk chunk : line.getTextChunks()) {
+                SemanticTextNode textNode = (SemanticTextNode) node;
+                for (TextLine line : textNode.getLines()) {
+                    for (TextChunk chunk : line.getTextChunks()) {
 
-                    if (TextChunkUtils.isSpaceChunk(chunk)) {
-                        continue;
-                    }
-
-                    TableTextToken token = new TableTextToken(chunk, node);
-                    recognitionArea.addTokenToRecognitionArea(token);
-
-                    if (recognitionArea.isComplete()) {
-                        List<INode> restNodes = new ArrayList<>();
-                        if (recognitionArea.isValid()) {
-                            restNodes.addAll(recognize());
+                        if (TextChunkUtils.isSpaceChunk(chunk)) {
+                            continue;
                         }
-                        init();
 
-                        restNodes.add(node);
-                        for (INode restNode : restNodes) {
-                            accept(restNode);
-                        }
+                        TableToken token = new TableToken(chunk, node);
+                        accept(token);
                     }
                 }
-            }
+            } else if ((node instanceof SemanticImageNode)) {
+                SemanticImageNode imageNode = (SemanticImageNode) node;
 
+                TableToken token = new TableToken(imageNode.getImage(), imageNode);
+                accept(token);
+            }
         }
 
         if (node.isRoot()) {
@@ -92,6 +85,23 @@ public class ClusterTableConsumer implements Consumer<INode> {
             }
             updateTreeWithRecognizedTables(node);
             updateTreeWithRecognizedLists(node);
+        }
+    }
+
+    private void accept(TableToken token) {
+        recognitionArea.addTokenToRecognitionArea(token);
+
+        if (recognitionArea.isComplete()) {
+            List<INode> restNodes = new ArrayList<>();
+            if (recognitionArea.isValid()) {
+                restNodes.addAll(recognize());
+            }
+            init();
+
+            restNodes.add(token.getNode());
+            for (INode restNode : restNodes) {
+                accept(restNode);
+            }
         }
     }
 
@@ -236,8 +246,8 @@ public class ClusterTableConsumer implements Consumer<INode> {
         Set<INode> tableLeafNodes = new HashSet<>();
         for (TableTokenRow tokenRow : cell.getContent()) {
             for (TextChunk chunk : tokenRow.getTextChunks()) {
-                if (chunk instanceof TableTextToken) {
-                    TableTextToken token = (TableTextToken) chunk;
+                if (chunk instanceof TableToken) {
+                    TableToken token = (TableToken) chunk;
                     if (token.getNode() != null) {
                         tableLeafNodes.add(token.getNode());
                     }
@@ -324,8 +334,8 @@ public class ClusterTableConsumer implements Consumer<INode> {
         Set<INode> tableLeafNodes = new HashSet<>();
         for (TableTokenRow tokenRow : listElement.getContent()) {
             for (TextChunk chunk : tokenRow.getTextChunks()) {
-                if (chunk instanceof TableTextToken) {
-                    TableTextToken token = (TableTextToken) chunk;
+                if (chunk instanceof TableToken) {
+                    TableToken token = (TableToken) chunk;
                     if (token.getNode() != null) {
                         tableLeafNodes.add(token.getNode());
                     }

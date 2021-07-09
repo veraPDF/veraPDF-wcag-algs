@@ -4,7 +4,6 @@ import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.content.IChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
-import org.verapdf.wcag.algorithms.entities.tables.ITableToken;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableCluster;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableClusterGap;
 
@@ -37,22 +36,22 @@ public class TableUtils {
     /*
     TODO: add comments
      */
-    public static boolean areStrongContaining(ITableToken chunk1, ITableToken chunk2) {
+    public static boolean areStrongContaining(TextInfoChunk chunk1, TextInfoChunk chunk2) {
         return isAnyContaining(chunk1, chunk2) && areStrongCenterOverlapping(chunk1, chunk2);
     }
 
-    public static boolean isAnyContaining(ITableToken chunk1, ITableToken chunk2) {
+    public static boolean isAnyContaining(TextInfoChunk chunk1, TextInfoChunk chunk2) {
         return (isContaining(chunk1, chunk2) || isContaining(chunk2, chunk1));
     }
 
-    public static boolean isContaining(ITableToken first, ITableToken second) {
-        double tol = WIDTH_TOLERANCE_FACTOR * Math.min(first.getHeight(), second.getHeight());
+    public static boolean isContaining(TextInfoChunk first, TextInfoChunk second) {
+        double tol = WIDTH_TOLERANCE_FACTOR * Math.min(first.getFontSize(), second.getFontSize());
         return (second.getLeftX() + tol > first.getLeftX() && second.getRightX() < first.getRightX() + tol);
 
     }
 
-    public static boolean areStrongCenterOverlapping(ITableToken chunk1, ITableToken chunk2) {
-        double tol = WIDTH_TOLERANCE_FACTOR * Math.min(chunk1.getHeight(), chunk2.getHeight());
+    public static boolean areStrongCenterOverlapping(TextInfoChunk chunk1, TextInfoChunk chunk2) {
+        double tol = WIDTH_TOLERANCE_FACTOR * Math.min(chunk1.getFontSize(), chunk2.getFontSize());
         double center1 = chunk1.getCenterX();
         double center2 = chunk2.getCenterX();
 
@@ -65,8 +64,8 @@ public class TableUtils {
         return true;
     }
 
-    public static boolean areCenterOverlapping(ITableToken chunk1, ITableToken chunk2) {
-        double tol = WIDTH_TOLERANCE_FACTOR * Math.min(chunk1.getHeight(), chunk2.getHeight());
+    public static boolean areCenterOverlapping(TextInfoChunk chunk1, TextInfoChunk chunk2) {
+        double tol = WIDTH_TOLERANCE_FACTOR * Math.min(chunk1.getFontSize(), chunk2.getFontSize());
         double center1 = chunk1.getCenterX();
         double center2 = chunk2.getCenterX();
 

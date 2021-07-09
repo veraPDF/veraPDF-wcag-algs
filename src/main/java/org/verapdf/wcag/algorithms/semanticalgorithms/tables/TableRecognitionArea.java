@@ -1,7 +1,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
 
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
-import org.verapdf.wcag.algorithms.entities.tables.TableTextToken;
+import org.verapdf.wcag.algorithms.entities.tables.TableToken;
 import org.verapdf.wcag.algorithms.entities.tables.TableTokenRow;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
@@ -63,7 +63,7 @@ public class TableRecognitionArea {
         return clusters;
     }
 
-    public void  addTokenToRecognitionArea(TableTextToken token) {
+    public void  addTokenToRecognitionArea(TableToken token) {
         if (isComplete) {
             return;
         }
@@ -140,7 +140,7 @@ public class TableRecognitionArea {
         return headersProbability > TableUtils.HEADERS_PROBABILITY_THRESHOLD;
     }
 
-    private boolean belongsToHeadersArea(TableTextToken token) {
+    private boolean belongsToHeadersArea(TableToken token) {
         if (headers.isEmpty()) {
             return true;
         }
@@ -154,7 +154,7 @@ public class TableRecognitionArea {
         return true;
     }
 
-    private void expandHeaders(TableTextToken token) {
+    private void expandHeaders(TableToken token) {
         if (headers.isEmpty()) {
             TableCluster header = new TableCluster(token);
             header.setHeader(header);
@@ -191,7 +191,7 @@ public class TableRecognitionArea {
         }
     }
 
-    private boolean expandHeader(TableCluster header, TableTextToken token) {
+    private boolean expandHeader(TableCluster header, TableToken token) {
         double headerBaseLine = header.getBaseLine();
         double tokenBaseLine = token.getBaseLine();
         double baseLineDiff = Math.abs(headerBaseLine - tokenBaseLine);
@@ -226,7 +226,7 @@ public class TableRecognitionArea {
         return false;
     }
 
-    private boolean joinHeaders(TableCluster currentHeader, TableCluster header, TableTextToken token) {
+    private boolean joinHeaders(TableCluster currentHeader, TableCluster header, TableToken token) {
         BoundingBox headerBBox = header.getBoundingBox();
 
         if (headerBBox.getLeftX() < token.getRightX() && token.getLeftX() < headerBBox.getRightX()) {
@@ -243,7 +243,7 @@ public class TableRecognitionArea {
         return false;
     }
 
-    private void addCluster(TableTextToken token) {
+    private void addCluster(TableToken token) {
         if (baseLine - token.getBaseLine() > TableUtils.TABLE_GAP_FACTOR * token.getFontSize() ||
                 headersBaseLine < token.getBaseLine()) {
             isComplete = true;
