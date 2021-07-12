@@ -169,14 +169,30 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 
 	private double getContrastRatio(BufferedImage image, Color textColor) {
 		double textLuminosity = 0;
+		double approximatedTextLuminosity = 0;
 		if (textColor != null) {
 			textLuminosity = relativeLuminosity(textColor);
+			approximatedTextLuminosity = textLuminosity;
+			double diff = 1.0;
+			List<DataPoint> dpFullArray = getLuminosityPresenceList(image);
+			for (DataPoint dp : dpFullArray) {
+				double luminosity = dp.getValue();
+				double currentDifference = Math.abs(luminosity - textLuminosity);
+				if (currentDifference <= diff) {
+					approximatedTextLuminosity = luminosity;
+					diff = currentDifference;
+				}
+			}
 		}
+
 		double[] contrastColors = get2MostPresentElements(getLuminosityPresenceList(image));
-		if (Math.abs(textLuminosity - contrastColors[0]) <= LUMINOSITY_DIFFERENCE) {
-			return getContrastRatio(textLuminosity, contrastColors[1]);
-		} else if ((Math.abs(textLuminosity - contrastColors[1]) <= LUMINOSITY_DIFFERENCE) || textColor != null) {
-			return getContrastRatio(textLuminosity, contrastColors[0]);
+		if (Math.abs(approximatedTextLuminosity - contrastColors[0]) <= LUMINOSITY_DIFFERENCE) {
+			if (contrastColors[1] == -1) {
+				return 1;
+			}
+			return getContrastRatio(approximatedTextLuminosity, contrastColors[1]);
+		} else if ((Math.abs(approximatedTextLuminosity - contrastColors[1]) <= LUMINOSITY_DIFFERENCE) || textColor != null) {
+			return getContrastRatio(approximatedTextLuminosity, contrastColors[0]);
 		} else {
 			return getContrastRatio(contrastColors[0], contrastColors[1]);
 		}
