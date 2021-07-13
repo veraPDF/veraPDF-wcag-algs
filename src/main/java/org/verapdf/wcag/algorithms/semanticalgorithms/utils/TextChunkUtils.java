@@ -16,4 +16,13 @@ public class TextChunkUtils {
         }
         return true;
     }
+
+    public static boolean isWhiteSpaceChunk(TextChunk chunk) {
+        for (char symbol : chunk.getValue().toCharArray()) {
+            if (!Character.isWhitespace(symbol)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

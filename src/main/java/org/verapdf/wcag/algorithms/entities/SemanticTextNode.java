@@ -147,7 +147,7 @@ public class SemanticTextNode extends SemanticNode {
         Map<Double, Double> weightMap = new HashMap<>();
         for (TextLine line : lines) {
             for (TextChunk chunk : line.getTextChunks()) {
-                if (!TextChunkUtils.isSpaceChunk(chunk)) {
+                if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
                     Double weight = chunk.getFontWeight();
                     Double weightLength = weightMap.get(weight);
                     if (weightLength == null) {
@@ -180,7 +180,7 @@ public class SemanticTextNode extends SemanticNode {
         Map<Double, Double> sizeMap = new HashMap<>();
         for (TextLine line : lines) {
             for (TextChunk chunk : line.getTextChunks()) {
-                if (!TextChunkUtils.isSpaceChunk(chunk)) {
+                if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
                     Double size = chunk.getFontSize();
                     Double sizeLength = sizeMap.get(size);
                     if (sizeLength == null) {
@@ -205,7 +205,7 @@ public class SemanticTextNode extends SemanticNode {
     public boolean isSpaceNode() {
         for (TextLine line : lines) {
             for (TextChunk chunk : line.getTextChunks()) {
-                if (!TextChunkUtils.isSpaceChunk(chunk)) {
+                if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
                     return false;
                 }
             }
