@@ -62,7 +62,7 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		if (renderedPage != null) {
 			for (TextLine textLine : node.getLines()) {
 				for (TextChunk textChunk : textLine.getTextChunks()) {
-					if ((textChunk.getValue() != null && TextChunkUtils.isSpaceChunk(textChunk))) {
+					if ((textChunk.getValue() != null && (TextChunkUtils.isWhiteSpaceChunk(textChunk)))) {
 						textChunk.setContrastRatio(Integer.MAX_VALUE);
 						continue;
 					}

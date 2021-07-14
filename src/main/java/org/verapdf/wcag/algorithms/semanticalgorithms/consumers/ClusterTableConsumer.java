@@ -56,7 +56,7 @@ public class ClusterTableConsumer implements Consumer<INode> {
                 for (TextLine line : textNode.getLines()) {
                     for (TextChunk chunk : line.getTextChunks()) {
 
-                        if (TextChunkUtils.isSpaceChunk(chunk)) {
+                        if (TextChunkUtils.isWhiteSpaceChunk(chunk)) {
                             continue;
                         }
 
