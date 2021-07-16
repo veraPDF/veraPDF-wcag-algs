@@ -71,29 +71,25 @@ public class TableRecognizer {
         for (TableCluster cluster : clusters) {
 
             if (cluster.getHeader() == null) {
-                TableCluster closestHeader = null;
-                double minDist = Double.MAX_VALUE;
-
-                for (TableCluster header : headers) {
-                    double factor = Double.MAX_VALUE;
-                    if (TableUtils.areStrongContaining(cluster, header)) {
-                        factor = 0.1;
-                    } else if (TableUtils.isContaining(cluster, header)) {
-                        factor = 1.0;
-                    }
-                    if (factor < 2.0) {
-                        double dist = factor * Math.abs(cluster.getCenterX() - header.getCenterX());
-                        if (dist < minDist) {
-                            closestHeader = header;
-                            minDist = dist - TableUtils.EPSILON;
-                        }
-                    }
-                }
-                cluster.setHeader(closestHeader);
+                setupStrongHeaderForCluster(cluster);
             }
             addClusterToColumnByHeader(cluster);
         }
         clusters = getActualClusters(clusters);
+    }
+
+    private void setupStrongHeaderForCluster(TableCluster cluster) {
+        TableCluster containingHeader = null;
+
+        for (TableCluster header : headers) {
+            if (TableUtils.isContaining(cluster, header)) {
+                if (containingHeader != null) {
+                    return;
+                }
+                containingHeader = header;
+            }
+        }
+        cluster.setHeader(containingHeader);
     }
 
     private void addClusterToColumnByHeader(TableCluster cluster) {
@@ -124,6 +120,11 @@ public class TableRecognizer {
             for (TableCluster header : headers) {
                 double factor = 1.0;
 
+                if (TableUtils.areStrongContaining(cluster, header)) {
+                    factor = 0.0001;
+                } else if (TableUtils.isContaining(cluster, header)) {
+                    factor = 0.001;
+                }
                 if (TableUtils.areCenterOverlapping(cluster, header)) {
                     factor = 0.01;
                 } else if (TableUtils.areOverlapping(cluster, header)) {
@@ -215,6 +216,9 @@ public class TableRecognizer {
         }
         for (TableCluster cluster : clusters) {
             clusterRows.get(cluster.getFirstRow().getRowNumber() - 1).add(cluster);
+            if (cluster.getHeader() == null) {
+                setupStrongHeaderForCluster(cluster);
+            }
         }
 
         clusters = mergeInitialClusters(clusterRows);
