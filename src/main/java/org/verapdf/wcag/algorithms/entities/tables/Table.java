@@ -14,7 +14,7 @@ public class Table extends InfoChunk {
     private static Long tableCounter = 0L;
     private static final double ROW_GAP_DIFF_TOLERANCE = 0.35; // Sensitive parameter !!!
     private static final double ROW_WIDTH_FACTOR = 1.2; // Validation parameter
-    private static final double INTER_TABLE_GAP_FACTOR = 2.0; // Parameter for table separation
+    private static final double INTER_TABLE_GAP_FACTOR = 1.8; // Parameter for table separation
 
     private final Long id = tableCounter++;
     private List<TableRow> rows;
