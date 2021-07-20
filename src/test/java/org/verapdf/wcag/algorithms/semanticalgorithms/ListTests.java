@@ -23,6 +23,7 @@ public class ListTests {
 
     static Stream<Arguments> listDetectionTestParams() {
         return Stream.of(
+                Arguments.of("list-with-image-label.json", new int[] {3}, false),
                 Arguments.of("NEG-fake-list.json", new int[] {4}, false),
                 Arguments.of("ordered-list1.json", new int[] {5, 5}, true)
                 );

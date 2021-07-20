@@ -4,6 +4,7 @@ import org.verapdf.wcag.algorithms.entities.content.InfoChunk;
 import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.tables.TableCell;
 import org.verapdf.wcag.algorithms.entities.tables.TableRow;
+import org.verapdf.wcag.algorithms.entities.tables.TableToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,8 @@ public class PDFList extends InfoChunk {
         ListItem lastListItem = null;
         for (TableRow row : tableRows) {
             TableCell cell = row.getCells().get(0);
-            if (cell.getString().trim().isEmpty() && lastListItem != null) {
+            if (cell.getString().trim().isEmpty() && (cell.getContent().isEmpty() ||
+                    cell.getContent().get(0).getType() == TableToken.TableTokenType.TEXT) && lastListItem != null) {
                 lastListItem.add(row);
             } else {
                 lastListItem = new ListItem(row);
