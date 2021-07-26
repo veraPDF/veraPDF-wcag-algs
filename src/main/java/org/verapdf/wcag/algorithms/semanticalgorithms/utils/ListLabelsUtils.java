@@ -26,7 +26,7 @@ public class ListLabelsUtils {
 		}
 		List<String> labels = new ArrayList<>(listLabels.size());
 		for (String listLabel : listLabels) {
-			String label = listLabel.trim();//isSpaceCharacter
+			String label = listLabel.trim();//isWhiteSpaceCharacter
 			if (!label.isEmpty()) {
 				labels.add(label);
 			}
