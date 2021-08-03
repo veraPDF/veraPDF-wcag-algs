@@ -35,10 +35,16 @@ public class ListUtils {
 				return false;
 			}
 			TableCell cell = cells.get(0);
-			textLabels.add(cell.getString());
-			if (cell.getContent().size() == 1 && cell.getContent().get(0).getType() == TableToken.TableTokenType.IMAGE) {
+			if (cell.isTextCell()) {
+				textLabels.add(cell.getString());
+			} else if (cell.getContent().size() == 1 && cell.getContent().get(0).getType() == TableToken.TableTokenType.IMAGE) {
 				imageLabels.add(cell.getContent().get(0).getBoundingBox());
+			} else {
+				return false;
 			}
+		}
+		if (!imageLabels.isEmpty() && !textLabels.isEmpty()) {
+			return false;
 		}
 		return imageLabels.isEmpty() ? ListLabelsUtils.isListLabels(textLabels) : isListImageLabels(imageLabels);
 	}

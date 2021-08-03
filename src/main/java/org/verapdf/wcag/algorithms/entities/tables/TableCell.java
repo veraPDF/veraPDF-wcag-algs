@@ -77,6 +77,15 @@ public class TableCell extends TextInfoChunk {
         super.add(other);
     }
 
+    public boolean isTextCell() {
+        for (TableTokenRow tableTokenRow : content) {
+            if (tableTokenRow.getType() != TableToken.TableTokenType.TEXT) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public String getString() {
         StringBuilder stringBuilder = new StringBuilder();
         for (TableTokenRow tokenRow : content) {

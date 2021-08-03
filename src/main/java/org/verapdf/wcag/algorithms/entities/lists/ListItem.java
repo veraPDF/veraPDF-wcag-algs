@@ -19,6 +19,7 @@ public class ListItem extends TextInfoChunk {
     public void add(TableRow tableRow) {
         label.add(tableRow.getCells().get(0));
         body.add(tableRow.getCells().get(1));
+        super.add(tableRow);
     }
 
     public void setSemanticType(SemanticType semanticType) {
