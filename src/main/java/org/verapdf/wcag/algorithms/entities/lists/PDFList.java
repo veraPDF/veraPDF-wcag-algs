@@ -49,7 +49,7 @@ public class PDFList extends InfoChunk {
                 double gap = TableUtils.getRowGapFactor(lastListItem, row);
                 if (maxGap == null) {
                     maxGap = TableUtils.NEXT_LINE_MAX_TOLERANCE_FACTOR * gap;
-                } else if (gap < maxGap){
+                } else if (gap < maxGap) {
                     maxGap = Math.max(TableUtils.NEXT_LINE_MAX_TOLERANCE_FACTOR * gap, maxGap);
                 } else {
                     break;
