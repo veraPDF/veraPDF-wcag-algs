@@ -208,7 +208,7 @@ public class BoundingBox {
                 && (pageNumber < other.pageNumber
                     || (pageNumber.equals(other.pageNumber) && other.topY < (topY + EPSILON)))
                 && (lastPageNumber > other.lastPageNumber
-                    || (lastPageNumber.equals(other.lastPageNumber) && other.bottomY < (bottomY + EPSILON)));
+                    || (lastPageNumber.equals(other.lastPageNumber) && bottomY < (other.bottomY + EPSILON)));
     }
 
     public boolean weaklyContains(BoundingBox fullRectangle) {
