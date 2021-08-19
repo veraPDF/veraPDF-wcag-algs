@@ -42,7 +42,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 
 		boolean isLeafChild  = true;
 		for (INode child : node.getChildren()) {
-			if (!(child instanceof SemanticSpan) && !(child instanceof SemanticImageNode)) {
+			if (!(child instanceof SemanticSpan) && !(child instanceof SemanticImageNode) &&
+			                                                child.getSemanticType() != null) {
 				isLeafChild = false;
 				break;
 			}
@@ -53,12 +54,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			acceptSemanticParagraph(node);
 		}
 
-		if (node.getChildren().size() == 1) {
-			INode accumulatedChild = accumulatedNodeMapper.get(node.getChildren().get(0));
-			if (accumulatedChild instanceof SemanticImageNode) {
-				updateNode(node, accumulatedChild, accumulatedChild.getCorrectSemanticScore(), accumulatedChild.getSemanticType());
-			}
-		}
+		acceptSemanticImage(node);
 
 		if (!isLeafChild) {
 			acceptChildrenSemanticHeading(node);
@@ -67,11 +63,31 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 
 	}
 
+	private void acceptSemanticImage(INode node) {
+		INode imageNode = null;
+		for (INode child : node.getChildren()) {
+			INode accumulatedChild = accumulatedNodeMapper.get(child);
+			if (accumulatedChild instanceof SemanticTextNode) {
+				if (!((SemanticTextNode)accumulatedChild).isEmpty() && !((SemanticTextNode)accumulatedChild).isSpaceNode()) {
+					return;
+				}
+			} else if (accumulatedChild instanceof SemanticImageNode) {
+				if (imageNode != null) {
+					return;
+				}
+				imageNode = accumulatedChild;
+			}
+		}
+		if (imageNode != null) {
+			updateNode(node, imageNode, imageNode.getCorrectSemanticScore(), imageNode.getSemanticType());
+		}
+	}
+
 	private void acceptSemanticSpan(INode node) {
 		double spanProbability = 1;
 		SemanticSpan span  = null;
 		for (INode child : node.getChildren()) {
-			if (SemanticType.isIgnoredStandardType(child.getInitialSemanticType())) {
+			if (child.getSemanticType() == null || SemanticType.isIgnoredStandardType(child.getInitialSemanticType())) {
 				continue;
 			}
 			INode accumulatedChild = accumulatedNodeMapper.get(child);
@@ -163,7 +179,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		double paragraphProbability = 1;
 		SemanticParagraph paragraph = null;
 		for (INode child : node.getChildren()) {
-			if (SemanticType.isIgnoredStandardType(child.getInitialSemanticType())) {
+			if (child.getSemanticType() == null || SemanticType.isIgnoredStandardType(child.getInitialSemanticType())) {
 				continue;
 			}
 			INode accumulatedChild = accumulatedNodeMapper.get(child);
