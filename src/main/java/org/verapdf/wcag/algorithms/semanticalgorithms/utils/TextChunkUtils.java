@@ -19,10 +19,14 @@ public class TextChunkUtils {
 
     public static boolean isWhiteSpaceChunk(TextChunk chunk) {
         for (char symbol : chunk.getValue().toCharArray()) {
-            if (!Character.isWhitespace(symbol)) {
+            if (!isWhiteSpaceChar(symbol)) {
                 return false;
             }
         }
         return true;
+    }
+
+    public static boolean isWhiteSpaceChar(char symbol) {
+        return Character.isWhitespace(symbol) || symbol == '\u00A0' || symbol == '\u2007' || symbol == '\u202F';
     }
 }
