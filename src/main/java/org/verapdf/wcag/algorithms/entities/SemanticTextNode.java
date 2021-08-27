@@ -14,9 +14,14 @@ import java.util.Map;
 public class SemanticTextNode extends SemanticNode {
     protected final List<TextLine> lines;
 
+    private Double fontWeight;
+    private Double fontSize;
+
     public SemanticTextNode(SemanticTextNode textNode) {
         super(textNode.getBoundingBox(), textNode.getInitialSemanticType(), textNode.getSemanticType());
         lines = new ArrayList<>(textNode.getLines());
+        this.fontWeight = textNode.fontWeight;
+        this.fontSize = textNode.fontSize;
     }
 
     public SemanticTextNode() {
@@ -61,6 +66,7 @@ public class SemanticTextNode extends SemanticNode {
     public void add(TextLine textLine) {
         lines.add(textLine);
         getBoundingBox().union(textLine.getBoundingBox());
+        updateVariables();
     }
 
     public void addAll(List<TextLine> text) {
@@ -71,6 +77,12 @@ public class SemanticTextNode extends SemanticNode {
         for (TextLine textLine : text) {
             getBoundingBox().union(textLine.getBoundingBox());
         }
+        updateVariables();
+    }
+
+    private void updateVariables() {
+        fontSize = null;
+        fontWeight = null;
     }
 
     public List<TextLine> getLines() {
@@ -94,6 +106,7 @@ public class SemanticTextNode extends SemanticNode {
         } else {
             lines.add(firstLine);
         }
+        updateVariables();
     }
 
     public void setLastLine(TextLine lastLine) {
@@ -102,6 +115,7 @@ public class SemanticTextNode extends SemanticNode {
         } else {
             lines.add(lastLine);
         }
+        updateVariables();
     }
 
     public TextLine getSecondLine() {
@@ -144,6 +158,13 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     public double getFontWeight() {
+        if (fontWeight == null) {
+            fontWeight = calculateFontWeight();
+        }
+        return fontWeight;
+    }
+
+    private double calculateFontWeight() {
         Map<Double, Double> weightMap = new HashMap<>();
         for (TextLine line : lines) {
             for (TextChunk chunk : line.getTextChunks()) {
@@ -177,6 +198,13 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     public double getFontSize() {
+        if (fontSize == null) {
+            fontSize = calculateFontSize();
+        }
+        return fontSize;
+    }
+
+    private double calculateFontSize() {
         Map<Double, Double> sizeMap = new HashMap<>();
         for (TextLine line : lines) {
             for (TextChunk chunk : line.getTextChunks()) {
