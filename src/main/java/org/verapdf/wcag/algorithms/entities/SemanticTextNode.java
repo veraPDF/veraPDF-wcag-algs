@@ -10,18 +10,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Comparator;
 
 public class SemanticTextNode extends SemanticNode {
     protected final List<TextLine> lines;
 
     private Double fontWeight;
     private Double fontSize;
+    private double[] textColor;
+    private Double italicAngle;
+    private String fontName;
 
     public SemanticTextNode(SemanticTextNode textNode) {
         super(textNode.getBoundingBox(), textNode.getInitialSemanticType(), textNode.getSemanticType());
         lines = new ArrayList<>(textNode.getLines());
         this.fontWeight = textNode.fontWeight;
         this.fontSize = textNode.fontSize;
+        this.textColor = textNode.textColor;
+        this.italicAngle = textNode.italicAngle;
+        this.fontName = textNode.fontName;
     }
 
     public SemanticTextNode() {
@@ -83,6 +90,9 @@ public class SemanticTextNode extends SemanticNode {
     private void updateVariables() {
         fontSize = null;
         fontWeight = null;
+        textColor = null;
+        italicAngle = null;
+        fontName = null;
     }
 
     public List<TextLine> getLines() {
@@ -165,29 +175,23 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     private double calculateFontWeight() {
-        Map<Double, Double> weightMap = new HashMap<>();
+        Map<Double, Double> fontWeightMap = new HashMap<>();
         for (TextLine line : lines) {
             for (TextChunk chunk : line.getTextChunks()) {
                 if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
-                    Double weight = chunk.getFontWeight();
-                    Double weightLength = weightMap.get(weight);
-                    if (weightLength == null) {
-                        weightMap.put(weight, chunk.getBoundingBox().getWidth());
-                    } else {
-                        weightMap.put(weight, weightLength + chunk.getBoundingBox().getWidth());
-                    }
+                    Double weightLength = fontWeightMap.get(chunk.getFontWeight());
+                    fontWeightMap.put(chunk.getFontWeight(),
+                                  ((weightLength == null) ? 0 : weightLength) + chunk.getBoundingBox().getWidth());
                 }
             }
         }
-        double commonWeight = 0.0;
-        double commonWeightLength = 0.0;
-        for (Map.Entry<Double, Double> weight : weightMap.entrySet()) {
-            if (commonWeightLength < weight.getValue()) {
-                commonWeightLength = weight.getValue();
-                commonWeight = weight.getKey();
-            }
+        if (!fontWeightMap.isEmpty()) {
+            return fontWeightMap.entrySet()
+                                .stream()
+                                .max(Comparator.comparingDouble(Map.Entry::getValue))
+                                .get().getKey();
         }
-        return commonWeight;
+        return 0.0;
     }
 
     public boolean hasFullLines() {
@@ -205,29 +209,101 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     private double calculateFontSize() {
-        Map<Double, Double> sizeMap = new HashMap<>();
+        Map<Double, Double> fontSizeMap = new HashMap<>();
         for (TextLine line : lines) {
             for (TextChunk chunk : line.getTextChunks()) {
                 if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
-                    Double size = chunk.getFontSize();
-                    Double sizeLength = sizeMap.get(size);
-                    if (sizeLength == null) {
-                        sizeMap.put(size, chunk.getBoundingBox().getWidth());
-                    } else {
-                        sizeMap.put(size, sizeLength + chunk.getBoundingBox().getWidth());
-                    }
+                    Double sizeLength = fontSizeMap.get(chunk.getFontSize());
+                    fontSizeMap.put(chunk.getFontSize(),
+                                ((sizeLength == null) ? 0 : sizeLength) + chunk.getBoundingBox().getWidth());
                 }
             }
         }
-        double commonSize = 0.0;
-        double commonSizeLength = 0.0;
-        for (Map.Entry<Double, Double> weight : sizeMap.entrySet()) {
-            if (commonSizeLength < weight.getValue()) {
-                commonSizeLength = weight.getValue();
-                commonSize = weight.getKey();
+        if (!fontSizeMap.isEmpty()) {
+            return fontSizeMap.entrySet()
+                              .stream()
+                              .max(Comparator.comparingDouble(Map.Entry::getValue))
+                              .get().getKey();
+        }
+        return 0.0;
+    }
+
+    public double getItalicAngle() {
+        if (italicAngle == null) {
+            italicAngle = calculateItalicAngle();
+        }
+        return italicAngle;
+    }
+
+    private double calculateItalicAngle() {
+        Map<Double, Double> italicAngleMap = new HashMap<>();
+        for (TextLine line : lines) {
+            for (TextChunk chunk : line.getTextChunks()) {
+                if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
+                    Double sizeLength = italicAngleMap.get(chunk.getItalicAngle());
+                    italicAngleMap.put(chunk.getItalicAngle(),
+                                    ((sizeLength == null) ? 0 : sizeLength) + chunk.getBoundingBox().getWidth());
+                }
             }
         }
-        return commonSize;
+        if (!italicAngleMap.isEmpty()) {
+            return italicAngleMap.entrySet()
+                               .stream()
+                               .max(Comparator.comparingDouble(Map.Entry::getValue))
+                               .get().getKey();
+        }
+        return 0.0;
+    }
+
+    public double[] getTextColor() {
+        if (textColor == null) {
+            textColor = calculateTextColor();
+        }
+        return textColor;
+    }
+
+    private double[] calculateTextColor() {
+        Map<double[], Double> textColorMap = new HashMap<>();
+        for (TextLine line : lines) {
+            for (TextChunk chunk : line.getTextChunks()) {
+                if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
+                    Double fontNameLength = textColorMap.get(chunk.getFontColor());
+                    textColorMap.put(chunk.getFontColor(),
+                                    ((fontNameLength == null) ? 0 : fontNameLength) + chunk.getBoundingBox().getWidth());
+                }
+            }
+        }
+        if (!textColorMap.isEmpty()) {
+            return textColorMap.entrySet()
+                               .stream()
+                               .max(Comparator.comparingDouble(Map.Entry::getValue))
+                               .get().getKey();
+        }
+        return new double[]{0.0};
+    }
+
+    public String getFontName() {
+        if (fontName == null) {
+            fontName = calculateFontName();
+        }
+        return fontName;
+    }
+
+    private String calculateFontName() {
+        Map<String, Double> fontNameMap = new HashMap<>();
+        for (TextLine line : lines) {
+            for (TextChunk chunk : line.getTextChunks()) {
+                if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
+                    Double fontNameLength = fontNameMap.get(chunk.getFontName());
+                    fontNameMap.put(chunk.getFontName(),
+                                    ((fontNameLength == null) ? 0 : fontNameLength) + chunk.getBoundingBox().getWidth());
+                }
+            }
+        }
+        if (!fontNameMap.isEmpty()) {
+            return fontNameMap.entrySet().stream().max(Comparator.comparingDouble(Map.Entry::getValue)).get().getKey();
+        }
+        return "";
     }
 
     public boolean isSpaceNode() {

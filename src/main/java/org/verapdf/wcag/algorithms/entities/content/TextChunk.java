@@ -14,6 +14,7 @@ public class TextChunk extends TextInfoChunk {
     private double[] fontColor;
     private String fontColorSpace;
     private double contrastRatio;
+    private boolean hasSpecialStyle = false;
 
     public TextChunk() {
     }
@@ -85,6 +86,14 @@ public class TextChunk extends TextInfoChunk {
 
     public void setContrastRatio(double contrastRatio) {
         this.contrastRatio = contrastRatio;
+    }
+
+    public boolean getHasSpecialStyle() {
+        return hasSpecialStyle;
+    }
+
+    public void setHasSpecialStyle() {
+        this.hasSpecialStyle = true;
     }
 
     public String getFontColorSpace() {
