@@ -53,6 +53,8 @@ public class ClusterTableTests {
         Consumer<INode> semanticTreeValidator = new SemanticTreePreprocessingConsumer();
         tree.forEach(semanticTreeValidator);
 
+        Table.updateTableCounter();
+
         Consumer<INode> paragraphValidator = new AccumulatedNodeConsumer();
         tree.forEach(paragraphValidator);
 

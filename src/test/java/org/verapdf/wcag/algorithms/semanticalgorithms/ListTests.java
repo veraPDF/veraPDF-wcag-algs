@@ -9,6 +9,7 @@ import org.verapdf.wcag.algorithms.entities.ITree;
 import org.verapdf.wcag.algorithms.entities.JsonToPdfTree;
 import org.verapdf.wcag.algorithms.entities.SemanticTree;
 import org.verapdf.wcag.algorithms.entities.lists.PDFList;
+import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.AccumulatedNodeConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ClusterTableConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.SemanticTreePreprocessingConsumer;
@@ -38,6 +39,8 @@ public class ListTests {
 
         Consumer<INode> semanticTreeValidator = new SemanticTreePreprocessingConsumer();
         tree.forEach(semanticTreeValidator);
+
+        Table.updateTableCounter();
 
         Consumer<INode> paragraphValidator = new AccumulatedNodeConsumer();
         tree.forEach(paragraphValidator);

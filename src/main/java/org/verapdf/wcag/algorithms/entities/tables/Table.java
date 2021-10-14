@@ -273,4 +273,8 @@ public class Table extends InfoChunk {
     public static void updateTableCounter() {
         tableCounter = 0L;
     }
+
+    public static Long getNextTableListId() {
+        return tableCounter++;
+    }
 }

@@ -13,8 +13,11 @@ import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.ImageChunk;
 import org.verapdf.wcag.algorithms.entities.maps.AccumulatedNodeMapper;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListLabelsUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +64,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 
 		if (!isLeafChild) {
 			acceptChildrenSemanticHeading(node);
+			acceptSemanticList(node);
 			acceptChildrenSemanticCaption(node);
 		}
 
@@ -337,7 +341,9 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	}
 
 	private void acceptSemanticHeading(INode node, INode previousNode, INode nextNode) {
-		double headingProbability = NodeUtils.headingProbability(accumulatedNodeMapper.get(node), accumulatedNodeMapper.get(previousNode), accumulatedNodeMapper.get(nextNode));
+		double headingProbability = NodeUtils.headingProbability(accumulatedNodeMapper.get(node),
+		                                                         accumulatedNodeMapper.get(previousNode),
+		                                                         accumulatedNodeMapper.get(nextNode));
 		if (headingProbability >= MERGE_PROBABILITY_THRESHOLD) {
 			INode accumulatedNode = accumulatedNodeMapper.get(node);
 			if (node.getInitialSemanticType() == SemanticType.NUMBER_HEADING) {
@@ -396,4 +402,46 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		}
 	}
 
+	private void acceptSemanticList(INode node) {
+		List<INode> textChildren = new ArrayList<>(node.getChildren().size());
+		List<TextLine> childrenFirstLines = new ArrayList<>(node.getChildren().size());
+		List<INode> imageChildren = new ArrayList<>(node.getChildren().size());
+		List<ImageChunk> childrenImages = new ArrayList<>(node.getChildren().size());
+		for (INode child : node.getChildren()) {
+			if (child != null) {
+				INode newChild = child;
+				while (!newChild.getChildren().isEmpty()) {
+					newChild = newChild.getChildren().get(0);
+				}
+				if (newChild instanceof SemanticImageNode) {
+					imageChildren.add(child);
+					childrenImages.add(((SemanticImageNode)newChild).getImage());
+				} else {
+					INode accumulatedChild = accumulatedNodeMapper.get(child);
+					if (accumulatedChild instanceof SemanticTextNode) {
+						SemanticTextNode textNode = (SemanticTextNode)accumulatedChild;
+						if (!textNode.isSpaceNode() && !textNode.isEmpty()) {
+							TextLine line = textNode.getFirstLine();
+							if (!line.getValue().trim().isEmpty()) {
+								textChildren.add(child);
+								childrenFirstLines.add(line);
+							}
+						}
+					}
+				}
+			}
+		}
+		if (textChildren.size() > 1) {
+			List<String> listItems = new ArrayList<>(node.getChildren().size());
+			for (TextLine line : childrenFirstLines) {
+				listItems.add(line.getValue());
+			}
+			ListUtils.updateTreeWithRecognizedList(node, textChildren,
+					ListUtils.getChildrenListIntervals(ListLabelsUtils.getListItemsIntervals(listItems), childrenFirstLines));
+		}
+		if (imageChildren.size() > 1) {
+			ListUtils.updateTreeWithRecognizedList(node, imageChildren,
+					ListUtils.getChildrenListIntervals(ListLabelsUtils.getImageListItemsIntervals(childrenImages), childrenImages));
+		}
+	}
 }
