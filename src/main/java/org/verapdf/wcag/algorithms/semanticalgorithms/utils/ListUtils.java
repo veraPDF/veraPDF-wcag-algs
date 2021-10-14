@@ -1,8 +1,10 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
 import org.verapdf.wcag.algorithms.entities.INode;
+import org.verapdf.wcag.algorithms.entities.content.InfoChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
 import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.tables.TableCell;
 import org.verapdf.wcag.algorithms.entities.tables.TableRow;
@@ -14,9 +16,12 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 
+import static org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils.TABLE_PROBABILITY_THRESHOLD;
+
 public class ListUtils {
 
 	private static final double EPSILON = 0.0001;
+	private static final double LABELS_EPSILON = 0.03;
 
 	private static final Set<SemanticType> listSemanticTypes = new HashSet<>(Arrays.asList(
 			SemanticType.LIST, SemanticType.LIST_ITEM,
@@ -65,8 +70,73 @@ public class ListUtils {
 		return true;
 	}
 
-	private static boolean areCloseNumbers(double d1, double d2) {
-		return Math.abs(d1 - d2) < EPSILON;
+	public static boolean areCloseNumbers(double d1, double d2, double epsilon) {
+		return Math.abs(d1 - d2) < epsilon;
 	}
 
+	public static boolean areCloseNumbers(double d1, double d2) {
+		return areCloseNumbers(d1, d2, EPSILON);
+	}
+
+	public static void updateTreeWithRecognizedList(INode node, List<INode> children, Set<ListInterval> listIntervals) {
+		for (ListInterval listInterval : listIntervals) {
+			Long listId = Table.getNextTableListId();
+			for (int i = listInterval.start; i <= listInterval.end; i++) {
+				updateTreeWithRecognizedListItem(children.get(i), listId);
+			}
+			if (node.getRecognizedStructureId() == null) {
+				double probability = ((double)(listInterval.end - listInterval.start + 1)) / children.size();
+				if (probability > TABLE_PROBABILITY_THRESHOLD) {
+					node.setSemanticType(SemanticType.LIST);
+					node.setCorrectSemanticScore(probability);
+					node.setRecognizedStructureId(listId);
+				}
+			}
+		}
+	}
+
+	public static void updateTreeWithRecognizedListItem(INode item, Long listId) {
+		item.setSemanticType(SemanticType.LIST_ITEM);
+		item.setCorrectSemanticScore(1.0);
+		item.setRecognizedStructureId(listId);
+		List<INode> children = item.getChildren();
+		if (children.size() == 1) {
+			INode child = children.get(0);
+			child.setSemanticType(SemanticType.LIST_BODY);
+			child.setCorrectSemanticScore(1.0);
+			child.setRecognizedStructureId(listId);
+		} else if (children.size() > 1) {
+			INode child = children.get(0);
+			child.setSemanticType(SemanticType.LIST_LABEL);
+			child.setCorrectSemanticScore(1.0);
+			child.setRecognizedStructureId(listId);
+			for (int i = 1; i < children.size(); i++) {
+				child = children.get(i);
+				child.setSemanticType(SemanticType.LIST_BODY);
+				child.setCorrectSemanticScore(1.0);
+				child.setRecognizedStructureId(listId);
+			}
+		}
+	}
+
+	public static Set<ListInterval> getChildrenListIntervals(Set<ListInterval> listIntervals,
+															  List<? extends InfoChunk> childrenFirstLines) {
+		Set<ListInterval> resultListIntervals = new HashSet<>();
+		for (ListInterval listInterval : listIntervals) {
+			int start = listInterval.start;
+			for (int i = listInterval.start + 1; i <= listInterval.end; i++) {
+				if (!ListUtils.areCloseNumbers(childrenFirstLines.get(start).getLeftX(),
+						childrenFirstLines.get(i).getLeftX(), LABELS_EPSILON)) {
+					if (start < i - 1) {
+						resultListIntervals.add(new ListInterval(start, i - 1));
+					}
+					start = i;
+				}
+			}
+			if (start < listInterval.end) {
+				resultListIntervals.add(new ListInterval(start, listInterval.end));
+			}
+		}
+		return resultListIntervals;
+	}
 }
