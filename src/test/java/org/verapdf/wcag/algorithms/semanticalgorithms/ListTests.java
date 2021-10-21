@@ -24,6 +24,11 @@ public class ListTests {
 
     static Stream<Arguments> listDetectionTestParams() {
         return Stream.of(
+                Arguments.of("list_start_with_Figure_pass.json", new int[] {}, true),
+                Arguments.of("test-document-13.json", new int[] {}, true),
+                Arguments.of("fake_list_fail.json", new int[] {}, true),
+                Arguments.of("list_start_from_005_pass.json", new int[] {}, true),
+                Arguments.of("fake_list_with_i_item_diff_formatting_fail.json", new int[] {}, true),
                 Arguments.of("list-with-image-label.json", new int[] {3}, false),
                 Arguments.of("NEG-fake-list.json", new int[] {4}, false),
                 Arguments.of("ordered-list1.json", new int[] {5, 5}, true),
@@ -63,7 +68,7 @@ public class ListTests {
 
     private void testListTreeStructure(ITree tree) {
         for (INode node : tree) {
-            if (ListUtils.isListNode(node)) {
+            if (ListUtils.isListNode(node) && !node.isLeaf()) {
                 Assertions.assertEquals(node.getInitialSemanticType(), node.getSemanticType());
             }
         }

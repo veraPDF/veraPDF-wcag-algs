@@ -21,7 +21,6 @@ import static org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils.TA
 public class ListUtils {
 
 	private static final double EPSILON = 0.0001;
-	private static final double LABELS_EPSILON = 0.03;
 
 	private static final Set<SemanticType> listSemanticTypes = new HashSet<>(Arrays.asList(
 			SemanticType.LIST, SemanticType.LIST_ITEM,
@@ -125,8 +124,9 @@ public class ListUtils {
 		for (ListInterval listInterval : listIntervals) {
 			int start = listInterval.start;
 			for (int i = listInterval.start + 1; i <= listInterval.end; i++) {
-				if (!ListUtils.areCloseNumbers(childrenFirstLines.get(start).getLeftX(),
-						childrenFirstLines.get(i).getLeftX(), LABELS_EPSILON)) {
+				if (!ListUtils.areCloseNumbers(childrenFirstLines.get(i - 1).getLeftX(),
+						childrenFirstLines.get(i).getLeftX(),
+						childrenFirstLines.get(i - 1).getBoundingBox().getHeight() / 2)) {
 					if (start < i - 1) {
 						resultListIntervals.add(new ListInterval(start, i - 1));
 					}
