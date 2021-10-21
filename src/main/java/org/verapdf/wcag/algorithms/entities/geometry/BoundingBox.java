@@ -201,14 +201,18 @@ public class BoundingBox {
     }
 
     public boolean contains(BoundingBox other) {
+        return contains(other, EPSILON, EPSILON);
+    }
+
+    public boolean contains(BoundingBox other, double horizontalOffset, double verticalOffset) {
         if (pageNumber == null || other.pageNumber == null) {
             return false;
         }
-        return leftX < (other.leftX + EPSILON) && other.rightX < (rightX + EPSILON)
-                && (pageNumber < other.pageNumber
-                    || (pageNumber.equals(other.pageNumber) && other.topY < (topY + EPSILON)))
-                && (lastPageNumber > other.lastPageNumber
-                    || (lastPageNumber.equals(other.lastPageNumber) && bottomY < (other.bottomY + EPSILON)));
+        return leftX < (other.leftX + horizontalOffset) && other.rightX < (rightX + horizontalOffset)
+               && (pageNumber < other.pageNumber
+                   || (pageNumber.equals(other.pageNumber) && other.topY < (topY + verticalOffset)))
+               && (lastPageNumber > other.lastPageNumber
+                   || (lastPageNumber.equals(other.lastPageNumber) && bottomY < (other.bottomY + verticalOffset)));
     }
 
     public boolean weaklyContains(BoundingBox fullRectangle) {
