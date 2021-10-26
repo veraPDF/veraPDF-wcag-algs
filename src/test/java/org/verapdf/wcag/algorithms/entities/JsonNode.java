@@ -15,9 +15,15 @@ public class JsonNode {
 	private double baseLine;
 	private int pageNumber;
 	private double[] color;
+	private double startX;
+	private double startY;
+	private double endX;
+	private double endY;
 	private String fontColorSpace;
 	private double[] boundingBox;
 	private List<JsonNode> children;
+	private List<JsonNode> pages;
+	private List<JsonNode> artifacts;
 
 	public JsonNode() {
 	}
@@ -118,6 +124,54 @@ public class JsonNode {
 		this.children = children;
 	}
 
+	public double getStartX() {
+		return startX;
+	}
+
+	public void setStartX(double startX) {
+		this.startX = startX;
+	}
+
+	public double getStartY() {
+		return startY;
+	}
+
+	public void setStartY(double startY) {
+		this.startY = startY;
+	}
+
+	public double getEndX() {
+		return endX;
+	}
+
+	public void setEndX(double endX) {
+		this.endX = endX;
+	}
+
+	public double getEndY() {
+		return endY;
+	}
+
+	public void setEndY(double endY) {
+		this.endY = endY;
+	}
+
+	public List<JsonNode> getPages() {
+		return pages;
+	}
+
+	public void setPages(List<JsonNode> pages) {
+		this.pages = pages;
+	}
+
+	public List<JsonNode> getArtifacts() {
+		return artifacts;
+	}
+
+	public void setArtifacts(List<JsonNode> artifacts) {
+		this.artifacts = artifacts;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -127,12 +181,21 @@ public class JsonNode {
 			return false;
 		}
 		JsonNode jsonNode = (JsonNode) o;
-		return Double.compare(jsonNode.fontSize, fontSize) == 0 && fontWeight == jsonNode.fontWeight && Double.compare(jsonNode.italicAngle, italicAngle) == 0 && Double.compare(jsonNode.baseLine, baseLine) == 0 && pageNumber == jsonNode.pageNumber && Objects.equals(type, jsonNode.type) && Objects.equals(value, jsonNode.value) && Objects.equals(fontName, jsonNode.fontName) && Arrays.equals(color, jsonNode.color) && Objects.equals(fontColorSpace, jsonNode.fontColorSpace) && Arrays.equals(boundingBox, jsonNode.boundingBox) && Objects.equals(children, jsonNode.children);
+		return Double.compare(jsonNode.fontSize, fontSize) == 0 && Objects.equals(artifacts, jsonNode.artifacts) &&
+				Double.compare(jsonNode.italicAngle, italicAngle) == 0 && Objects.equals(children, jsonNode.children) &&
+				Double.compare(jsonNode.baseLine, baseLine) == 0 && Objects.equals(value, jsonNode.value) &&
+				Objects.equals(type, jsonNode.type) && jsonNode.pageNumber == pageNumber &&
+				Arrays.equals(boundingBox, jsonNode.boundingBox) && Arrays.equals(color, jsonNode.color) &&
+				Objects.equals(fontColorSpace, jsonNode.fontColorSpace) && Objects.equals(pages, jsonNode.pages) &&
+				Objects.equals(fontName, jsonNode.fontName) && Double.compare(jsonNode.fontWeight, fontWeight) == 0 &&
+				Double.compare(jsonNode.startX, startX) == 0 && Double.compare(jsonNode.startY, startY) == 0 &&
+				Double.compare(jsonNode.endX, endX) == 0 && Double.compare(jsonNode.endY, endY) == 0;
 	}
 
 	@Override
 	public int hashCode() {
-		int result = Objects.hash(type, value, fontName, fontSize, fontWeight, italicAngle, baseLine, pageNumber, children);
+		int result = Objects.hash(type, value, fontName, fontSize, fontWeight, italicAngle, baseLine, pageNumber,
+				children, pages, artifacts, startX, startY, endX, endY);
 		result = 31 * result + Arrays.hashCode(color);
 		result = 31 * result + Arrays.hashCode(boundingBox);
 		return result;
@@ -149,10 +212,16 @@ public class JsonNode {
 		       ", italicAngle=" + italicAngle +
 		       ", baseLine=" + baseLine +
 		       ", pageNumber=" + pageNumber +
-		       ", color=" + Arrays.toString(color) +
+				", startX=" + startX +
+				", startY=" + startY +
+				", endX=" + endX +
+				", endY=" + endY +
+				", color=" + Arrays.toString(color) +
 		       ", fontColorSpace='" + fontColorSpace + '\'' +
 		       ", boundingBox=" + Arrays.toString(boundingBox) +
 		       ", children=" + children +
-		       '}';
+				", artifacts=" + artifacts +
+				", pages=" + pages +
+				'}';
 	}
 }
