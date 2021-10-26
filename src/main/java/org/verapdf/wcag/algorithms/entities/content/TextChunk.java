@@ -15,6 +15,7 @@ public class TextChunk extends TextInfoChunk {
     private String fontColorSpace;
     private double contrastRatio;
     private boolean hasSpecialStyle = false;
+    private boolean isUnderlinedText = false;
 
     public TextChunk() {
     }
@@ -94,6 +95,14 @@ public class TextChunk extends TextInfoChunk {
 
     public void setHasSpecialStyle() {
         this.hasSpecialStyle = true;
+    }
+
+    public boolean getIsUnderlinedText() {
+        return isUnderlinedText;
+    }
+
+    public void setIsUnderlinedText() {
+        this.isUnderlinedText = true;
     }
 
     public String getFontColorSpace() {

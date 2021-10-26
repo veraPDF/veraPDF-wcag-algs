@@ -46,61 +46,73 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		return (l1 + 0.05) / (l2 + 0.05);
 	}
 
-	private void calculateContrastRatio(SemanticTextNode node) {
-		BufferedImage renderedPage = renderedPages.get(node.getPageNumber());
+	private BufferedImage getRenderPage(int pageNumber) {
+		BufferedImage renderedPage = renderedPages.get(pageNumber);
 		if (renderedPage == null) {
 			try (PDDocument document = PDDocument.load(new FileInputStream(sourcePdfPath))) {
-				renderedPage = renderPage(document, node.getPageNumber());
-				renderedPages.put(node.getPageNumber(), renderedPage);
+				renderedPage = renderPage(document, pageNumber);
+				renderedPages.put(pageNumber, renderedPage);
 			}
 			catch (IOException e) {
 				e.printStackTrace();
 				logger.warning(e.getMessage());
 			}
 		}
+		return renderedPage;
+	}
 
+	public void calculateContrastRatio(TextChunk textChunk) {
+		BufferedImage renderedPage = getRenderPage(textChunk.getPageNumber());
+		calculateContrastRation(textChunk, renderedPage);
+	}
+
+	private void calculateContrastRatio(SemanticTextNode node) {
+		BufferedImage renderedPage = getRenderPage(node.getPageNumber());
 		if (renderedPage != null) {
 			for (TextLine textLine : node.getLines()) {
 				for (TextChunk textChunk : textLine.getTextChunks()) {
-					if ((textChunk.getValue() != null && (TextChunkUtils.isWhiteSpaceChunk(textChunk)))) {
-						textChunk.setContrastRatio(Integer.MAX_VALUE);
-						continue;
-					}
-
-					double [] textChunkOriginalColor = textChunk.getFontColor();
-					Color textColorForProcessing = getTextColorFromComponentArray(textChunkOriginalColor);
-
-					BoundingBox bBox = textChunk.getBoundingBox();
-					double dpiScaling = ((double) RENDER_DPI) / ((double) PDF_DPI);
-					int renderedPageWidth = renderedPage.getRaster().getWidth();
-					int renderedPageHeight = renderedPage.getRaster().getHeight();
-					BoundingBox pageBBox = new BoundingBox(node.getPageNumber(),0, 0, renderedPageWidth, renderedPageHeight);
-
-					BoundingBox scaledBBox = new BoundingBox(node.getPageNumber(), bBox.getLeftX() * dpiScaling,
-					                                         bBox.getBottomY() * dpiScaling,
-					                                         bBox.getRightX() * dpiScaling,
-					                                         bBox.getTopY() * dpiScaling);
-					boolean isOverlappingBox = scaledBBox.overlaps(pageBBox);
-					if (isOverlappingBox) {
-						scaledBBox = scaledBBox.cross(pageBBox);
-					} else if (!pageBBox.contains(scaledBBox)) {
-						textChunk.setContrastRatio(Integer.MAX_VALUE);
-						return;
-					}
-					int x = (int) (Math.round(scaledBBox.getLeftX()));
-					int y = (int) (Math.round(scaledBBox.getTopY()));
-					int width = getIntegerBBoxValueForProcessing(scaledBBox.getWidth(), 1);
-					int height = getIntegerBBoxValueForProcessing(scaledBBox.getHeight(), 1);
-					try {
-						BufferedImage targetBim = renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
-						double contrastRatio = getContrastRatio(targetBim, textColorForProcessing);
-						textChunk.setContrastRatio(contrastRatio);
-					} catch (Exception e) {
-						logger.log(Level.WARNING, e.getMessage());
-					}
+					calculateContrastRation(textChunk, renderedPage);
 				}
-
 			}
+		}
+	}
+
+	public void calculateContrastRation(TextChunk textChunk, BufferedImage renderedPage) {
+		if ((textChunk.getValue() != null && (TextChunkUtils.isWhiteSpaceChunk(textChunk)))) {
+			textChunk.setContrastRatio(Integer.MAX_VALUE);
+			return;
+		}
+
+		double [] textChunkOriginalColor = textChunk.getFontColor();
+		Color textColorForProcessing = getTextColorFromComponentArray(textChunkOriginalColor);
+
+		BoundingBox bBox = textChunk.getBoundingBox();
+		double dpiScaling = ((double) RENDER_DPI) / ((double) PDF_DPI);
+		int renderedPageWidth = renderedPage.getRaster().getWidth();
+		int renderedPageHeight = renderedPage.getRaster().getHeight();
+		BoundingBox pageBBox = new BoundingBox(textChunk.getPageNumber(),0, 0, renderedPageWidth, renderedPageHeight);
+
+		BoundingBox scaledBBox = new BoundingBox(textChunk.getPageNumber(), bBox.getLeftX() * dpiScaling,
+				bBox.getBottomY() * dpiScaling,
+				bBox.getRightX() * dpiScaling,
+				bBox.getTopY() * dpiScaling);
+		boolean isOverlappingBox = scaledBBox.overlaps(pageBBox);
+		if (isOverlappingBox) {
+			scaledBBox = scaledBBox.cross(pageBBox);
+		} else if (!pageBBox.contains(scaledBBox)) {
+			textChunk.setContrastRatio(Integer.MAX_VALUE);
+			return;
+		}
+		int x = (int) (Math.round(scaledBBox.getLeftX()));
+		int y = (int) (Math.round(scaledBBox.getTopY()));
+		int width = getIntegerBBoxValueForProcessing(scaledBBox.getWidth(), 1);
+		int height = getIntegerBBoxValueForProcessing(scaledBBox.getHeight(), 1);
+		try {
+			BufferedImage targetBim = renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
+			double contrastRatio = getContrastRatio(targetBim, textColorForProcessing);
+			textChunk.setContrastRatio(contrastRatio);
+		} catch (Exception e) {
+			logger.log(Level.WARNING, e.getMessage());
 		}
 	}
 

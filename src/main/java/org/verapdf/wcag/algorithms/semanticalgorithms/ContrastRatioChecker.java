@@ -1,7 +1,9 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms;
 
+import org.verapdf.wcag.algorithms.entities.IDocument;
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.ITree;
+import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.enums.TextType;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ContrastRatioConsumer;
 
@@ -23,6 +25,16 @@ public class ContrastRatioChecker {
 	public void checkSemanticTree(ITree tree, String pdfName) {
 		Consumer<INode> v = new ContrastRatioConsumer(pdfName);
 		tree.forEach(v);
+	}
+
+	public void checkDocument(IDocument document, String pdfName) {
+		ContrastRatioConsumer v = new ContrastRatioConsumer(pdfName);
+		if (document.getTree() != null) {
+			document.getTree().forEach(v);
+		}
+		document.getArtifacts().stream()
+				.filter(chunk -> chunk instanceof TextChunk)
+				.forEach(chunk -> v.calculateContrastRatio((TextChunk)chunk));
 	}
 
 	/**

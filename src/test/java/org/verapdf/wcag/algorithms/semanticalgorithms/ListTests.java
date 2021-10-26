@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.ITree;
 import org.verapdf.wcag.algorithms.entities.JsonToPdfTree;
-import org.verapdf.wcag.algorithms.entities.SemanticTree;
+import org.verapdf.wcag.algorithms.entities.IDocument;
 import org.verapdf.wcag.algorithms.entities.lists.PDFList;
 import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.AccumulatedNodeConsumer;
@@ -39,8 +39,8 @@ public class ListTests {
     @ParameterizedTest(name = "{index}: ({0}, {1}, {2} ) => {0}")
     @MethodSource("listDetectionTestParams")
     void testListDetection(String filename, int[] checkSizes, boolean initialSemanticIsValid) throws IOException {
-        INode root = JsonToPdfTree.getPdfTreeRoot("/files/lists/" + filename);
-        ITree tree = new SemanticTree(root);
+        IDocument document = JsonToPdfTree.getDocument("/files/lists/" + filename);
+        ITree tree = document.getTree();
 
         Consumer<INode> semanticTreeValidator = new SemanticTreePreprocessingConsumer();
         tree.forEach(semanticTreeValidator);

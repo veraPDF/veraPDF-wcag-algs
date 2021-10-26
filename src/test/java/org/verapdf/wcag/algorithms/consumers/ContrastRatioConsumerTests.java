@@ -53,8 +53,8 @@ public class ContrastRatioConsumerTests {
 	@ParameterizedTest(name = "{index}: ({0}, {1}, {2}) => {0}")
 	@MethodSource("contrastTestPassParams")
 	void testColorContrastPass(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
-		INode root = JsonToPdfTree.getPdfTreeRoot(SRC_DIR + jsonPdfPath);
-		ITree tree = new SemanticTree(root);
+		IDocument document = JsonToPdfTree.getDocument(SRC_DIR + jsonPdfPath);
+		ITree tree = document.getTree();
 		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath);
 
 		tree.forEach(contrastRatioConsumer);
@@ -78,8 +78,8 @@ public class ContrastRatioConsumerTests {
 	@ParameterizedTest(name = "{index}: ({0}, {1}, {2}) => {0}")
 	@MethodSource("contrastCompletedWithoutExceptionsParams")
 	void testColorContrastCompletedWithoutExceptions(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
-		INode root = JsonToPdfTree.getPdfTreeRoot(SRC_DIR + jsonPdfPath);
-		ITree tree = new SemanticTree(root);
+		IDocument document = JsonToPdfTree.getDocument(SRC_DIR + jsonPdfPath);
+		ITree tree = document.getTree();
 		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath);
 
 		tree.forEach(contrastRatioConsumer);
@@ -89,8 +89,8 @@ public class ContrastRatioConsumerTests {
 	@ParameterizedTest(name = "{index}: ({0}, {1}, {2}) => {0}")
 	@MethodSource("contrastTestFailParams")
 	void testColorContrastFail(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
-		INode root = JsonToPdfTree.getPdfTreeRoot(SRC_DIR + jsonPdfPath);
-		ITree tree = new SemanticTree(root);
+		IDocument document = JsonToPdfTree.getDocument(SRC_DIR + jsonPdfPath);
+		ITree tree = document.getTree();
 		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath);
 
 		tree.forEach(contrastRatioConsumer);

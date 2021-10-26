@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class ListIntervalsCollection {
 
-	private Set<ListInterval> set;
+	private final Set<ListInterval> set;
 
 	public ListIntervalsCollection() {
 		set = new HashSet<>();
