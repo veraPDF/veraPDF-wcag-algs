@@ -19,6 +19,7 @@ public class JsonNode {
 	private double startY;
 	private double endX;
 	private double endY;
+	private double width;
 	private String fontColorSpace;
 	private double[] boundingBox;
 	private List<JsonNode> children;
@@ -98,6 +99,14 @@ public class JsonNode {
 
 	public void setColor(double[] color) {
 		this.color = color;
+	}
+
+	public double getWidth() {
+		return width;
+	}
+
+	public void setWidth(double width) {
+		this.width = width;
 	}
 
 	public String getFontColorSpace() {
@@ -189,13 +198,14 @@ public class JsonNode {
 				Objects.equals(fontColorSpace, jsonNode.fontColorSpace) && Objects.equals(pages, jsonNode.pages) &&
 				Objects.equals(fontName, jsonNode.fontName) && Double.compare(jsonNode.fontWeight, fontWeight) == 0 &&
 				Double.compare(jsonNode.startX, startX) == 0 && Double.compare(jsonNode.startY, startY) == 0 &&
-				Double.compare(jsonNode.endX, endX) == 0 && Double.compare(jsonNode.endY, endY) == 0;
+				Double.compare(jsonNode.endX, endX) == 0 && Double.compare(jsonNode.endY, endY) == 0 &&
+				Double.compare(jsonNode.width, width) == 0;
 	}
 
 	@Override
 	public int hashCode() {
 		int result = Objects.hash(type, value, fontName, fontSize, fontWeight, italicAngle, baseLine, pageNumber,
-				children, pages, artifacts, startX, startY, endX, endY);
+				children, pages, artifacts, startX, startY, endX, endY, width);
 		result = 31 * result + Arrays.hashCode(color);
 		result = 31 * result + Arrays.hashCode(boundingBox);
 		return result;
@@ -216,6 +226,7 @@ public class JsonNode {
 				", startY=" + startY +
 				", endX=" + endX +
 				", endY=" + endY +
+				", width=" + width +
 				", color=" + Arrays.toString(color) +
 		       ", fontColorSpace='" + fontColorSpace + '\'' +
 		       ", boundingBox=" + Arrays.toString(boundingBox) +
