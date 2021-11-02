@@ -8,6 +8,7 @@ public class LineChunk extends InfoChunk {
 	private double startY;
 	private double endX;
 	private double endY;
+	private double width;
 
 	public LineChunk() {
 	}
@@ -19,6 +20,16 @@ public class LineChunk extends InfoChunk {
 		this.startY = startY;
 		this.endX = endX;
 		this.endY = endY;
+	}
+
+	public LineChunk(Integer pageNumber, double startX, double startY, double endX, double endY, double width) {
+		super(new BoundingBox(pageNumber, Math.min(startX, endX), Math.min(startY, endY),
+				Math.max(startX, endX), Math.max(startY, endY)));
+		this.startX = startX;
+		this.startY = startY;
+		this.endX = endX;
+		this.endY = endY;
+		this.width = width;
 	}
 
 	public double getStartX() {

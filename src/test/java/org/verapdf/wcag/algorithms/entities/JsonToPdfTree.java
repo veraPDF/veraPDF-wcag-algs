@@ -44,7 +44,7 @@ public class JsonToPdfTree {
 
 	private static LineChunk getLineChunk(JsonNode jsonNode) {
 		return new LineChunk(jsonNode.getPageNumber(), jsonNode.getStartX(),
-				jsonNode.getStartY(), jsonNode.getEndX(), jsonNode.getEndY());
+				jsonNode.getStartY(), jsonNode.getEndX(), jsonNode.getEndY(), jsonNode.getWidth());
 	}
 
 	private static IPage getPage(JsonNode jsonNode) {
