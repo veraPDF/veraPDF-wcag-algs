@@ -2,6 +2,8 @@ package org.verapdf.wcag.algorithms.entities.content;
 
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
+import java.util.Objects;
+
 public class LineChunk extends InfoChunk {
 
 	private double startX;
@@ -62,5 +64,42 @@ public class LineChunk extends InfoChunk {
 
 	public void setEndY(double endY) {
 		this.endY = endY;
+	}
+
+	public double getWidth() {
+		return width;
+	}
+
+	public void setWidth(double width) {
+		this.width = width;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(startX, startY, endX, endY, width);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!super.equals(o)) {
+			return false;
+		}
+		LineChunk that = (LineChunk) o;
+		return Double.compare(that.startX, startX) == 0
+				&& Double.compare(that.startY, startY) == 0
+				&& Double.compare(that.endX, endX) == 0
+				&& Double.compare(that.endY, endY) == 0
+				&& Double.compare(that.width, width) == 0;
+	}
+
+	@Override
+	public String toString() {
+		return "LineChunk{" +
+				"startX=" + startX +
+				", startY=" + startY +
+				", endX=" + endX +
+				", endY=" + endY +
+				", width=" + width +
+				'}';
 	}
 }
