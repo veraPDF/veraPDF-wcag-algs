@@ -219,7 +219,7 @@ public class Table extends InfoChunk {
 
                 TextChunk firstChunk = tokenRow.getFirstTextChunk();
                 TextChunk secondChunk = nextTokenRow.getFirstTextChunk();
-                if (firstChunk.getValue() != "") {
+                if (!firstChunk.getValue().isEmpty()) {
                     double styleFactor = firstChunk.getFontName().equals(secondChunk.getFontName()) ? 1.0 : 1.2;
                     styleFactor *= Math.max(firstCell.getFontSize(), secondCell.getFontSize()) / Math.min(firstCell.getFontSize(), secondCell.getFontSize());
                     styleFactor *= Math.max(firstChunk.getFontWeight(), secondChunk.getFontWeight()) / Math.min(firstChunk.getFontWeight(), secondChunk.getFontWeight());

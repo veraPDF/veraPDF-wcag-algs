@@ -15,7 +15,7 @@ public class SemanticHeading extends SemanticParagraph {
 	}
 
 	public SemanticHeading(SemanticSpan span) {
-		super(span.getBoundingBox(), span.getLines());
+		super(span);
 		setSemanticType(SemanticType.HEADING);
 	}
 

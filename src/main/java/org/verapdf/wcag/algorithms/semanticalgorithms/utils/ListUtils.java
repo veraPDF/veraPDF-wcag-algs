@@ -20,8 +20,6 @@ import static org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils.TA
 
 public class ListUtils {
 
-	private static final double EPSILON = 0.0001;
-
 	private static final Set<SemanticType> listSemanticTypes = new HashSet<>(Arrays.asList(
 			SemanticType.LIST, SemanticType.LIST_ITEM,
 			SemanticType.LIST_LABEL, SemanticType.LIST_BODY));
@@ -60,21 +58,13 @@ public class ListUtils {
 		BoundingBox firstLabel = listLabels.get(0);
 		double firstLabelHeight = firstLabel.getHeight();
 		for (int i = 1; i < listLabels.size(); i++) {
-			if (!areCloseNumbers(listLabels.get(i).getLeftX(), listLabels.get(0).getLeftX()) ||
-			    !areCloseNumbers(listLabels.get(i).getRightX(), listLabels.get(0).getRightX()) ||
-			    !areCloseNumbers(listLabels.get(i).getHeight(), firstLabelHeight)) {
+			if (!NodeUtils.areCloseNumbers(listLabels.get(i).getLeftX(), listLabels.get(0).getLeftX()) ||
+			    !NodeUtils.areCloseNumbers(listLabels.get(i).getRightX(), listLabels.get(0).getRightX()) ||
+			    !NodeUtils.areCloseNumbers(listLabels.get(i).getHeight(), firstLabelHeight)) {
 				return false;
 			}
 		}
 		return true;
-	}
-
-	public static boolean areCloseNumbers(double d1, double d2, double epsilon) {
-		return Math.abs(d1 - d2) < epsilon;
-	}
-
-	public static boolean areCloseNumbers(double d1, double d2) {
-		return areCloseNumbers(d1, d2, EPSILON);
 	}
 
 	public static void updateTreeWithRecognizedList(INode node, List<INode> children, Set<ListInterval> listIntervals) {
@@ -124,7 +114,7 @@ public class ListUtils {
 		for (ListInterval listInterval : listIntervals) {
 			int start = listInterval.start;
 			for (int i = listInterval.start + 1; i <= listInterval.end; i++) {
-				if (!ListUtils.areCloseNumbers(childrenFirstLines.get(i - 1).getLeftX(),
+				if (!NodeUtils.areCloseNumbers(childrenFirstLines.get(i - 1).getLeftX(),
 						childrenFirstLines.get(i).getLeftX(),
 						childrenFirstLines.get(i - 1).getBoundingBox().getHeight() / 2)) {
 					if (start < i - 1) {
