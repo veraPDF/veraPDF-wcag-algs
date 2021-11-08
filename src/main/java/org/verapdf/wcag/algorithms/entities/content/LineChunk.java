@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.entities.content;
 
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
 import java.util.Objects;
 
@@ -60,6 +61,22 @@ public class LineChunk extends InfoChunk {
 
 	public double getEndY() {
 		return endY;
+	}
+
+	public double getCenterX() {
+		return 0.5 * (startX + endX);
+	}
+
+	public double getCenterY() {
+		return 0.5 * (startY + endY);
+	}
+
+	public boolean isHorizontalLine() {
+		return NodeUtils.areCloseNumbers(startY, endY);
+	}
+
+	public boolean isVerticalLine() {
+		return NodeUtils.areCloseNumbers(startX, endX);
 	}
 
 	public void setEndY(double endY) {

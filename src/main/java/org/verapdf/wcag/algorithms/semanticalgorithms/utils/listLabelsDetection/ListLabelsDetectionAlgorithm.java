@@ -34,7 +34,7 @@ public abstract class ListLabelsDetectionAlgorithm {
         return getRegexStartLength(string, getRegex());
     }
 
-    private static int getRegexStartLength(String string, String regex) {
+    public static int getRegexStartLength(String string, String regex) {
         for (int i = 0; i < string.length(); i++) {
             if (!string.substring(i, i + 1).matches(regex)) {
                 return i;

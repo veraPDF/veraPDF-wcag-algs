@@ -101,8 +101,8 @@ public class ListLabelsUtils {
 		ImageChunk image = listItems.get(index);
 		for (int j = 1; j < listItems.size(); j++) {
 			ImageChunk currentImage = listItems.get(j);
-			if (!ListUtils.areCloseNumbers(image.getBoundingBox().getWidth(), currentImage.getBoundingBox().getWidth()) ||
-					!ListUtils.areCloseNumbers(image.getBoundingBox().getHeight(), currentImage.getBoundingBox().getHeight())) {
+			if (!NodeUtils.areCloseNumbers(image.getBoundingBox().getWidth(), currentImage.getBoundingBox().getWidth()) ||
+					!NodeUtils.areCloseNumbers(image.getBoundingBox().getHeight(), currentImage.getBoundingBox().getHeight())) {
 				if (index < j - 1) {
 					listIntervals.add(new ListInterval(index, j - 1));
 				}
