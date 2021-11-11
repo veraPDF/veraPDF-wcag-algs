@@ -343,7 +343,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	private void acceptSemanticHeading(INode node, INode previousNode, INode nextNode) {
 		double headingProbability = NodeUtils.headingProbability(accumulatedNodeMapper.get(node),
 		                                                         accumulatedNodeMapper.get(previousNode),
-		                                                         accumulatedNodeMapper.get(nextNode));
+		                                                         accumulatedNodeMapper.get(nextNode),
+		                                                         node.getInitialSemanticType());
 		if (headingProbability >= MERGE_PROBABILITY_THRESHOLD) {
 			INode accumulatedNode = accumulatedNodeMapper.get(node);
 			if (node.getInitialSemanticType() == SemanticType.NUMBER_HEADING) {
