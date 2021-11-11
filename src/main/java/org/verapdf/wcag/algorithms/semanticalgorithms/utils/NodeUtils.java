@@ -6,6 +6,7 @@ import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.SemanticImageNode;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 
 public class NodeUtils {
 
@@ -15,10 +16,10 @@ public class NodeUtils {
 	private static final double IMAGE_INTERVAL_STANDARD = 1;
 	private static final double EPSILON = 0.0001;
 	private static final double WITH_TOLERANCE_FACTOR = 0.33;
-	private static final double[] HEADING_PROBABILITY_PARAMS = {0.55, 0.55, 0.3, 0.0291, 0.15, 0.15, 0.1};
+	private static final double[] HEADING_PROBABILITY_PARAMS = {0.55, 0.55, 0.3, 0.0291, 0.15, 0.15, 0.1, 0.1};
 	private static final double[] CAPTION_PROBABILITY_PARAMS = {1.0, 0.95, 0.9, 0.85};
 
-	public static double headingProbability(INode node, INode previousNode, INode nextNode) {
+	public static double headingProbability(INode node, INode previousNode, INode nextNode, SemanticType initialSemanticType) {
 		if (node == null) {
 			return 0.0;
 		}
@@ -50,6 +51,10 @@ public class NodeUtils {
 		if (textNode.isStartsWithArabicNumber()) {
 			headingProbability += HEADING_PROBABILITY_PARAMS[6];
 		}
+		if (SemanticType.HEADING.equals(initialSemanticType) || SemanticType.NUMBER_HEADING.equals(initialSemanticType)) {
+			headingProbability += HEADING_PROBABILITY_PARAMS[7];
+		}
+
 		return Math.max(Math.min(headingProbability * getLineSizeHeadingProbability(textNode), 1.0), 0.0);
 	}
 
