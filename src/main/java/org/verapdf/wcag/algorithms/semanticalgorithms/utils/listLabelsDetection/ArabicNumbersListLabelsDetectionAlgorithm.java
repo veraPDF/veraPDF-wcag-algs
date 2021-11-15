@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetectionAlgorithm {
 
-    private static final String ARABIC_NUMBER_REGEX = "\\d+";
+    public static final String ARABIC_NUMBER_REGEX = "\\d+";
 
     @Override
     public boolean isListLabels(List<String> labels, int commonStartLength, int commonEndLength) {

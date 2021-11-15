@@ -6,6 +6,7 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ArabicNumbersListLabelsDetectionAlgorithm;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ListLabelsDetectionAlgorithm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -320,7 +321,8 @@ public class SemanticTextNode extends SemanticNode {
 
     public boolean isStartsWithArabicNumber() {
         String value = getFirstLine().getValue().trim();
-        if (!value.isEmpty() && ArabicNumbersListLabelsDetectionAlgorithm.getRegexStartLength(value, "\\d+") > 0) {
+        if (!value.isEmpty() && ListLabelsDetectionAlgorithm.getRegexStartLength(value,
+                ArabicNumbersListLabelsDetectionAlgorithm.ARABIC_NUMBER_REGEX) > 0) {
             return true;
         }
         return false;

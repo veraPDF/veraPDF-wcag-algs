@@ -7,6 +7,8 @@ import org.verapdf.wcag.algorithms.entities.SemanticImageNode;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ArabicNumbersListLabelsDetectionAlgorithm;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ListLabelsDetectionAlgorithm;
 
 public class NodeUtils {
 
@@ -17,7 +19,8 @@ public class NodeUtils {
 	private static final double EPSILON = 0.0001;
 	private static final double WITH_TOLERANCE_FACTOR = 0.33;
 	private static final double[] HEADING_PROBABILITY_PARAMS = {0.55, 0.55, 0.3, 0.0291, 0.15, 0.15, 0.1, 0.1};
-	private static final double[] CAPTION_PROBABILITY_PARAMS = {1.0, 0.95, 0.9, 0.85};
+	private static final double[] CAPTION_PROBABILITY_PARAMS = {1.0, 0.95, 0.9, 0.85, 0.2, 0.1, 0.03};
+	public static final String FIGURE = "Figure";
 
 	public static double headingProbability(INode node, INode previousNode, INode nextNode, SemanticType initialSemanticType) {
 		if (node == null) {
@@ -55,7 +58,7 @@ public class NodeUtils {
 			headingProbability += HEADING_PROBABILITY_PARAMS[7];
 		}
 
-		return Math.max(Math.min(headingProbability * getLineSizeHeadingProbability(textNode), 1.0), 0.0);
+		return Math.max(Math.min(headingProbability * getLinesNumberHeadingProbability(textNode), 1.0), 0.0);
 	}
 
 	public static double headingProbability(SemanticTextNode textNode, INode neighborNode) {
@@ -80,7 +83,7 @@ public class NodeUtils {
 		return probability;
 	}
 
-	private static double getLineSizeHeadingProbability(SemanticTextNode textNode) {
+	private static double getLinesNumberHeadingProbability(SemanticTextNode textNode) {
 		return Math.max(0, 1 - HEADING_PROBABILITY_PARAMS[3] *
 				(textNode.getLinesNumber() - 1) * (textNode.getLinesNumber() - 1));
 	}
@@ -102,7 +105,14 @@ public class NodeUtils {
 		SemanticImageNode neighborImageNode = (SemanticImageNode) neighborNode;
 		double captionProbability = captionVerticalProbability(textNode, neighborImageNode);
 		captionProbability *= captionHorizontalProbability(textNode, neighborImageNode);
-		return captionProbability;
+		captionProbability *= getLinesNumberCaptionProbability(textNode);
+		captionProbability += captionContentProbability(textNode);
+		return Math.min(captionProbability, 1.0);
+	}
+
+	private static double getLinesNumberCaptionProbability(SemanticTextNode textNode) {
+		return Math.max(0, 1 - CAPTION_PROBABILITY_PARAMS[6] *
+				(textNode.getLinesNumber() - 1) * (textNode.getLinesNumber() - 1));
 	}
 
 	private static boolean isContaining(SemanticTextNode textNode, SemanticImageNode imageNode) {
@@ -171,6 +181,19 @@ public class NodeUtils {
 		if (firstBaseline < imageNode.getBottomY() - FLOATING_POINT_OPERATIONS_EPS) {
 			return ChunksMergeUtils.getUniformProbability(DEFAULT_INTERVAL_AFTER_IMAGE,
 					(imageNode.getBottomY() - firstBaseline) / textNode.getFontSize(), IMAGE_INTERVAL_STANDARD);
+		}
+		return 0.0;
+	}
+
+	private static double captionContentProbability(SemanticTextNode textNode) {
+		String value = textNode.getFirstLine().getValue().trim();
+		if (value.startsWith(FIGURE)) {
+			value = value.substring(FIGURE.length()).trim();
+			if (!value.isEmpty() && ListLabelsDetectionAlgorithm.getRegexStartLength(value,
+					ArabicNumbersListLabelsDetectionAlgorithm.ARABIC_NUMBER_REGEX) > 0) {
+				return CAPTION_PROBABILITY_PARAMS[4];
+			}
+			return CAPTION_PROBABILITY_PARAMS[5];
 		}
 		return 0.0;
 	}
