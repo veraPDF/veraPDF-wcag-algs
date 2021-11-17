@@ -4,7 +4,5 @@ import org.verapdf.wcag.algorithms.entities.IDocument;
 import org.verapdf.wcag.algorithms.entities.ITree;
 
 public interface ISemanticsChecker {
-	void checkSemanticTree(ITree tree);
-
-	void checkSemanticTree(IDocument document);
+	void checkSemanticDocument(IDocument document);
 }

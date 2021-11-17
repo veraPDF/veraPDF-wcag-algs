@@ -1,99 +1,84 @@
 package org.verapdf.wcag.algorithms.entities.content;
 
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.entities.geometry.Vertex;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
+import java.util.Comparator;
 import java.util.Objects;
 
 public class LineChunk extends InfoChunk {
 
-	private double startX;
-	private double startY;
-	private double endX;
-	private double endY;
-	private double width;
-
-	public LineChunk() {
-	}
+	private final Vertex start;
+	private final Vertex end;
+	private final double width;
 
 	public LineChunk(Integer pageNumber, double startX, double startY, double endX, double endY) {
-		super(new BoundingBox(pageNumber, Math.min(startX, endX), Math.min(startY, endY),
-				Math.max(startX, endX), Math.max(startY, endY)));
-		this.startX = startX;
-		this.startY = startY;
-		this.endX = endX;
-		this.endY = endY;
+		this(pageNumber, startX, startY, endX, endY, 1.0);
 	}
 
 	public LineChunk(Integer pageNumber, double startX, double startY, double endX, double endY, double width) {
-		super(new BoundingBox(pageNumber, Math.min(startX, endX), Math.min(startY, endY),
-				Math.max(startX, endX), Math.max(startY, endY)));
-		this.startX = startX;
-		this.startY = startY;
-		this.endX = endX;
-		this.endY = endY;
+		super(new BoundingBox(pageNumber, Math.min(startX, endX) - 0.5 * width,
+				Math.min(startY, endY) - 0.5 * width, Math.max(startX, endX) + 0.5 * width,
+				Math.max(startY, endY) + 0.5 * width));
+		this.start = new Vertex(pageNumber, startX, startY, 0.5 * width);
+		this.end = new Vertex(pageNumber, endX, endY, 0.5 * width);
 		this.width = width;
 	}
 
 	public double getStartX() {
-		return startX;
-	}
-
-	public void setStartX(double startX) {
-		this.startX = startX;
+		return start.getX();
 	}
 
 	public double getStartY() {
-		return startY;
-	}
-
-	public void setStartY(double startY) {
-		this.startY = startY;
+		return start.getY();
 	}
 
 	public double getEndX() {
-		return endX;
-	}
-
-	public void setEndX(double endX) {
-		this.endX = endX;
+		return end.getX();
 	}
 
 	public double getEndY() {
-		return endY;
-	}
-
-	public double getCenterX() {
-		return 0.5 * (startX + endX);
-	}
-
-	public double getCenterY() {
-		return 0.5 * (startY + endY);
+		return end.getY();
 	}
 
 	public boolean isHorizontalLine() {
-		return NodeUtils.areCloseNumbers(startY, endY);
+		return NodeUtils.areCloseNumbers(start.getY(), end.getY());
 	}
 
 	public boolean isVerticalLine() {
-		return NodeUtils.areCloseNumbers(startX, endX);
-	}
-
-	public void setEndY(double endY) {
-		this.endY = endY;
+		return NodeUtils.areCloseNumbers(start.getX(), end.getX());
 	}
 
 	public double getWidth() {
 		return width;
 	}
 
-	public void setWidth(double width) {
-		this.width = width;
+	public static class HorizontalLineComparator implements Comparator<LineChunk> {
+
+		public int compare(LineChunk line1, LineChunk line2){
+			int res = Double.compare(line2.getCenterY(), line1.getCenterY());
+			if (res != 0) {
+				return res;
+			}
+			return Double.compare(line2.getCenterX(), line1.getCenterX());
+		}
+	}
+
+	public static class VerticalLineComparator implements Comparator<LineChunk> {
+
+		public int compare(LineChunk line1, LineChunk line2){
+			int res = Double.compare(line2.getCenterX(), line1.getCenterX());
+			if (res != 0) {
+				return res;
+			}
+			return Double.compare(line2.getCenterY(), line1.getCenterY());
+		}
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(startX, startY, endX, endY, width);
+		return Objects.hash(start.getX(), start.getY(), end.getX(), end.getY(), width);
 	}
 
 	@Override
@@ -102,21 +87,36 @@ public class LineChunk extends InfoChunk {
 			return false;
 		}
 		LineChunk that = (LineChunk) o;
-		return Double.compare(that.startX, startX) == 0
-				&& Double.compare(that.startY, startY) == 0
-				&& Double.compare(that.endX, endX) == 0
-				&& Double.compare(that.endY, endY) == 0
+		return Double.compare(that.start.getX(), start.getX()) == 0
+				&& Double.compare(that.start.getY(), start.getY()) == 0
+				&& Double.compare(that.end.getX(), end.getX()) == 0
+				&& Double.compare(that.end.getY(), end.getY()) == 0
 				&& Double.compare(that.width, width) == 0;
 	}
 
 	@Override
 	public String toString() {
 		return "LineChunk{" +
-				"startX=" + startX +
-				", startY=" + startY +
-				", endX=" + endX +
-				", endY=" + endY +
+				"startX=" + start.getX() +
+				", startY=" + start.getY() +
+				", endX=" + end.getX() +
+				", endY=" + end.getY() +
 				", width=" + width +
 				'}';
 	}
+
+	public static Vertex getIntersectionVertex(LineChunk horizontalLine, LineChunk verticalLine) {
+		if (verticalLine.getCenterX() < horizontalLine.getBoundingBox().getLeftX() ||
+				verticalLine.getCenterX() > horizontalLine.getBoundingBox().getRightX()) {
+			return null;//epsilon
+		}
+		if (horizontalLine.getCenterY() < verticalLine.getBoundingBox().getBottomY() ||
+				horizontalLine.getCenterY() > verticalLine.getBoundingBox().getTopY()) {
+			return null;
+		}
+		return new Vertex(verticalLine.getBoundingBox().getPageNumber(),
+				verticalLine.getCenterX(), horizontalLine.getCenterY(),
+				Math.max(0.5 * verticalLine.width, 0.5 * horizontalLine.width));//min?
+	}
+
 }

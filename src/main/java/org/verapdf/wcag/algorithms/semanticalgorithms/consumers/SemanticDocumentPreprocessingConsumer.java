@@ -1,15 +1,25 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
+import org.verapdf.wcag.algorithms.entities.IDocument;
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.SemanticSpan;
+import org.verapdf.wcag.algorithms.entities.content.*;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SemanticTreePreprocessingConsumer implements Consumer<INode> {
-    private static final Logger LOGGER = Logger.getLogger(SemanticTreePreprocessingConsumer.class.getCanonicalName());
+public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
+    private static final Logger LOGGER = Logger.getLogger(SemanticDocumentPreprocessingConsumer.class.getCanonicalName());
+
+    private final IDocument document;
+    private final LinesCollection linesCollection;
+
+    public SemanticDocumentPreprocessingConsumer(IDocument document, LinesCollection linesCollection) {
+        this.document = document;
+        this.linesCollection = linesCollection;
+    }
 
     public void accept(INode node) {
         // setup parent nodes for children
