@@ -54,7 +54,7 @@ class AccumulatedNodeSemanticsCheckerTests {
 	void testSemanticCorrectness(String jsonPdfPath, double probability, SemanticType semanticType) throws IOException {
 		IDocument document = JsonToPdfTree.getDocument("/files/" + jsonPdfPath);
 		ITree tree = document.getTree();
-		semanticsChecker.checkSemanticTree(tree);
+		semanticsChecker.checkSemanticDocument(document);
 		Assertions.assertEquals(probability, tree.getRoot().getCorrectSemanticScore(), SEMANTIC_SCORE_TOLERANCE);
 		Assertions.assertEquals(semanticType, tree.getRoot().getSemanticType());
 	}
@@ -76,7 +76,7 @@ class AccumulatedNodeSemanticsCheckerTests {
 	void testTreeSemanticCorrectness(String jsonPdfPath) throws IOException {
 		IDocument document = JsonToPdfTree.getDocument("/files/" + jsonPdfPath);
 		ITree tree = document.getTree();
-		semanticsChecker.checkSemanticTree(tree);
+		semanticsChecker.checkSemanticDocument(document);
 		testTreeStructure(tree);
 	}
 

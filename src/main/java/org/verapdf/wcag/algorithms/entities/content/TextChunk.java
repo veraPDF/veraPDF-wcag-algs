@@ -133,10 +133,8 @@ public class TextChunk extends TextInfoChunk {
             return false;
         }
         TextChunk that = (TextChunk) o;
-        return Double.compare(that.fontSize, fontSize) == 0
-                && Double.compare(that.fontWeight, fontWeight) == 0
+        return Double.compare(that.fontWeight, fontWeight) == 0
                 && Double.compare(that.italicAngle, italicAngle) == 0
-                && Double.compare(that.baseLine, baseLine) == 0
                 && Objects.equals(value, that.value)
                 && Objects.equals(fontName, that.fontName)
                 && Objects.equals(fontColorSpace, that.fontColorSpace)
@@ -146,7 +144,7 @@ public class TextChunk extends TextInfoChunk {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + Objects.hash(fontSize, fontWeight, italicAngle, baseLine);
+        result = 31 * result + Objects.hash(fontWeight, italicAngle);
         return result;
     }
 

@@ -12,7 +12,8 @@ import org.verapdf.wcag.algorithms.entities.lists.PDFList;
 import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.AccumulatedNodeConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ClusterTableConsumer;
-import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.SemanticTreePreprocessingConsumer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.LinesPreprocessingConsumer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.SemanticDocumentPreprocessingConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListUtils;
 
 import java.io.IOException;
@@ -42,8 +43,12 @@ public class ListTests {
         IDocument document = JsonToPdfTree.getDocument("/files/lists/" + filename);
         ITree tree = document.getTree();
 
-        Consumer<INode> semanticTreeValidator = new SemanticTreePreprocessingConsumer();
-        tree.forEach(semanticTreeValidator);
+        LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer(document);
+        linesPreprocessingConsumer.findTableBorders();
+
+        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document,
+                linesPreprocessingConsumer.getLinesCollection());
+        tree.forEach(semanticDocumentValidator);
 
         Table.updateTableCounter();
 
