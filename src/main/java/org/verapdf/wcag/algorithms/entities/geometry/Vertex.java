@@ -4,6 +4,7 @@ import org.verapdf.wcag.algorithms.entities.content.InfoChunk;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 public class Vertex extends InfoChunk {
     private final double x;
@@ -47,5 +48,30 @@ public class Vertex extends InfoChunk {
         public int compare(Vertex vertex1, Vertex vertex2){
             return -Double.compare(vertex1.getTopY(), vertex2.getTopY());
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!super.equals(o)) {
+            return false;
+        }
+        Vertex that = (Vertex) o;
+        return Double.compare(that.x, x) == 0
+                && Double.compare(that.y, y) == 0
+                && Double.compare(that.radius, radius) == 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Vertex{" +
+                "x=" + x +
+                ", y=" + y +
+                ", radius=" + radius +
+                '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, radius);
     }
 }
