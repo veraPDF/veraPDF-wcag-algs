@@ -61,14 +61,14 @@ public class LineChunk extends InfoChunk {
 			if (res != 0) {
 				return res;
 			}
-			return Double.compare(line2.getCenterX(), line1.getCenterX());
+			return Double.compare(line1.getCenterX(), line2.getCenterX());
 		}
 	}
 
 	public static class VerticalLineComparator implements Comparator<LineChunk> {
 
 		public int compare(LineChunk line1, LineChunk line2){
-			int res = Double.compare(line2.getCenterX(), line1.getCenterX());
+			int res = Double.compare(line1.getCenterX(), line2.getCenterX());
 			if (res != 0) {
 				return res;
 			}

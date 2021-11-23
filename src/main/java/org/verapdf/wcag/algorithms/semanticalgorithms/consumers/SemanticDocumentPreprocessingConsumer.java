@@ -68,8 +68,8 @@ public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
 
     private SortedSet<LineChunk> getHorizontalLines(TextChunk textChunk) {
         SortedSet<LineChunk> lines = linesCollection.getHorizontalLines(textChunk.getPageNumber());
-        return lines.subSet(new LineChunk(textChunk.getPageNumber(), Double.MIN_VALUE, textChunk.getBaseLine(),
-                        Double.MIN_VALUE, textChunk.getBaseLine()),
+        return lines.subSet(new LineChunk(textChunk.getPageNumber(), -Double.MAX_VALUE, textChunk.getBaseLine(),
+                        -Double.MAX_VALUE, textChunk.getBaseLine()),
                 new LineChunk(textChunk.getPageNumber(), Double.MAX_VALUE,
                         textChunk.getBaseLine() - 0.3 * textChunk.getBoundingBox().getHeight(), Double.MAX_VALUE,
                         textChunk.getBaseLine() - 0.3 * textChunk.getBoundingBox().getHeight()));
