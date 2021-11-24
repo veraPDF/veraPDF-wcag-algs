@@ -341,6 +341,9 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	}
 
 	private void acceptSemanticHeading(INode node, INode previousNode, INode nextNode) {
+		if (SemanticType.LIST.equals(node.getSemanticType())) {
+			return;
+		}
 		double headingProbability = NodeUtils.headingProbability(accumulatedNodeMapper.get(node),
 		                                                         accumulatedNodeMapper.get(previousNode),
 		                                                         accumulatedNodeMapper.get(nextNode),
@@ -435,7 +438,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		if (textChildren.size() > 1) {
 			List<String> listItems = new ArrayList<>(node.getChildren().size());
 			for (TextLine line : childrenFirstLines) {
-				listItems.add(line.getValue());
+				listItems.add(line.getValue().trim());
 			}
 			ListUtils.updateTreeWithRecognizedList(node, textChildren,
 					ListUtils.getChildrenListIntervals(ListLabelsUtils.getListItemsIntervals(listItems), childrenFirstLines));
