@@ -22,7 +22,7 @@ public class NodeUtils {
 	private static final double[] CAPTION_PROBABILITY_PARAMS = {1.0, 0.95, 0.9, 0.85, 0.2, 0.1, 0.03};
 	public static final String FIGURE = "Figure";
 
-	public static double headingProbability(INode node, INode previousNode, INode nextNode, SemanticType initialSemanticType) {
+	public static double headingProbability(INode node, INode previousNode, INode nextNode, INode nextNextNode, SemanticType initialSemanticType) {
 		if (node == null) {
 			return 0.0;
 		}
@@ -36,14 +36,24 @@ public class NodeUtils {
 		double headingProbability = 0.0;
 		if (previousNode == null || previousNode instanceof SemanticHeading) {
 			if (nextNode != null) {
-				headingProbability += headingProbability(textNode, nextNode);
+				double probabilityNextNode = headingProbability(textNode, nextNode);
+				if (areCloseNumbers(probabilityNextNode, 0.0) && nextNextNode != null) {
+					headingProbability += headingProbability(textNode, nextNextNode);
+				} else {
+					headingProbability += probabilityNextNode;
+				}
 			}
 		} else if (nextNode == null) {
 			headingProbability += headingProbability(textNode, previousNode);
 		} else {
 			double probability = headingProbability(textNode, nextNode);
 			if (areCloseNumbers(probability, 0.0)) {
-				headingProbability += headingProbability(textNode, previousNode);
+				if (nextNextNode != null) {
+					headingProbability += Math.min(headingProbability(textNode, previousNode),
+					                               headingProbability(textNode, nextNextNode));
+				} else {
+					headingProbability += headingProbability(textNode, previousNode);
+				}
 			} else {
 				headingProbability += Math.min(headingProbability(textNode, previousNode), probability);
 			}
