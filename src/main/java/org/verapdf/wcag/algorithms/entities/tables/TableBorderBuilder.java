@@ -3,6 +3,7 @@ package org.verapdf.wcag.algorithms.entities.tables;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.Vertex;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,7 +40,7 @@ public class TableBorderBuilder {
     }
 
     public boolean isConnectedBorder(TableBorderBuilder border) {
-        if (boundingBox.overlaps(border.boundingBox)) {
+        if (boundingBox.overlaps(border.boundingBox, NodeUtils.TABLE_BORDER_EPSILON)) {
             return true;
         }
         return false;

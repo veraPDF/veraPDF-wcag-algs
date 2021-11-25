@@ -10,6 +10,7 @@ import org.verapdf.wcag.algorithms.entities.JsonToPdfTree;
 import org.verapdf.wcag.algorithms.entities.IDocument;
 import org.verapdf.wcag.algorithms.entities.lists.PDFList;
 import org.verapdf.wcag.algorithms.entities.tables.Table;
+import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.AccumulatedNodeConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ClusterTableConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.LinesPreprocessingConsumer;
@@ -55,7 +56,8 @@ public class ListTests {
         Consumer<INode> paragraphValidator = new AccumulatedNodeConsumer();
         tree.forEach(paragraphValidator);
 
-        ClusterTableConsumer tableFinder = new ClusterTableConsumer();
+        ClusterTableConsumer tableFinder = new ClusterTableConsumer(new TableBordersCollection(
+                linesPreprocessingConsumer.getTableBorders()));
         tree.forEach(tableFinder);
 
         List<PDFList> resultLists = tableFinder.getLists();

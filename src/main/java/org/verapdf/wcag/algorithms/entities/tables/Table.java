@@ -20,7 +20,7 @@ public class Table extends InfoChunk {
     private List<TableRow> rows;
 
     private Double validationScore = null;
-
+    private TableBorder tableBorder;
     private final List<INode> restNodes;
 
     public Table(List<TableCluster> headers) {
@@ -276,5 +276,13 @@ public class Table extends InfoChunk {
 
     public static Long getNextTableListId() {
         return tableCounter++;
+    }
+
+    public TableBorder getTableBorder() {
+        return tableBorder;
+    }
+
+    public void setTableBorder(TableBorder tableBorder) {
+        this.tableBorder = tableBorder;
     }
 }

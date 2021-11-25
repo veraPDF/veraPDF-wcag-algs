@@ -635,7 +635,7 @@
                   {
                      "type":"TextChunk",
                      "pageNumber":0,
-                     "value":" ",
+                     "value":"Eerste regel tekst direct onder de tabel",
                      "baseLine":704.4,
                      "fontWeight":400.0,
                      "italicAngle":0.0,
@@ -643,7 +643,27 @@
                      "boundingBox":[
                         70.8,
                         700.95552,
-                        73.29504,
+                        245.17790400000018,
+                        715.72704
+                     ],
+                     "fontName":"Calibri",
+                     "color":[
+                        0.0
+                     ],
+                     "fontColorSpace":"ICCBased"
+                  },
+                  {
+                     "type":"TextChunk",
+                     "pageNumber":0,
+                     "value":" ",
+                     "baseLine":704.4,
+                     "fontWeight":400.0,
+                     "italicAngle":0.0,
+                     "fontSize":11.04,
+                     "boundingBox":[
+                        245.04431999999997,
+                        700.95552,
+                        247.53935999999996,
                         715.72704
                      ],
                      "fontName":"Calibri",
@@ -666,9 +686,9 @@
                      "italicAngle":0.0,
                      "fontSize":11.04,
                      "boundingBox":[
-                        70.8,
+                        70.79999999999998,
                         678.5112,
-                        142.542336,
+                        142.54233599999995,
                         693.28272
                      ],
                      "fontName":"Calibri",

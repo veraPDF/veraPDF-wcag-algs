@@ -16,11 +16,13 @@ public class TableRecognizer {
     private Integer numRows = null;
 
     private Table table = null;
+    private TableBorder tableBorder;
 
     public TableRecognizer(TableRecognitionArea recognitionArea) {
         headers = recognitionArea.getHeaders();
         clusters = recognitionArea.getClusters();
         columns = new HashMap<>();
+        tableBorder = recognitionArea.getTableBorder();
     }
 
     public void recognize() {
@@ -312,6 +314,7 @@ public class TableRecognizer {
     private Table constructTable() {
         updateColumns();
         Table table = new Table(headers);
+        table.setTableBorder(tableBorder);
 
         List<Integer> rowIds = new ArrayList<>(Collections.nCopies(headers.size(), 0));
         for (TableCluster cluster : clusters) {
@@ -349,5 +352,13 @@ public class TableRecognizer {
 
     private Long generateClusterId() {
         return clusterCounter++;
+    }
+
+    public TableBorder getTableBorder() {
+        return tableBorder;
+    }
+
+    public void setTableBorder(TableBorder tableBorder) {
+        this.tableBorder = tableBorder;
     }
 }

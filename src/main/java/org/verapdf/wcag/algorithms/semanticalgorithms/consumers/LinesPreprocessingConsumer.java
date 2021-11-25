@@ -16,6 +16,8 @@ public class LinesPreprocessingConsumer {
     private final IDocument document;
     private final LinesCollection linesCollection;
 
+    private List<List<TableBorderBuilder>> tableBorders;
+
     public LinesPreprocessingConsumer(IDocument document) {
         this.document = document;
         this.linesCollection = new LinesCollection(document);
@@ -25,12 +27,18 @@ public class LinesPreprocessingConsumer {
         return linesCollection;
     }
 
-    public List<TableBorderBuilder> findTableBorders() {
-        List<TableBorderBuilder> tableBorders = new LinkedList<>();
-        for (int pageNumber = 0; pageNumber < document.getPages().size(); pageNumber++) {
-            tableBorders.addAll(findTableBorders(pageNumber));
+    public List<List<TableBorderBuilder>> getTableBorders() {
+        if (tableBorders == null) {
+            findTableBorders();
         }
         return tableBorders;
+    }
+
+    public void findTableBorders() {
+        tableBorders = new LinkedList<>();
+        for (int pageNumber = 0; pageNumber < document.getPages().size(); pageNumber++) {
+            tableBorders.add(findTableBorders(pageNumber));
+        }
     }
 
     private List<TableBorderBuilder> findTableBorders(Integer pageNumber) {
@@ -38,10 +46,6 @@ public class LinesPreprocessingConsumer {
         Set<LineChunk> set = new HashSet<>(linesCollection.getHorizontalLines(pageNumber));
         set.addAll(linesCollection.getVerticalLines(pageNumber));
         for (LineChunk line : set) {
-            Vertex v1 = new Vertex(line.getBoundingBox().getPageNumber(), line.getStartX(), line.getStartY(),
-                    0.5 * line.getWidth());
-            Vertex v2 = new Vertex(line.getBoundingBox().getPageNumber(), line.getEndX(), line.getEndY(),
-                    0.5 * line.getWidth());
             boolean separateTableBorder = true;
             for (TableBorderBuilder border : tableBorders) {
                 boolean isCross = false;
@@ -63,8 +67,6 @@ public class LinesPreprocessingConsumer {
                     }
                 }
                 if (isCross) {
-                    border.addVertex(v1);
-                    border.addVertex(v2);
                     border.addLine(line);
                     separateTableBorder = false;
                     break;
