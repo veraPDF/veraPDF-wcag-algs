@@ -21,10 +21,6 @@ public class TableBorderBuilder {
         verticalLines = new TreeSet<>(new LineChunk.VerticalLineComparator());
         boundingBox = new BoundingBox(lineChunk.getBoundingBox());
         addLine(lineChunk);
-        addVertex(new Vertex(lineChunk.getBoundingBox().getPageNumber(), lineChunk.getStartX(),
-                lineChunk.getStartY(), 0.5 * lineChunk.getWidth()));
-        addVertex(new Vertex(lineChunk.getBoundingBox().getPageNumber(), lineChunk.getEndX(),
-                lineChunk.getEndY(), 0.5 * lineChunk.getWidth()));
     }
 
     public void addVertex(Vertex v) {
@@ -38,6 +34,8 @@ public class TableBorderBuilder {
             verticalLines.add(lineChunk);
         }
         boundingBox.union(lineChunk.getBoundingBox());
+        addVertex(lineChunk.getStart());
+        addVertex(lineChunk.getEnd());
     }
 
     public boolean isConnectedBorder(TableBorderBuilder border) {
@@ -67,17 +65,7 @@ public class TableBorderBuilder {
         verticalLines.addAll(border.getVerticalLines());
         horizontalLines.addAll(border.getHorizontalLines());
         boundingBox.union(border.boundingBox);
-        for (Vertex vertex1 : border.vertexes) {
-            boolean hasCloseVertex = false;
-            for (Vertex vertex2 : vertexes) {
-                if (Vertex.areCloseVertexes(vertex1, vertex2)) {
-                    hasCloseVertex = true;
-                }
-            }
-            if (!hasCloseVertex) {
-                vertexes.add(vertex1);
-            }
-        }
+        vertexes.addAll(border.getVertexes());
     }
 
     public int getVertexesNumber() {

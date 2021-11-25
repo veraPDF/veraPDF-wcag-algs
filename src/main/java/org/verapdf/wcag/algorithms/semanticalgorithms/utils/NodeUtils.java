@@ -159,8 +159,8 @@ public class NodeUtils {
 	}
 
 	public static boolean areOverlapping(TextChunk textChunk, LineChunk lineChunk) {
-		return ((textChunk.getLeftX() < lineChunk.getRightX() + 0.5 * lineChunk.getWidth()) &&
-				(lineChunk.getLeftX() - 0.5 * lineChunk.getWidth() < textChunk.getRightX()));
+		return ((textChunk.getLeftX() < lineChunk.getRightX()) &&
+				(lineChunk.getLeftX() < textChunk.getRightX()));
 	}
 
 	private static double captionVerticalProbability(SemanticTextNode textNode, SemanticImageNode imageNode) {
