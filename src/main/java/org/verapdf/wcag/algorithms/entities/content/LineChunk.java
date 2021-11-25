@@ -20,7 +20,7 @@ public class LineChunk extends InfoChunk {
 	public LineChunk(Integer pageNumber, double startX, double startY, double endX, double endY, double width) {
 		super(new BoundingBox(pageNumber, Math.min(startX, endX) - 0.5 * width,
 				Math.min(startY, endY) - 0.5 * width, Math.max(startX, endX) + 0.5 * width,
-				Math.max(startY, endY) + 0.5 * width));
+				Math.max(startY, endY) + 0.5 * width));//fix
 		this.start = new Vertex(pageNumber, startX, startY, 0.5 * width);
 		this.end = new Vertex(pageNumber, endX, endY, 0.5 * width);
 		this.width = width;
@@ -34,12 +34,20 @@ public class LineChunk extends InfoChunk {
 		return start.getY();
 	}
 
+	public Vertex getStart() {
+		return start;
+	}
+
 	public double getEndX() {
 		return end.getX();
 	}
 
 	public double getEndY() {
 		return end.getY();
+	}
+
+	public Vertex getEnd() {
+		return end;
 	}
 
 	public boolean isHorizontalLine() {
@@ -119,4 +127,23 @@ public class LineChunk extends InfoChunk {
 				Math.max(0.5 * verticalLine.width, 0.5 * horizontalLine.width));//min?
 	}
 
+	public static LineChunk createLineChunk(Integer pageNumber, double startX, double startY, double endX, double endY,
+											double width, int cap) {
+		if (cap == 1 || cap == 2) {
+			return new LineChunk(pageNumber, startX, startY, endX, endY, width);
+		}
+		double length = Math.sqrt(Math.pow(startX - endX, 2) + Math.pow(startY - endY, 2));
+		if (width > length) {
+			double centerX = 0.5 * (startX + endX);
+			double centerY = 0.5 * (startY + endY);
+			double deltaX = (centerY - startY) * width / length;
+			double deltaY = (centerX - startX) * width / length;
+			return createLineChunk(pageNumber, centerX + deltaX, centerY - deltaY,
+					centerX - deltaX, centerY + deltaY, length, 0);
+		}
+		double deltaX = (endX - startX) * 0.5 * width / length;
+		double deltaY = (endY - startY) * 0.5 * width / length;
+		return createLineChunk(pageNumber, startX + deltaX, startY + deltaY,
+				endX - deltaX, endY - deltaY, width, 2);
+	}
 }
