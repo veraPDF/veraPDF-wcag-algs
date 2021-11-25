@@ -26,11 +26,13 @@ public class ClusterTableConsumer implements Consumer<INode> {
     private TableRecognitionArea recognitionArea;
     private final List<Table> tables;
     private final List<PDFList> lists;
+    private final TableBordersCollection tableBorders;
 
-    public  ClusterTableConsumer() {
+    public  ClusterTableConsumer(TableBordersCollection tableBorders) {
         tables = new ArrayList<>();
         lists = new ArrayList<>();
         init();
+        this.tableBorders = tableBorders;
     }
 
     private void init() {
@@ -87,9 +89,22 @@ public class ClusterTableConsumer implements Consumer<INode> {
         }
     }
 
-    private void accept(TableToken token) {
-        recognitionArea.addTokenToRecognitionArea(token);
+    private void findTableBorder() {
+        Integer pageNumber = recognitionArea.getPageNumber();
+        if (pageNumber != null && tableBorders.getTableBorders().size() > pageNumber) {
+            for (TableBorder tableBorder : tableBorders.getTableBorders().get(pageNumber)) {
+                if (tableBorder.getBoundingBox().contains(recognitionArea.getBoundingBox(), 0.5, 0.5)) {
+                    recognitionArea.setTableBorder(tableBorder);
+                    return;
+                }
+            }
+        }
+    }
 
+    private void accept(TableToken token) {
+        if (recognitionArea.addTokenToRecognitionArea(token) && recognitionArea.getTableBorder() == null) {
+            findTableBorder();
+        }
         if (recognitionArea.isComplete()) {
             List<INode> restNodes = new ArrayList<>();
             if (recognitionArea.isValid()) {
@@ -110,7 +125,7 @@ public class ClusterTableConsumer implements Consumer<INode> {
         Table recognizedTable = recognizer.getTable();
 
         if (recognizedTable != null) {
-            if (ListUtils.isList(recognizedTable)) {
+            if (recognizedTable.getTableBorder() == null && ListUtils.isList(recognizedTable)) {
                 lists.add(new PDFList(recognizedTable));
             } else {
                 tables.add(recognizedTable);

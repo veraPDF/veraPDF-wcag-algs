@@ -370,74 +370,74 @@
             {
                "type":"LineChunk",
                "pageNumber":0,
-               "startX":57.15,
+               "startX":56.699999999999996,
                "startY":785.139,
-               "endX":538.15,
+               "endX":538.6,
                "endY":785.139,
-               "width":1.0
+               "width":0.1
             },
             {
                "type":"LineChunk",
                "pageNumber":0,
-               "startX":57.15,
+               "startX":56.699999999999996,
                "startY":765.739,
-               "endX":538.15,
+               "endX":538.6,
                "endY":765.739,
-               "width":1.0
+               "width":0.1
             },
             {
                "type":"LineChunk",
                "pageNumber":0,
-               "startX":57.15,
+               "startX":56.699999999999996,
                "startY":746.439,
-               "endX":538.15,
+               "endX":538.6,
                "endY":746.439,
-               "width":1.0
+               "width":0.1
             },
             {
                "type":"LineChunk",
                "pageNumber":0,
-               "startX":57.15,
+               "startX":56.699999999999996,
                "startY":727.039,
-               "endX":538.15,
+               "endX":538.6,
                "endY":727.039,
-               "width":1.0
+               "width":0.1
             },
             {
                "type":"LineChunk",
                "pageNumber":0,
                "startX":56.7,
-               "startY":784.689,
+               "startY":785.139,
                "endX":56.7,
-               "endY":727.489,
-               "width":1.0
+               "endY":727.039,
+               "width":0.1
             },
             {
                "type":"LineChunk",
                "pageNumber":0,
                "startX":217.3,
-               "startY":784.689,
+               "startY":785.139,
                "endX":217.3,
-               "endY":727.489,
-               "width":1.0
+               "endY":727.039,
+               "width":0.1
             },
             {
                "type":"LineChunk",
                "pageNumber":0,
                "startX":378.0,
-               "startY":784.689,
+               "startY":785.139,
                "endX":378.0,
-               "endY":727.489,
-               "width":1.0
+               "endY":727.039,
+               "width":0.1
             },
             {
                "type":"LineChunk",
                "pageNumber":0,
                "startX":538.6,
-               "startY":784.689,
+               "startY":785.139,
                "endX":538.6,
-               "endY":727.489,
-               "width":1.0
+               "endY":727.039,
+               "width":0.1
             }
          ]
       }

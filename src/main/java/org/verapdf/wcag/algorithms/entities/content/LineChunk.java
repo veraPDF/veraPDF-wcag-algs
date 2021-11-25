@@ -16,6 +16,8 @@ public class LineChunk extends InfoChunk {
 	private final Vertex start;
 	private final Vertex end;
 	private final double width;
+	private final boolean isHorizontalLine;
+	private final boolean isVerticalLine;
 
 	public LineChunk(Integer pageNumber, double startX, double startY, double endX, double endY) {
 		this(pageNumber, startX, startY, endX, endY, 1.0);
@@ -27,7 +29,9 @@ public class LineChunk extends InfoChunk {
 				Math.max(startY, endY) + 0.5 * width));//fix
 		this.start = new Vertex(pageNumber, startX, startY, 0.5 * width);
 		this.end = new Vertex(pageNumber, endX, endY, 0.5 * width);
-		this.width = width;
+		this.width = width;//one vertex case
+		isVerticalLine = NodeUtils.areCloseNumbers(start.getX(), end.getX(), Math.abs(start.getY() - end.getY()) / 100);
+		isHorizontalLine = !isVerticalLine && NodeUtils.areCloseNumbers(start.getY(), end.getY(), Math.abs(start.getX() - end.getX()) / 100);
 	}
 
 	public double getStartX() {
@@ -55,11 +59,11 @@ public class LineChunk extends InfoChunk {
 	}
 
 	public boolean isHorizontalLine() {
-		return NodeUtils.areCloseNumbers(start.getY(), end.getY());
+		return isHorizontalLine;
 	}
 
 	public boolean isVerticalLine() {
-		return NodeUtils.areCloseNumbers(start.getX(), end.getX());
+		return isVerticalLine;
 	}
 
 	public double getWidth() {

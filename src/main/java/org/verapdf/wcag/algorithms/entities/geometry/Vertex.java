@@ -31,7 +31,7 @@ public class Vertex extends InfoChunk {
     }
 
     public static boolean areCloseVertexes(Vertex v1, Vertex v2) {
-        return areCloseVertexes(v1, v2, 0.5 * (v1.radius + v2.radius));
+        return areCloseVertexes(v1, v2, 0.5 * (v1.radius + v2.radius) + NodeUtils.TABLE_BORDER_EPSILON);
     }
 
     public static boolean areCloseVertexes(Vertex v1, Vertex v2, double epsilon) {

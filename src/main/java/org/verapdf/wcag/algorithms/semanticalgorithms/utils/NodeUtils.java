@@ -16,7 +16,8 @@ public class NodeUtils {
 	private static final double[] DEFAULT_INTERVAL_BEFORE_IMAGE = {0, 1.75};
 	private static final double[] DEFAULT_INTERVAL_AFTER_IMAGE = {0, 1.8};
 	private static final double IMAGE_INTERVAL_STANDARD = 1;
-	private static final double EPSILON = 0.0001;
+	public static final double EPSILON = 0.0001;
+	public static final double TABLE_BORDER_EPSILON = 0.01;
 	private static final double WITH_TOLERANCE_FACTOR = 0.33;
 	private static final double[] HEADING_PROBABILITY_PARAMS = {0.55, 0.55, 0.3, 0.0291, 0.15, 0.15, 0.1, 0.1};
 	private static final double[] CAPTION_PROBABILITY_PARAMS = {1.0, 0.95, 0.9, 0.85, 0.2, 0.1, 0.03};
@@ -215,7 +216,7 @@ public class NodeUtils {
 	}
 
 	public static boolean areCloseNumbers(double d1, double d2, double epsilon) {
-		return Math.abs(d1 - d2) < epsilon;
+		return Math.abs(d1 - d2) <= epsilon;
 	}
 
 	public static boolean areCloseNumbers(double d1, double d2) {

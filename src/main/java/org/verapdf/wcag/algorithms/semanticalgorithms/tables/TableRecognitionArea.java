@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
 
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.entities.tables.TableBorder;
 import org.verapdf.wcag.algorithms.entities.tables.TableToken;
 import org.verapdf.wcag.algorithms.entities.tables.TableTokenRow;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
@@ -15,11 +16,12 @@ public class TableRecognitionArea {
     private boolean hasCompleteHeaders;
     private boolean isComplete;
     private boolean isValid;
-    private List<TableCluster> headers;
-    private List<TableCluster> clusters;
-    BoundingBox boundingBox;
-    double headersBaseLine;
-    double baseLine;
+    private final List<TableCluster> headers;
+    private final List<TableCluster> clusters;
+    private BoundingBox boundingBox;
+    private double headersBaseLine;
+    private double baseLine;
+    private TableBorder tableBorder;
 
     public TableRecognitionArea() {
         adaptiveNextLineToleranceFactor = TableUtils.NEXT_LINE_TOLERANCE_FACTOR;
@@ -63,36 +65,37 @@ public class TableRecognitionArea {
         return clusters;
     }
 
-    public void  addTokenToRecognitionArea(TableToken token) {
+    public boolean addTokenToRecognitionArea(TableToken token) {
         if (isComplete) {
-            return;
+            return false;
         }
 
         if (token.getPageNumber() == null) {
-            return;
+            return false;
         } else if (boundingBox.getPageNumber() == null) {
             boundingBox.setPageNumber(token.getPageNumber());
         } else if (!boundingBox.getPageNumber().equals(token.getPageNumber())) {
             hasCompleteHeaders = isComplete = true;
             headersBaseLine = baseLine;
-            return;
+            return false;
         }
 
         if (hasCompleteHeaders) {
-            addCluster(token);
+            return addCluster(token);
         } else {
             if (belongsToHeadersArea(token)) {
-                expandHeaders(token);
+                return expandHeaders(token);//check bounding box?
             } else {
                 hasCompleteHeaders = true;
                 headersBaseLine = baseLine;
                 if (checkHeaders()) {
-                    addCluster(token);
+                    return addCluster(token);
                 } else {
                     isComplete = true;
                 }
             }
         }
+        return false;
     }
 
     private boolean checkHeaders() {
@@ -154,16 +157,17 @@ public class TableRecognitionArea {
         return true;
     }
 
-    private void expandHeaders(TableToken token) {
+    private boolean expandHeaders(TableToken token) {
         if (headers.isEmpty()) {
             TableCluster header = new TableCluster(token);
             header.setHeader(header);
             headers.add(header);
             boundingBox = new BoundingBox(token.getBoundingBox());
             baseLine = token.getBaseLine();
-            return;
+            return true;
         }
 
+        boolean tokenAdded = false;
         TableCluster currentHeader = null;
         List<TableCluster> headersToRemove = new ArrayList<>();
         for (TableCluster header : headers) {
@@ -174,6 +178,7 @@ public class TableRecognitionArea {
             } else {
                 if (joinHeaders(currentHeader, header, token)) {
                     headersToRemove.add(header);
+                    tokenAdded = true;
                 }
             }
         }
@@ -186,9 +191,11 @@ public class TableRecognitionArea {
             if (token.getBaseLine() < baseLine) {
                 baseLine = token.getBaseLine();
             }
+            return true;
         } else {
             headers.removeAll(headersToRemove);
         }
+        return tokenAdded;
     }
 
     private boolean expandHeader(TableCluster header, TableToken token) {
@@ -243,11 +250,12 @@ public class TableRecognitionArea {
         return false;
     }
 
-    private void addCluster(TableToken token) {
+    private boolean addCluster(TableToken token) {
         if (baseLine - token.getBaseLine() > TableUtils.TABLE_GAP_FACTOR * token.getFontSize() ||
-                headersBaseLine < token.getBaseLine()) {
+                headersBaseLine < token.getBaseLine() ||
+                (tableBorder != null && !tableBorder.getBoundingBox().contains(token.getBoundingBox()))) {
             isComplete = true;
-            return;
+            return false;
         }
 
         TableCluster cluster = new TableCluster(token);
@@ -257,6 +265,7 @@ public class TableRecognitionArea {
             baseLine = cluster.getBaseLine();
         }
         isValid = true;
+        return true;
     }
 
     @Override
@@ -274,5 +283,13 @@ public class TableRecognitionArea {
         result.append("    }, boundingBox=").append(boundingBox).append('\n');
         result.append("    , baseLine=").append(baseLine).append("\n}");
         return result.toString();
+    }
+
+    public TableBorder getTableBorder() {
+        return tableBorder;
+    }
+
+    public void setTableBorder(TableBorder tableBorder) {
+        this.tableBorder = tableBorder;
     }
 }
