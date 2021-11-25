@@ -9,6 +9,10 @@ import java.util.Objects;
 
 public class LineChunk extends InfoChunk {
 
+	public static int BUTT_CAP_STYLE = 0;
+	public static int ROUND_CAP_STYLE = 1;
+	public static int PROJECTING_SQUARE_CAP_STYLE = 2;
+
 	private final Vertex start;
 	private final Vertex end;
 	private final double width;
@@ -129,7 +133,7 @@ public class LineChunk extends InfoChunk {
 
 	public static LineChunk createLineChunk(Integer pageNumber, double startX, double startY, double endX, double endY,
 											double width, int cap) {
-		if (cap == 1 || cap == 2) {
+		if (cap == ROUND_CAP_STYLE || cap == PROJECTING_SQUARE_CAP_STYLE) {
 			return new LineChunk(pageNumber, startX, startY, endX, endY, width);
 		}
 		double length = Math.sqrt(Math.pow(startX - endX, 2) + Math.pow(startY - endY, 2));
@@ -139,11 +143,11 @@ public class LineChunk extends InfoChunk {
 			double deltaX = (centerY - startY) * width / length;
 			double deltaY = (centerX - startX) * width / length;
 			return createLineChunk(pageNumber, centerX + deltaX, centerY - deltaY,
-					centerX - deltaX, centerY + deltaY, length, 0);
+					centerX - deltaX, centerY + deltaY, length, BUTT_CAP_STYLE);
 		}
 		double deltaX = (endX - startX) * 0.5 * width / length;
 		double deltaY = (endY - startY) * 0.5 * width / length;
 		return createLineChunk(pageNumber, startX + deltaX, startY + deltaY,
-				endX - deltaX, endY - deltaY, width, 2);
+				endX - deltaX, endY - deltaY, width, PROJECTING_SQUARE_CAP_STYLE);
 	}
 }
