@@ -64,6 +64,7 @@ class AccumulatedNodeSemanticsCheckerTests {
 				Arguments.of("headings/Heading1.json"),
 				Arguments.of("headings/Heading2.json"),
 				Arguments.of("headings/Heading3.json"),
+				Arguments.of("headings/Heading4.json"),
 				Arguments.of("captions/caption1.json"),
 				Arguments.of("captions/caption2.json"),
 				Arguments.of("captions/caption3.json"),

@@ -333,20 +333,26 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		if (children.size() <= 1) {
 			return;
 		}
-		acceptSemanticHeading(children.get(0), null, children.get(1));
-		for (int i = 1; i < children.size() - 1; i++) {
-			acceptSemanticHeading(children.get(i), children.get(i - 1), children.get(i + 1));
+		if (children.size() == 2) {
+			acceptSemanticHeading(children.get(0), null, children.get(1), null);
+			return;
 		}
-		acceptSemanticHeading(children.get(children.size() - 1), children.get(children.size() - 2), null);
+		acceptSemanticHeading(children.get(0), null, children.get(1), children.get(2));
+		for (int i = 1; i < children.size() - 2; i++) {
+			acceptSemanticHeading(children.get(i), children.get(i - 1), children.get(i + 1), children.get(i + 2));
+		}
+		acceptSemanticHeading(children.get(children.size() - 2), children.get(children.size() - 3), children.get(children.size() - 1), null);
+		acceptSemanticHeading(children.get(children.size() - 1), children.get(children.size() - 2), null, null);
 	}
 
-	private void acceptSemanticHeading(INode node, INode previousNode, INode nextNode) {
+	private void acceptSemanticHeading(INode node, INode previousNode, INode nextNode, INode nextNextNode) {
 		if (SemanticType.LIST.equals(node.getSemanticType())) {
 			return;
 		}
 		double headingProbability = NodeUtils.headingProbability(accumulatedNodeMapper.get(node),
 		                                                         accumulatedNodeMapper.get(previousNode),
 		                                                         accumulatedNodeMapper.get(nextNode),
+		                                                         accumulatedNodeMapper.get(nextNextNode),
 		                                                         node.getInitialSemanticType());
 		if (headingProbability >= MERGE_PROBABILITY_THRESHOLD) {
 			INode accumulatedNode = accumulatedNodeMapper.get(node);
