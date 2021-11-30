@@ -148,7 +148,8 @@ public class ClusterTableConsumer implements Consumer<INode> {
             INode tableRoot = updateTreeWithRecognizedTable(table, root);
 
             if (tableRoot != null) {
-                if ((TableUtils.isTableNode(tableRoot) || ListUtils.isListNode(tableRoot)) && tableRoot.getRecognizedStructureId() != table.getId()) {
+                if ((TableUtils.isTableNode(tableRoot) || (ListUtils.isListNode(tableRoot) &&
+                        table.getTableBorder() == null)) && tableRoot.getRecognizedStructureId() != table.getId()) {
                     tableRoot.setRecognizedStructureId(null);
                 } else {
                     tableRoot.setRecognizedStructureId(table.getId());
@@ -165,10 +166,11 @@ public class ClusterTableConsumer implements Consumer<INode> {
         rowNodes.put(SemanticType.TABLE_BODY, new HashSet<>());
         for (int i = 0; i < table.getRows().size(); i++) {
             TableRow row = table.getRows().get(i);
-            INode rowNode = updateTreeWithRecognizedTableRow(row, table.getId(), i == 0 ? null : table.getRows().get(i - 1));
+            INode rowNode = updateTreeWithRecognizedTableRow(table, row, i == 0 ? null : table.getRows().get(i - 1));
 
             if (rowNode != null) {
-                if ((ListUtils.isListNode(rowNode) || TableUtils.isTableNode(rowNode)) && rowNode.getRecognizedStructureId() != table.getId()) {
+                if (((ListUtils.isListNode(rowNode) && table.getTableBorder() == null) ||
+                        TableUtils.isTableNode(rowNode)) && rowNode.getRecognizedStructureId() != table.getId()) {
                     rowNode.setRecognizedStructureId(null);
                 } else {
                     rowNode.setRecognizedStructureId(table.getId());
@@ -196,7 +198,8 @@ public class ClusterTableConsumer implements Consumer<INode> {
 
             INode localRoot = findLocalRoot(rows);
             if (localRoot != null) {
-                if ((TableUtils.isTableNode(localRoot) || ListUtils.isListNode(localRoot)) && localRoot.getRecognizedStructureId() != table.getId()) {
+                if ((TableUtils.isTableNode(localRoot) || (ListUtils.isListNode(localRoot) &&
+                        table.getTableBorder() == null)) && localRoot.getRecognizedStructureId() != table.getId()) {
                     localRoot.setRecognizedStructureId(null);
                 } else {
                     localRoot.setRecognizedStructureId(table.getId());
@@ -225,7 +228,8 @@ public class ClusterTableConsumer implements Consumer<INode> {
         }
     }
 
-    private INode updateTreeWithRecognizedTableRow(TableRow row, Long id, TableRow previousRow) {
+    private INode updateTreeWithRecognizedTableRow(Table table, TableRow row, TableRow previousRow) {
+        Long id = table.getId();
         Map<INode, Integer> cellNodes = new HashMap<>();
         for (int i = 0; i < row.getCells().size(); i++) {
             INode cellNode = updateTreeWithRecognizedCell(row.getCells().get(i));
@@ -243,7 +247,8 @@ public class ClusterTableConsumer implements Consumer<INode> {
                 cellNode = cellNode.getParent();
             }
 
-            if ((ListUtils.isListNode(cellNode) || TableUtils.isTableNode(cellNode)) && cellNode.getRecognizedStructureId() != id) {
+            if (((ListUtils.isListNode(cellNode) && table.getTableBorder() == null) ||
+                    TableUtils.isTableNode(cellNode)) && cellNode.getRecognizedStructureId() != id) {
                 cellNode.setRecognizedStructureId(null);
             } else {
                 cellNode.setRecognizedStructureId(id);

@@ -92,17 +92,14 @@ public class ListUtils {
 		if (children.size() == 1) {
 			INode child = children.get(0);
 			child.setSemanticType(SemanticType.LIST_BODY);
-			child.setCorrectSemanticScore(1.0);
 			child.setRecognizedStructureId(listId);
 		} else if (children.size() > 1) {
 			INode child = children.get(0);
 			child.setSemanticType(SemanticType.LIST_LABEL);
-			child.setCorrectSemanticScore(1.0);
 			child.setRecognizedStructureId(listId);
 			for (int i = 1; i < children.size(); i++) {
 				child = children.get(i);
 				child.setSemanticType(SemanticType.LIST_BODY);
-				child.setCorrectSemanticScore(1.0);
 				child.setRecognizedStructureId(listId);
 			}
 		}
