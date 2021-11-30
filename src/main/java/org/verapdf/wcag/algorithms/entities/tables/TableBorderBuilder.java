@@ -5,6 +5,7 @@ import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.Vertex;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -95,5 +96,15 @@ public class TableBorderBuilder {
 
     public BoundingBox getBoundingBox() {
         return boundingBox;
+    }
+
+    public static class TableBorderBuildersComparator implements Comparator<TableBorderBuilder> {
+        public int compare(TableBorderBuilder builder1, TableBorderBuilder builder2){
+            int res = Double.compare(builder2.getBoundingBox().getTopY(), builder1.getBoundingBox().getTopY());
+            if (res != 0) {
+                return res;
+            }
+            return Double.compare(builder1.getBoundingBox().getLeftX(), builder2.getBoundingBox().getLeftX());
+        }
     }
 }

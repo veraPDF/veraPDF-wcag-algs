@@ -2,15 +2,17 @@ package org.verapdf.wcag.algorithms.entities.tables;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class TableBordersCollection {
 
-    private final List<List<TableBorder>> tableBorders;
+    private final List<SortedSet<TableBorder>> tableBorders;
 
     public TableBordersCollection(List<List<TableBorderBuilder>> tableBorderBuilders) {
         tableBorders = new ArrayList<>(tableBorderBuilders.size());
         for (List<TableBorderBuilder> builders : tableBorderBuilders) {
-            List<TableBorder> borders = new ArrayList<>();
+            SortedSet<TableBorder> borders = new TreeSet<>(new TableBorder.TableBordersComparator());
             for (TableBorderBuilder builder : builders) {
                 TableBorder border = new TableBorder(builder);
                 if (!border.isBadTable()) {
@@ -21,7 +23,7 @@ public class TableBordersCollection {
         }
     }
 
-    public List<List<TableBorder>> getTableBorders() {
+    public List<SortedSet<TableBorder>> getTableBorders() {
         return tableBorders;
     }
 }

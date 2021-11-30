@@ -5,6 +5,7 @@ import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.Vertex;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -198,6 +199,16 @@ public class TableBorder {
 
         public double getHeight() {
             return getTopY() - getBottomY();
+        }
+    }
+
+    public static class TableBordersComparator implements Comparator<TableBorder> {
+        public int compare(TableBorder border1, TableBorder border2){
+            int res = Double.compare(border2.getBoundingBox().getTopY(), border1.getBoundingBox().getTopY());
+            if (res != 0) {
+                return res;
+            }
+            return Double.compare(border1.getBoundingBox().getLeftX(), border2.getBoundingBox().getLeftX());
         }
     }
 }
