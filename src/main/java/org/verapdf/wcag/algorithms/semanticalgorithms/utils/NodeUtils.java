@@ -18,6 +18,7 @@ public class NodeUtils {
 	private static final double IMAGE_INTERVAL_STANDARD = 1;
 	public static final double EPSILON = 0.0001;
 	public static final double TABLE_BORDER_EPSILON = 0.01;
+	public static final double UNDERLINED_TEXT_EPSILON = 0.05;
 	private static final double WITH_TOLERANCE_FACTOR = 0.33;
 	private static final double[] HEADING_PROBABILITY_PARAMS = {0.55, 0.55, 0.3, 0.0291, 0.15, 0.15, 0.1, 0.1};
 	private static final double[] CAPTION_PROBABILITY_PARAMS = {1.0, 0.95, 0.9, 0.85, 0.2, 0.1, 0.03};
@@ -170,8 +171,8 @@ public class NodeUtils {
 	}
 
 	public static boolean areOverlapping(TextChunk textChunk, LineChunk lineChunk) {
-		return ((textChunk.getLeftX() < lineChunk.getRightX()) &&
-				(lineChunk.getLeftX() < textChunk.getRightX()));
+		return Math.min(lineChunk.getRightX() - textChunk.getLeftX(), textChunk.getRightX() - lineChunk.getLeftX()) >
+				UNDERLINED_TEXT_EPSILON * textChunk.getBoundingBox().getWidth();
 	}
 
 	private static double captionVerticalProbability(SemanticTextNode textNode, SemanticImageNode imageNode) {
