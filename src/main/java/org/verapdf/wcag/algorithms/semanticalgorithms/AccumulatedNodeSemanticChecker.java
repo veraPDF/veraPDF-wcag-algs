@@ -9,6 +9,7 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.AccumulatedNodeC
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ClusterTableConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.LinesPreprocessingConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.SemanticDocumentPreprocessingConsumer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.SemanticDocumentPostprocessingConsumer;
 
 import java.util.function.Consumer;
 
@@ -35,5 +36,9 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 		ClusterTableConsumer tableFinder = new ClusterTableConsumer(tableBordersCollection,
 				semanticDetectionValidator.getAccumulatedNodeMapper());
 		tree.forEach(tableFinder);
+
+		SemanticDocumentPostprocessingConsumer documentPostprocessingConsumer =
+				new SemanticDocumentPostprocessingConsumer(semanticDetectionValidator.getAccumulatedNodeMapper());
+		documentPostprocessingConsumer.checkForTitle(tree);
 	}
 }
