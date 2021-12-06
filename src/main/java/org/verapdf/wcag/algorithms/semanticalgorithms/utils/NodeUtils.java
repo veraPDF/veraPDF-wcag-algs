@@ -7,6 +7,7 @@ import org.verapdf.wcag.algorithms.entities.SemanticImageNode;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ArabicNumbersListLabelsDetectionAlgorithm;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ListLabelsDetectionAlgorithm;
 
@@ -100,7 +101,7 @@ public class NodeUtils {
 				(textNode.getLinesNumber() - 1) * (textNode.getLinesNumber() - 1));
 	}
 
-	public static double captionProbability(INode node, INode neighborNode) {
+	public static double imageCaptionProbability(INode node, INode neighborNode) {
 		if (node == null) {
 			return 0.0;
 		}
@@ -115,10 +116,10 @@ public class NodeUtils {
 		}
 		SemanticTextNode textNode = (SemanticTextNode) node;
 		SemanticImageNode neighborImageNode = (SemanticImageNode) neighborNode;
-		double captionProbability = captionVerticalProbability(textNode, neighborImageNode);
-		captionProbability *= captionHorizontalProbability(textNode, neighborImageNode);
+		double captionProbability = captionVerticalProbability(textNode, neighborImageNode.getBoundingBox());
+		captionProbability *= captionHorizontalProbability(textNode, neighborImageNode.getBoundingBox());
 		captionProbability *= getLinesNumberCaptionProbability(textNode);
-		captionProbability += captionContentProbability(textNode);
+		captionProbability += captionContentProbability(textNode, FIGURE);
 		return Math.min(captionProbability, 1.0);
 	}
 
@@ -127,22 +128,24 @@ public class NodeUtils {
 				(textNode.getLinesNumber() - 1) * (textNode.getLinesNumber() - 1));
 	}
 
-	private static boolean isContaining(SemanticTextNode textNode, SemanticImageNode imageNode) {
+	private static boolean isContaining(SemanticTextNode textNode, BoundingBox imageBoundingBox) {
 		double tol = WITH_TOLERANCE_FACTOR * textNode.getFontSize();
-		return (imageNode.getLeftX() + tol > textNode.getLeftX() && imageNode.getRightX() < textNode.getRightX() + tol);
+		return (imageBoundingBox.getLeftX() + tol > textNode.getLeftX() &&
+				imageBoundingBox.getRightX() < textNode.getRightX() + tol);
 	}
 
-	private static boolean isContaining(SemanticImageNode imageNode, SemanticTextNode textNode) {
+	private static boolean isContaining(BoundingBox imageBoundingBox, SemanticTextNode textNode) {
 		double tol = WITH_TOLERANCE_FACTOR * textNode.getFontSize();
-		return (textNode.getLeftX() + tol > imageNode.getLeftX() && textNode.getRightX() < imageNode.getRightX() + tol);
+		return (textNode.getLeftX() + tol > imageBoundingBox.getLeftX() &&
+				textNode.getRightX() < imageBoundingBox.getRightX() + tol);
 	}
 
-	private static boolean areStrongCenterOverlapping(SemanticTextNode textNode, SemanticImageNode imageNode) {
+	private static boolean areStrongCenterOverlapping(SemanticTextNode textNode, BoundingBox imageBoundingBox) {
 		double tol = WITH_TOLERANCE_FACTOR * textNode.getFontSize();
 		double textCenter = textNode.getBoundingBox().getCenterX();
-		double imageCenter = imageNode.getBoundingBox().getCenterX();
+		double imageCenter = imageBoundingBox.getCenterX();
 
-		if (textCenter + tol > imageNode.getRightX() || textCenter < imageNode.getLeftX() + tol) {
+		if (textCenter + tol > imageBoundingBox.getRightX() || textCenter < imageBoundingBox.getLeftX() + tol) {
 			return false;
 		}
 		if (imageCenter + tol > textNode.getRightX() || imageCenter < textNode.getLeftX() + tol) {
@@ -151,12 +154,12 @@ public class NodeUtils {
 		return true;
 	}
 
-	private static boolean areCenterOverlapping(SemanticTextNode textNode, SemanticImageNode imageNode) {
+	private static boolean areCenterOverlapping(SemanticTextNode textNode, BoundingBox imageBoundingBox) {
 		double tol = WITH_TOLERANCE_FACTOR * textNode.getFontSize();
 		double textCenter = textNode.getBoundingBox().getCenterX();
-		double imageCenter = imageNode.getBoundingBox().getCenterX();
+		double imageCenter = imageBoundingBox.getCenterX();
 
-		if (textCenter + tol < imageNode.getRightX() && textCenter > imageNode.getLeftX() + tol) {
+		if (textCenter + tol < imageBoundingBox.getRightX() && textCenter > imageBoundingBox.getLeftX() + tol) {
 			return true;
 		}
 		if (imageCenter + tol < textNode.getRightX() && imageCenter > textNode.getLeftX() + tol) {
@@ -175,32 +178,32 @@ public class NodeUtils {
 				UNDERLINED_TEXT_EPSILON * textChunk.getBoundingBox().getWidth();
 	}
 
-	private static double captionVerticalProbability(SemanticTextNode textNode, SemanticImageNode imageNode) {
-		if (textNode.getLastPageNumber() == null || imageNode.getPageNumber() == null ||
-		    textNode.getPageNumber() == null || imageNode.getLastPageNumber() == null) {
+	private static double captionVerticalProbability(SemanticTextNode textNode, BoundingBox imageBoundingBox) {
+		if (textNode.getLastPageNumber() == null || imageBoundingBox.getPageNumber() == null ||
+		    textNode.getPageNumber() == null || imageBoundingBox.getLastPageNumber() == null) {
 			return 0.0;
 		}
 		if (!textNode.getPageNumber().equals(textNode.getLastPageNumber()) ||
-		    !textNode.getPageNumber().equals(imageNode.getPageNumber())) {
+		    !textNode.getPageNumber().equals(imageBoundingBox.getPageNumber())) {
 			return 0.0;
 		}
 		double firstBaseline = textNode.getFirstBaseline();
 		double lastBaseline = textNode.getLastBaseline();
-		if (lastBaseline > imageNode.getTopY() + FLOATING_POINT_OPERATIONS_EPS) {
+		if (lastBaseline > imageBoundingBox.getTopY() + FLOATING_POINT_OPERATIONS_EPS) {
 			return ChunksMergeUtils.getUniformProbability(DEFAULT_INTERVAL_BEFORE_IMAGE,
-					(lastBaseline - imageNode.getTopY()) / textNode.getFontSize(), IMAGE_INTERVAL_STANDARD);
+					(lastBaseline - imageBoundingBox.getTopY()) / textNode.getFontSize(), IMAGE_INTERVAL_STANDARD);
 		}
-		if (firstBaseline < imageNode.getBottomY() - FLOATING_POINT_OPERATIONS_EPS) {
+		if (firstBaseline < imageBoundingBox.getBottomY() - FLOATING_POINT_OPERATIONS_EPS) {
 			return ChunksMergeUtils.getUniformProbability(DEFAULT_INTERVAL_AFTER_IMAGE,
-					(imageNode.getBottomY() - firstBaseline) / textNode.getFontSize(), IMAGE_INTERVAL_STANDARD);
+					(imageBoundingBox.getBottomY() - firstBaseline) / textNode.getFontSize(), IMAGE_INTERVAL_STANDARD);
 		}
 		return 0.0;
 	}
 
-	private static double captionContentProbability(SemanticTextNode textNode) {
+	private static double captionContentProbability(SemanticTextNode textNode, String prefix) {
 		String value = textNode.getFirstLine().getValue().trim();
-		if (value.startsWith(FIGURE)) {
-			value = value.substring(FIGURE.length()).trim();
+		if (value.startsWith(prefix)) {
+			value = value.substring(prefix.length()).trim();
 			if (!value.isEmpty() && ListLabelsDetectionAlgorithm.getRegexStartLength(value,
 					ArabicNumbersListLabelsDetectionAlgorithm.ARABIC_NUMBER_REGEX) > 0) {
 				return CAPTION_PROBABILITY_PARAMS[4];
@@ -210,17 +213,17 @@ public class NodeUtils {
 		return 0.0;
 	}
 
-	private static double captionHorizontalProbability(SemanticTextNode textNode, SemanticImageNode imageNode) {
-		if (isContaining(imageNode, textNode) && areStrongCenterOverlapping(textNode, imageNode)) {
+	private static double captionHorizontalProbability(SemanticTextNode textNode, BoundingBox imageBoundingBox) {
+		if (isContaining(imageBoundingBox, textNode) && areStrongCenterOverlapping(textNode, imageBoundingBox)) {
 			return CAPTION_PROBABILITY_PARAMS[0];
 		}
-		if (isContaining(imageNode, textNode) && areCenterOverlapping(textNode, imageNode)) {
+		if (isContaining(imageBoundingBox, textNode) && areCenterOverlapping(textNode, imageBoundingBox)) {
 			return CAPTION_PROBABILITY_PARAMS[1];
 		}
-		if (isContaining(textNode, imageNode) && areStrongCenterOverlapping(textNode, imageNode)) {
+		if (isContaining(textNode, imageBoundingBox) && areStrongCenterOverlapping(textNode, imageBoundingBox)) {
 			return CAPTION_PROBABILITY_PARAMS[2];
 		}
-		if (isContaining(textNode, imageNode) && areCenterOverlapping(textNode, imageNode)) {
+		if (isContaining(textNode, imageBoundingBox) && areCenterOverlapping(textNode, imageBoundingBox)) {
 			return CAPTION_PROBABILITY_PARAMS[3];
 		}
 		return 0.0;

@@ -25,8 +25,10 @@ public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
 
     public void accept(INode node) {
         // setup parent nodes for children
-        for (INode child : node.getChildren()) {
+        for (int i = 0; i < node.getChildren().size(); i++) {
+            INode child = node.getChildren().get(i);
             child.setParent(node);
+            child.setIndex(i);
         }
 
         if (node instanceof SemanticSpan) {

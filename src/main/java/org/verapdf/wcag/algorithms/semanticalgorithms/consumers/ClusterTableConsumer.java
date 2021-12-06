@@ -7,6 +7,7 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.lists.ListElement;
 import org.verapdf.wcag.algorithms.entities.lists.ListItem;
 import org.verapdf.wcag.algorithms.entities.lists.PDFList;
+import org.verapdf.wcag.algorithms.entities.maps.AccumulatedNodeMapper;
 import org.verapdf.wcag.algorithms.entities.tables.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognitionArea;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognizer;
@@ -23,16 +24,18 @@ public class ClusterTableConsumer implements Consumer<INode> {
 
     private static final Logger LOGGER = Logger.getLogger(AccumulatedNodeConsumer.class.getCanonicalName());
 
+    private final AccumulatedNodeMapper accumulatedNodeMapper;
     private TableRecognitionArea recognitionArea;
     private final List<Table> tables;
     private final List<PDFList> lists;
     private final TableBordersCollection tableBorders;
 
-    public  ClusterTableConsumer(TableBordersCollection tableBorders) {
+    public  ClusterTableConsumer(TableBordersCollection tableBorders, AccumulatedNodeMapper accumulatedNodeMapper) {
         tables = new ArrayList<>();
         lists = new ArrayList<>();
         init();
         this.tableBorders = tableBorders;
+        this.accumulatedNodeMapper = accumulatedNodeMapper;
     }
 
     private void init() {
@@ -90,14 +93,9 @@ public class ClusterTableConsumer implements Consumer<INode> {
     }
 
     private void findTableBorder() {
-        Integer pageNumber = recognitionArea.getPageNumber();
-        if (pageNumber != null && tableBorders.getTableBorders().size() > pageNumber) {
-            for (TableBorder tableBorder : tableBorders.getTableBorders().get(pageNumber)) {
-                if (tableBorder.getBoundingBox().contains(recognitionArea.getBoundingBox(), 0.5, 0.5)) {
-                    recognitionArea.setTableBorder(tableBorder);
-                    return;
-                }
-            }
+        TableBorder tableBorder = tableBorders.getTableBorder(recognitionArea.getBoundingBox());
+        if (tableBorder != null) {
+            recognitionArea.setTableBorder(tableBorder);
         }
     }
 

@@ -65,8 +65,8 @@ public class TableBordersTests {
             Assertions.assertEquals(listN[pageNumber].length, borders.size());
             int i = 0;
             for (TableBorder border : borders) {
-                Assertions.assertEquals(listN[pageNumber][i], border.getN());
-                Assertions.assertEquals(listM[pageNumber][i], border.getM());
+                Assertions.assertEquals(listN[pageNumber][i], border.getNumberOfRows());
+                Assertions.assertEquals(listM[pageNumber][i], border.getNumberOfColumns());
                 i++;
             }
         }

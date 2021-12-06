@@ -12,6 +12,7 @@ import org.verapdf.wcag.algorithms.entities.SemanticNumberHeading;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
+import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.ImageChunk;
 import org.verapdf.wcag.algorithms.entities.maps.AccumulatedNodeMapper;
@@ -34,16 +35,22 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	public static final double MERGE_PROBABILITY_THRESHOLD = 0.75;
 
 	private final AccumulatedNodeMapper accumulatedNodeMapper;
+	private final TableBordersCollection tableBordersCollection;
 
-	public AccumulatedNodeConsumer() {
+	public AccumulatedNodeConsumer(TableBordersCollection tableBordersCollection) {
 		accumulatedNodeMapper = new AccumulatedNodeMapper();
+		this.tableBordersCollection = tableBordersCollection;
+	}
+
+	public AccumulatedNodeMapper getAccumulatedNodeMapper() {
+		return accumulatedNodeMapper;
 	}
 
 	@Override
 	public void accept(INode node) {
 
 		if (node.getChildren().isEmpty()) {
-			updateNode(node, node, 1.0, node.getSemanticType());
+			accumulatedNodeMapper.updateNode(node, node, 1.0, node.getSemanticType());
 			return;
 		}
 
@@ -117,7 +124,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			}
 		}
 		if (imageNode != null) {
-			updateNode(node, imageNode, imageNode.getCorrectSemanticScore(), imageNode.getSemanticType());
+			accumulatedNodeMapper.updateNode(node, imageNode, imageNode.getCorrectSemanticScore(), imageNode.getSemanticType());
 		}
 	}
 
@@ -136,7 +143,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 				spanProbability = Math.min(spanProbability, toSpanMergeProbability(span, accumulatedChild));
 			}
 		}
-		updateNode(node, span, spanProbability, SemanticType.SPAN);
+		accumulatedNodeMapper.updateNode(node, span, spanProbability, SemanticType.SPAN);
 	}
 
 	private SemanticSpan buildSpanFromNode(INode node) {
@@ -201,18 +208,6 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		return (secondSpan.getCorrectSemanticScore() == null) ? mergeProbability : (Math.min(mergeProbability, secondSpan.getCorrectSemanticScore()));
 	}
 
-	private void updateNode(INode node, INode accumulatedNode, double correctSemanticScore, SemanticType semanticType) {
-		if (accumulatedNode == null) {
-			node.setCorrectSemanticScore(0.0d);
-			return;
-		}
-		node.setCorrectSemanticScore(correctSemanticScore);
-		node.setSemanticType(semanticType);
-		node.setBoundingBox(accumulatedNode.getBoundingBox());
-		accumulatedNode.setCorrectSemanticScore(correctSemanticScore);
-		accumulatedNodeMapper.put(node, accumulatedNode);
-	}
-
 	private void acceptSemanticParagraph(INode node) {
 		double paragraphProbability = 1;
 		SemanticParagraph paragraph = null;
@@ -228,7 +223,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 				paragraphProbability = Math.min(paragraphProbability, toParagraphMergeProbability(paragraph, accumulatedChild));
 			}
 		}
-		updateNode(node, paragraph, paragraphProbability, SemanticType.PARAGRAPH);
+		accumulatedNodeMapper.updateNode(node, paragraph, paragraphProbability, SemanticType.PARAGRAPH);
 	}
 
 	private SemanticParagraph buildParagraphFromNode(INode node) {
@@ -358,18 +353,18 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			INode accumulatedNode = accumulatedNodeMapper.get(node);
 			if (node.getInitialSemanticType() == SemanticType.NUMBER_HEADING) {
 				if (accumulatedNode instanceof SemanticSpan) {
-					updateNode(node, new SemanticNumberHeading((SemanticSpan)accumulatedNode),
+					accumulatedNodeMapper.updateNode(node, new SemanticNumberHeading((SemanticSpan)accumulatedNode),
 					           headingProbability * node.getCorrectSemanticScore(), SemanticType.NUMBER_HEADING);
 				} else if (accumulatedNode instanceof SemanticParagraph) {
-					updateNode(node, new SemanticNumberHeading((SemanticParagraph)accumulatedNode),
+					accumulatedNodeMapper.updateNode(node, new SemanticNumberHeading((SemanticParagraph)accumulatedNode),
 					           headingProbability * node.getCorrectSemanticScore(), SemanticType.NUMBER_HEADING);
 				}
 			} else {
 				if (accumulatedNode instanceof SemanticSpan) {
-					updateNode(node, new SemanticHeading((SemanticSpan)accumulatedNode),
+					accumulatedNodeMapper.updateNode(node, new SemanticHeading((SemanticSpan)accumulatedNode),
 					           headingProbability * node.getCorrectSemanticScore(), SemanticType.HEADING);
 				} else if (accumulatedNode instanceof SemanticParagraph) {
-					updateNode(node, new SemanticHeading((SemanticParagraph)accumulatedNode),
+					accumulatedNodeMapper.updateNode(node, new SemanticHeading((SemanticParagraph)accumulatedNode),
 					           headingProbability * node.getCorrectSemanticScore(), SemanticType.HEADING);
 				}
 			}
@@ -405,9 +400,9 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			return;
 		}
 		INode accumulatedNode = accumulatedNodeMapper.get(node);
-		double captionProbability = NodeUtils.captionProbability(accumulatedNode, accumulatedNodeMapper.get(neighborNode));
+		double captionProbability = NodeUtils.imageCaptionProbability(accumulatedNode, accumulatedNodeMapper.get(neighborNode));
 		if (captionProbability >= MERGE_PROBABILITY_THRESHOLD) {
-			updateNode(node, new SemanticCaption((SemanticTextNode) accumulatedNode),
+			accumulatedNodeMapper.updateNode(node, new SemanticCaption((SemanticTextNode) accumulatedNode),
 			           captionProbability * node.getCorrectSemanticScore(), SemanticType.CAPTION);
 		}
 	}

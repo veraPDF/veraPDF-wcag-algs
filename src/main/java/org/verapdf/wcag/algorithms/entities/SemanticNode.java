@@ -15,6 +15,7 @@ public abstract class SemanticNode implements INode {
 	private SemanticType semanticType;
 	private Long recognizedStructureId = null;
 
+	private Integer index = null;
 	private INode parent = null;
 	private final List<INode> children;
 	private final SemanticType initialSemanticType;
@@ -161,6 +162,32 @@ public abstract class SemanticNode implements INode {
 	@Override
 	public INode getParent() {
 		return parent;
+	}
+
+	@Override
+	public Integer getIndex() {
+		return index;
+	}
+
+	@Override
+	public void setIndex(Integer index) {
+		this.index = index;
+	}
+
+	@Override
+	public INode getNextNeighbor() {
+		if (parent != null && index != null && index + 1 < parent.getChildren().size()) {
+			return parent.getChildren().get(index + 1);
+		}
+		return null;
+	}
+
+	@Override
+	public INode getPreviousNeighbor() {
+		if (parent != null && index != null && index > 0) {
+			return parent.getChildren().get(index - 1);
+		}
+		return null;
 	}
 
 	@Override

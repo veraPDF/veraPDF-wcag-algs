@@ -27,11 +27,13 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 
 		Table.updateTableCounter();
 
-		Consumer<INode> semanticDetectionValidator = new AccumulatedNodeConsumer();
+		TableBordersCollection tableBordersCollection = new TableBordersCollection(linesPreprocessingConsumer.getTableBorders());
+
+		AccumulatedNodeConsumer semanticDetectionValidator = new AccumulatedNodeConsumer(tableBordersCollection);
 		tree.forEach(semanticDetectionValidator);
 
-		ClusterTableConsumer tableFinder = new ClusterTableConsumer(new TableBordersCollection(
-				linesPreprocessingConsumer.getTableBorders()));
+		ClusterTableConsumer tableFinder = new ClusterTableConsumer(tableBordersCollection,
+				semanticDetectionValidator.getAccumulatedNodeMapper());
 		tree.forEach(tableFinder);
 	}
 }
