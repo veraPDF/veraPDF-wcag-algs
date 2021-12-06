@@ -29,6 +29,7 @@ public class SemanticTypeMapper {
         map.put(SemanticType.TABLE_FOOTER.getValue(), SemanticType.TABLE_FOOTER);
         map.put(SemanticType.TABLE_CELL.getValue(), SemanticType.TABLE_CELL);
         map.put(SemanticType.CAPTION.getValue(), SemanticType.CAPTION);
+        map.put(SemanticType.TITLE.getValue(), SemanticType.TITLE);
     }
 
     public static boolean containsType(String type) {

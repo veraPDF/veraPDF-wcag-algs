@@ -21,7 +21,8 @@ public enum SemanticType {
 	LIST_BODY("LBody"),
 	LIST_ITEM("LI"),
 	NUMBER_HEADING("Hn"),
-	HEADING("H");
+	HEADING("H"),
+	TITLE("Title");
 
 	private final String value;
 
