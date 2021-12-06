@@ -53,11 +53,13 @@ public class ListTests {
 
         Table.updateTableCounter();
 
-        Consumer<INode> paragraphValidator = new AccumulatedNodeConsumer();
+        TableBordersCollection tableBordersCollection = new TableBordersCollection(linesPreprocessingConsumer.getTableBorders());
+
+        AccumulatedNodeConsumer paragraphValidator = new AccumulatedNodeConsumer(tableBordersCollection);
         tree.forEach(paragraphValidator);
 
-        ClusterTableConsumer tableFinder = new ClusterTableConsumer(new TableBordersCollection(
-                linesPreprocessingConsumer.getTableBorders()));
+        ClusterTableConsumer tableFinder = new ClusterTableConsumer(tableBordersCollection,
+                paragraphValidator.getAccumulatedNodeMapper());
         tree.forEach(tableFinder);
 
         List<PDFList> resultLists = tableFinder.getLists();

@@ -1,5 +1,7 @@
 package org.verapdf.wcag.algorithms.entities.tables;
 
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.SortedSet;
@@ -25,5 +27,23 @@ public class TableBordersCollection {
 
     public List<SortedSet<TableBorder>> getTableBorders() {
         return tableBorders;
+    }
+
+    public SortedSet<TableBorder> getTableBorders(Integer pageNumber) {
+        if (pageNumber != null && pageNumber < tableBorders.size()) {
+            return tableBorders.get(pageNumber);
+        }
+        return new TreeSet<>();
+    }
+
+    public TableBorder getTableBorder(BoundingBox boundingBox) {
+        SortedSet<TableBorder> tableBorders = getTableBorders(boundingBox.getPageNumber());
+        for (TableBorder tableBorder : tableBorders) {
+            if (tableBorder.getBoundingBox().contains(boundingBox, TableBorder.TABLE_BORDER_EPSILON,
+                    TableBorder.TABLE_BORDER_EPSILON)) {
+                return tableBorder;
+            }
+        }
+        return null;
     }
 }

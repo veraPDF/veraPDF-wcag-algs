@@ -47,6 +47,14 @@ public interface INode {
 
 	INode getParent();
 
+	INode getNextNeighbor();
+
+	INode getPreviousNeighbor();
+
+	void setIndex(Integer index);
+
+	Integer getIndex();
+
 	boolean isRoot();
 
 	void addChild(INode child);

@@ -11,14 +11,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TableBorder {
+
+    public static final double TABLE_BORDER_EPSILON = 0.5;
+
     private final List<Double> xCoordinates;
     private final List<Double> xWidths;
     private final List<Double> yCoordinates;
     private final List<Double> yWidths;
-    private final TableCell[][] matrix;
+    private final TableBorderCell[][] matrix;
     private final BoundingBox boundingBox;
-    private final int n;
-    private final int m;
+    private final int numberOfRows;
+    private final int numberOfColumns;
 
     public TableBorder(TableBorderBuilder builder) {
         xCoordinates = new LinkedList<>();
@@ -28,9 +31,9 @@ public class TableBorder {
         yWidths = new LinkedList<>();
         calculateYCoordinates(builder);
         boundingBox = new BoundingBox(builder.getBoundingBox());
-        n = yCoordinates.size() - 1;
-        m = xCoordinates.size() - 1;
-        matrix = new TableCell[n][m];
+        numberOfRows = yCoordinates.size() - 1;
+        numberOfColumns = xCoordinates.size() - 1;
+        matrix = new TableBorderCell[numberOfRows][numberOfColumns];
         createMatrix(builder);
     }
 
@@ -71,9 +74,9 @@ public class TableBorder {
     }
 
     private void createMatrix(TableBorderBuilder builder) {
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                matrix[i][j] = new TableCell(i, j, n - i, m - j);
+        for (int i = 0; i < numberOfRows; i++) {
+            for (int j = 0; j < numberOfColumns; j++) {
+                matrix[i][j] = new TableBorderCell(i, j, numberOfRows - i, numberOfColumns - j);
             }
         }
         for (LineChunk line : builder.getHorizontalLines()) {
@@ -96,27 +99,27 @@ public class TableBorder {
                 }
             }
         }
-        for (int i = n - 2; i >= 0; i--) {
-            for (int j = m - 2; j >= 0; j--) {
-                if (matrix[i][j].colSpan != 1) {
-                    matrix[i][j].colSpan = matrix[i][j + 1].colSpan + 1;
+        for (int rowNumber = numberOfRows - 2; rowNumber >= 0; rowNumber--) {
+            for (int colNumber = numberOfColumns - 2; colNumber >= 0; colNumber--) {
+                if (matrix[rowNumber][colNumber].colSpan != 1) {
+                    matrix[rowNumber][colNumber].colSpan = matrix[rowNumber][colNumber + 1].colSpan + 1;
                 }
-                if (matrix[i][j].rowSpan != 1) {
-                    matrix[i][j].rowSpan = matrix[i + 1][j].rowSpan + 1;
-                }
-            }
-        }
-        for (int i = n - 1; i >= 0; i--) {
-            for (int j = m - 2; j >= 0; j--) {
-                if (matrix[i][j].colSpan > 1) {
-                    matrix[i][j + 1] = null;
+                if (matrix[rowNumber][colNumber].rowSpan != 1) {
+                    matrix[rowNumber][colNumber].rowSpan = matrix[rowNumber + 1][colNumber].rowSpan + 1;
                 }
             }
         }
-        for (int i = n - 2; i >= 0; i--) {
-            for (int j = m - 1; j >= 0; j--) {
-                if (matrix[i][j] != null && matrix[i][j].rowSpan > 1) {
-                    matrix[i + 1][j] = null;
+        for (int rowNumber = numberOfRows - 1; rowNumber >= 0; rowNumber--) {
+            for (int colNumber = numberOfColumns - 2; colNumber >= 0; colNumber--) {
+                if (matrix[rowNumber][colNumber].colSpan > 1) {
+                    matrix[rowNumber][colNumber + 1] = matrix[rowNumber][colNumber];
+                }
+            }
+        }
+        for (int rowNumber = numberOfRows - 2; rowNumber >= 0; rowNumber--) {
+            for (int colNumber = numberOfColumns - 1; colNumber >= 0; colNumber--) {
+                if (matrix[rowNumber][colNumber] != null && matrix[rowNumber][colNumber].rowSpan > 1) {
+                    matrix[rowNumber + 1][colNumber] = matrix[rowNumber][colNumber];
                 }
             }
         }
@@ -144,19 +147,19 @@ public class TableBorder {
         return -1;
     }
 
-    public int getN() {
-        return n;
+    public int getNumberOfRows() {
+        return numberOfRows;
     }
 
-    public int getM() {
-        return m;
+    public int getNumberOfColumns() {
+        return numberOfColumns;
     }
 
     public boolean isBadTable() {
-        return n <= 1 ||  m <= 1 || (n == 2 && m == 2);
+        return numberOfRows <= 1 ||  numberOfColumns <= 1 || (numberOfRows == 2 && numberOfColumns == 2);
     }
 
-    public TableCell[][] getMatrix() {
+    public TableBorderCell[][] getMatrix() {
         return matrix;
     }
 
@@ -164,33 +167,33 @@ public class TableBorder {
         return boundingBox;
     }
 
-    public class TableCell {
-        public int i;
-        public int j;
+    public class TableBorderCell {
+        public int rowNumber;
+        public int colNumber;
         public int rowSpan;
         public int colSpan;
 
-        TableCell(int i, int j, int rowSpan, int colSpan) {
-            this.i = i;
-            this.j = j;
+        TableBorderCell(int rowNumber, int colNumber, int rowSpan, int colSpan) {
+            this.rowNumber = rowNumber;
+            this.colNumber = colNumber;
             this.rowSpan = rowSpan;
             this.colSpan = colSpan;
         }
 
         public double getTopY() {
-            return yCoordinates.get(i);
+            return yCoordinates.get(rowNumber) + 0.5 * yWidths.get(rowNumber);
         }
 
         public double getBottomY() {
-            return yCoordinates.get(i + rowSpan);
+            return yCoordinates.get(rowNumber + rowSpan) - 0.5 * yWidths.get(rowNumber + rowSpan);
         }
 
         public double getLeftX() {
-            return xCoordinates.get(j);
+            return xCoordinates.get(colNumber) - 0.5 * xWidths.get(colNumber);
         }
 
         public double getRightX() {
-            return xCoordinates.get(j + colSpan);
+            return xCoordinates.get(colNumber + colSpan) + 0.5 * xWidths.get(colNumber + colSpan);
         }
 
         public double getWidth() {
