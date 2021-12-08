@@ -21,7 +21,7 @@ public class TableBordersTests {
     static Stream<Arguments> clusterTableBorderDetectionTestParams() {
         return Stream.of(
                 Arguments.of("NEG-fake-table", new int[][] {{10}}, new int[][] {{4}}, new int[][] {{4}}),
-                Arguments.of("NEG-floating-text-box", new int[][] {{6}}, new int[][] {{}}, new int[][] {{}}),
+                Arguments.of("NEG-floating-text-box", new int[][] {{5}}, new int[][] {{}}, new int[][] {{}}),
                 Arguments.of("PDFUA-Ref-2-02_Invoice", new int[][] {{}}, new int[][] {{}}, new int[][] {{}}),
                 Arguments.of("PDFUA-Reference-01_(Matterhorn-Protocol_1-02)",
                         new int[][] {{},{62},{53},{173},{113,93,53,93,113},{73,73,193,53},{173,53,173,173},
@@ -31,7 +31,7 @@ public class TableBordersTests {
                         new int[][] {{},{3},{2},{6},{6,6,6,6,6},{6,6,6,6},{6,6,6,6},{6,6,6,6,6},{6,6,6,6,6,6,6,6},
                                 {6},{6,6,6},{6},{6}}),
                 Arguments.of("PDFUA-Ref-2-05_BookChapter-german",
-                        new int[][] {{},{},{},{},{5},{},{62},{},{},{},{},{},{},{},{},{},{},{},{},{},{}},//check
+                        new int[][] {{},{},{},{},{5},{},{62},{},{},{},{},{},{},{},{},{},{},{},{},{},{}},
                         new int[][] {{},{},{},{},{},{},{6},{},{},{},{},{},{},{},{},{},{},{},{},{},{}},
                         new int[][] {{},{},{},{},{},{},{5},{},{},{},{},{},{},{},{},{},{},{},{},{},{}}),
                 Arguments.of("PDFUA-Ref-2-06_Brochure", new int[][] {{10,9},{}}, new int[][] {{},{}}, new int[][] {{},{}}),

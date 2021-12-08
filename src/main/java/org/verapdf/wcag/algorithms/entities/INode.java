@@ -62,4 +62,8 @@ public interface INode {
 	boolean isLeaf();
 
 	public NodeInfo getNodeInfo();
+
+	public int getDepth();
+
+	public void setDepth(int depth);
 }
