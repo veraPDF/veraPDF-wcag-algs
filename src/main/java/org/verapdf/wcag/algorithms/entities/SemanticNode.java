@@ -19,6 +19,7 @@ public abstract class SemanticNode implements INode {
 	private INode parent = null;
 	private final List<INode> children;
 	private final SemanticType initialSemanticType;
+	private int depth;
 
 	public NodeInfo nodeInfo;
 
@@ -198,6 +199,16 @@ public abstract class SemanticNode implements INode {
 	@Override
 	public boolean isLeaf() {
 		return children.isEmpty();
+	}
+
+	@Override
+	public int getDepth() {
+		return depth;
+	}
+
+	@Override
+	public void setDepth(int depth) {
+		this.depth = depth;
 	}
 
 	@Override

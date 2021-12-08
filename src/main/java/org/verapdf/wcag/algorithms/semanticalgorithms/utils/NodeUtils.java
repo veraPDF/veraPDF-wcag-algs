@@ -6,6 +6,7 @@ import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.SemanticImageNode;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ArabicNumbersListLabelsDetectionAlgorithm;
@@ -19,7 +20,7 @@ public class NodeUtils {
 	private static final double IMAGE_INTERVAL_STANDARD = 1;
 	public static final double EPSILON = 0.0001;
 	public static final double TABLE_BORDER_EPSILON = 0.01;
-	public static final double UNDERLINED_TEXT_EPSILON = 0.05;
+	public static final double[] UNDERLINED_TEXT_EPSILONS = {0.05, 0.3, 0.3, 0.3};
 	private static final double WITH_TOLERANCE_FACTOR = 0.33;
 	private static final double[] HEADING_PROBABILITY_PARAMS = {0.55, 0.55, 0.3, 0.0291, 0.15, 0.15, 0.1, 0.1};
 	private static final double[] CAPTION_PROBABILITY_PARAMS = {1.0, 0.95, 0.9, 0.85, 0.2, 0.1, 0.03};
@@ -123,6 +124,21 @@ public class NodeUtils {
 		return Math.min(captionProbability, 1.0);
 	}
 
+	public static double tableCaptionProbability(INode node, Table table) {
+		if (node == null) {
+			return 0.0;
+		}
+		if (!(node instanceof SemanticTextNode)) {
+			return 0.0;
+		}
+		SemanticTextNode textNode = (SemanticTextNode) node;
+		double captionProbability = NodeUtils.captionVerticalProbability(textNode, table.getBoundingBox());
+		captionProbability *= NodeUtils.captionHorizontalProbability(textNode, table.getBoundingBox());
+		captionProbability *= NodeUtils.getLinesNumberCaptionProbability(textNode);
+		captionProbability += NodeUtils.captionContentProbability(textNode, SemanticType.TABLE.getValue());
+		return Math.min(captionProbability, 1.0);
+	}
+
 	private static double getLinesNumberCaptionProbability(SemanticTextNode textNode) {
 		return Math.max(0, 1 - CAPTION_PROBABILITY_PARAMS[6] *
 				(textNode.getLinesNumber() - 1) * (textNode.getLinesNumber() - 1));
@@ -175,7 +191,7 @@ public class NodeUtils {
 
 	public static boolean areOverlapping(TextChunk textChunk, LineChunk lineChunk) {
 		return Math.min(lineChunk.getRightX() - textChunk.getLeftX(), textChunk.getRightX() - lineChunk.getLeftX()) >
-				UNDERLINED_TEXT_EPSILON * textChunk.getBoundingBox().getWidth();
+				UNDERLINED_TEXT_EPSILONS[0] * textChunk.getBoundingBox().getWidth();
 	}
 
 	private static double captionVerticalProbability(SemanticTextNode textNode, BoundingBox imageBoundingBox) {

@@ -499,56 +499,47 @@
             {
                "type":"LineChunk",
                "pageNumber":0,
-               "startX":445.4,
+               "startX":445.34999999999997,
                "startY":633.789,
-               "endX":445.4,
+               "endX":367.45,
                "endY":633.789,
-               "width":1.0
-            },
-            {
-               "type":"LineChunk",
-               "pageNumber":0,
-               "startX":444.9,
-               "startY":633.789,
-               "endX":367.9,
-               "endY":633.789,
-               "width":1.0
+               "width":0.1
             },
             {
                "type":"LineChunk",
                "pageNumber":0,
                "startX":367.4,
-               "startY":634.289,
+               "startY":633.8389999999999,
                "endX":367.4,
-               "endY":683.539,
-               "width":1.0
+               "endY":683.989,
+               "width":0.1
             },
             {
                "type":"LineChunk",
                "pageNumber":0,
-               "startX":367.9,
+               "startX":367.45,
                "startY":684.039,
-               "endX":522.9,
+               "endX":523.35,
                "endY":684.039,
-               "width":1.0
+               "width":0.1
             },
             {
                "type":"LineChunk",
                "pageNumber":0,
                "startX":523.4,
-               "startY":683.539,
+               "startY":683.989,
                "endX":523.4,
-               "endY":634.289,
-               "width":1.0
+               "endY":633.8389999999999,
+               "width":0.1
             },
             {
                "type":"LineChunk",
                "pageNumber":0,
-               "startX":522.9,
+               "startX":523.35,
                "startY":633.789,
-               "endX":445.9,
+               "endX":445.45,
                "endY":633.789,
-               "width":1.0
+               "width":0.1
             }
          ]
       }

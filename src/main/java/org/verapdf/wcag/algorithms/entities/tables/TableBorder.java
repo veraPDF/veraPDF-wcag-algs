@@ -12,13 +12,13 @@ import java.util.stream.Collectors;
 
 public class TableBorder {
 
-    public static final double TABLE_BORDER_EPSILON = 0.5;
+    public static final double TABLE_BORDER_EPSILON = 0.55;
 
     private final List<Double> xCoordinates;
     private final List<Double> xWidths;
     private final List<Double> yCoordinates;
     private final List<Double> yWidths;
-    private final TableBorderCell[][] matrix;
+    private final TableBorderRow[] rows;
     private final BoundingBox boundingBox;
     private final int numberOfRows;
     private final int numberOfColumns;
@@ -33,7 +33,7 @@ public class TableBorder {
         boundingBox = new BoundingBox(builder.getBoundingBox());
         numberOfRows = yCoordinates.size() - 1;
         numberOfColumns = xCoordinates.size() - 1;
-        matrix = new TableBorderCell[numberOfRows][numberOfColumns];
+        rows = new TableBorderRow[numberOfRows];
         createMatrix(builder);
     }
 
@@ -53,6 +53,10 @@ public class TableBorder {
         }
         xCoordinates.add(0.5 * (x1 + x2));
         xWidths.add(x2 - x1);
+    }
+
+    public TableBorderRow[] getRows() {
+        return rows;
     }
 
     private void calculateYCoordinates(TableBorderBuilder builder) {
@@ -75,8 +79,9 @@ public class TableBorder {
 
     private void createMatrix(TableBorderBuilder builder) {
         for (int i = 0; i < numberOfRows; i++) {
+            rows[i] = new TableBorderRow(i);
             for (int j = 0; j < numberOfColumns; j++) {
-                matrix[i][j] = new TableBorderCell(i, j, numberOfRows - i, numberOfColumns - j);
+                rows[i].cells[j] = new TableBorderCell(i, j, numberOfRows - i, numberOfColumns - j);
             }
         }
         for (LineChunk line : builder.getHorizontalLines()) {
@@ -85,7 +90,7 @@ public class TableBorder {
             int j2 = getCoordinateX(line.getRightX());
             if (i > 0 && j1 != -1 && j2 != -1) {
                 for (int j = j1; j < j2; j++) {
-                    matrix[i - 1][j].rowSpan = 1;
+                    rows[i - 1].cells[j].rowSpan = 1;
                 }
             }
         }
@@ -95,31 +100,27 @@ public class TableBorder {
             int i2 = getCoordinateY(line.getBottomY());
             if (j > 0 && i1 != -1 && i2 != -1) {
                 for (int i = i1; i < i2; i++) {
-                    matrix[i][j - 1].colSpan = 1;
+                    rows[i].cells[j - 1].colSpan = 1;
                 }
             }
         }
         for (int rowNumber = numberOfRows - 2; rowNumber >= 0; rowNumber--) {
             for (int colNumber = numberOfColumns - 2; colNumber >= 0; colNumber--) {
-                if (matrix[rowNumber][colNumber].colSpan != 1) {
-                    matrix[rowNumber][colNumber].colSpan = matrix[rowNumber][colNumber + 1].colSpan + 1;
+                if (rows[rowNumber].cells[colNumber].colSpan != 1) {
+                    rows[rowNumber].cells[colNumber].colSpan = rows[rowNumber].cells[colNumber + 1].colSpan + 1;
                 }
-                if (matrix[rowNumber][colNumber].rowSpan != 1) {
-                    matrix[rowNumber][colNumber].rowSpan = matrix[rowNumber + 1][colNumber].rowSpan + 1;
-                }
-            }
-        }
-        for (int rowNumber = numberOfRows - 1; rowNumber >= 0; rowNumber--) {
-            for (int colNumber = numberOfColumns - 2; colNumber >= 0; colNumber--) {
-                if (matrix[rowNumber][colNumber].colSpan > 1) {
-                    matrix[rowNumber][colNumber + 1] = matrix[rowNumber][colNumber];
+                if (rows[rowNumber].cells[colNumber].rowSpan != 1) {
+                    rows[rowNumber].cells[colNumber].rowSpan = rows[rowNumber + 1].cells[colNumber].rowSpan + 1;
                 }
             }
         }
-        for (int rowNumber = numberOfRows - 2; rowNumber >= 0; rowNumber--) {
-            for (int colNumber = numberOfColumns - 1; colNumber >= 0; colNumber--) {
-                if (matrix[rowNumber][colNumber] != null && matrix[rowNumber][colNumber].rowSpan > 1) {
-                    matrix[rowNumber + 1][colNumber] = matrix[rowNumber][colNumber];
+        for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+            for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
+                if (rows[rowNumber].cells[colNumber].colNumber + rows[rowNumber].cells[colNumber].colSpan > colNumber + 1) {
+                    rows[rowNumber].cells[colNumber + 1] = rows[rowNumber].cells[colNumber];
+                }
+                if (rows[rowNumber].cells[colNumber].rowNumber + rows[rowNumber].cells[colNumber].rowSpan > rowNumber + 1) {
+                    rows[rowNumber + 1].cells[colNumber] = rows[rowNumber].cells[colNumber];
                 }
             }
         }
@@ -159,12 +160,43 @@ public class TableBorder {
         return numberOfRows <= 1 ||  numberOfColumns <= 1 || (numberOfRows == 2 && numberOfColumns == 2);
     }
 
-    public TableBorderCell[][] getMatrix() {
-        return matrix;
-    }
-
     public BoundingBox getBoundingBox() {
         return boundingBox;
+    }
+
+    public class TableBorderRow {
+        public int rowNumber;
+        public TableBorderCell[] cells;
+
+        TableBorderRow(int rowNumber) {
+            this.rowNumber = rowNumber;
+            cells = new TableBorderCell[numberOfColumns];
+        }
+
+        public double getTopY() {
+            return yCoordinates.get(rowNumber) + 0.5 * yWidths.get(rowNumber);
+        }
+
+        public double getBottomY() {
+            return yCoordinates.get(rowNumber + 1) - 0.5 * yWidths.get(rowNumber + 1);
+        }
+
+        public double getLeftX() {
+            return boundingBox.getLeftX();
+        }
+
+        public double getRightX() {
+            return boundingBox.getRightX();
+        }
+
+        public double getWidth() {
+            return boundingBox.getWidth();
+        }
+
+        public double getHeight() {
+            return boundingBox.getTopY() - getBottomY();
+        }
+
     }
 
     public class TableBorderCell {

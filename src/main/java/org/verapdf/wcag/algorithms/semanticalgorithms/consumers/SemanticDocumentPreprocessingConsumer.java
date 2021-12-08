@@ -3,11 +3,15 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 import org.verapdf.wcag.algorithms.entities.IDocument;
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.SemanticSpan;
-import org.verapdf.wcag.algorithms.entities.content.*;
+import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextLine;
+import org.verapdf.wcag.algorithms.entities.content.LineChunk;
+import org.verapdf.wcag.algorithms.entities.content.LinesCollection;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
 import java.util.SortedSet;
+import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,15 +25,29 @@ public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
     public SemanticDocumentPreprocessingConsumer(IDocument document, LinesCollection linesCollection) {
         this.document = document;
         this.linesCollection = linesCollection;
+        setNodeParents();
+    }
+
+    public void setNodeParents() {
+        Stack<INode> nodeStack = new Stack<>();
+        INode root = document.getTree().getRoot();
+        nodeStack.push(root);
+        root.setDepth(0);
+        nodeStack.add(root);
+        while (!nodeStack.isEmpty()) {
+            INode node = nodeStack.pop();
+            for (int i = 0; i < node.getChildren().size(); i++) {
+                INode child = node.getChildren().get(i);
+                child.setParent(node);
+                child.setIndex(i);
+                child.setDepth(node.getDepth() + 1);
+                nodeStack.push(child);
+            }
+        }
     }
 
     public void accept(INode node) {
         // setup parent nodes for children
-        for (int i = 0; i < node.getChildren().size(); i++) {
-            INode child = node.getChildren().get(i);
-            child.setParent(node);
-            child.setIndex(i);
-        }
 
         if (node instanceof SemanticSpan) {
             if (node.getChildren().size() != 0) {
@@ -73,13 +91,13 @@ public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
         return lines.subSet(new LineChunk(textChunk.getPageNumber(), -Double.MAX_VALUE, textChunk.getBaseLine(),
                         -Double.MAX_VALUE, textChunk.getBaseLine()),
                 new LineChunk(textChunk.getPageNumber(), Double.MAX_VALUE,
-                        textChunk.getBaseLine() - 0.3 * textChunk.getBoundingBox().getHeight(), Double.MAX_VALUE,
-                        textChunk.getBaseLine() - 0.3 * textChunk.getBoundingBox().getHeight()));
+                        textChunk.getBaseLine() - NodeUtils.UNDERLINED_TEXT_EPSILONS[1] * textChunk.getBoundingBox().getHeight(), Double.MAX_VALUE,
+                        textChunk.getBaseLine() - NodeUtils.UNDERLINED_TEXT_EPSILONS[2] * textChunk.getBoundingBox().getHeight()));
     }
 
     private boolean isUnderlinedText(TextChunk textChunk, LineChunk lineChunk) {
         if (NodeUtils.areOverlapping(textChunk, lineChunk) &&
-                (lineChunk.getWidth() < 0.3 * textChunk.getBoundingBox().getHeight())) {
+                (lineChunk.getWidth() < NodeUtils.UNDERLINED_TEXT_EPSILONS[3] * textChunk.getBoundingBox().getHeight())) {
             return true;
         }
         return false;

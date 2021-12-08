@@ -12,6 +12,7 @@ import org.verapdf.wcag.algorithms.entities.tables.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognitionArea;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognizer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
@@ -153,8 +154,30 @@ public class ClusterTableConsumer implements Consumer<INode> {
                     tableRoot.setRecognizedStructureId(table.getId());
                     tableRoot.setSemanticType(SemanticType.TABLE);
                     tableRoot.setCorrectSemanticScore(1.0);
+                    detectTableCaptions(table, tableRoot);
                 }
             }
+        }
+    }
+
+    private void detectTableCaptions(Table table, INode tableRoot) {
+        detectTableCaption(table, tableRoot.getPreviousNeighbor());
+        detectTableCaption(table, tableRoot.getNextNeighbor());
+    }
+
+    private void detectTableCaption(Table table, INode node) {
+        if (node == null) {
+            return;
+        }
+        if (node.getSemanticType() == SemanticType.HEADING ||
+                node.getSemanticType() == SemanticType.NUMBER_HEADING) {
+            return;
+        }
+        INode accumulatedNode = accumulatedNodeMapper.get(node);
+        double captionProbability = NodeUtils.tableCaptionProbability(accumulatedNode, table);
+        if (captionProbability >= TableUtils.MERGE_PROBABILITY_THRESHOLD) {
+            accumulatedNodeMapper.updateNode(node, new SemanticCaption((SemanticTextNode) accumulatedNode),
+                    captionProbability * node.getCorrectSemanticScore(), SemanticType.CAPTION);
         }
     }
 

@@ -284,5 +284,8 @@ public class Table extends InfoChunk {
 
     public void setTableBorder(TableBorder tableBorder) {
         this.tableBorder = tableBorder;
+        if (tableBorder != null) {
+            setBoundingBox(tableBorder.getBoundingBox());
+        }
     }
 }
