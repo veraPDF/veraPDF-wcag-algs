@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
 import org.verapdf.wcag.algorithms.entities.INode;
+import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 import org.verapdf.wcag.algorithms.entities.SemanticParagraph;
 import org.verapdf.wcag.algorithms.entities.SemanticSpan;
@@ -408,6 +409,12 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	}
 
 	private void acceptSemanticList(INode node) {
+		INode accumulatedNode = accumulatedNodeMapper.get(node);
+		TableBorder tableBorder = tableBordersCollection.getTableBorder(node.getBoundingBox());
+		if (accumulatedNode != null && tableBorder != null &&
+				tableBorder.getTableBorderCell(accumulatedNode.getBoundingBox()) == null) {
+			return;
+		}
 		List<INode> textChildren = new ArrayList<>(node.getChildren().size());
 		List<TextLine> childrenFirstLines = new ArrayList<>(node.getChildren().size());
 		List<INode> imageChildren = new ArrayList<>(node.getChildren().size());

@@ -33,6 +33,10 @@ public class TableUtils {
         return tableSemanticTypes.contains(node.getSemanticType());
     }
 
+    static public boolean isInitialTableNode(INode node) {
+        return tableSemanticTypes.contains(node.getInitialSemanticType());
+    }
+
     /*
     TODO: add comments
      */

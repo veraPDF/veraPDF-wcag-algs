@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.entities.tables;
 
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 
 import java.util.List;
 import java.util.ArrayList;

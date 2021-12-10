@@ -1,14 +1,20 @@
 package org.verapdf.wcag.algorithms.entities.lists;
 
-import java.util.Set;
-
 public class ListInterval {
-	public int start;
-	public int end;
+	public final int start;
+	public final int end;
 
 	public ListInterval(int start, int end) {
 		this.start = start;
 		this.end = end;
+	}
+
+	public int getStart() {
+		return start;
+	}
+
+	public int getEnd() {
+		return start;
 	}
 
 	@Override
@@ -27,16 +33,5 @@ public class ListInterval {
 
 	public boolean contains(ListInterval second) {
 		return this.start <= second.start && this.end >= second.end;
-	}
-
-	public void put(Set<ListInterval> set, ListInterval listInterval) {
-		for (ListInterval interval : set) {
-			if (interval.contains(listInterval)) {
-				return;
-			} else if (listInterval.contains(interval)) {
-				set.remove(interval);
-			}
-		}
-		set.add(listInterval);
 	}
 }
