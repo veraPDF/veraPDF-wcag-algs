@@ -1,8 +1,11 @@
-package org.verapdf.wcag.algorithms.entities.tables;
+package org.verapdf.wcag.algorithms.entities.tables.tableBorders;
 
+import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.Vertex;
+import org.verapdf.wcag.algorithms.entities.tables.Table;
+import org.verapdf.wcag.algorithms.entities.tables.TableBorderBuilder;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
 import java.util.Comparator;
@@ -11,7 +14,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TableBorder {
-
     public static final double TABLE_BORDER_EPSILON = 0.55;
 
     private final List<Double> xCoordinates;
@@ -22,6 +24,8 @@ public class TableBorder {
     private final BoundingBox boundingBox;
     private final int numberOfRows;
     private final int numberOfColumns;
+    private final Long id;
+    private INode node;
 
     public TableBorder(TableBorderBuilder builder) {
         xCoordinates = new LinkedList<>();
@@ -35,6 +39,7 @@ public class TableBorder {
         numberOfColumns = xCoordinates.size() - 1;
         rows = new TableBorderRow[numberOfRows];
         createMatrix(builder);
+        id = Table.getNextTableListId();
     }
 
     private void calculateXCoordinates(TableBorderBuilder builder) {
@@ -59,6 +64,16 @@ public class TableBorder {
         return rows;
     }
 
+    public int getNumberOfRowsWithContent() {
+        int numberOfRowsWithContent = 0;
+        for (TableBorderRow row : rows) {
+            if (row.getNumberOfCellWithContent() > 0) {
+                numberOfRowsWithContent++;
+            }
+        }
+        return numberOfRowsWithContent;
+    }
+
     private void calculateYCoordinates(TableBorderBuilder builder) {
         List<Vertex> vertexes = builder.getVertexes().stream().sorted(new Vertex.VertexComparatorY()).collect(Collectors.toList());
         double y1 = vertexes.get(0).getTopY();
@@ -78,10 +93,14 @@ public class TableBorder {
     }
 
     private void createMatrix(TableBorderBuilder builder) {
-        for (int i = 0; i < numberOfRows; i++) {
-            rows[i] = new TableBorderRow(i);
-            for (int j = 0; j < numberOfColumns; j++) {
-                rows[i].cells[j] = new TableBorderCell(i, j, numberOfRows - i, numberOfColumns - j);
+        for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+            rows[rowNumber] = new TableBorderRow(rowNumber, numberOfColumns,
+                    new BoundingBox(boundingBox.getPageNumber(), boundingBox.getLeftX(),
+                            yCoordinates.get(rowNumber + 1) - 0.5 * yWidths.get(rowNumber + 1),
+                            boundingBox.getRightX(), yCoordinates.get(rowNumber) + 0.5 * yWidths.get(rowNumber)));
+            for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
+                rows[rowNumber].cells[colNumber] = new TableBorderCell(rowNumber, colNumber,
+                        numberOfRows - rowNumber, numberOfColumns - colNumber);
             }
         }
         for (LineChunk line : builder.getHorizontalLines()) {
@@ -124,6 +143,19 @@ public class TableBorder {
                 }
             }
         }
+        for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+            for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
+                if (rows[rowNumber].cells[colNumber].colNumber == colNumber &&
+                        rows[rowNumber].cells[colNumber].rowNumber == rowNumber) {
+                    TableBorderCell cell = rows[rowNumber].cells[colNumber];
+                    cell.setBoundingBox(new BoundingBox(rows[rowNumber].getPageNumber(),
+                            xCoordinates.get(colNumber) - 0.5 * xWidths.get(colNumber),
+                            yCoordinates.get(rowNumber + cell.rowSpan) - 0.5 * yWidths.get(rowNumber + cell.rowSpan),
+                            xCoordinates.get(colNumber + cell.colSpan) + 0.5 * xWidths.get(colNumber + cell.colSpan),
+                            yCoordinates.get(rowNumber) + 0.5 * yWidths.get(rowNumber)));
+                }
+            }
+        }
     }
 
     public Integer getPageNumber() {
@@ -132,7 +164,8 @@ public class TableBorder {
 
     private int getCoordinateX(double x) {
         for (int i = 0; i < xCoordinates.size(); i++) {
-            if (x <= xCoordinates.get(i) + 0.5 * xWidths.get(i) && x >= xCoordinates.get(i) - 0.5 * xWidths.get(i)) {
+            if (x <= xCoordinates.get(i) + 0.5 * xWidths.get(i) + NodeUtils.EPSILON &&
+                    x >= xCoordinates.get(i) - 0.5 * xWidths.get(i) - NodeUtils.EPSILON) {
                 return i;
             }
         }
@@ -141,7 +174,26 @@ public class TableBorder {
 
     private int getCoordinateY(double y) {
         for (int i = 0; i < yCoordinates.size(); i++) {
-            if (y <= yCoordinates.get(i) + 0.5 * yWidths.get(i) && y >= yCoordinates.get(i) - 0.5 * yWidths.get(i)) {
+            if (y <= yCoordinates.get(i) + 0.5 * yWidths.get(i) + NodeUtils.EPSILON
+                    && y >= yCoordinates.get(i) - 0.5 * yWidths.get(i) - NodeUtils.EPSILON) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int getClosestLeftX(double x) {
+        for (int i = xCoordinates.size() - 1; i >= 0; i--) {
+            if (x >= xCoordinates.get(i) - 0.5 * xWidths.get(i) - TABLE_BORDER_EPSILON) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int getClosestTopY(double y) {
+        for (int i = yCoordinates.size() - 1; i >= 0; i--) {
+            if (y <= yCoordinates.get(i) + 0.5 * yWidths.get(i) + TABLE_BORDER_EPSILON) {
                 return i;
             }
         }
@@ -156,6 +208,18 @@ public class TableBorder {
         return numberOfColumns;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public INode getNode() {
+        return node;
+    }
+
+    public void setNode(INode node) {
+        this.node = node;
+    }
+
     public boolean isBadTable() {
         return numberOfRows <= 1 ||  numberOfColumns <= 1 || (numberOfRows == 2 && numberOfColumns == 2);
     }
@@ -164,86 +228,27 @@ public class TableBorder {
         return boundingBox;
     }
 
-    public class TableBorderRow {
-        public int rowNumber;
-        public TableBorderCell[] cells;
-
-        TableBorderRow(int rowNumber) {
-            this.rowNumber = rowNumber;
-            cells = new TableBorderCell[numberOfColumns];
-        }
-
-        public double getTopY() {
-            return yCoordinates.get(rowNumber) + 0.5 * yWidths.get(rowNumber);
-        }
-
-        public double getBottomY() {
-            return yCoordinates.get(rowNumber + 1) - 0.5 * yWidths.get(rowNumber + 1);
-        }
-
-        public double getLeftX() {
-            return boundingBox.getLeftX();
-        }
-
-        public double getRightX() {
-            return boundingBox.getRightX();
-        }
-
-        public double getWidth() {
-            return boundingBox.getWidth();
-        }
-
-        public double getHeight() {
-            return boundingBox.getTopY() - getBottomY();
-        }
-
-    }
-
-    public class TableBorderCell {
-        public int rowNumber;
-        public int colNumber;
-        public int rowSpan;
-        public int colSpan;
-
-        TableBorderCell(int rowNumber, int colNumber, int rowSpan, int colSpan) {
-            this.rowNumber = rowNumber;
-            this.colNumber = colNumber;
-            this.rowSpan = rowSpan;
-            this.colSpan = colSpan;
-        }
-
-        public double getTopY() {
-            return yCoordinates.get(rowNumber) + 0.5 * yWidths.get(rowNumber);
-        }
-
-        public double getBottomY() {
-            return yCoordinates.get(rowNumber + rowSpan) - 0.5 * yWidths.get(rowNumber + rowSpan);
-        }
-
-        public double getLeftX() {
-            return xCoordinates.get(colNumber) - 0.5 * xWidths.get(colNumber);
-        }
-
-        public double getRightX() {
-            return xCoordinates.get(colNumber + colSpan) + 0.5 * xWidths.get(colNumber + colSpan);
-        }
-
-        public double getWidth() {
-            return getRightX() - getLeftX();
-        }
-
-        public double getHeight() {
-            return getTopY() - getBottomY();
-        }
-    }
-
     public static class TableBordersComparator implements Comparator<TableBorder> {
-        public int compare(TableBorder border1, TableBorder border2){
+        public int compare(TableBorder border1, TableBorder border2) {
             int res = Double.compare(border2.getBoundingBox().getTopY(), border1.getBoundingBox().getTopY());
             if (res != 0) {
                 return res;
             }
             return Double.compare(border1.getBoundingBox().getLeftX(), border2.getBoundingBox().getLeftX());
         }
+    }
+
+    public TableBorderCell getTableBorderCell(BoundingBox box) {
+        int xIndex = getClosestLeftX(box.getLeftX());
+        int yIndex = getClosestTopY(box.getTopY());
+        if (xIndex < 0 || yIndex < 0) {
+            return null;
+        }
+        TableBorderCell cell = rows[yIndex].cells[xIndex];
+        if (cell.getRightX() + TABLE_BORDER_EPSILON > box.getRightX() &&
+                cell.getBottomY() - TABLE_BORDER_EPSILON < box.getBottomY()) {
+            return cell;
+        }
+        return null;
     }
 }

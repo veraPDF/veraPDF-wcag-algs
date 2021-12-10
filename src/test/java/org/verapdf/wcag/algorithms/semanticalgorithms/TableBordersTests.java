@@ -5,20 +5,25 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.verapdf.wcag.algorithms.entities.IDocument;
+import org.verapdf.wcag.algorithms.entities.INode;
+import org.verapdf.wcag.algorithms.entities.ITree;
 import org.verapdf.wcag.algorithms.entities.JsonToPdfTree;
-import org.verapdf.wcag.algorithms.entities.tables.TableBorder;
+import org.verapdf.wcag.algorithms.entities.tables.Table;
+import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.entities.tables.TableBorderBuilder;
 import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.LinesPreprocessingConsumer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.SemanticDocumentPreprocessingConsumer;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class TableBordersTests {
 
-    static Stream<Arguments> clusterTableBorderDetectionTestParams() {
+    static Stream<Arguments> tableBorderDetectionTestParams() {
         return Stream.of(
                 Arguments.of("NEG-fake-table", new int[][] {{10}}, new int[][] {{4}}, new int[][] {{4}}),
                 Arguments.of("NEG-floating-text-box", new int[][] {{5}}, new int[][] {{}}, new int[][] {{}}),
@@ -41,9 +46,10 @@ public class TableBordersTests {
     }
 
     @ParameterizedTest(name = "{index}: ({0}, {1}, {2}, {3}) => {0}")
-    @MethodSource("clusterTableBorderDetectionTestParams")
+    @MethodSource("tableBorderDetectionTestParams")
     void testTableBorderDetection(String filename, int[][] list, int[][] listN, int[][] listM) throws IOException {
         IDocument document = JsonToPdfTree.getDocument("/files/tables/" + filename + ".json");
+        ITree tree = document.getTree();
         LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer(document);
         List<List<TableBorderBuilder>> tableBorderBuilders = linesPreprocessingConsumer.getTableBorders();
         Assertions.assertEquals(list.length, tableBorderBuilders.size());
@@ -57,6 +63,10 @@ public class TableBordersTests {
                         border.getVerticalLinesNumber());
             }
         }
+        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document,
+                linesPreprocessingConsumer.getLinesCollection());
+        tree.forEach(semanticDocumentValidator);
+        Table.updateTableCounter();
         TableBordersCollection tableBordersCollection = new TableBordersCollection(tableBorderBuilders);
         List<SortedSet<TableBorder>> tableBorders = tableBordersCollection.getTableBorders();
         Assertions.assertEquals(listN.length, tableBorders.size());

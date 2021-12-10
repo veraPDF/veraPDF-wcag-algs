@@ -2,6 +2,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
 
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.tables.*;
+import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 
 import java.util.*;

@@ -1,7 +1,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
 
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
-import org.verapdf.wcag.algorithms.entities.tables.TableBorder;
+import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.entities.tables.TableToken;
 import org.verapdf.wcag.algorithms.entities.tables.TableTokenRow;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
