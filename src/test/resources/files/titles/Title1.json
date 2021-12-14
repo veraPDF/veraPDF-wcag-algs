@@ -1,0 +1,205 @@
+{
+  "type": "Document",
+  "children": [
+    {
+      "type": "P",
+      "children": [
+        {
+          "type": "TextChunk",
+          "pageNumber": 0,
+          "value": " ",
+          "baseLine": 794.47,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 12.0,
+          "boundingBox": [
+            352.65,
+            791.95,
+            355.986,
+            803.206
+          ],
+          "fontName": "ArialMT",
+          "color": [
+            0.0
+          ],
+          "fontColorSpace": "DeviceGray"
+        }
+      ]
+    },
+    {
+      "type": "Figure",
+      "children": [
+        {
+          "type": "ImageChunk",
+          "pageNumber": 0,
+          "boundingBox": [
+            361.4,
+            754.91,
+            559.45,
+            806.001
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Title",
+      "children": [
+        {
+          "type": "Span",
+          "children": [
+            {
+              "type": "TextChunk",
+              "pageNumber": 0,
+              "value": "Raadsvoorstel",
+              "baseLine": 739.22,
+              "fontWeight": 400.0,
+              "italicAngle": 0.0,
+              "fontSize": 28.0,
+              "boundingBox": [
+                36.025,
+                733.34,
+                208.757,
+                759.604
+              ],
+              "fontName": "ArialMT",
+              "color": [
+                0.0
+              ],
+              "fontColorSpace": "DeviceGray"
+            }
+          ]
+        },
+        {
+          "type": "Span",
+          "children": [
+            {
+              "type": "TextChunk",
+              "pageNumber": 0,
+              "value": " ",
+              "baseLine": 739.22,
+              "fontWeight": 400.0,
+              "italicAngle": 0.0,
+              "fontSize": 28.0,
+              "boundingBox": [
+                208.6,
+                733.34,
+                216.384,
+                759.604
+              ],
+              "fontName": "ArialMT",
+              "color": [
+                0.0
+              ],
+              "fontColorSpace": "DeviceGray"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "P",
+      "children": [
+        {
+          "type": "TextChunk",
+          "pageNumber": 0,
+          "value": "Onderwerp: ",
+          "baseLine": 689.95,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 12.0,
+          "boundingBox": [
+            36.025,
+            687.4300000000001,
+            102.06099999999999,
+            698.686
+          ],
+          "fontName": "ArialMT",
+          "color": [
+            0.0
+          ],
+          "fontColorSpace": "DeviceGray"
+        },
+        {
+          "type": "TextChunk",
+          "pageNumber": 0,
+          "value": " ",
+          "baseLine": 689.95,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 12.0,
+          "boundingBox": [
+            102.05,
+            687.4300000000001,
+            105.386,
+            698.686
+          ],
+          "fontName": "ArialMT",
+          "color": [
+            0.0
+          ],
+          "fontColorSpace": "DeviceGray"
+        },
+        {
+          "type": "TextChunk",
+          "pageNumber": 0,
+          "value": "Kindpakket in natura Barendrecht 2020",
+          "baseLine": 689.95,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 12.0,
+          "boundingBox": [
+            177.83,
+            687.4300000000001,
+            386.1140000000004,
+            698.686
+          ],
+          "fontName": "ArialMT",
+          "color": [
+            0.0
+          ],
+          "fontColorSpace": "DeviceGray"
+        },
+        {
+          "type": "TextChunk",
+          "pageNumber": 0,
+          "value": " ",
+          "baseLine": 689.95,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 12.0,
+          "boundingBox": [
+            386.17,
+            687.4300000000001,
+            389.50600000000003,
+            698.686
+          ],
+          "fontName": "ArialMT",
+          "color": [
+            0.0
+          ],
+          "fontColorSpace": "DeviceGray"
+        },
+        {
+          "type": "TextChunk",
+          "pageNumber": 0,
+          "value": " ",
+          "baseLine": 689.95,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 12.0,
+          "boundingBox": [
+            390.18,
+            687.4300000000001,
+            393.516,
+            698.686
+          ],
+          "fontName": "ArialMT",
+          "color": [
+            0.0
+          ],
+          "fontColorSpace": "DeviceGray"
+        }
+      ]
+    }
+  ]
+}
