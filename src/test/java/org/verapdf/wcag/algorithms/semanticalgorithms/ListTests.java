@@ -26,21 +26,22 @@ public class ListTests {
 
     static Stream<Arguments> listDetectionTestParams() {
         return Stream.of(
-                Arguments.of("list_start_with_Figure_pass.json", new int[] {}, true),
-                Arguments.of("test-document-13.json", new int[] {}, true),
-                Arguments.of("fake_list_fail.json", new int[] {}, true),
-                Arguments.of("list_start_from_005_pass.json", new int[] {}, true),
-                Arguments.of("fake_list_with_i_item_diff_formatting_fail.json", new int[] {}, true),
-                Arguments.of("list-with-image-label.json", new int[] {3}, false),
-                Arguments.of("NEG-fake-list.json", new int[] {4}, false),
-                Arguments.of("ordered-list1.json", new int[] {5, 5}, true),
-                Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[] {7, 4, 4}, true)
+                Arguments.of("list_start_with_Figure_pass.json", new int[] {}, true, true),
+                Arguments.of("test-document-13.json", new int[] {}, true, true),
+                Arguments.of("fake_list_fail.json", new int[] {}, true, true),
+                Arguments.of("list_start_from_005_pass.json", new int[] {}, true, true),
+                Arguments.of("fake_list_with_i_item_diff_formatting_fail.json", new int[] {}, true, true),
+                Arguments.of("list-with-image-label.json", new int[] {3}, false, true),
+                Arguments.of("NEG-fake-list.json", new int[] {4}, false, true),
+                Arguments.of("ordered-list1.json", new int[] {5, 5}, true, true),
+                Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[] {7, 4, 4}, true, true)
                 );
     }
 
-    @ParameterizedTest(name = "{index}: ({0}, {1}, {2} ) => {0}")
+    @ParameterizedTest(name = "{index}: ({0}, {1}, {2}, {3}) => {0}")
     @MethodSource("listDetectionTestParams")
-    void testListDetection(String filename, int[] checkSizes, boolean initialSemanticIsValid) throws IOException {
+    void testListDetection(String filename, int[] checkSizes, boolean semanticIsValid,
+                           boolean initialSemanticIsValid) throws IOException {
         IDocument document = JsonToPdfTree.getDocument("/files/lists/" + filename);
         ITree tree = document.getTree();
 
@@ -70,14 +71,26 @@ public class ListTests {
             Assertions.assertEquals(checkSizes[i], resultLists.get(i).getNumberOfListItems());
         }
 
-        if (initialSemanticIsValid) {
+        if (semanticIsValid) {
             testListTreeStructure(tree);
+        }
+
+        if (initialSemanticIsValid) {
+            testListInitialTreeStructure(tree);
         }
     }
 
     private void testListTreeStructure(ITree tree) {
         for (INode node : tree) {
             if (ListUtils.isListNode(node) && !node.isLeaf()) {
+                Assertions.assertEquals(node.getInitialSemanticType(), node.getSemanticType());
+            }
+        }
+    }
+
+    private void testListInitialTreeStructure(ITree tree) {
+        for (INode node : tree) {
+            if (ListUtils.isInitialListNode(node)) {
                 Assertions.assertEquals(node.getInitialSemanticType(), node.getSemanticType());
             }
         }
