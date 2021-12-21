@@ -5,16 +5,13 @@ import org.verapdf.wcag.algorithms.entities.content.InfoChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
+import org.verapdf.wcag.algorithms.entities.lists.ListIntervalsCollection;
 import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.tables.TableCell;
 import org.verapdf.wcag.algorithms.entities.tables.TableRow;
 import org.verapdf.wcag.algorithms.entities.tables.TableToken;
 
-import java.util.Set;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Arrays;
-import java.util.ArrayList;
+import java.util.*;
 
 import static org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils.TABLE_PROBABILITY_THRESHOLD;
 
@@ -26,6 +23,10 @@ public class ListUtils {
 
 	static public boolean isListNode(INode node) {
 		return listSemanticTypes.contains(node.getSemanticType());
+	}
+
+	static public boolean isInitialListNode(INode node) {
+		return listSemanticTypes.contains(node.getInitialSemanticType());
 	}
 
 	public static boolean isList(Table table) {
@@ -75,7 +76,7 @@ public class ListUtils {
 			}
 			if (node.getRecognizedStructureId() == null) {
 				double probability = ((double)(listInterval.end - listInterval.start + 1)) / children.size();
-				if (probability > TABLE_PROBABILITY_THRESHOLD) {
+				if (probability >= TABLE_PROBABILITY_THRESHOLD) {
 					node.setSemanticType(SemanticType.LIST);
 					node.setCorrectSemanticScore(probability);
 					node.setRecognizedStructureId(listId);
@@ -107,23 +108,29 @@ public class ListUtils {
 
 	public static Set<ListInterval> getChildrenListIntervals(Set<ListInterval> listIntervals,
 															  List<? extends InfoChunk> childrenFirstLines) {
-		Set<ListInterval> resultListIntervals = new HashSet<>();
+		ListIntervalsCollection listIntervalsCollection = new ListIntervalsCollection();
 		for (ListInterval listInterval : listIntervals) {
 			int start = listInterval.start;
 			for (int i = listInterval.start + 1; i <= listInterval.end; i++) {
-				if (!NodeUtils.areCloseNumbers(childrenFirstLines.get(i - 1).getLeftX(),
-						childrenFirstLines.get(i).getLeftX(),
-						childrenFirstLines.get(i - 1).getBoundingBox().getHeight() / 2)) {
+				InfoChunk line1 = childrenFirstLines.get(i - 1);
+				InfoChunk line2 = childrenFirstLines.get(i);
+				if (line1.getPageNumber() + 1 < line2.getPageNumber()) {
+					start = listInterval.end;
+					break;
+				}
+				if (Objects.equals(line1.getPageNumber(), line2.getPageNumber()) &&
+						!NodeUtils.areCloseNumbers(line1.getLeftX(), line2.getLeftX(),
+								line1.getBoundingBox().getHeight() / 2)) {
 					if (start < i - 1) {
-						resultListIntervals.add(new ListInterval(start, i - 1));
+						listIntervalsCollection.put(new ListInterval(start, i - 1));
 					}
 					start = i;
 				}
 			}
 			if (start < listInterval.end) {
-				resultListIntervals.add(new ListInterval(start, listInterval.end));
+				listIntervalsCollection.put(new ListInterval(start, listInterval.end));
 			}
 		}
-		return resultListIntervals;
+		return listIntervalsCollection.getSet();
 	}
 }

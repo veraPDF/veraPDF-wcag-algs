@@ -25,31 +25,33 @@ public class ClusterTableTests {
 
     static Stream<Arguments> clusterTableDetectionTestParams() {
         return Stream.of(
-                Arguments.of("NEG-fake-table.json", new int[][] {{4, 4}}, false),
-                Arguments.of("NEG-bad-table.json", new int[][] {{4, 5}}, false),
-                Arguments.of("NEG-bad-table2.json", new int[][] {{4, 5}}, false),
-                Arguments.of("no-table.json", new int[][] {}, false),
-                Arguments.of("NEG-floating-text-box.json", new int[][] {}, false),
-                Arguments.of("2columns2.json", new int[][] {}, false),
-                Arguments.of("2columns3.json", new int[][] {}, false),
-                Arguments.of("NEG-bad-table3.json", new int[][] {{2, 4}}, false),
-                Arguments.of("NEG-bad-table3-full.json", new int[][] {{2, 24}}, false), // should be 6 separated tables
-                Arguments.of("fake-table1.json", new int[][] {{2, 3}, {2, 4}, {2, 4}, {2, 2}, {2, 2}, {2, 2}, {2, 4}, {2, 3}, {2, 5}}, false), // contents page is recognized as a set of tables
-                Arguments.of("real-table.json", new int[][] {{4, 5}, {4, 9}}, false),
-                Arguments.of("fake-table2.json", new int[][] {{4, 5}, {4, 9}}, false),
-                Arguments.of("fake-table2-fix.json", new int[][] {{4, 5}, {4, 9}}, true),
-                Arguments.of("fake-table3.json", new int[][] {}, false),
-                Arguments.of("tableBorder.json", new int[][] {{3, 4}}, true),
-                Arguments.of("three-tables.json", new int[][] {{5, 6}, {4, 10}, {5, 4}}, false), // third table contains images
-                Arguments.of("PDFUA-Ref-2-05_BookChapter-german.json", new int[][] {{2, 24}}, false), // contents page is recognized as table, table on 6th page is not recognized
-                Arguments.of("PDFUA-Ref-2-02_Invoice.json", new int[][] {{4, 9}}, false),
-                Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[][] {}, false)
+                Arguments.of("NEG-fake-table.json", new int[][] {{4, 4}}, false, true),
+                Arguments.of("NEG-bad-table.json", new int[][] {{4, 5}}, false, false),
+                Arguments.of("NEG-bad-table2.json", new int[][] {{4, 5}}, false, false),
+                Arguments.of("no-table.json", new int[][] {}, false, true),
+                Arguments.of("NEG-floating-text-box.json", new int[][] {}, false, true),
+                Arguments.of("2columns2.json", new int[][] {}, false, true),
+                Arguments.of("2columns3.json", new int[][] {}, false, false),
+                Arguments.of("NEG-bad-table3.json", new int[][] {{2, 4}}, false, false),
+                Arguments.of("NEG-bad-table3-full.json", new int[][] {{2, 24}}, false, false), // should be 6 separated tables
+                Arguments.of("fake-table1.json", new int[][] {{2, 3}, {2, 4}, {2, 4}, {2, 2}, {2, 2}, {2, 2}, {2, 4},
+                        {2, 3}, {2, 5}}, false, true), // contents page is recognized as a set of tables
+                Arguments.of("real-table.json", new int[][] {{4, 5}, {4, 9}}, false, false),
+                Arguments.of("fake-table2.json", new int[][] {{4, 5}, {4, 9}}, false, false),
+                Arguments.of("fake-table2-fix.json", new int[][] {{4, 5}, {4, 9}}, true, true),
+                Arguments.of("fake-table3.json", new int[][] {}, false, true),
+                Arguments.of("tableBorder.json", new int[][] {{3, 4}}, true, true),
+                Arguments.of("three-tables.json", new int[][] {{5, 6}, {4, 10}, {5, 4}}, false, false), // third table contains images
+                Arguments.of("PDFUA-Ref-2-05_BookChapter-german.json", new int[][] {{2, 24}}, false, false), // contents page is recognized as table, table on 6th page is not recognized
+                Arguments.of("PDFUA-Ref-2-02_Invoice.json", new int[][] {{4, 9}}, false, false),
+                Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[][] {}, false, true)
                 );
     }
 
-    @ParameterizedTest(name = "{index}: ({0}, {1}, {2} ) => {0}")
+    @ParameterizedTest(name = "{index}: ({0}, {1}, {2}, {3}) => {0}")
     @MethodSource("clusterTableDetectionTestParams")
-    void testClusterTableDetection(String filename, int[][] checkSizes, boolean initialSemanticIsValid) throws IOException {
+    void testClusterTableDetection(String filename, int[][] checkSizes, boolean semanticIsValid,
+                                   boolean initialSemanticIsValid) throws IOException {
         IDocument document = JsonToPdfTree.getDocument("/files/tables/" + filename);
         ITree tree = document.getTree();
 
@@ -80,14 +82,26 @@ public class ClusterTableTests {
             Assertions.assertEquals(checkSizes[i][1], resultTables.get(i).numberOfRows());
         }
 
-        if (initialSemanticIsValid) {
+        if (semanticIsValid) {
             testTableTreeStructure(tree);
+        }
+
+        if (initialSemanticIsValid) {
+            testTableInitialTreeStructure(tree);
         }
     }
 
     private void testTableTreeStructure(ITree tree) {
         for (INode node : tree) {
             if (TableUtils.isTableNode(node)) {
+                Assertions.assertEquals(node.getInitialSemanticType(), node.getSemanticType());
+            }
+        }
+    }
+
+    private void testTableInitialTreeStructure(ITree tree) {
+        for (INode node : tree) {
+            if (TableUtils.isInitialTableNode(node)) {
                 Assertions.assertEquals(node.getInitialSemanticType(), node.getSemanticType());
             }
         }
