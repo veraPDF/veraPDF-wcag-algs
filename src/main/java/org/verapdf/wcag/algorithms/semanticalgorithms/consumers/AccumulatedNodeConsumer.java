@@ -34,6 +34,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	private static final Logger LOGGER = Logger.getLogger(AccumulatedNodeConsumer.class.getCanonicalName());
 
 	public static final double MERGE_PROBABILITY_THRESHOLD = 0.75;
+	public static final double ONE_LINE_MIN_PROBABILITY_THRESHOLD = 0.1;
 
 	private final AccumulatedNodeMapper accumulatedNodeMapper;
 	private final TableBordersCollection tableBordersCollection;
@@ -177,19 +178,24 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		}
 		TextLine lastLine = span.getLastLine();
 		TextLine nextLine = secondSpan.getFirstLine();
-		double mergeProbability = ChunksMergeUtils.toLineMergeProbability(lastLine, nextLine);
-		if (mergeProbability < MERGE_PROBABILITY_THRESHOLD) {
-			if (span.getLinesNumber() > 1 && secondSpan.getLinesNumber() > 1) {
-				mergeProbability = ChunksMergeUtils.toParagraphMergeProbability(lastLine, nextLine);
-			} else {
-				mergeProbability = ChunksMergeUtils.mergeLeadingProbability(lastLine, nextLine);
-			}
-			double toColumnsMergeProbability = ChunksMergeUtils.toColumnsMergeProbability(lastLine, nextLine);
-			if (toColumnsMergeProbability > mergeProbability) {
-				mergeProbability = toColumnsMergeProbability;
-			}
+		double oneLineProbability = ChunksMergeUtils.toLineMergeProbability(lastLine, nextLine);
+		double differentLinesProbability;
+		if (span.getLinesNumber() > 1 && secondSpan.getLinesNumber() > 1) {
+			differentLinesProbability = ChunksMergeUtils.toParagraphMergeProbability(lastLine, nextLine);
+		} else {
+			differentLinesProbability = ChunksMergeUtils.mergeLeadingProbability(lastLine, nextLine);
+		}
+		double toColumnsMergeProbability = ChunksMergeUtils.toColumnsMergeProbability(lastLine, nextLine);
+		if (toColumnsMergeProbability > differentLinesProbability) {
+			differentLinesProbability = toColumnsMergeProbability;
+		}
+
+		double mergeProbability;
+		if (oneLineProbability < Math.max(differentLinesProbability, ONE_LINE_MIN_PROBABILITY_THRESHOLD)) {
+			mergeProbability = differentLinesProbability;
 			span.getLines().addAll(secondSpan.getLines());
 		} else {
+			mergeProbability = oneLineProbability;
 			lastLine.setNotFullLine();
 			nextLine.setNotFullLine();
 			lastLine = new TextLine(lastLine);
@@ -270,19 +276,24 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		}
 		TextLine lastLine = paragraph.getLastLine();
 		TextLine nextLine = lines.get(0);
-		double mergeProbability = ChunksMergeUtils.toLineMergeProbability(lastLine, nextLine);
-		if (mergeProbability < MERGE_PROBABILITY_THRESHOLD) {
-			if (paragraph.getLines().size() > 1 && lines.size() > 1) {
-				mergeProbability = ChunksMergeUtils.toParagraphMergeProbability(lastLine, nextLine);
-			} else {
-				mergeProbability = ChunksMergeUtils.mergeLeadingProbability(lastLine, nextLine);
-			}
-			double toColumnsMergeProbability = ChunksMergeUtils.toColumnsMergeProbability(lastLine, nextLine);
-			if (toColumnsMergeProbability > mergeProbability) {
-				mergeProbability = toColumnsMergeProbability;
-			}
+		double oneLineProbability = ChunksMergeUtils.toLineMergeProbability(lastLine, nextLine);
+		double differentLinesProbability;
+		if (paragraph.getLines().size() > 1 && lines.size() > 1) {
+			differentLinesProbability = ChunksMergeUtils.toParagraphMergeProbability(lastLine, nextLine);
+		} else {
+			differentLinesProbability = ChunksMergeUtils.mergeLeadingProbability(lastLine, nextLine);
+		}
+		double toColumnsMergeProbability = ChunksMergeUtils.toColumnsMergeProbability(lastLine, nextLine);
+		if (toColumnsMergeProbability > differentLinesProbability) {
+			differentLinesProbability = toColumnsMergeProbability;
+		}
+
+		double mergeProbability;
+		if (oneLineProbability < Math.max(differentLinesProbability, ONE_LINE_MIN_PROBABILITY_THRESHOLD)) {
+			mergeProbability = differentLinesProbability;
 			paragraph.getLines().addAll(lines);
 		} else {
+			mergeProbability = oneLineProbability;
 			lastLine.setNotFullLine();
 			nextLine.setNotFullLine();
 			lastLine = new TextLine(lastLine);
