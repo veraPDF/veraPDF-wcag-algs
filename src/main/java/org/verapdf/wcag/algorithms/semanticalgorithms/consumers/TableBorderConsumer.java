@@ -116,10 +116,10 @@ public class TableBorderConsumer {
             if (nodes.size() == 1) {
                 setType(iterator.next(),SemanticType.TABLE_BODY, table.getId());
             } else if (nodes.size() == 2) {
-                setType(iterator.next(),SemanticType.TABLE_HEADER, table.getId());
+                setType(iterator.next(),SemanticType.TABLE_HEADERS, table.getId());
                 setType(iterator.next(),SemanticType.TABLE_BODY, table.getId());
             } else if (nodes.size() == 3) {
-                setType(iterator.next(),SemanticType.TABLE_HEADER, table.getId());
+                setType(iterator.next(),SemanticType.TABLE_HEADERS, table.getId());
                 setType(iterator.next(),SemanticType.TABLE_BODY, table.getId());
                 setType(iterator.next(),SemanticType.TABLE_FOOTER, table.getId());
             }
