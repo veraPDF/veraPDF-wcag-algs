@@ -70,7 +70,8 @@ class AccumulatedNodeSemanticsCheckerTests {
 				Arguments.of("captions/caption3.json"),
 				Arguments.of("captions/caption4.json"),
 				Arguments.of("captions/caption5.json"),
-				Arguments.of("titles/Title1.json"));
+				Arguments.of("titles/Title1.json"),
+				Arguments.of("spans/Span1.json"));
 	}
 
 	@ParameterizedTest(name = "{index}: ({0}) => {0}")

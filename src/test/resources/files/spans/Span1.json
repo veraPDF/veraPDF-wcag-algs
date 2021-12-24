@@ -1,0 +1,162 @@
+{
+  "type": "Document",
+  "children": [
+    {
+      "type": "TextChunk",
+      "pageNumber": 4,
+      "value": "ket des Buches: ",
+      "baseLine": 428.0275980000001,
+      "fontWeight": 400.0,
+      "italicAngle": 0.0,
+      "fontSize": 11.0,
+      "boundingBox": [
+        62.36220900000006,
+        424.06759800000015,
+        131.62810900000005,
+        438.90659800000014
+      ],
+      "fontName": "MinionPro-Regular",
+      "color": [
+        0.071,
+        0.071,
+        0.05
+      ],
+      "fontColorSpace": "ICCBased"
+    },
+    {
+      "type": "Span",
+      "children": [
+        {
+          "type": "TextChunk",
+          "pageNumber": 4,
+          "value": "03_Entstehung ",
+          "baseLine": 428.02758800000015,
+          "fontWeight": 500.0,
+          "italicAngle": 0.0,
+          "fontSize": 9.5,
+          "boundingBox": [
+            131.62800600000006,
+            424.33208800000017,
+            202.75327100000004,
+            438.16408800000016
+          ],
+          "fontName": "NotoSans-Medium",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        }
+      ]
+    },
+    {
+      "type": "Span",
+      "children": [
+        {
+          "type": "TextChunk",
+          "pageNumber": 4,
+          "value": "‣",
+          "baseLine": 424.02758800000015,
+          "fontWeight": 500.0,
+          "italicAngle": 0.0,
+          "fontSize": 19.0,
+          "boundingBox": [
+            202.84840400000004,
+            416.63658800000013,
+            209.87840400000005,
+            444.3005880000002
+          ],
+          "fontName": "NotoSans-Medium",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        }
+      ]
+    },
+    {
+      "type": "Span",
+      "children": [
+        {
+          "type": "TextChunk",
+          "pageNumber": 4,
+          "value": " AblaufVisualisierung ",
+          "baseLine": 428.02758800000015,
+          "fontWeight": 500.0,
+          "italicAngle": 0.0,
+          "fontSize": 9.5,
+          "boundingBox": [
+            210.06829900000005,
+            424.33208800000017,
+            310.75670900000006,
+            438.16408800000016
+          ],
+          "fontName": "NotoSans-Medium",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        }
+      ]
+    },
+    {
+      "type": "Span",
+      "children": [
+        {
+          "type": "TextChunk",
+          "pageNumber": 4,
+          "value": "‣",
+          "baseLine": 424.02758800000015,
+          "fontWeight": 500.0,
+          "italicAngle": 0.0,
+          "fontSize": 19.0,
+          "boundingBox": [
+            310.75680600000004,
+            416.63658800000013,
+            317.78680600000007,
+            444.3005880000002
+          ],
+          "fontName": "NotoSans-Medium",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        }
+      ]
+    },
+    {
+      "type": "Span",
+      "children": [
+        {
+          "type": "TextChunk",
+          "pageNumber": 4,
+          "value": " Workflow_Barrierefreie-PDF.pdf",
+          "baseLine": 428.02758800000015,
+          "fontWeight": 500.0,
+          "italicAngle": 0.0,
+          "fontSize": 9.5,
+          "boundingBox": [
+            317.97671500000007,
+            424.33208800000017,
+            466.33536500000014,
+            438.16408800000016
+          ],
+          "fontName": "NotoSans-Medium",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        }
+      ]
+    }
+  ]
+}
