@@ -19,7 +19,7 @@ public class NodeUtils {
 	private static final double[] DEFAULT_INTERVAL_AFTER_IMAGE = {0, 1.8};
 	private static final double IMAGE_INTERVAL_STANDARD = 1;
 	public static final double EPSILON = 0.0001;
-	public static final double TABLE_BORDER_EPSILON = 0.01;
+	public static final double TABLE_BORDER_EPSILON = 0.011;
 	public static final double[] UNDERLINED_TEXT_EPSILONS = {0.05, 0.3, 0.3, 0.3};
 	private static final double WITH_TOLERANCE_FACTOR = 0.33;
 	private static final double[] HEADING_PROBABILITY_PARAMS = {0.55, 0.55, 0.3, 0.0291, 0.15, 0.15, 0.1, 0.1};
