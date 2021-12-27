@@ -13,6 +13,8 @@ import java.util.HashSet;
 
 public class LinesPreprocessingConsumer {
 
+    private static final double MAX_LINE_WIDTH = 5.0;
+
     private final IDocument document;
     private final LinesCollection linesCollection;
 
@@ -46,6 +48,9 @@ public class LinesPreprocessingConsumer {
         Set<LineChunk> set = new HashSet<>(linesCollection.getHorizontalLines(pageNumber));
         set.addAll(linesCollection.getVerticalLines(pageNumber));
         for (LineChunk line : set) {
+            if (line.getWidth() > MAX_LINE_WIDTH) {
+                continue;
+            }
             boolean separateTableBorder = true;
             for (TableBorderBuilder border : tableBorders) {
                 boolean isCross = false;
