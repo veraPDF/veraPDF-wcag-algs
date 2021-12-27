@@ -284,7 +284,9 @@ public class TableBorderConsumer {
     private static SortedSet<INode> findParents(Set<INode> nodes, int depth) {
         SortedSet<INode> parents = new TreeSet<>(Comparator.comparing(INode::getIndex));
         for (INode node : nodes) {
-            parents.add(findParent(node, depth));
+            if (node != null) {
+                parents.add(findParent(node, depth));
+            }
         }
         return parents;
     }

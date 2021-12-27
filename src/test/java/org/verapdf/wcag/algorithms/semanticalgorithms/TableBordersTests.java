@@ -28,6 +28,8 @@ public class TableBordersTests {
 
     static Stream<Arguments> tableBorderDetectionTestParams() {
         return Stream.of(
+                Arguments.of("test-document-1", new int[][] {{},{},{188},{},{},{}}, new int[][] {{},{},{19},{},{},{}},
+                        new int[][] {{},{},{4},{},{},{}}, true, true),
                 Arguments.of("table-word", new int[][] {{65}}, new int[][] {{4}}, new int[][] {{4}}, true, true),
                 Arguments.of("emptyCells", new int[][] {{40}}, new int[][] {{3}}, new int[][] {{3}}, true, true),
                 Arguments.of("emptyCells2", new int[][] {{40}}, new int[][] {{3}}, new int[][] {{3}}, true, true),
@@ -44,10 +46,10 @@ public class TableBordersTests {
                         new int[][] {{},{3},{2},{6},{6,6,6,6,6},{6,6,6,6},{6,6,6,6},{6,6,6,6,6},{6,6,6,6,6,6,6,6},
                                 {6},{6,6,6},{6},{6}}, true, true),
                 Arguments.of("PDFUA-Ref-2-05_BookChapter-german",
-                        new int[][] {{},{},{},{},{5},{},{62},{},{},{},{},{},{},{},{},{},{},{},{},{},{}},
+                        new int[][] {{},{},{},{},{},{},{62},{},{},{},{},{},{},{},{},{},{},{},{},{},{}},
                         new int[][] {{},{},{},{},{},{},{6},{},{},{},{},{},{},{},{},{},{},{},{},{},{}},
                         new int[][] {{},{},{},{},{},{},{5},{},{},{},{},{},{},{},{},{},{},{},{},{},{}}, true, true),
-                Arguments.of("PDFUA-Ref-2-06_Brochure", new int[][] {{10,9},{}}, new int[][] {{},{}}, new int[][] {{},{}}, true, true),
+                Arguments.of("PDFUA-Ref-2-06_Brochure", new int[][] {{},{}}, new int[][] {{},{}}, new int[][] {{},{}}, true, true),
                 Arguments.of("tableBorders/table_word", new int[][] {{38}}, new int[][] {{4}}, new int[][] {{3}}, true, true),
                 Arguments.of("tableBorders/table_libre", new int[][] {{8}}, new int[][] {{3}}, new int[][] {{3}}, true, true)
         );

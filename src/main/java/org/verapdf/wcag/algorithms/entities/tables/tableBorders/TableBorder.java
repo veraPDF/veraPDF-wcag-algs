@@ -124,6 +124,16 @@ public class TableBorder {
             }
         }
         for (int rowNumber = numberOfRows - 2; rowNumber >= 0; rowNumber--) {
+            if (rows[rowNumber].cells[numberOfColumns - 1].rowSpan != 1) {
+                rows[rowNumber].cells[numberOfColumns - 1].rowSpan = rows[rowNumber + 1].cells[numberOfColumns - 1].rowSpan + 1;
+            }
+        }
+        for (int colNumber = numberOfColumns - 2; colNumber >= 0; colNumber--) {
+            if (rows[numberOfRows - 1].cells[colNumber].colSpan != 1) {
+                rows[numberOfRows - 1].cells[colNumber].colSpan = rows[numberOfRows - 1].cells[colNumber + 1].colSpan + 1;
+            }
+        }
+        for (int rowNumber = numberOfRows - 2; rowNumber >= 0; rowNumber--) {
             for (int colNumber = numberOfColumns - 2; colNumber >= 0; colNumber--) {
                 if (rows[rowNumber].cells[colNumber].colSpan != 1) {
                     rows[rowNumber].cells[colNumber].colSpan = rows[rowNumber].cells[colNumber + 1].colSpan + 1;
