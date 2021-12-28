@@ -38,7 +38,9 @@ public class TableBorder {
         numberOfRows = yCoordinates.size() - 1;
         numberOfColumns = xCoordinates.size() - 1;
         rows = new TableBorderRow[numberOfRows];
-        createMatrix(builder);
+        if (numberOfColumns > 1 && numberOfRows > 1) {
+            createMatrix(builder);
+        }
         id = Table.getNextTableListId();
     }
 
