@@ -36,7 +36,7 @@ public class TableBordersTests {
                 Arguments.of("emptyCells3", new int[][] {{40}}, new int[][] {{3}}, new int[][] {{3}}, true, true),
                 Arguments.of("emptyCells4", new int[][] {{40}}, new int[][] {{3}}, new int[][] {{3}}, true, true),
                 Arguments.of("NEG-fake-table", new int[][] {{10}}, new int[][] {{4}}, new int[][] {{4}}, false, true),
-                Arguments.of("NEG-floating-text-box", new int[][] {{5}}, new int[][] {{}}, new int[][] {{}}, true, true),
+                Arguments.of("NEG-floating-text-box", new int[][] {{5}}, new int[][] {{1}}, new int[][] {{2}}, false, false),
                 Arguments.of("PDFUA-Ref-2-02_Invoice", new int[][] {{}}, new int[][] {{}}, new int[][] {{}}, true, false),
                 Arguments.of("PDFUA-Reference-01_(Matterhorn-Protocol_1-02)",
                         new int[][] {{},{62},{53},{173},{113,93,53,93,113},{73,73,193,53},{173,53,173,173},
@@ -81,7 +81,8 @@ public class TableBordersTests {
         TableBordersCollection tableBordersCollection = new TableBordersCollection(tableBorderBuilders);
         AccumulatedNodeConsumer paragraphValidator = new AccumulatedNodeConsumer(tableBordersCollection);
         tree.forEach(paragraphValidator);
-        TableBorderConsumer tableBorderConsumer = new TableBorderConsumer(tableBordersCollection, null);
+        TableBorderConsumer tableBorderConsumer = new TableBorderConsumer(tableBordersCollection,
+                paragraphValidator.getAccumulatedNodeMapper());
         tableBorderConsumer.recognizeTables(tree);
         List<SortedSet<TableBorder>> tableBorders = tableBordersCollection.getTableBorders();
         Assertions.assertEquals(listN.length, tableBorders.size());

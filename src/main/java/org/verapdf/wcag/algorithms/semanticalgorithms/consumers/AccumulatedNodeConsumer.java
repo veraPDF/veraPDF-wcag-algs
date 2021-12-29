@@ -468,14 +468,16 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 				listItems.add(line.getValue().trim());
 			}
 			ListUtils.updateTreeWithRecognizedList(node, textChildren,
-					ListUtils.getChildrenListIntervals(ListLabelsUtils.getListItemsIntervals(listItems), childrenFirstLines));
+					ListUtils.getChildrenListIntervals(ListLabelsUtils.getListItemsIntervals(listItems),
+							childrenFirstLines), accumulatedNodeMapper);
 		} else if (textChildren.size() == 1 && SemanticType.LIST.equals(node.getInitialSemanticType()) &&
 		           ListLabelsUtils.isListLabel(childrenFirstLines.get(0).getValue().trim().charAt(0))) {
-			ListUtils.updateTreeWithRecognizedList(node, textChildren, new ListInterval(0, 0));
+			ListUtils.updateTreeWithRecognizedList(node, textChildren, new ListInterval(0, 0), accumulatedNodeMapper);
 		}
 		if (imageChildren.size() > 1) {
 			ListUtils.updateTreeWithRecognizedList(node, imageChildren,
-					ListUtils.getChildrenListIntervals(ListLabelsUtils.getImageListItemsIntervals(childrenImages), childrenImages));
+					ListUtils.getChildrenListIntervals(ListLabelsUtils.getImageListItemsIntervals(childrenImages),
+							childrenImages), accumulatedNodeMapper);
 		}
 	}
 }

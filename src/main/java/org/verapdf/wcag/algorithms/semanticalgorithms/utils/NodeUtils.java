@@ -22,7 +22,7 @@ public class NodeUtils {
 	public static final double TABLE_BORDER_EPSILON = 0.011;
 	public static final double[] UNDERLINED_TEXT_EPSILONS = {0.05, 0.3, 0.3, 0.3};
 	private static final double WITH_TOLERANCE_FACTOR = 0.33;
-	private static final double[] HEADING_PROBABILITY_PARAMS = {0.55, 0.55, 0.3, 0.0291, 0.15, 0.15, 0.1, 0.1};
+	private static final double[] HEADING_PROBABILITY_PARAMS = {0.55, 0.55, 0.3, 0.0291, 0.15, 0.15, 0.1, 0.1, 0.05};
 	private static final double[] CAPTION_PROBABILITY_PARAMS = {1.0, 0.95, 0.9, 0.85, 0.2, 0.1, 0.03};
 	public static final String FIGURE = "Figure";
 
@@ -84,14 +84,14 @@ public class NodeUtils {
 		}
 		SemanticTextNode neighborTextNode = (SemanticTextNode) neighborNode;
 		double probability = 0.0;
-		if (textNode.getFontWeight() > neighborTextNode.getFontWeight() + FLOATING_POINT_OPERATIONS_EPS) {
+		if (textNode.getFontWeight() > neighborTextNode.getFontWeight() + HEADING_PROBABILITY_PARAMS[8]) {
 			probability += HEADING_PROBABILITY_PARAMS[0];
-		} else if (neighborTextNode.getFontWeight() > textNode.getFontWeight() + FLOATING_POINT_OPERATIONS_EPS) {
+		} else if (neighborTextNode.getFontWeight() > textNode.getFontWeight() + HEADING_PROBABILITY_PARAMS[8]) {
 			probability -= HEADING_PROBABILITY_PARAMS[4];
 		}
-		if (textNode.getFontSize() > neighborTextNode.getFontSize() + FLOATING_POINT_OPERATIONS_EPS) {
+		if (textNode.getFontSize() > neighborTextNode.getFontSize() + HEADING_PROBABILITY_PARAMS[8]) {
 			probability += HEADING_PROBABILITY_PARAMS[1];
-		} else if (neighborTextNode.getFontSize() > textNode.getFontSize() + FLOATING_POINT_OPERATIONS_EPS) {
+		} else if (neighborTextNode.getFontSize() > textNode.getFontSize() + HEADING_PROBABILITY_PARAMS[8]) {
 			probability -= HEADING_PROBABILITY_PARAMS[5];
 		}
 		return probability;
@@ -124,7 +124,7 @@ public class NodeUtils {
 		return Math.min(captionProbability, 1.0);
 	}
 
-	public static double tableCaptionProbability(INode node, Table table) {
+	public static double tableCaptionProbability(INode node, BoundingBox tableBoundingBox) {
 		if (node == null) {
 			return 0.0;
 		}
@@ -132,8 +132,8 @@ public class NodeUtils {
 			return 0.0;
 		}
 		SemanticTextNode textNode = (SemanticTextNode) node;
-		double captionProbability = NodeUtils.captionVerticalProbability(textNode, table.getBoundingBox());
-		captionProbability *= NodeUtils.captionHorizontalProbability(textNode, table.getBoundingBox());
+		double captionProbability = NodeUtils.captionVerticalProbability(textNode, tableBoundingBox);
+		captionProbability *= NodeUtils.captionHorizontalProbability(textNode, tableBoundingBox);
 		captionProbability *= NodeUtils.getLinesNumberCaptionProbability(textNode);
 		captionProbability += NodeUtils.captionContentProbability(textNode, SemanticType.TABLE.getValue());
 		return Math.min(captionProbability, 1.0);

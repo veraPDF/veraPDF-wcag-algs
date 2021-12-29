@@ -11,6 +11,7 @@ import org.verapdf.wcag.algorithms.entities.IDocument;
 import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.AccumulatedNodeConsumer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.TableBorderConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ClusterTableConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.LinesPreprocessingConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.SemanticDocumentPreprocessingConsumer;
@@ -25,8 +26,8 @@ public class ClusterTableTests {
 
     static Stream<Arguments> clusterTableDetectionTestParams() {
         return Stream.of(
-                Arguments.of("table-word.json", new int[][] {{4, 4}}, true, true),
-                Arguments.of("NEG-fake-table.json", new int[][] {{4, 4}}, false, true),
+                Arguments.of("table-word.json", new int[][] {/*{4, 4}*/}, true, true),
+                Arguments.of("NEG-fake-table.json", new int[][] {/*{4, 4}*/}, false, true),
                 Arguments.of("NEG-bad-table.json", new int[][] {{4, 5}}, false, false),
                 Arguments.of("NEG-bad-table2.json", new int[][] {{4, 5}}, false, false),
                 Arguments.of("no-table.json", new int[][] {}, false, true),
@@ -41,11 +42,11 @@ public class ClusterTableTests {
                 Arguments.of("fake-table2.json", new int[][] {{4, 5}, {4, 9}}, false, false),
                 Arguments.of("fake-table2-fix.json", new int[][] {{4, 5}, {4, 9}}, true, true),
                 Arguments.of("fake-table3.json", new int[][] {}, false, true),
-                Arguments.of("tableBorder.json", new int[][] {{3, 4}}, true, true),
+                Arguments.of("tableBorder.json", new int[][] {/*{3, 4}*/}, true, true),
                 Arguments.of("three-tables.json", new int[][] {{5, 6}, {4, 10}, {5, 4}}, false, false), // third table contains images
                 Arguments.of("PDFUA-Ref-2-05_BookChapter-german.json", new int[][] {{2, 24}}, false, false), // contents page is recognized as table, table on 6th page is not recognized
                 Arguments.of("PDFUA-Ref-2-02_Invoice.json", new int[][] {{4, 9}}, false, false),
-                Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[][] {}, false, true)
+                Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[][] {}, true, true)
                 );
     }
 
@@ -70,9 +71,13 @@ public class ClusterTableTests {
         AccumulatedNodeConsumer paragraphValidator = new AccumulatedNodeConsumer(tableBordersCollection);
         tree.forEach(paragraphValidator);
 
-		ClusterTableConsumer tableFinder = new ClusterTableConsumer(tableBordersCollection,
+        TableBorderConsumer tableBorderConsumer = new TableBorderConsumer(tableBordersCollection,
                 paragraphValidator.getAccumulatedNodeMapper());
-        tree.forEach(tableFinder);
+        tableBorderConsumer.recognizeTables(tree);
+
+        ClusterTableConsumer tableFinder = new ClusterTableConsumer(tableBordersCollection,
+                paragraphValidator.getAccumulatedNodeMapper());
+        tableFinder.findTables(tree.getRoot());
 
         List<Table> resultTables = tableFinder.getTables();
 

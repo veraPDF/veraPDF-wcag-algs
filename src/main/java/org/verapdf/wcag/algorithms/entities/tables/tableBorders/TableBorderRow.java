@@ -6,7 +6,7 @@ import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 public class TableBorderRow {
     public int rowNumber;
-    public TableBorderCell[] cells;
+    protected TableBorderCell[] cells;
     private SemanticType semanticType;
     private INode node;
     private final BoundingBox boundingBox;
@@ -85,5 +85,13 @@ public class TableBorderRow {
             }
         }
         return numberOfCells;
+    }
+
+    public TableBorderCell[] getCells() {
+        return cells;
+    }
+
+    public TableBorderCell getCell(int colNumber) {
+        return cells[colNumber];
     }
 }

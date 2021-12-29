@@ -20,12 +20,13 @@ public class TableBorder {
     private final List<Double> xWidths;
     private final List<Double> yCoordinates;
     private final List<Double> yWidths;
-    private final TableBorderRow[] rows;
+    private TableBorderRow[] rows;
     private final BoundingBox boundingBox;
-    private final int numberOfRows;
-    private final int numberOfColumns;
+    private int numberOfRows;
+    private int numberOfColumns;
     private final Long id;
     private INode node;
+    private boolean isBadTable = false;
 
     public TableBorder(TableBorderBuilder builder) {
         xCoordinates = new LinkedList<>();
@@ -38,7 +39,7 @@ public class TableBorder {
         numberOfRows = yCoordinates.size() - 1;
         numberOfColumns = xCoordinates.size() - 1;
         rows = new TableBorderRow[numberOfRows];
-        if (numberOfColumns > 1 && numberOfRows > 1) {
+        if (numberOfColumns > 0 && numberOfRows > 0) {
             createMatrix(builder);
         }
         id = Table.getNextTableListId();
@@ -64,6 +65,10 @@ public class TableBorder {
 
     public TableBorderRow[] getRows() {
         return rows;
+    }
+
+    public TableBorderRow getRow(int rowNumber) {
+        return rows[rowNumber];
     }
 
     public int getNumberOfRowsWithContent() {
@@ -148,10 +153,22 @@ public class TableBorder {
         for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
             for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
                 if (rows[rowNumber].cells[colNumber].colNumber + rows[rowNumber].cells[colNumber].colSpan > colNumber + 1) {
-                    rows[rowNumber].cells[colNumber + 1] = rows[rowNumber].cells[colNumber];
+                    if (rows[rowNumber].cells[colNumber + 1].rowNumber + rows[rowNumber].cells[colNumber + 1].rowSpan ==
+                            rows[rowNumber].cells[colNumber].rowNumber + rows[rowNumber].cells[colNumber].rowSpan) {
+                        rows[rowNumber].cells[colNumber + 1] = rows[rowNumber].cells[colNumber];
+                    } else {
+                        isBadTable = true;
+                        return;
+                    }
                 }
                 if (rows[rowNumber].cells[colNumber].rowNumber + rows[rowNumber].cells[colNumber].rowSpan > rowNumber + 1) {
-                    rows[rowNumber + 1].cells[colNumber] = rows[rowNumber].cells[colNumber];
+                    if (rows[rowNumber + 1].cells[colNumber].colNumber + rows[rowNumber + 1].cells[colNumber].colSpan ==
+                            rows[rowNumber].cells[colNumber].colNumber + rows[rowNumber].cells[colNumber].colSpan) {
+                        rows[rowNumber + 1].cells[colNumber] = rows[rowNumber].cells[colNumber];
+                    } else {
+                        isBadTable = true;
+                        return;
+                    }
                 }
             }
         }
@@ -233,7 +250,7 @@ public class TableBorder {
     }
 
     public boolean isBadTable() {
-        return numberOfRows <= 1 ||  numberOfColumns <= 1 || (numberOfRows == 2 && numberOfColumns == 2);
+        return isBadTable || numberOfRows <= 0 ||  numberOfColumns <= 0 || (numberOfRows == 1 && numberOfColumns == 1);
     }
 
     public BoundingBox getBoundingBox() {

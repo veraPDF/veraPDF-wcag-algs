@@ -1,11 +1,13 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
 import org.verapdf.wcag.algorithms.entities.INode;
+import org.verapdf.wcag.algorithms.entities.SemanticList;
 import org.verapdf.wcag.algorithms.entities.content.InfoChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
 import org.verapdf.wcag.algorithms.entities.lists.ListIntervalsCollection;
+import org.verapdf.wcag.algorithms.entities.maps.AccumulatedNodeMapper;
 import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.tables.TableCell;
 import org.verapdf.wcag.algorithms.entities.tables.TableRow;
@@ -68,13 +70,15 @@ public class ListUtils {
 		return true;
 	}
 
-	public static void updateTreeWithRecognizedList(INode node, List<INode> children, Set<ListInterval> listIntervals) {
+	public static void updateTreeWithRecognizedList(INode node, List<INode> children, Set<ListInterval> listIntervals,
+													AccumulatedNodeMapper accumulatedNodeMapper) {
 		for (ListInterval listInterval : listIntervals) {
-			updateTreeWithRecognizedList(node, children, listInterval);
+			updateTreeWithRecognizedList(node, children, listInterval, accumulatedNodeMapper);
 		}
 	}
 
-	public static void updateTreeWithRecognizedList(INode node, List<INode> children, ListInterval listInterval) {
+	public static void updateTreeWithRecognizedList(INode node, List<INode> children, ListInterval listInterval,
+													AccumulatedNodeMapper accumulatedNodeMapper) {
 		Long listId = Table.getNextTableListId();
 		for (int i = listInterval.start; i <= listInterval.end; i++) {
 			updateTreeWithRecognizedListItem(children.get(i), listId);
@@ -82,8 +86,7 @@ public class ListUtils {
 		if (node.getRecognizedStructureId() == null) {
 			double probability = ((double) (listInterval.end - listInterval.start + 1)) / children.size();
 			if (probability >= TABLE_PROBABILITY_THRESHOLD) {
-				node.setSemanticType(SemanticType.LIST);
-				node.setCorrectSemanticScore(probability);
+				accumulatedNodeMapper.updateNode(node, new SemanticList(node), probability, SemanticType.LIST);
 				node.setRecognizedStructureId(listId);
 			}
 		}
