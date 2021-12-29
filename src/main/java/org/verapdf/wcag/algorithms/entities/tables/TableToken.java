@@ -3,6 +3,7 @@ package org.verapdf.wcag.algorithms.entities.tables;
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.content.ImageChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 
 public class TableToken extends TextChunk {
     private final INode node;
@@ -12,6 +13,13 @@ public class TableToken extends TextChunk {
         super(textChunk);
         this.node = node;
         type = TableTokenType.TEXT;
+    }
+
+    public TableToken(TableBorder tableBorder) {
+        super(tableBorder.getBoundingBox(), "", tableBorder.getBoundingBox().getHeight(),
+                tableBorder.getBoundingBox().getBottomY());
+        this.node = tableBorder.getNode();
+        type = TableTokenType.TABLE;
     }
 
     public TableToken(ImageChunk imageChunk, INode node) {
@@ -31,6 +39,8 @@ public class TableToken extends TextChunk {
 
     public enum TableTokenType {
         IMAGE,
-        TEXT
+        TEXT,
+        LIST,
+        TABLE
     }
 }

@@ -12,6 +12,10 @@ public class TableBordersCollection {
 
     private final List<SortedSet<TableBorder>> tableBorders;
 
+    public TableBordersCollection() {
+        tableBorders = new ArrayList<>();
+    }
+
     public TableBordersCollection(List<List<TableBorderBuilder>> tableBorderBuilders) {
         tableBorders = new ArrayList<>(tableBorderBuilders.size());
         for (List<TableBorderBuilder> builders : tableBorderBuilders) {

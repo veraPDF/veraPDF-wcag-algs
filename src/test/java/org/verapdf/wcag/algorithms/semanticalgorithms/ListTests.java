@@ -62,7 +62,7 @@ public class ListTests {
 
         ClusterTableConsumer tableFinder = new ClusterTableConsumer(tableBordersCollection,
                 paragraphValidator.getAccumulatedNodeMapper());
-        tree.forEach(tableFinder);
+        tableFinder.findTables(tree.getRoot());
 
         List<PDFList> resultLists = tableFinder.getLists();
 

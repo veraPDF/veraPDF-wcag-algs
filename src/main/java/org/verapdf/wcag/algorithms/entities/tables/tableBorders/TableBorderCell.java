@@ -9,10 +9,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class TableBorderCell {
-    public int rowNumber;
-    public int colNumber;
-    public int rowSpan;
-    public int colSpan;
+    protected int rowNumber;
+    protected int colNumber;
+    protected int rowSpan;
+    protected int colSpan;
     private BoundingBox boundingBox;
     private final List<TableToken> content;
     private SemanticType semanticType;
@@ -80,5 +80,21 @@ public class TableBorderCell {
 
     public void setNode(INode node) {
         this.node = node;
+    }
+
+    public int getColNumber() {
+        return colNumber;
+    }
+
+    public int getRowNumber() {
+        return rowNumber;
+    }
+
+    public int getRowSpan() {
+        return rowSpan;
+    }
+
+    public int getColSpan() {
+        return colSpan;
     }
 }

@@ -2,6 +2,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.ITree;
+import org.verapdf.wcag.algorithms.entities.SemanticTable;
 import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.SemanticImageNode;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
@@ -63,8 +64,9 @@ public class TableBorderConsumer {
             for (TableBorder table : tables) {
                 INode tableNode = getTableNode(table);
                 if (tableNode != null) {
-                    setType(tableNode, SemanticType.TABLE, table.getId());
-                    //tableCaptions
+                    table.setNode(tableNode);
+                    accumulatedNodeMapper.updateNode(tableNode, new SemanticTable(table), 1.0,
+                                SemanticType.TABLE);
                     Integer depth = Arrays.stream(table.getRows())
                             .map(TableBorderRow::getNode)
                             .filter(Objects::nonNull)
@@ -81,6 +83,7 @@ public class TableBorderConsumer {
                         }
                         updateTreeWithRecognizedTableRows(table, depth);
                     }
+                    ClusterTableConsumer.detectTableCaptions(table.getBoundingBox(), tableNode, accumulatedNodeMapper);
                 }
             }
         }
@@ -89,7 +92,7 @@ public class TableBorderConsumer {
     private static void setTypesForEmptyRowNodes(TableBorder table, List<INode> rowNodes) {
         if (rowNodes.size() == table.getNumberOfRows()) {
             for (int rowNumber = 0; rowNumber < table.getRows().length; rowNumber++) {
-                TableBorderRow row = table.getRows()[rowNumber];
+                TableBorderRow row = table.getRow(rowNumber);
                 INode rowNode = rowNodes.get(rowNumber);
                 if (row.getNumberOfCellWithContent() == 0 && rowNode.getSemanticType() == null) {
                     rowNode.setSemanticType(SemanticType.TABLE_ROW);
@@ -136,9 +139,9 @@ public class TableBorderConsumer {
         if (rowNode != null && rowNode.getChildren().size() == row.getNumberOfCells()) {
             int number = 0;
             INode cellNode;
-            for (int colNumber = 0; colNumber < row.cells.length; colNumber++) {
-                TableBorderCell cell = row.cells[colNumber];
-                if (cell.rowNumber == row.rowNumber && cell.colNumber == colNumber) {
+            for (int colNumber = 0; colNumber < row.getCells().length; colNumber++) {
+                TableBorderCell cell = row.getCell(colNumber);
+                if (cell.getRowNumber() == row.rowNumber && cell.getColNumber() == colNumber) {
                     cellNode = rowNode.getChildren().get(number);
                     if (cell.getContent().isEmpty() && cellNode.getSemanticType() == null) {
                         cell.setNode(cellNode);
@@ -148,17 +151,17 @@ public class TableBorderConsumer {
                 }
             }
         }
-        List<INode> cells = findParents(Arrays.stream(row.cells).map(TableBorderCell::getNode)
+        List<INode> cells = findParents(Arrays.stream(row.getCells()).map(TableBorderCell::getNode)
                         .collect(Collectors.toList()), depth + 1);
         for (int colNumber = 0; colNumber < cells.size(); colNumber++) {
-            if (cells.get(colNumber) != null && row.cells[colNumber].rowNumber == row.rowNumber &&
-                    row.cells[colNumber].colNumber == colNumber) {
-                if (isHeaderCell(cells.get(colNumber), row.cells[colNumber], table)) {
+            if (cells.get(colNumber) != null && row.getCell(colNumber).getRowNumber() == row.rowNumber &&
+                    row.getCell(colNumber).getColNumber() == colNumber) {
+                if (isHeaderCell(cells.get(colNumber), row.getCell(colNumber), table)) {
                     setType(cells.get(colNumber), SemanticType.TABLE_HEADER, table.getId());
-                    row.cells[colNumber].setSemanticType(SemanticType.TABLE_HEADER);
+                    row.getCell(colNumber).setSemanticType(SemanticType.TABLE_HEADER);
                 } else {
                     setType(cells.get(colNumber), SemanticType.TABLE_CELL, table.getId());
-                    row.cells[colNumber].setSemanticType(SemanticType.TABLE_CELL);
+                    row.getCell(colNumber).setSemanticType(SemanticType.TABLE_CELL);
                 }
             }
         }
@@ -211,9 +214,9 @@ public class TableBorderConsumer {
 
     private INode getRowNode(TableBorderRow row) {
         Set<INode> cellNodes = new HashSet<>();
-        for (int colNumber = 0; colNumber < row.cells.length; colNumber++) {
-            TableBorderCell cell = row.cells[colNumber];
-            if (cell.rowNumber == row.rowNumber && cell.colNumber == colNumber) {
+        for (int colNumber = 0; colNumber < row.getCells().length; colNumber++) {
+            TableBorderCell cell = row.getCell(colNumber);
+            if (cell.getRowNumber() == row.rowNumber && cell.getColNumber() == colNumber) {
                 INode cellNode = getCellNode(cell);
                 if (cellNode != null) {
                     cell.setNode(cellNode);
@@ -243,16 +246,16 @@ public class TableBorderConsumer {
         if (cellNode.getInitialSemanticType() != SemanticType.TABLE_HEADER) {
             return false;
         }
-        if (cell.colNumber == 0 || cell.rowNumber == 0) {
+        if (cell.getColNumber() == 0 || cell.getRowNumber() == 0) {
             return true;
         }
-        for (int rowNumber = cell.rowNumber; rowNumber < cell.rowNumber + cell.rowSpan; rowNumber++) {
-            if (table.getRows()[rowNumber].cells[cell.colNumber - 1].getSemanticType() == SemanticType.TABLE_HEADER) {
+        for (int rowNumber = cell.getRowNumber(); rowNumber < cell.getRowNumber() + cell.getRowSpan(); rowNumber++) {
+            if (table.getRow(rowNumber).getCell(cell.getColNumber() - 1).getSemanticType() == SemanticType.TABLE_HEADER) {
                 return true;
             }
         }
-        for (int colNumber = cell.colNumber; colNumber < cell.colNumber + cell.colSpan; colNumber++) {
-            if (table.getRows()[cell.rowNumber - 1].cells[colNumber].getSemanticType() == SemanticType.TABLE_HEADER) {
+        for (int colNumber = cell.getColNumber(); colNumber < cell.getColNumber() + cell.getColSpan(); colNumber++) {
+            if (table.getRow(cell.getRowNumber() - 1).getCell(colNumber).getSemanticType() == SemanticType.TABLE_HEADER) {
                 return true;
             }
         }

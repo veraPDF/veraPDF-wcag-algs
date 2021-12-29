@@ -29,12 +29,13 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 		AccumulatedNodeConsumer semanticDetectionValidator = new AccumulatedNodeConsumer(tableBordersCollection);
 		tree.forEach(semanticDetectionValidator);
 
-		TableBorderConsumer tableBorderConsumer = new TableBorderConsumer(tableBordersCollection, null);
+		TableBorderConsumer tableBorderConsumer = new TableBorderConsumer(tableBordersCollection,
+				semanticDetectionValidator.getAccumulatedNodeMapper());
 		tableBorderConsumer.recognizeTables(tree);
 
-//		ClusterTableConsumer tableFinder = new ClusterTableConsumer(tableBordersCollection,
-//				semanticDetectionValidator.getAccumulatedNodeMapper());
-//		tree.forEach(tableFinder);
+		ClusterTableConsumer tableFinder = new ClusterTableConsumer(tableBordersCollection,
+				semanticDetectionValidator.getAccumulatedNodeMapper());
+		tableFinder.findTables(tree.getRoot());
 
 		SemanticDocumentPostprocessingConsumer documentPostprocessingConsumer =
 				new SemanticDocumentPostprocessingConsumer(semanticDetectionValidator.getAccumulatedNodeMapper());
