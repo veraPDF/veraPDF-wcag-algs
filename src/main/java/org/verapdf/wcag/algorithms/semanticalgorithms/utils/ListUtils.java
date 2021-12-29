@@ -70,17 +70,21 @@ public class ListUtils {
 
 	public static void updateTreeWithRecognizedList(INode node, List<INode> children, Set<ListInterval> listIntervals) {
 		for (ListInterval listInterval : listIntervals) {
-			Long listId = Table.getNextTableListId();
-			for (int i = listInterval.start; i <= listInterval.end; i++) {
-				updateTreeWithRecognizedListItem(children.get(i), listId);
-			}
-			if (node.getRecognizedStructureId() == null) {
-				double probability = ((double)(listInterval.end - listInterval.start + 1)) / children.size();
-				if (probability >= TABLE_PROBABILITY_THRESHOLD) {
-					node.setSemanticType(SemanticType.LIST);
-					node.setCorrectSemanticScore(probability);
-					node.setRecognizedStructureId(listId);
-				}
+			updateTreeWithRecognizedList(node, children, listInterval);
+		}
+	}
+
+	public static void updateTreeWithRecognizedList(INode node, List<INode> children, ListInterval listInterval) {
+		Long listId = Table.getNextTableListId();
+		for (int i = listInterval.start; i <= listInterval.end; i++) {
+			updateTreeWithRecognizedListItem(children.get(i), listId);
+		}
+		if (node.getRecognizedStructureId() == null) {
+			double probability = ((double) (listInterval.end - listInterval.start + 1)) / children.size();
+			if (probability >= TABLE_PROBABILITY_THRESHOLD) {
+				node.setSemanticType(SemanticType.LIST);
+				node.setCorrectSemanticScore(probability);
+				node.setRecognizedStructureId(listId);
 			}
 		}
 	}

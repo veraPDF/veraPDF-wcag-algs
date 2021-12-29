@@ -19,6 +19,10 @@ public class ListLabelsUtils {
 	private static final Set<Character> labels = new HashSet<>(Arrays.asList('\u002D', '\u006F', '\u2022', '\u25CF', '\u2714',
 			'\u2717', '\u2794', '\u27A2', '\uE00A', '\uE00C', '\uF076', '\u2588', '\u25A0', '\u2013', '\uF0B7'));//office labels examples (-, •, ✔, ✗, ●, ➔, ➢, o), pdf files labels examples (█, ■)
 
+	public static boolean isListLabel(Character label) {
+		return labels.contains(label);
+	}
+
 	public static boolean isListLabels(List<String> listLabels) {
 		if (listLabels.size() < 2) {
 			return false;
