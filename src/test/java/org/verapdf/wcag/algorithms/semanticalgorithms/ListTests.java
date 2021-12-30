@@ -34,7 +34,8 @@ public class ListTests {
                 Arguments.of("list-with-image-label.json", new int[] {3}, false, true),
                 Arguments.of("NEG-fake-list.json", new int[] {4}, false, true),
                 Arguments.of("ordered-list1.json", new int[] {5, 5}, true, true),
-                Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[] {7, 4, 4}, true, true)
+                Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[] {7, 4, 4}, true, true),
+                Arguments.of("one_element_list.json", new int[]{}, true, true)
                 );
     }
 

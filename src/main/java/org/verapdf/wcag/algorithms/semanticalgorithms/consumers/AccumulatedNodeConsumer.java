@@ -1,6 +1,8 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
 import org.verapdf.wcag.algorithms.entities.INode;
+import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
+import org.verapdf.wcag.algorithms.entities.lists.ListIntervalsCollection;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 import org.verapdf.wcag.algorithms.entities.SemanticParagraph;
@@ -461,6 +463,9 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			}
 			ListUtils.updateTreeWithRecognizedList(node, textChildren,
 					ListUtils.getChildrenListIntervals(ListLabelsUtils.getListItemsIntervals(listItems), childrenFirstLines));
+		} else if (textChildren.size() == 1 && SemanticType.LIST.equals(node.getInitialSemanticType()) &&
+		           ListLabelsUtils.isListLabel(childrenFirstLines.get(0).getValue().trim().charAt(0))) {
+			ListUtils.updateTreeWithRecognizedList(node, textChildren, new ListInterval(0, 0));
 		}
 		if (imageChildren.size() > 1) {
 			ListUtils.updateTreeWithRecognizedList(node, imageChildren,
