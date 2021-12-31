@@ -58,12 +58,13 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			return;
 		}
 
-		boolean isLeafChild  = node.getChildren()
-		                           .stream()
-		                           .allMatch((child) -> ((child instanceof SemanticSpan) ||
-		                                                 (child instanceof SemanticImageNode) ||
-		                                                 child.getSemanticType() == null));
-		if (isLeafChild && node.getInitialSemanticType() == SemanticType.SPAN) {
+		boolean isSpan  = node.getChildren()
+		                      .stream()
+		                      .allMatch(child -> ((child instanceof SemanticSpan) ||
+		                                          (child instanceof SemanticImageNode) ||
+		                                          child.getSemanticType() == SemanticType.SPAN ||
+		                                          child.getSemanticType() == null));
+		if (node.getInitialSemanticType() == SemanticType.SPAN && isSpan) {
 			acceptSemanticSpan(node);
 		} else {
 			acceptSemanticParagraph(node);
@@ -73,6 +74,11 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 
 		checkSemanticSpanChildren(node);
 
+		boolean isLeafChild  = node.getChildren()
+		                           .stream()
+		                           .allMatch(child -> ((child instanceof SemanticSpan) ||
+		                                               (child instanceof SemanticImageNode) ||
+		                                               child.getSemanticType() == null));
 		if (!isLeafChild) {
 			acceptChildrenSemanticHeading(node);
 			acceptSemanticList(node);
