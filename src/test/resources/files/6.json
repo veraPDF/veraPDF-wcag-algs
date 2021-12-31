@@ -2,7 +2,7 @@
 	"type": "Span",
 	"children": [
 		{
-			"type": "Span",
+			"type": "P",
 			"children": [
 				{
 					"type": "TextChunk",
