@@ -38,6 +38,6 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 		tableFinder.findTables(tree.getRoot());
 
 		SemanticDocumentPostprocessingConsumer documentPostprocessingConsumer = new SemanticDocumentPostprocessingConsumer();
-		documentPostprocessingConsumer.checkForTitle(tree);
+		documentPostprocessingConsumer.runPostprocessingChecks(tree);
 	}
 }
