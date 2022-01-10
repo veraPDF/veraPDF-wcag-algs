@@ -13,15 +13,11 @@ import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class SemanticDocumentPostprocessingConsumer {
 
-	private final List<RepeatedCharacters> repeatedCharacters = new ArrayList<>();
-
-	public List<RepeatedCharacters> getRepeatedCharacters() {
-		return repeatedCharacters;
+	public void runPostprocessingChecks(ITree tree) {
+		checkForTitle(tree);
+		checkForRepeatedCharacters(tree);
 	}
 
 	public void checkForTitle(ITree tree) {
@@ -35,7 +31,7 @@ public class SemanticDocumentPostprocessingConsumer {
 		}
 	}
 
-	public void checkForRepeatedElements(ITree tree) {
+	public void checkForRepeatedCharacters(ITree tree) {
 		String valueToCheck = "";
 		MultiBoundingBox multiBoundingBox = new MultiBoundingBox();
 		for (INode node : tree) {
@@ -126,7 +122,8 @@ public class SemanticDocumentPostprocessingConsumer {
 				length++;
 			} else {
 				if (length > 2) {
-					repeatedCharacters.add(new RepeatedCharacters(!isLastCharacterWhiteSpace, length, boundingBox));
+					StaticContainers.getRepeatedCharacters().add(new RepeatedCharacters(!isLastCharacterWhiteSpace,
+					                                                                    length, boundingBox));
 				}
 				length = 1;
 				lastCharacter = character;
@@ -134,7 +131,8 @@ public class SemanticDocumentPostprocessingConsumer {
 			}
 		}
 		if (length > 2) {
-			repeatedCharacters.add(new RepeatedCharacters(!isLastCharacterWhiteSpace, length, boundingBox));
+			StaticContainers.getRepeatedCharacters().add(new RepeatedCharacters(!isLastCharacterWhiteSpace,
+			                                                                    length, boundingBox));
 		}
 	}
 }

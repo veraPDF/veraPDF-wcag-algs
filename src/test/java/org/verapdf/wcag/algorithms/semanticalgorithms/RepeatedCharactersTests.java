@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.verapdf.wcag.algorithms.entities.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.*;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,6 +40,12 @@ class RepeatedCharactersTests {
 				                                                                                             new RepeatedCharacters(true, 21)}),
 				Arguments.of("space_tab.json", new RepeatedCharacters[]{new RepeatedCharacters(false, 5),
 				                                                        new RepeatedCharacters(false, 5)}),
+				Arguments.of("test-document-3.json", new RepeatedCharacters[]{new RepeatedCharacters(false, 3),
+				                                                              new RepeatedCharacters(false, 5),
+				                                                              new RepeatedCharacters(false, 3),
+				                                                              new RepeatedCharacters(true, 3),
+				                                                              new RepeatedCharacters(true, 3),
+				                                                              new RepeatedCharacters(false, 3)}),
 				Arguments.of("title.json", new RepeatedCharacters[]{new RepeatedCharacters(true, 7),
 				                                                    new RepeatedCharacters(false, 5)}),
 				Arguments.of("whitespace_nonbreaking.json", new RepeatedCharacters[]{new RepeatedCharacters(false, 5),
@@ -52,11 +59,13 @@ class RepeatedCharactersTests {
 		IDocument document = JsonToPdfTree.getDocument("/files/repeatedCharacters/" + filename);
 		ITree tree = document.getTree();
 
+		StaticContainers.clearAllContainers(null);
+
 		SemanticDocumentPostprocessingConsumer documentPostprocessingConsumer =
 				new SemanticDocumentPostprocessingConsumer();
-		documentPostprocessingConsumer.checkForRepeatedElements(tree);
+		documentPostprocessingConsumer.checkForRepeatedCharacters(tree);
 
-		testRepeated(checks, documentPostprocessingConsumer.getRepeatedCharacters());
+		testRepeated(checks, StaticContainers.getRepeatedCharacters());
 	}
 
 	private void testRepeated(RepeatedCharacters[] checks, List<RepeatedCharacters> repeatedCharacters) {
