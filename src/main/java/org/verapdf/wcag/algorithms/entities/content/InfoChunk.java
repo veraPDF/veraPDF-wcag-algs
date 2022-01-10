@@ -1,18 +1,19 @@
 package org.verapdf.wcag.algorithms.entities.content;
 
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 
 import java.util.Objects;
 
 public abstract class InfoChunk implements IChunk {
-    private final BoundingBox boundingBox;
+    private BoundingBox boundingBox;
 
     public InfoChunk() {
         boundingBox = new BoundingBox();
     }
 
     public InfoChunk(BoundingBox bbox) {
-        this.boundingBox = new BoundingBox(bbox);
+        setBoundingBox(bbox);
     }
 
     @Override
@@ -67,7 +68,11 @@ public abstract class InfoChunk implements IChunk {
 
     @Override
     public void setBoundingBox(BoundingBox bbox) {
-        boundingBox.init(bbox);
+        if (bbox instanceof MultiBoundingBox) {
+            boundingBox = new MultiBoundingBox(bbox);
+        } else {
+            boundingBox = new BoundingBox(bbox);
+        }
     }
 
     @Override

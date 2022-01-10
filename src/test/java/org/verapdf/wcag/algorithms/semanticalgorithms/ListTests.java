@@ -15,6 +15,7 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.AccumulatedNodeC
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ClusterTableConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.LinesPreprocessingConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.SemanticDocumentPreprocessingConsumer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListUtils;
 
 import java.io.IOException;
@@ -46,22 +47,22 @@ public class ListTests {
         IDocument document = JsonToPdfTree.getDocument("/files/lists/" + filename);
         ITree tree = document.getTree();
 
+        StaticContainers.clearAllContainers(document);
+
         LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer(document);
         linesPreprocessingConsumer.findTableBorders();
 
-        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document,
-                linesPreprocessingConsumer.getLinesCollection());
+        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document);
         tree.forEach(semanticDocumentValidator);
 
         Table.updateTableCounter();
 
-        TableBordersCollection tableBordersCollection = new TableBordersCollection(linesPreprocessingConsumer.getTableBorders());
+        StaticContainers.setTableBordersCollection(new TableBordersCollection(linesPreprocessingConsumer.getTableBorders()));
 
-        AccumulatedNodeConsumer paragraphValidator = new AccumulatedNodeConsumer(tableBordersCollection);
+        AccumulatedNodeConsumer paragraphValidator = new AccumulatedNodeConsumer();
         tree.forEach(paragraphValidator);
 
-        ClusterTableConsumer tableFinder = new ClusterTableConsumer(tableBordersCollection,
-                paragraphValidator.getAccumulatedNodeMapper());
+        ClusterTableConsumer tableFinder = new ClusterTableConsumer();
         tableFinder.findTables(tree.getRoot());
 
         List<PDFList> resultLists = tableFinder.getLists();

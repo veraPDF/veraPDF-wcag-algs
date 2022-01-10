@@ -13,6 +13,7 @@ import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.LinesPreprocessingConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.SemanticDocumentPreprocessingConsumer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
 import java.io.IOException;
 import java.util.function.Consumer;
@@ -33,11 +34,11 @@ public class UnderlinedTextTests {
     void testUnderlinedTextDetection(String filename, boolean isUnderlined) throws IOException {
         IDocument document = JsonToPdfTree.getDocument("/files/underlinedText/" + filename);
         ITree tree = document.getTree();
+        StaticContainers.clearAllContainers(document);
         LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer(document);
         linesPreprocessingConsumer.findTableBorders();
 
-        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document,
-                linesPreprocessingConsumer.getLinesCollection());
+        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document);
         tree.forEach(semanticDocumentValidator);
         testUnderlined(tree, isUnderlined);
     }

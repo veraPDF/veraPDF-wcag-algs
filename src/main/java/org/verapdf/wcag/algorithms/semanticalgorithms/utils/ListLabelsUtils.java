@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 
-import org.verapdf.wcag.algorithms.entities.content.ImageChunk;
+import org.verapdf.wcag.algorithms.entities.content.InfoChunk;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
 import org.verapdf.wcag.algorithms.entities.lists.ListIntervalsCollection;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ArabicNumbersListLabelsDetectionAlgorithm;
@@ -99,12 +99,12 @@ public class ListLabelsUtils {
 		return length;
 	}
 
-	public static Set<ListInterval> getImageListItemsIntervals(List<ImageChunk> listItems) {
+	public static Set<ListInterval> getImageListItemsIntervals(List<? extends InfoChunk> listItems) {
 		Set<ListInterval> listIntervals = new HashSet<>();
 		int index = 0;
-		ImageChunk image = listItems.get(index);
+		InfoChunk image = listItems.get(index);
 		for (int i = 1; i < listItems.size(); i++) {
-			ImageChunk currentImage = listItems.get(i);
+			InfoChunk currentImage = listItems.get(i);
 			if (!NodeUtils.areCloseNumbers(image.getBoundingBox().getWidth(), currentImage.getBoundingBox().getWidth()) ||
 					!NodeUtils.areCloseNumbers(image.getBoundingBox().getHeight(), currentImage.getBoundingBox().getHeight())) {
 				if (index < i - 1) {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.verapdf.wcag.algorithms.entities.content.IChunk;
 import org.verapdf.wcag.algorithms.entities.content.ImageChunk;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
+import org.verapdf.wcag.algorithms.entities.content.LineArtChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.maps.SemanticTypeMapper;
@@ -42,6 +43,10 @@ public class JsonToPdfTree {
 		return new ImageChunk(new BoundingBox(jsonNode.getPageNumber(), jsonNode.getBoundingBox()));
 	}
 
+	private static LineArtChunk getLineArtChunk(JsonNode jsonNode) {
+		return new LineArtChunk(new BoundingBox(jsonNode.getPageNumber(), jsonNode.getBoundingBox()));
+	}
+
 	private static LineChunk getLineChunk(JsonNode jsonNode) {
 		return new LineChunk(jsonNode.getPageNumber(), jsonNode.getStartX(),
 				jsonNode.getStartY(), jsonNode.getEndX(), jsonNode.getEndY(), jsonNode.getWidth());
@@ -64,6 +69,9 @@ public class JsonToPdfTree {
 		if ("ImageChunk".equals(jsonNode.getType())) {
 			return getImageChunk(jsonNode);
 		}
+		if ("LineArtChunk".equals(jsonNode.getType())) {
+			return getLineArtChunk(jsonNode);
+		}
 		if ("LineChunk".equals(jsonNode.getType())) {
 			return getLineChunk(jsonNode);
 		}
@@ -78,10 +86,12 @@ public class JsonToPdfTree {
 		INode node;
 		String pdfType = jsonNode.getType();
 
-		if ("PDTextChunk".equals(pdfType) || "TextChunk".equals(pdfType)) {
+		if ("TextChunk".equals(pdfType)) {
 			node = new SemanticSpan(getTextChunk(jsonNode));
 		} else if ("ImageChunk".equals(pdfType)) {
 			node = new SemanticImageNode(getImageChunk(jsonNode));
+		} else if ("LineArtChunk".equals(pdfType)) {
+			node = new SemanticFigure(getLineArtChunk(jsonNode));
 		} else {
 			node = new UnexpectedSemanticNode(SemanticTypeMapper.getSemanticType(pdfType));
 		}

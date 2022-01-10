@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TableBorder {
-    public static final double TABLE_BORDER_EPSILON = 0.55;
+    public static final double TABLE_BORDER_EPSILON = 0.6;
 
     private final List<Double> xCoordinates;
     private final List<Double> xWidths;

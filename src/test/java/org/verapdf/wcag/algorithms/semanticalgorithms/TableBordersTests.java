@@ -16,6 +16,7 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.AccumulatedNodeC
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.LinesPreprocessingConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.SemanticDocumentPreprocessingConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.TableBorderConsumer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 
 import java.io.IOException;
@@ -28,19 +29,20 @@ public class TableBordersTests {
 
     static Stream<Arguments> tableBorderDetectionTestParams() {
         return Stream.of(
-                Arguments.of("test-document-1", new int[][] {{},{},{188},{},{},{}}, new int[][] {{},{},{19},{},{},{}},
+                Arguments.of("test-document-1", new int[][] {{},{},{154},{},{},{}}, new int[][] {{},{},{19},{},{},{}},
                         new int[][] {{},{},{4},{},{},{}}, true, true),
+                Arguments.of("pdfmaker", new int[][] {{55}}, new int[][] {{4}}, new int[][] {{4}}, true, true),
                 Arguments.of("table-word", new int[][] {{65}}, new int[][] {{4}}, new int[][] {{4}}, true, true),
-                Arguments.of("emptyCells", new int[][] {{40}}, new int[][] {{3}}, new int[][] {{3}}, true, true),
-                Arguments.of("emptyCells2", new int[][] {{40}}, new int[][] {{3}}, new int[][] {{3}}, true, true),
-                Arguments.of("emptyCells3", new int[][] {{40}}, new int[][] {{3}}, new int[][] {{3}}, true, true),
-                Arguments.of("emptyCells4", new int[][] {{40}}, new int[][] {{3}}, new int[][] {{3}}, true, true),
+                Arguments.of("emptyCells", new int[][] {{36}}, new int[][] {{3}}, new int[][] {{3}}, true, true),
+                Arguments.of("emptyCells2", new int[][] {{36}}, new int[][] {{3}}, new int[][] {{3}}, true, true),
+                Arguments.of("emptyCells3", new int[][] {{36}}, new int[][] {{3}}, new int[][] {{3}}, true, true),
+                Arguments.of("emptyCells4", new int[][] {{36}}, new int[][] {{3}}, new int[][] {{3}}, true, true),
                 Arguments.of("NEG-fake-table", new int[][] {{10}}, new int[][] {{4}}, new int[][] {{4}}, false, true),
                 Arguments.of("NEG-floating-text-box", new int[][] {{5}}, new int[][] {{1}}, new int[][] {{2}}, false, false),
                 Arguments.of("PDFUA-Ref-2-02_Invoice", new int[][] {{}}, new int[][] {{}}, new int[][] {{}}, true, false),
                 Arguments.of("PDFUA-Reference-01_(Matterhorn-Protocol_1-02)",
-                        new int[][] {{},{62},{53},{173},{113,93,53,93,113},{73,73,193,53},{173,53,173,173},
-                                {133,93,93,73,113},{93,53,53,53,53,53,73,53},{393},{53,73,233},{333},{133}},
+                        new int[][] {{},{38},{32},{110},{71,58,32,58,71},{45,45,123,32},{128,38,128,128},
+                                {84,58,58,45,71},{58,32,32,32,32,32,45,32},{253},{38,53,173},{214},{84}},
                         new int[][] {{},{5},{6},{8},{5,4,2,4,5},{3,3,9,2},{8,2,8,8},{6,4,4,3,5},{4,2,2,2,2,2,3,2},
                                 {19},{2,3,11},{16},{6}},
                         new int[][] {{},{3},{2},{6},{6,6,6,6,6},{6,6,6,6},{6,6,6,6},{6,6,6,6,6},{6,6,6,6,6,6,6,6},
@@ -61,6 +63,8 @@ public class TableBordersTests {
                                   boolean initialSemanticIsValid) throws IOException {
         IDocument document = JsonToPdfTree.getDocument("/files/tables/" + filename + ".json");
         ITree tree = document.getTree();
+        StaticContainers.clearAllContainers(document);
+
         LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer(document);
         List<List<TableBorderBuilder>> tableBorderBuilders = linesPreprocessingConsumer.getTableBorders();
         Assertions.assertEquals(list.length, tableBorderBuilders.size());
@@ -74,17 +78,16 @@ public class TableBordersTests {
                         border.getVerticalLinesNumber());
             }
         }
-        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document,
-                linesPreprocessingConsumer.getLinesCollection());
+        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document);
         tree.forEach(semanticDocumentValidator);
         Table.updateTableCounter();
-        TableBordersCollection tableBordersCollection = new TableBordersCollection(tableBorderBuilders);
-        AccumulatedNodeConsumer paragraphValidator = new AccumulatedNodeConsumer(tableBordersCollection);
+        StaticContainers.setTableBordersCollection(new TableBordersCollection(linesPreprocessingConsumer.getTableBorders()));
+        AccumulatedNodeConsumer paragraphValidator = new AccumulatedNodeConsumer();
         tree.forEach(paragraphValidator);
-        TableBorderConsumer tableBorderConsumer = new TableBorderConsumer(tableBordersCollection,
-                paragraphValidator.getAccumulatedNodeMapper());
+        TableBorderConsumer tableBorderConsumer = new TableBorderConsumer();
         tableBorderConsumer.recognizeTables(tree);
-        List<SortedSet<TableBorder>> tableBorders = tableBordersCollection.getTableBorders();
+
+        List<SortedSet<TableBorder>> tableBorders = StaticContainers.getTableBordersCollection().getTableBorders();
         Assertions.assertEquals(listN.length, tableBorders.size());
         for (int pageNumber = 0; pageNumber < tableBorders.size(); pageNumber++) {
             SortedSet<TableBorder> borders = tableBorders.get(pageNumber);

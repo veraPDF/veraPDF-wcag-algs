@@ -6,8 +6,8 @@ import org.verapdf.wcag.algorithms.entities.SemanticSpan;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
-import org.verapdf.wcag.algorithms.entities.content.LinesCollection;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
 import java.util.SortedSet;
@@ -20,11 +20,9 @@ public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
     private static final Logger LOGGER = Logger.getLogger(SemanticDocumentPreprocessingConsumer.class.getCanonicalName());
 
     private final IDocument document;
-    private final LinesCollection linesCollection;
 
-    public SemanticDocumentPreprocessingConsumer(IDocument document, LinesCollection linesCollection) {
+    public SemanticDocumentPreprocessingConsumer(IDocument document) {
         this.document = document;
-        this.linesCollection = linesCollection;
         setNodeParents();
     }
 
@@ -87,7 +85,7 @@ public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
     }
 
     private SortedSet<LineChunk> getHorizontalLines(TextChunk textChunk) {
-        SortedSet<LineChunk> lines = linesCollection.getHorizontalLines(textChunk.getPageNumber());
+        SortedSet<LineChunk> lines = StaticContainers.getLinesCollection().getHorizontalLines(textChunk.getPageNumber());
         return lines.subSet(new LineChunk(textChunk.getPageNumber(), -Double.MAX_VALUE, textChunk.getBaseLine(),
                         -Double.MAX_VALUE, textChunk.getBaseLine()),
                 new LineChunk(textChunk.getPageNumber(), Double.MAX_VALUE,

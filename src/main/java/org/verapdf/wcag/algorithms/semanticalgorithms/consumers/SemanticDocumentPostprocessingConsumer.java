@@ -1,12 +1,16 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
 import org.verapdf.wcag.algorithms.entities.*;
+import org.verapdf.wcag.algorithms.entities.ITree;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
+import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
-import org.verapdf.wcag.algorithms.entities.maps.AccumulatedNodeMapper;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.ArrayList;
@@ -14,12 +18,7 @@ import java.util.List;
 
 public class SemanticDocumentPostprocessingConsumer {
 
-	private final AccumulatedNodeMapper accumulatedNodeMapper;
-	private List<RepeatedCharacters> repeatedCharacters = new ArrayList<>();
-
-	public SemanticDocumentPostprocessingConsumer(AccumulatedNodeMapper accumulatedNodeMapper) {
-		this.accumulatedNodeMapper = accumulatedNodeMapper;
-	}
+	private final List<RepeatedCharacters> repeatedCharacters = new ArrayList<>();
 
 	public List<RepeatedCharacters> getRepeatedCharacters() {
 		return repeatedCharacters;
@@ -30,6 +29,9 @@ public class SemanticDocumentPostprocessingConsumer {
 			if (checkNode(node)) {
 				break;
 			}
+		}
+		for (INode child : tree.getRoot().getChildren()) {
+			acceptChildren(child);
 		}
 	}
 
@@ -71,7 +73,7 @@ public class SemanticDocumentPostprocessingConsumer {
 				return true;
 			}
 			INode parent = node.getParent();
-			while (parent != null && accumulatedNodeMapper.get(parent) instanceof SemanticTextNode) {
+			while (parent != null && StaticContainers.getAccumulatedNodeMapper().get(parent) instanceof SemanticTextNode) {
 				if (isTitle(parent)) {
 					parent.setSemanticType(SemanticType.TITLE);
 					break;
@@ -83,8 +85,24 @@ public class SemanticDocumentPostprocessingConsumer {
 		return false;
 	}
 
+	private void acceptChildren(INode node) {
+		if ((TableUtils.isTableNode(node) || TableUtils.isInitialTableNode(node)) &&
+				node.getSemanticType() != node.getInitialSemanticType()) {
+			node.setHasHighestErrorLevel();
+			return;
+		}
+		if ((ListUtils.isListNode(node) || ListUtils.isInitialListNode(node)) &&
+				node.getSemanticType() != node.getInitialSemanticType()) {
+			node.setHasHighestErrorLevel();
+			return;
+		}
+		for (INode child : node.getChildren()) {
+			acceptChildren(child);
+		}
+	}
+
 	private boolean isTextNode(INode node) {
-		INode accumulatedNode = accumulatedNodeMapper.get(node);
+		INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
 		return accumulatedNode instanceof SemanticTextNode && !((SemanticTextNode) accumulatedNode).isSpaceNode() &&
 		       !node.getChildren().isEmpty();
 	}
