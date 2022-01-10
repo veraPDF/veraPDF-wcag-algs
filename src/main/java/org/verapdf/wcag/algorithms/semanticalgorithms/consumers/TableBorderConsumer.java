@@ -8,26 +8,17 @@ import org.verapdf.wcag.algorithms.entities.SemanticImageNode;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
-import org.verapdf.wcag.algorithms.entities.maps.AccumulatedNodeMapper;
 import org.verapdf.wcag.algorithms.entities.tables.TableToken;
-import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorderCell;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorderRow;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class TableBorderConsumer {
-
-    private final AccumulatedNodeMapper accumulatedNodeMapper;
-    private final TableBordersCollection tableBorders;
-
-    public TableBorderConsumer(TableBordersCollection tableBorders, AccumulatedNodeMapper accumulatedNodeMapper) {
-        this.tableBorders = tableBorders;
-        this.accumulatedNodeMapper = accumulatedNodeMapper;
-    }
 
     public void recognizeTables(ITree tree) {
         for (INode node : tree) {
@@ -49,7 +40,7 @@ public class TableBorderConsumer {
     }
 
     private void add(TableToken token) {
-        TableBorder tableBorder = tableBorders.getTableBorder(token.getBoundingBox());
+        TableBorder tableBorder = StaticContainers.getTableBordersCollection().getTableBorder(token.getBoundingBox());
         if (tableBorder != null) {
             TableBorderCell tableBorderCell = tableBorder.getTableBorderCell(token.getBoundingBox());
             if (tableBorderCell != null) {
@@ -60,12 +51,12 @@ public class TableBorderConsumer {
     }
 
     private void updateTreeWithRecognizedTables() {
-        for (SortedSet<TableBorder> tables : tableBorders.getTableBorders()) {
+        for (SortedSet<TableBorder> tables : StaticContainers.getTableBordersCollection().getTableBorders()) {
             for (TableBorder table : tables) {
                 INode tableNode = getTableNode(table);
                 if (tableNode != null) {
                     table.setNode(tableNode);
-                    accumulatedNodeMapper.updateNode(tableNode, new SemanticTable(table), 1.0,
+                    StaticContainers.getAccumulatedNodeMapper().updateNode(tableNode, new SemanticTable(table), 1.0,
                                 SemanticType.TABLE);
                     Integer depth = Arrays.stream(table.getRows())
                             .map(TableBorderRow::getNode)
@@ -83,7 +74,7 @@ public class TableBorderConsumer {
                         }
                         updateTreeWithRecognizedTableRows(table, depth);
                     }
-                    ClusterTableConsumer.detectTableCaptions(table.getBoundingBox(), tableNode, accumulatedNodeMapper);
+                    ClusterTableConsumer.detectTableCaptions(table.getBoundingBox(), tableNode);
                 }
             }
         }

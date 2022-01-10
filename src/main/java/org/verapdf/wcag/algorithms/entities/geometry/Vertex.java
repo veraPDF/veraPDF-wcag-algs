@@ -18,6 +18,14 @@ public class Vertex extends InfoChunk {
         this.radius = radius;
     }
 
+    public Vertex(Integer pageNumber, double x, double y) {
+        this(pageNumber, x, y, 0.0);
+    }
+
+    public Vertex(double x, double y) {
+        this(null, x, y);
+    }
+
     public double getX() {
         return x;
     }

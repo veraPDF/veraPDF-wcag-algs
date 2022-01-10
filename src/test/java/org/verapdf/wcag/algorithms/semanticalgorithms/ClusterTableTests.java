@@ -15,6 +15,7 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.TableBorderConsu
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ClusterTableConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.LinesPreprocessingConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.SemanticDocumentPreprocessingConsumer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 
 import java.io.IOException;
@@ -55,28 +56,27 @@ public class ClusterTableTests {
     void testClusterTableDetection(String filename, int[][] checkSizes, boolean semanticIsValid,
                                    boolean initialSemanticIsValid) throws IOException {
         IDocument document = JsonToPdfTree.getDocument("/files/tables/" + filename);
+        StaticContainers.clearAllContainers(document);
+
         ITree tree = document.getTree();
 
         LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer(document);
         linesPreprocessingConsumer.findTableBorders();
 
-        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document,
-                linesPreprocessingConsumer.getLinesCollection());
+        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document);
         tree.forEach(semanticDocumentValidator);
 
         Table.updateTableCounter();
 
-        TableBordersCollection tableBordersCollection = new TableBordersCollection(linesPreprocessingConsumer.getTableBorders());
+        StaticContainers.setTableBordersCollection(new TableBordersCollection(linesPreprocessingConsumer.getTableBorders()));
 
-        AccumulatedNodeConsumer paragraphValidator = new AccumulatedNodeConsumer(tableBordersCollection);
+        AccumulatedNodeConsumer paragraphValidator = new AccumulatedNodeConsumer();
         tree.forEach(paragraphValidator);
 
-        TableBorderConsumer tableBorderConsumer = new TableBorderConsumer(tableBordersCollection,
-                paragraphValidator.getAccumulatedNodeMapper());
+        TableBorderConsumer tableBorderConsumer = new TableBorderConsumer();
         tableBorderConsumer.recognizeTables(tree);
 
-        ClusterTableConsumer tableFinder = new ClusterTableConsumer(tableBordersCollection,
-                paragraphValidator.getAccumulatedNodeMapper());
+        ClusterTableConsumer tableFinder = new ClusterTableConsumer();
         tableFinder.findTables(tree.getRoot());
 
         List<Table> resultTables = tableFinder.getTables();

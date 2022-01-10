@@ -12,6 +12,7 @@ import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.tables.TableCell;
 import org.verapdf.wcag.algorithms.entities.tables.TableRow;
 import org.verapdf.wcag.algorithms.entities.tables.TableToken;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
 import java.util.*;
 
@@ -70,15 +71,13 @@ public class ListUtils {
 		return true;
 	}
 
-	public static void updateTreeWithRecognizedList(INode node, List<INode> children, Set<ListInterval> listIntervals,
-													AccumulatedNodeMapper accumulatedNodeMapper) {
+	public static void updateTreeWithRecognizedLists(INode node, List<INode> children, Set<ListInterval> listIntervals) {
 		for (ListInterval listInterval : listIntervals) {
-			updateTreeWithRecognizedList(node, children, listInterval, accumulatedNodeMapper);
+			updateTreeWithRecognizedList(node, children, listInterval);
 		}
 	}
 
-	public static void updateTreeWithRecognizedList(INode node, List<INode> children, ListInterval listInterval,
-													AccumulatedNodeMapper accumulatedNodeMapper) {
+	public static void updateTreeWithRecognizedList(INode node, List<INode> children, ListInterval listInterval) {
 		Long listId = Table.getNextTableListId();
 		for (int i = listInterval.start; i <= listInterval.end; i++) {
 			updateTreeWithRecognizedListItem(children.get(i), listId);
@@ -86,7 +85,7 @@ public class ListUtils {
 		if (node.getRecognizedStructureId() == null) {
 			double probability = ((double) (listInterval.end - listInterval.start + 1)) / children.size();
 			if (probability >= TABLE_PROBABILITY_THRESHOLD) {
-				accumulatedNodeMapper.updateNode(node, new SemanticList(node), probability, SemanticType.LIST);
+				StaticContainers.getAccumulatedNodeMapper().updateNode(node, new SemanticList(node), probability, SemanticType.LIST);
 				node.setRecognizedStructureId(listId);
 			}
 		}
@@ -115,10 +114,11 @@ public class ListUtils {
 		}
 	}
 
-	public static Set<ListInterval> getChildrenListIntervals(Set<ListInterval> listIntervals,
+	public static Set<ListInterval> getChildrenListIntervals(Set<ListInterval> listIntervals, List<INode> children,
 															  List<? extends InfoChunk> childrenFirstLines) {
 		ListIntervalsCollection listIntervalsCollection = new ListIntervalsCollection();
 		for (ListInterval listInterval : listIntervals) {
+			double right = -Double.MAX_VALUE;
 			int start = listInterval.start;
 			for (int i = listInterval.start + 1; i <= listInterval.end; i++) {
 				InfoChunk line1 = childrenFirstLines.get(i - 1);
@@ -127,13 +127,19 @@ public class ListUtils {
 					start = listInterval.end;
 					break;
 				}
-				if (Objects.equals(line1.getPageNumber(), line2.getPageNumber()) &&
-						!NodeUtils.areCloseNumbers(line1.getLeftX(), line2.getLeftX(),
-								line1.getBoundingBox().getHeight() / 2)) {
-					if (start < i - 1) {
-						listIntervalsCollection.put(new ListInterval(start, i - 1));
+				INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(i));
+				if (Objects.equals(line1.getPageNumber(), line2.getPageNumber())) {
+					if (!NodeUtils.areCloseNumbers(line1.getLeftX(), line2.getLeftX(),
+							line1.getBoundingBox().getHeight() / 2) && right >= accumulatedChild.getLeftX()) {
+						if (start < i - 1) {
+							listIntervalsCollection.put(new ListInterval(start, i - 1));
+						}
+						start = i;
+						right = -Double.MAX_VALUE;
 					}
-					start = i;
+					right = Math.max(right, accumulatedChild.getRightX());
+				} else {
+					right = accumulatedChild.getRightX();
 				}
 			}
 			if (start < listInterval.end) {

@@ -8,9 +8,9 @@ import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.lists.ListElement;
 import org.verapdf.wcag.algorithms.entities.lists.ListItem;
 import org.verapdf.wcag.algorithms.entities.lists.PDFList;
-import org.verapdf.wcag.algorithms.entities.maps.AccumulatedNodeMapper;
 import org.verapdf.wcag.algorithms.entities.tables.*;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognitionArea;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognizer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListUtils;
@@ -26,18 +26,14 @@ public class ClusterTableConsumer {
 
     private static final Logger LOGGER = Logger.getLogger(AccumulatedNodeConsumer.class.getCanonicalName());
 
-    private final AccumulatedNodeMapper accumulatedNodeMapper;
     private TableRecognitionArea recognitionArea;
     private final List<Table> tables;
     private final List<PDFList> lists;
-    private final TableBordersCollection tableBorders;
 
-    public  ClusterTableConsumer(TableBordersCollection tableBorders, AccumulatedNodeMapper accumulatedNodeMapper) {
+    public  ClusterTableConsumer() {
         tables = new ArrayList<>();
         lists = new ArrayList<>();
         init();
-        this.tableBorders = tableBorders;
-        this.accumulatedNodeMapper = accumulatedNodeMapper;
     }
 
     private void init() {
@@ -68,7 +64,7 @@ public class ClusterTableConsumer {
 
     private void acceptChildren(INode node) {
         if (node.getSemanticType() == SemanticType.TABLE) {
-            INode accumulatedNode = accumulatedNodeMapper.get(node);
+            INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
             if (accumulatedNode instanceof SemanticTable) {
                 TableToken token = new TableToken(((SemanticTable)accumulatedNode).getTableBorder());
                 accept(token);
@@ -107,7 +103,7 @@ public class ClusterTableConsumer {
     }
 
     private void findTableBorder() {
-        TableBorder tableBorder = tableBorders.getTableBorder(recognitionArea.getBoundingBox());
+        TableBorder tableBorder = StaticContainers.getTableBordersCollection().getTableBorder(recognitionArea.getBoundingBox());
         if (tableBorder != null) {
             recognitionArea.setTableBorder(tableBorder);
         }
@@ -167,20 +163,18 @@ public class ClusterTableConsumer {
                     tableRoot.setRecognizedStructureId(table.getId());
                     tableRoot.setSemanticType(SemanticType.TABLE);
                     tableRoot.setCorrectSemanticScore(1.0);
-                    detectTableCaptions(table.getBoundingBox(), tableRoot, accumulatedNodeMapper);
+                    detectTableCaptions(table.getBoundingBox(), tableRoot);
                 }
             }
         }
     }
 
-    public static void detectTableCaptions(BoundingBox tableBoundingBox, INode tableRoot,
-                                           AccumulatedNodeMapper accumulatedNodeMapper) {
-        detectTableCaption(tableBoundingBox, tableRoot.getPreviousNeighbor(), accumulatedNodeMapper);
-        detectTableCaption(tableBoundingBox, tableRoot.getNextNeighbor(), accumulatedNodeMapper);
+    public static void detectTableCaptions(BoundingBox tableBoundingBox, INode tableRoot) {
+        detectTableCaption(tableBoundingBox, tableRoot.getPreviousNeighbor());
+        detectTableCaption(tableBoundingBox, tableRoot.getNextNeighbor());
     }
 
-    private static void detectTableCaption(BoundingBox tableBoundingBox, INode node,
-                                           AccumulatedNodeMapper accumulatedNodeMapper) {
+    private static void detectTableCaption(BoundingBox tableBoundingBox, INode node) {
         if (node == null) {
             return;
         }
@@ -188,10 +182,10 @@ public class ClusterTableConsumer {
                 node.getSemanticType() == SemanticType.NUMBER_HEADING) {
             return;
         }
-        INode accumulatedNode = accumulatedNodeMapper.get(node);
+        INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
         double captionProbability = NodeUtils.tableCaptionProbability(accumulatedNode, tableBoundingBox);
         if (captionProbability >= TableUtils.MERGE_PROBABILITY_THRESHOLD) {
-            accumulatedNodeMapper.updateNode(node, new SemanticCaption((SemanticTextNode) accumulatedNode),
+            StaticContainers.getAccumulatedNodeMapper().updateNode(node, new SemanticCaption((SemanticTextNode) accumulatedNode),
                     captionProbability * node.getCorrectSemanticScore(), SemanticType.CAPTION);
         }
     }

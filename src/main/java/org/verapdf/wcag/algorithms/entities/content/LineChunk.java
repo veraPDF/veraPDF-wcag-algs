@@ -30,8 +30,10 @@ public class LineChunk extends InfoChunk {
 		this.start = new Vertex(pageNumber, startX, startY, 0.5 * width);
 		this.end = new Vertex(pageNumber, endX, endY, 0.5 * width);
 		this.width = width;//one vertex case
-		isVerticalLine = NodeUtils.areCloseNumbers(start.getX(), end.getX(), Math.abs(start.getY() - end.getY()) / 100);
-		isHorizontalLine = !isVerticalLine && NodeUtils.areCloseNumbers(start.getY(), end.getY(), Math.abs(start.getX() - end.getX()) / 100);
+		boolean hasCloseX = NodeUtils.areCloseNumbers(startX, endX, Math.abs(startY - endY) / 100);
+		boolean hasCloseY = NodeUtils.areCloseNumbers(startY, endY, Math.abs(startX - endX) / 100);
+		isVerticalLine = hasCloseX && !hasCloseY;
+		isHorizontalLine = !hasCloseX && hasCloseY;
 	}
 
 	public double getStartX() {

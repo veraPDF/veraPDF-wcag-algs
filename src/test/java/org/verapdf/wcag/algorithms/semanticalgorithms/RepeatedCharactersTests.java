@@ -53,7 +53,7 @@ class RepeatedCharactersTests {
 		ITree tree = document.getTree();
 
 		SemanticDocumentPostprocessingConsumer documentPostprocessingConsumer =
-				new SemanticDocumentPostprocessingConsumer(null);
+				new SemanticDocumentPostprocessingConsumer();
 		documentPostprocessingConsumer.checkForRepeatedElements(tree);
 
 		testRepeated(checks, documentPostprocessingConsumer.getRepeatedCharacters());

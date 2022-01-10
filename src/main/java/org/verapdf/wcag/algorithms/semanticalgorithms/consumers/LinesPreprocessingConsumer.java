@@ -2,9 +2,9 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
 import org.verapdf.wcag.algorithms.entities.IDocument;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
-import org.verapdf.wcag.algorithms.entities.content.LinesCollection;
 import org.verapdf.wcag.algorithms.entities.geometry.Vertex;
 import org.verapdf.wcag.algorithms.entities.tables.TableBorderBuilder;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
 import java.util.List;
 import java.util.LinkedList;
@@ -16,17 +16,11 @@ public class LinesPreprocessingConsumer {
     private static final double MAX_LINE_WIDTH = 5.0;
 
     private final IDocument document;
-    private final LinesCollection linesCollection;
 
     private List<List<TableBorderBuilder>> tableBorders;
 
     public LinesPreprocessingConsumer(IDocument document) {
         this.document = document;
-        this.linesCollection = new LinesCollection(document);
-    }
-
-    public LinesCollection getLinesCollection() {
-        return linesCollection;
     }
 
     public List<List<TableBorderBuilder>> getTableBorders() {
@@ -45,8 +39,8 @@ public class LinesPreprocessingConsumer {
 
     private List<TableBorderBuilder> findTableBorders(Integer pageNumber) {
         List<TableBorderBuilder> tableBorders = new LinkedList<>();
-        Set<LineChunk> set = new HashSet<>(linesCollection.getHorizontalLines(pageNumber));
-        set.addAll(linesCollection.getVerticalLines(pageNumber));
+        Set<LineChunk> set = new HashSet<>(StaticContainers.getLinesCollection().getHorizontalLines(pageNumber));
+        set.addAll(StaticContainers.getLinesCollection().getVerticalLines(pageNumber));
         for (LineChunk line : set) {
             if (line.getWidth() > MAX_LINE_WIDTH) {
                 continue;
@@ -94,10 +88,10 @@ public class LinesPreprocessingConsumer {
         }
         for (TableBorderBuilder border : tableBorders) {
             for (LineChunk lineChunk : border.getVerticalLines()) {
-                linesCollection.getVerticalLines(pageNumber).remove(lineChunk);
+                StaticContainers.getLinesCollection().getVerticalLines(pageNumber).remove(lineChunk);
             }
             for (LineChunk lineChunk : border.getHorizontalLines()) {
-                linesCollection.getHorizontalLines(pageNumber).remove(lineChunk);
+                StaticContainers.getLinesCollection().getHorizontalLines(pageNumber).remove(lineChunk);
             }
         }
         for (int i = 0; i < tableBorders.size();) {
