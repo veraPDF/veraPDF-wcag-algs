@@ -29,7 +29,7 @@ public class TableBordersTests {
 
     static Stream<Arguments> tableBorderDetectionTestParams() {
         return Stream.of(
-                Arguments.of("test-document-1", new int[][] {{},{},{154},{},{},{}}, new int[][] {{},{},{19},{},{},{}},
+                Arguments.of("test-document-1", new int[][] {{},{},{154},{},{},{}}, new int[][] {{},{},{10},{},{},{}},
                         new int[][] {{},{},{4},{},{},{}}, true, true),
                 Arguments.of("pdfmaker", new int[][] {{55}}, new int[][] {{4}}, new int[][] {{4}}, true, true),
                 Arguments.of("table-word", new int[][] {{65}}, new int[][] {{4}}, new int[][] {{4}}, true, true),
@@ -38,7 +38,7 @@ public class TableBordersTests {
                 Arguments.of("emptyCells3", new int[][] {{36}}, new int[][] {{3}}, new int[][] {{3}}, true, true),
                 Arguments.of("emptyCells4", new int[][] {{36}}, new int[][] {{3}}, new int[][] {{3}}, true, true),
                 Arguments.of("NEG-fake-table", new int[][] {{10}}, new int[][] {{4}}, new int[][] {{4}}, false, true),
-                Arguments.of("NEG-floating-text-box", new int[][] {{5}}, new int[][] {{1}}, new int[][] {{2}}, false, false),
+                Arguments.of("NEG-floating-text-box", new int[][] {{5}}, new int[][] {{}}, new int[][] {{}}, true, true),
                 Arguments.of("PDFUA-Ref-2-02_Invoice", new int[][] {{}}, new int[][] {{}}, new int[][] {{}}, true, false),
                 Arguments.of("PDFUA-Reference-01_(Matterhorn-Protocol_1-02)",
                         new int[][] {{},{38},{32},{110},{71,58,32,58,71},{45,45,123,32},{128,38,128,128},

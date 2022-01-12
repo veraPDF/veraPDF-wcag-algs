@@ -27,6 +27,7 @@ public class ClusterTableTests {
 
     static Stream<Arguments> clusterTableDetectionTestParams() {
         return Stream.of(
+                Arguments.of("testdocument10.json", new int[][] {{2,25},{2,21},{2,13},{2,10}}, true, true),
                 Arguments.of("table-word.json", new int[][] {/*{4, 4}*/}, true, true),
                 Arguments.of("NEG-fake-table.json", new int[][] {/*{4, 4}*/}, false, true),
                 Arguments.of("NEG-bad-table.json", new int[][] {{4, 5}}, false, false),

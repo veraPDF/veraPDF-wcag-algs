@@ -20,7 +20,7 @@ public abstract class SemanticNode implements INode {
 	private final List<INode> children;
 	private final SemanticType initialSemanticType;
 	private int depth;
-	private boolean hasHighestErrorLevel = false;
+	private boolean hasLowestDepthError = false;
 
 	public NodeInfo nodeInfo;
 
@@ -208,13 +208,13 @@ public abstract class SemanticNode implements INode {
 	}
 
 	@Override
-	public void setHasHighestErrorLevel() {
-		this.hasHighestErrorLevel = true;
+	public void setHasLowestDepthError() {
+		this.hasLowestDepthError = true;
 	}
 
 	@Override
-	public boolean getHasHighestErrorLevel() {
-		return hasHighestErrorLevel;
+	public boolean getHasLowestDepthError() {
+		return hasLowestDepthError;
 	}
 
 	@Override

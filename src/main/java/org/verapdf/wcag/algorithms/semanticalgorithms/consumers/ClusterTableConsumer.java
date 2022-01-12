@@ -270,7 +270,11 @@ public class ClusterTableConsumer {
         }
 
         INode rowNode = findLocalRoot(cellNodes.keySet());
-
+        if (row.getNumberOfCellsWithContent() == 1) {
+            if (rowNode.getParent() != null && rowNode.getParent().getInitialSemanticType() == SemanticType.TABLE_ROW) {
+                rowNode = rowNode.getParent();
+            }
+        }
         for (Map.Entry<INode, Integer> entry : cellNodes.entrySet()) {
             INode cellNode = entry.getKey();
             while (cellNode.getParent() != null && cellNode.getParent() != rowNode && cellNode.getParent().getChildren().size() == 1) {

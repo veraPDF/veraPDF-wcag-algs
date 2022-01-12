@@ -4,6 +4,9 @@ import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 public class LineArtChunk extends InfoChunk {
 
+	public LineArtChunk() {
+	}
+
 	public LineArtChunk(BoundingBox bbox) {
 		super(bbox);
 	}
