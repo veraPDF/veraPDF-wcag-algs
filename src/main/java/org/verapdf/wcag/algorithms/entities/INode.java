@@ -67,7 +67,7 @@ public interface INode {
 
 	public void setDepth(int depth);
 
-	public boolean getHasHighestErrorLevel();
+	public boolean getHasLowestDepthError();
 
-	public void setHasHighestErrorLevel();
+	public void setHasLowestDepthError();
 }

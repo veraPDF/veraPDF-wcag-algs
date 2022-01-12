@@ -8,6 +8,7 @@ import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.tables.TableBorderBuilder;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,12 +37,7 @@ public class TableBorder {
         yWidths = new LinkedList<>();
         calculateYCoordinates(builder);
         boundingBox = new BoundingBox(builder.getBoundingBox());
-        numberOfRows = yCoordinates.size() - 1;
-        numberOfColumns = xCoordinates.size() - 1;
-        rows = new TableBorderRow[numberOfRows];
-        if (numberOfColumns > 0 && numberOfRows > 0) {
-            createMatrix(builder);
-        }
+        createMatrix(builder);
         id = Table.getNextTableListId();
     }
 
@@ -100,6 +96,12 @@ public class TableBorder {
     }
 
     private void createMatrix(TableBorderBuilder builder) {
+        int numberOfRows = this.yCoordinates.size() - 1;
+        int numberOfColumns = this.xCoordinates.size() - 1;
+        if (numberOfColumns < 1 || numberOfRows < 1) {
+            return;
+        }
+        TableBorderRow[] rows = new TableBorderRow[numberOfRows];
         for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
             rows[rowNumber] = new TableBorderRow(rowNumber, numberOfColumns,
                     new BoundingBox(boundingBox.getPageNumber(), boundingBox.getLeftX(),
@@ -185,6 +187,91 @@ public class TableBorder {
                 }
             }
         }
+
+        List<Integer> redundantRows = new ArrayList(numberOfRows);
+        List<Integer> usefulRows = new ArrayList(numberOfRows);
+        for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+            boolean redundantRow = true;
+            for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
+                if (rows[rowNumber].cells[colNumber].rowNumber == rowNumber) {
+                    redundantRow = false;
+                    break;
+                }
+            }
+            if (redundantRow) {
+                redundantRows.add(rowNumber);
+            } else {
+                usefulRows.add(rowNumber);
+            }
+        }
+
+        List<Integer> redundantColumns = new ArrayList(numberOfColumns);
+        List<Integer> usefulColumns = new ArrayList(numberOfColumns);
+        for(int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
+            boolean redundantColumn = true;
+            for(int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+                if (rows[rowNumber].cells[colNumber].colNumber == colNumber) {
+                    redundantColumn = false;
+                    break;
+                }
+            }
+            if (redundantColumn) {
+                redundantColumns.add(colNumber);
+            } else {
+                usefulColumns.add(colNumber);
+            }
+        }
+        if (redundantColumns.isEmpty() && redundantRows.isEmpty()) {
+			this.rows = rows;
+			this.numberOfRows = numberOfRows;
+			this.numberOfColumns = numberOfColumns;
+			return;
+        }
+        for (int colNumber = 0; colNumber < redundantColumns.size(); colNumber++) {
+            for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+                if (rows[rowNumber].cells[colNumber].rowNumber == rowNumber) {
+                    rows[rowNumber].cells[colNumber].colSpan--;
+                }
+            }
+        }
+        for (int colNumber = 0; colNumber < redundantColumns.size(); colNumber++) {
+            for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+                if (rows[rowNumber].cells[colNumber].colNumber == colNumber) {
+                    rows[rowNumber].cells[colNumber].rowSpan--;
+                }
+            }
+        }
+        this.numberOfRows = usefulRows.size();
+        this.numberOfColumns = usefulColumns.size();
+        for (int colNumber = redundantColumns.size() - 1; colNumber >= 0; colNumber--) {
+            int oldColNumber = redundantColumns.get(colNumber);
+            xCoordinates.remove(oldColNumber);
+            xWidths.remove(oldColNumber);
+        }
+        for (int rowNumber = redundantRows.size() - 1; rowNumber >= 0; rowNumber--) {
+            int oldRowNumber = redundantRows.get(rowNumber);
+            yCoordinates.remove(oldRowNumber);
+            yWidths.remove(oldRowNumber);
+        }
+        this.rows = new TableBorderRow[this.numberOfRows];
+        for (int rowNumber = 0; rowNumber < this.numberOfRows; rowNumber++) {
+            this.rows[rowNumber] = new TableBorderRow(rowNumber, this.numberOfColumns,
+                    new BoundingBox(boundingBox.getPageNumber(), boundingBox.getLeftX(),
+                            yCoordinates.get(rowNumber + 1) - 0.5 * yWidths.get(rowNumber + 1),
+                            boundingBox.getRightX(), yCoordinates.get(rowNumber) + 0.5 * yWidths.get(rowNumber)));
+        }
+        for (int rowNumber = 0; rowNumber < this.numberOfRows; rowNumber++) {
+            for (int colNumber = 0; colNumber < this.numberOfColumns; colNumber++) {
+                int oldRowNumber = usefulRows.get(rowNumber);
+                int oldColNumber = usefulColumns.get(colNumber);
+                if (rows[oldRowNumber].cells[oldColNumber].rowNumber == oldRowNumber &&
+                        rows[oldRowNumber].cells[oldColNumber].colNumber == oldColNumber) {
+                    rows[oldRowNumber].cells[oldColNumber].rowNumber = rowNumber;
+                    rows[oldRowNumber].cells[oldColNumber].colNumber = colNumber;
+                }
+                this.rows[rowNumber].cells[colNumber] = rows[oldRowNumber].cells[oldColNumber];
+            }
+        }
     }
 
     public Integer getPageNumber() {
@@ -250,7 +337,7 @@ public class TableBorder {
     }
 
     public boolean isBadTable() {
-        return isBadTable || numberOfRows <= 0 ||  numberOfColumns <= 0 || (numberOfRows == 1 && numberOfColumns == 1);
+        return isBadTable || numberOfRows < 1 || numberOfColumns < 1 || (numberOfRows == 1 && numberOfColumns == 1);
     }
 
     public BoundingBox getBoundingBox() {

@@ -36,6 +36,16 @@ public class TableRow extends TextInfoChunk {
         return cells;
     }
 
+    public int getNumberOfCellsWithContent() {
+        int numberOfCellsWithContent = 0;
+        for (TableCell cell : cells) {
+            if (!cell.getContent().isEmpty()) {
+                numberOfCellsWithContent++;
+            }
+        }
+        return numberOfCellsWithContent;
+    }
+
     public void merge(TableRow other) {
         List<TableCell> otherCells = other.getCells();
         for (int i = 0; i < otherCells.size(); ++i) {

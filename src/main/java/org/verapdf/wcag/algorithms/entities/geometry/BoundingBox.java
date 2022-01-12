@@ -19,7 +19,7 @@ public class BoundingBox {
         init(Double.MAX_VALUE, Double.MAX_VALUE, 0, 0);
     }
 
-    public BoundingBox(int pageNumber) {
+    public BoundingBox(Integer pageNumber) {
         init(Double.MAX_VALUE, Double.MAX_VALUE, 0, 0);
         this.pageNumber = this.lastPageNumber = pageNumber;
     }
@@ -28,12 +28,12 @@ public class BoundingBox {
         init(bbox[0], bbox[1], bbox[2], bbox[3]);
     }
 
-    public BoundingBox(int pageNumber, double[] bbox) {
+    public BoundingBox(Integer pageNumber, double[] bbox) {
         init(bbox[0], bbox[1], bbox[2], bbox[3]);
         this.pageNumber = this.lastPageNumber = pageNumber;
     }
 
-    public BoundingBox(int pageNumber, int lastPageNumber, double[] bbox) {
+    public BoundingBox(Integer pageNumber, Integer lastPageNumber, double[] bbox) {
         init(bbox[0], bbox[1], bbox[2], bbox[3]);
         this.pageNumber = pageNumber;
         this.lastPageNumber = lastPageNumber;
@@ -43,12 +43,12 @@ public class BoundingBox {
         init(left, bottom, right, top);
     }
 
-    public BoundingBox(int pageNumber, double left, double bottom, double right, double top) {
+    public BoundingBox(Integer pageNumber, double left, double bottom, double right, double top) {
         init(left, bottom, right, top);
         this.pageNumber = this.lastPageNumber = pageNumber;
     }
 
-    public BoundingBox(int pageNumber, int lastPageNumber, double left, double bottom, double right, double top) {
+    public BoundingBox(Integer pageNumber, Integer lastPageNumber, double left, double bottom, double right, double top) {
         init(left, bottom, right, top);
         this.pageNumber = pageNumber;
         this.lastPageNumber = lastPageNumber;
@@ -58,14 +58,14 @@ public class BoundingBox {
         init(o);
     }
 
-    public void setPageNumber(int pageNumber) {
+    public void setPageNumber(Integer pageNumber) {
         this.pageNumber = pageNumber;
         if (lastPageNumber == null || lastPageNumber < pageNumber) {
             this.lastPageNumber = pageNumber;
         }
     }
 
-    public void setLastPageNumber(int lastPageNumber) {
+    public void setLastPageNumber(Integer lastPageNumber) {
         this.lastPageNumber = lastPageNumber;
     }
 

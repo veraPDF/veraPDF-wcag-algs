@@ -18,6 +18,14 @@ public class SemanticDocumentPostprocessingConsumer {
 	public void runPostprocessingChecks(ITree tree) {
 		checkForTitle(tree);
 		checkForRepeatedCharacters(tree);
+		setLowestDepthErrorFlag(tree);
+	}
+
+
+	public void setLowestDepthErrorFlag(ITree tree) {
+		for (INode child : tree.getRoot().getChildren()) {
+			setLowestDepthErrorFlag(child);
+		}
 	}
 
 	public void checkForTitle(ITree tree) {
@@ -25,9 +33,6 @@ public class SemanticDocumentPostprocessingConsumer {
 			if (checkNode(node)) {
 				break;
 			}
-		}
-		for (INode child : tree.getRoot().getChildren()) {
-			acceptChildren(child);
 		}
 	}
 
@@ -81,19 +86,19 @@ public class SemanticDocumentPostprocessingConsumer {
 		return false;
 	}
 
-	private void acceptChildren(INode node) {
+	private void setLowestDepthErrorFlag(INode node) {
 		if ((TableUtils.isTableNode(node) || TableUtils.isInitialTableNode(node)) &&
 				node.getSemanticType() != node.getInitialSemanticType()) {
-			node.setHasHighestErrorLevel();
+			node.setHasLowestDepthError();
 			return;
 		}
 		if ((ListUtils.isListNode(node) || ListUtils.isInitialListNode(node)) &&
 				node.getSemanticType() != node.getInitialSemanticType()) {
-			node.setHasHighestErrorLevel();
+			node.setHasLowestDepthError();
 			return;
 		}
 		for (INode child : node.getChildren()) {
-			acceptChildren(child);
+			setLowestDepthErrorFlag(child);
 		}
 	}
 
