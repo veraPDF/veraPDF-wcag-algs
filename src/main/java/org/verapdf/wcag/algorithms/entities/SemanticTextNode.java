@@ -2,6 +2,7 @@ package org.verapdf.wcag.algorithms.entities;
 
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
+import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
@@ -22,6 +23,7 @@ public class SemanticTextNode extends SemanticNode {
     private double[] textColor;
     private Double italicAngle;
     private String fontName;
+    private TextFormat textFormat = TextFormat.NORMAL;
 
     public SemanticTextNode(SemanticTextNode textNode) {
         super(textNode.getBoundingBox(), textNode.getInitialSemanticType(), textNode.getSemanticType());
@@ -31,6 +33,7 @@ public class SemanticTextNode extends SemanticNode {
         this.textColor = textNode.textColor;
         this.italicAngle = textNode.italicAngle;
         this.fontName = textNode.fontName;
+        this.textFormat = textNode.textFormat;
     }
 
     public SemanticTextNode() {
@@ -306,6 +309,14 @@ public class SemanticTextNode extends SemanticNode {
             return fontNameMap.entrySet().stream().max(Comparator.comparingDouble(Map.Entry::getValue)).get().getKey();
         }
         return "";
+    }
+
+    public TextFormat getTextFormat() {
+        return textFormat;
+    }
+
+    public void setTextFormat(TextFormat textFormat) {
+        this.textFormat = textFormat;
     }
 
     public boolean isSpaceNode() {

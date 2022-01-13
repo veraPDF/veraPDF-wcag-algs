@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
 import org.verapdf.wcag.algorithms.entities.INode;
+import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
@@ -185,7 +186,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		}
 		TextLine lastLine = span.getLastLine();
 		TextLine nextLine = secondSpan.getFirstLine();
-		double oneLineProbability = ChunksMergeUtils.toLineMergeProbability(lastLine, nextLine);
+		double oneLineProbability = ChunksMergeUtils.countOneLineProbability(secondSpan, lastLine, nextLine);
 		double differentLinesProbability;
 		if (span.getLinesNumber() > 1 && secondSpan.getLinesNumber() > 1) {
 			differentLinesProbability = ChunksMergeUtils.toParagraphMergeProbability(lastLine, nextLine);
@@ -201,7 +202,9 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		if (oneLineProbability < Math.max(differentLinesProbability, ONE_LINE_MIN_PROBABILITY_THRESHOLD)) {
 			mergeProbability = differentLinesProbability;
 			span.getLines().addAll(secondSpan.getLines());
+			secondSpan.setTextFormat(TextFormat.NORMAL);
 		} else {
+			updateTextChunksFormat(secondSpan);
 			mergeProbability = oneLineProbability;
 			lastLine.setNotFullLine();
 			nextLine.setNotFullLine();
@@ -277,13 +280,14 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		return false;
 	}
 
-	private double toParagraphMergeProbability(SemanticParagraph paragraph, List<TextLine> lines) {
+	private double toParagraphMergeProbability(SemanticParagraph paragraph, SemanticTextNode textNode) {
+		List<TextLine> lines = textNode.getLines();
 		if (lines.isEmpty()) {
 			return 1;
 		}
 		TextLine lastLine = paragraph.getLastLine();
 		TextLine nextLine = lines.get(0);
-		double oneLineProbability = ChunksMergeUtils.toLineMergeProbability(lastLine, nextLine);
+		double oneLineProbability = ChunksMergeUtils.countOneLineProbability(textNode, lastLine, nextLine);
 		double differentLinesProbability;
 		if (paragraph.getLines().size() > 1 && lines.size() > 1) {
 			differentLinesProbability = ChunksMergeUtils.toParagraphMergeProbability(lastLine, nextLine);
@@ -299,7 +303,9 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		if (oneLineProbability < Math.max(differentLinesProbability, ONE_LINE_MIN_PROBABILITY_THRESHOLD)) {
 			mergeProbability = differentLinesProbability;
 			paragraph.getLines().addAll(lines);
+			textNode.setTextFormat(TextFormat.NORMAL);
 		} else {
+			updateTextChunksFormat(textNode);
 			mergeProbability = oneLineProbability;
 			lastLine.setNotFullLine();
 			nextLine.setNotFullLine();
@@ -320,13 +326,13 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	}
 
 	private double toParagraphMergeProbability(SemanticParagraph paragraph, SemanticSpan span) {
-		double mergeProbability = toParagraphMergeProbability(paragraph, span.getLines());
+		double mergeProbability = toParagraphMergeProbability(paragraph, (SemanticTextNode) span);
 		paragraph.getBoundingBox().union(span.getBoundingBox());
 		return (span.getCorrectSemanticScore() == null) ? mergeProbability : (Math.min(span.getCorrectSemanticScore(), mergeProbability));
 	}
 
 	private double toParagraphMergeProbability(SemanticParagraph paragraph1, SemanticParagraph paragraph2) {
-		double mergeProbability = toParagraphMergeProbability(paragraph1, paragraph2.getLines());
+		double mergeProbability = toParagraphMergeProbability(paragraph1, (SemanticTextNode) paragraph2);
 		paragraph1.getBoundingBox().union(paragraph2.getBoundingBox());
 		return (paragraph2.getCorrectSemanticScore() == null) ? mergeProbability : (Math.min(paragraph2.getCorrectSemanticScore(), mergeProbability));
 	}
@@ -485,6 +491,15 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			ListUtils.updateTreeWithRecognizedLists(node, lineArtChildren,
 					ListUtils.getChildrenListIntervals(ListLabelsUtils.getImageListItemsIntervals(childrenLineArts),
 							lineArtChildren, childrenLineArts));
+		}
+	}
+
+	private void updateTextChunksFormat(SemanticTextNode textNode) {
+		TextFormat format = textNode.getTextFormat();
+		for (TextLine line : textNode.getLines()) {
+			for (TextChunk chunk : line.getTextChunks()) {
+				chunk.setTextFormat(format);
+			}
 		}
 	}
 }

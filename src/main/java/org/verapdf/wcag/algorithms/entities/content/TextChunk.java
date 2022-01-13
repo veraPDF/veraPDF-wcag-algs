@@ -1,5 +1,6 @@
 package org.verapdf.wcag.algorithms.entities.content;
 
+import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 import java.util.Arrays;
@@ -16,6 +17,7 @@ public class TextChunk extends TextInfoChunk {
     private double contrastRatio;
     private boolean hasSpecialStyle = false;
     private boolean isUnderlinedText = false;
+    private TextFormat textFormat = TextFormat.NORMAL;
 
     public TextChunk() {
     }
@@ -112,7 +114,15 @@ public class TextChunk extends TextInfoChunk {
     public void setFontColorSpace(String fontColorSpace) {
         this.fontColorSpace = fontColorSpace;
     }
-    
+
+    public TextFormat getTextFormat() {
+        return textFormat;
+    }
+
+    public void setTextFormat(TextFormat textFormat) {
+        this.textFormat = textFormat;
+    }
+
     public void addAll(List<TextChunk> otherChunks) {
         StringBuilder text = new StringBuilder(value);
         for (TextChunk chunk : otherChunks) {

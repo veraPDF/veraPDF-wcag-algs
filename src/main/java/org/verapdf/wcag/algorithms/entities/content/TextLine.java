@@ -1,5 +1,7 @@
 package org.verapdf.wcag.algorithms.entities.content;
 
+import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +38,16 @@ public class TextLine extends TextInfoChunk {
             return null;
         }
         return textChunks.get(textChunks.size() - 1);
+    }
+
+    public TextChunk getLastNormalTextChunk() {
+        for (int i = textChunks.size() - 2; i >= 0; i--) {
+            TextChunk textChunk = textChunks.get(i);
+            if (TextFormat.NORMAL.equals(textChunk.getTextFormat())) {
+                return textChunk;
+            }
+        }
+        return null;
     }
 
     public void add(TextChunk chunk) {

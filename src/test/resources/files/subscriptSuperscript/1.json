@@ -1,0 +1,185 @@
+{
+  "type": "PDFDocument",
+  "children": [
+    {
+      "type": "P",
+      "children": [
+        {
+          "type": "Span",
+          "children": [
+            {
+              "type": "TextChunk",
+              "pageNumber": 0,
+              "value": "a",
+              "baseLine": 582.389,
+              "fontWeight": 400.0,
+              "italicAngle": 0.0,
+              "fontSize": 20.0,
+              "boundingBox": [
+                56.8,
+                575.909,
+                67.92,
+                603.189
+              ],
+              "fontName": "ArialMT",
+              "color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fontColorSpace": "DeviceRGB"
+            }
+          ]
+        },
+        {
+          "type": "Span",
+          "children": [
+            {
+              "type": "TextChunk",
+              "pageNumber": 0,
+              "value": "1",
+              "baseLine": 580.689,
+              "fontWeight": 400.0,
+              "italicAngle": 0.0,
+              "fontSize": 11.6,
+              "boundingBox": [
+                68.0,
+                576.9305999999999,
+                74.4496,
+                592.7529999999999
+              ],
+              "fontName": "ArialMT",
+              "color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fontColorSpace": "DeviceRGB"
+            }
+          ]
+        },
+        {
+          "type": "Span",
+          "children": [
+            {
+              "type": "TextChunk",
+              "pageNumber": 0,
+              "value": "x+1",
+              "baseLine": 590.289,
+              "fontWeight": 400.0,
+              "italicAngle": 0.0,
+              "fontSize": 11.6,
+              "boundingBox": [
+                74.4,
+                586.5305999999999,
+                93.3544,
+                602.353
+              ],
+              "fontName": "ArialMT",
+              "color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fontColorSpace": "DeviceRGB"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "P",
+      "children": [
+        {
+          "type": "Span"
+        }
+      ]
+    },
+    {
+      "type": "P",
+      "children": [
+        {
+          "type": "Span",
+          "children": [
+            {
+              "type": "TextChunk",
+              "pageNumber": 0,
+              "value": "y",
+              "baseLine": 536.389,
+              "fontWeight": 400.0,
+              "italicAngle": 0.0,
+              "fontSize": 20.0,
+              "boundingBox": [
+                56.8,
+                529.909,
+                66.8,
+                557.189
+              ],
+              "fontName": "ArialMT",
+              "color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fontColorSpace": "DeviceRGB"
+            }
+          ]
+        },
+        {
+          "type": "Span",
+          "children": [
+            {
+              "type": "TextChunk",
+              "pageNumber": 0,
+              "value": "[1-y]x",
+              "baseLine": 544.289,
+              "fontWeight": 400.0,
+              "italicAngle": 0.0,
+              "fontSize": 11.6,
+              "boundingBox": [
+                66.8,
+                540.5305999999999,
+                95.09239999999998,
+                556.353
+              ],
+              "fontName": "ArialMT",
+              "color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fontColorSpace": "DeviceRGB"
+            }
+          ]
+        },
+        {
+          "type": "Span",
+          "children": [
+            {
+              "type": "TextChunk",
+              "pageNumber": 0,
+              "value": "(index)",
+              "baseLine": 534.689,
+              "fontWeight": 400.0,
+              "italicAngle": 0.0,
+              "fontSize": 11.6,
+              "boundingBox": [
+                95.2,
+                530.9305999999999,
+                130.62640000000002,
+                546.7529999999999
+              ],
+              "fontName": "ArialMT",
+              "color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "fontColorSpace": "DeviceRGB"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

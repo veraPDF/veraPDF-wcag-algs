@@ -2,6 +2,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
@@ -79,8 +80,11 @@ public class ChunksMergeUtilsTest {
                                                            "Calibri", 9.96,
                                                            400, 0, 85.79, new double[] {0},
                                                            new double[] {101.4, 82.7, 531.4, 96.0}, 0, 0);
-        double resultProbability = ChunksMergeUtils.toLineMergeProbability(first, second);
+        double resultProbability = ChunksMergeUtils.countOneLineProbability(new SemanticTextNode(), new TextLine(first),
+                                                                            new TextLine(second));
+        double secondResultProbability = ChunksMergeUtils.toLineMergeProbability(first, second);
         Assertions.assertEquals(1.0, resultProbability, 0.0001);
+        Assertions.assertEquals(1.0, secondResultProbability, 0.0001);
     }
 
     @Test
@@ -124,8 +128,11 @@ public class ChunksMergeUtilsTest {
                                                            400, 0, 85.79, new double[] {0},
                                                            new double[] {109.4, 82.7, 531.4, 96.0}, 0, 0);
 
-        double resultProbability = ChunksMergeUtils.toLineMergeProbability(first, second);
+        double resultProbability = ChunksMergeUtils.countOneLineProbability(new SemanticTextNode(), new TextLine(first),
+                                                                            new TextLine(second));
+        double secondResultProbability = ChunksMergeUtils.toLineMergeProbability(first, second);
         Assertions.assertEquals(1.0, resultProbability, 0.0001);
+        Assertions.assertEquals(1.0, secondResultProbability, 0.0001);
     }
 
     @Test
@@ -139,8 +146,11 @@ public class ChunksMergeUtilsTest {
                                                            400, 0, 85.79, new double[] {0},
                                                            new double[] {110.4, 82.7, 531.4, 96.0}, 0, 0);
 
-        double resultProbability = ChunksMergeUtils.toLineMergeProbability(first, second);
+        double resultProbability = ChunksMergeUtils.countOneLineProbability(new SemanticTextNode(), new TextLine(first),
+                                                                            new TextLine(second));
+        double secondResultProbability = ChunksMergeUtils.toLineMergeProbability(first, second);
         Assertions.assertEquals(1.0, resultProbability, 0.0001);
+        Assertions.assertEquals(1.0, secondResultProbability, 0.0001);
     }
 
     @Test
@@ -154,8 +164,11 @@ public class ChunksMergeUtilsTest {
                                                            400, 0, 85.79, new double[] {0},
                                                            new double[] {105.4, 82.7, 531.4, 96.0}, 0, 0);
 
-        double resultProbability = ChunksMergeUtils.toLineMergeProbability(first, second);
+        double resultProbability = ChunksMergeUtils.countOneLineProbability(new SemanticTextNode(), new TextLine(first),
+                                                                            new TextLine(second));
+        double secondResultProbability = ChunksMergeUtils.toLineMergeProbability(first, second);
         Assertions.assertEquals(1.0, resultProbability, 0.0001);
+        Assertions.assertEquals(1.0, secondResultProbability, 0.0001);
     }
 
     public TextChunk createTextChunk(String text, String fontName, double fontSize, double fontWeight,
