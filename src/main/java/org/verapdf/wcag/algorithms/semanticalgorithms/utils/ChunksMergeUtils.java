@@ -1,7 +1,9 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
+import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
+import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 
 import java.util.Arrays;
 
@@ -21,7 +23,7 @@ public class ChunksMergeUtils {
 	private static final double[] SUBSCRIPT_PROBABILITY_PARAMS = {0.71932, 1.0483, 0.37555};
 	private static final double SUPERSCRIPT_BASELINE_THRESHOLD = 0.1;
 	private static final double SUPERSCRIPT_FONTSIZE_THRESHOLD = 0.1;
-	private static final double SUBSCRIPT_BASELINE_THRESHOLD = 0.1;
+	private static final double SUBSCRIPT_BASELINE_THRESHOLD = 0.08;
 	private static final double SUBSCRIPT_FONTSIZE_THRESHOLD = 0.1;
 
 	private ChunksMergeUtils() {
@@ -39,13 +41,21 @@ public class ChunksMergeUtils {
 		return resultProbability;
 	}
 
-	public static double toLineMergeProbability(TextChunk x, TextChunk y) {
+	public static double getBaseLineDifference(TextChunk x, TextChunk y) {
 		double baseLineDiff = x.getBaseLine() - y.getBaseLine();
-		double fontSizeDiff = x.getFontSize() - y.getFontSize();
-		double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
+		baseLineDiff /= Math.max(x.getFontSize(), y.getFontSize());
+		return baseLineDiff;
+	}
 
-		baseLineDiff /= maxFontSize;
-		fontSizeDiff /= maxFontSize;
+	public static double getFontSizeDifference(TextChunk x, TextChunk y) {
+		double fontSizeDiff = x.getFontSize() - y.getFontSize();
+		fontSizeDiff /= Math.max(x.getFontSize(), y.getFontSize());
+		return fontSizeDiff;
+	}
+
+	public static double toLineMergeProbability(TextChunk x, TextChunk y) {
+		double baseLineDiff = getBaseLineDifference(x, y);
+		double fontSizeDiff = getFontSizeDifference(x, y);
 
 		double charSpacingProbability = mergeByCharSpacingProbability(x, y);
 		double resultProbability = charSpacingProbability *
@@ -81,6 +91,94 @@ public class ChunksMergeUtils {
 		}
 
 		return resultProbability;
+	}
+
+	public static double countOneLineProbability(SemanticTextNode secondNode, TextLine lastLine, TextLine nextLine) {
+		double oneLineProbability;
+		TextChunk x = lastLine.getLastTextChunk();
+		TextChunk y = nextLine.getFirstTextChunk();
+
+		double baseLineDiff = getBaseLineDifference(x, y);
+		double fontSizeDiff = getFontSizeDifference(x, y);
+		if (!TextFormat.NORMAL.equals(x.getTextFormat())) {
+			TextChunk z = lastLine.getLastNormalTextChunk();
+			if (z != null) {
+				baseLineDiff = getBaseLineDifference(z, y);
+				fontSizeDiff = getFontSizeDifference(z, y);
+			}
+		}
+
+		double normalTextProbability = getNormalTextProbabilitySecondChunk(x, y, baseLineDiff, fontSizeDiff);
+		double superscriptProbability = getSuperscriptProbabilitySecondChunk(x, y, baseLineDiff, fontSizeDiff);
+		double subscriptProbability = getSubscriptProbabilitySecondChunk(x, y, baseLineDiff, fontSizeDiff);
+
+		if (Math.max(superscriptProbability, subscriptProbability) > normalTextProbability) {
+			if (superscriptProbability > subscriptProbability) {
+				oneLineProbability = superscriptProbability;
+				secondNode.setTextFormat(TextFormat.SUPERSCRIPT);
+			} else {
+				oneLineProbability = subscriptProbability;
+				secondNode.setTextFormat(TextFormat.SUBSCRIPT);
+			}
+		} else {
+			double superscriptProbabilityFirst = getSuperscriptProbabilityFirstChunk(x, y, baseLineDiff, fontSizeDiff);
+			double subscriptProbabilityFirst = getSubscriptProbabilityFirstChunk(x, y, baseLineDiff, fontSizeDiff);
+			if (Math.max(superscriptProbabilityFirst, subscriptProbabilityFirst) > normalTextProbability) {
+				if (superscriptProbabilityFirst > subscriptProbabilityFirst) {
+					oneLineProbability = superscriptProbabilityFirst;
+					x.setTextFormat(TextFormat.SUPERSCRIPT);
+				} else {
+					oneLineProbability = subscriptProbabilityFirst;
+					x.setTextFormat(TextFormat.SUBSCRIPT);
+				}
+			} else {
+				oneLineProbability = normalTextProbability;
+				secondNode.setTextFormat(TextFormat.NORMAL);
+			}
+		}
+		return oneLineProbability;
+	}
+
+	public static double getNormalTextProbabilitySecondChunk(TextChunk x, TextChunk y, double baseLineDiff, double fontSizeDiff) {
+		return mergeByCharSpacingProbability(x, y) * mergeNormalLineProbability(Math.abs(baseLineDiff),
+		                                                                        Math.abs(fontSizeDiff),
+		                                                                        NORMAL_LINE_PROBABILITY_PARAMS);
+	}
+
+	public static double getSuperscriptProbabilitySecondChunk(TextChunk x, TextChunk y, double baseLineDiff, double fontSizeDiff) {
+		if (fontSizeDiff > SUPERSCRIPT_FONTSIZE_THRESHOLD && baseLineDiff < -SUPERSCRIPT_BASELINE_THRESHOLD) {
+			return  mergeByCharSpacingProbability(x, y) * toLineProbabilityFunction(Math.abs(baseLineDiff),
+			                                                                        Math.abs(fontSizeDiff),
+			                                                                        SUPERSCRIPT_PROBABILITY_PARAMS);
+		}
+		return 0.0;
+	}
+
+	public static double getSubscriptProbabilitySecondChunk(TextChunk x, TextChunk y, double baseLineDiff, double fontSizeDiff) {
+		if (fontSizeDiff > SUBSCRIPT_FONTSIZE_THRESHOLD && baseLineDiff > SUBSCRIPT_BASELINE_THRESHOLD) {
+			return  mergeByCharSpacingProbability(x, y) * toLineProbabilityFunction(Math.abs(baseLineDiff),
+			                                                                        Math.abs(fontSizeDiff),
+			                                                                        SUBSCRIPT_PROBABILITY_PARAMS);
+		}
+		return 0.0;
+	}
+
+	public static double getSuperscriptProbabilityFirstChunk(TextChunk x, TextChunk y, double baseLineDiff, double fontSizeDiff) {
+		if (fontSizeDiff < -SUPERSCRIPT_FONTSIZE_THRESHOLD && baseLineDiff > SUPERSCRIPT_BASELINE_THRESHOLD) {
+			return mergeByCharSpacingProbability(x, y) * toLineProbabilityFunction(Math.abs(baseLineDiff),
+			                                                                       Math.abs(fontSizeDiff),
+			                                                                       SUPERSCRIPT_PROBABILITY_PARAMS);
+		}
+		return 0.0;
+	}
+
+	public static double getSubscriptProbabilityFirstChunk(TextChunk x, TextChunk y, double baseLineDiff, double fontSizeDiff) {
+		if (fontSizeDiff < -SUBSCRIPT_FONTSIZE_THRESHOLD && baseLineDiff < -SUBSCRIPT_BASELINE_THRESHOLD) {
+			return mergeByCharSpacingProbability(x, y) * toLineProbabilityFunction(Math.abs(baseLineDiff),
+			                                                                       Math.abs(fontSizeDiff),
+			                                                                       SUBSCRIPT_PROBABILITY_PARAMS);
+		}
+		return 0.0;
 	}
 
 	/**
