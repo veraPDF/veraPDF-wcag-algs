@@ -112,26 +112,108 @@ public class TableBorder {
                         numberOfRows - rowNumber, numberOfColumns - colNumber);
             }
         }
+        if (processHorizontalLines(rows, numberOfRows, numberOfColumns, builder) ||
+                processVerticalLines(rows, numberOfRows, numberOfColumns, builder)) {
+            return;
+        }
+        if (processMergedCells(rows, numberOfRows, numberOfColumns)) {
+            return;
+        }
+        for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+            for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
+                if (rows[rowNumber].cells[colNumber].colNumber == colNumber &&
+                        rows[rowNumber].cells[colNumber].rowNumber == rowNumber) {
+                    TableBorderCell cell = rows[rowNumber].cells[colNumber];
+                    cell.setBoundingBox(new BoundingBox(rows[rowNumber].getPageNumber(),
+                            xCoordinates.get(colNumber) - 0.5 * xWidths.get(colNumber),
+                            yCoordinates.get(rowNumber + cell.rowSpan) - 0.5 * yWidths.get(rowNumber + cell.rowSpan),
+                            xCoordinates.get(colNumber + cell.colSpan) + 0.5 * xWidths.get(colNumber + cell.colSpan),
+                            yCoordinates.get(rowNumber) + 0.5 * yWidths.get(rowNumber)));
+                }
+            }
+        }
+        List<Integer> redundantRows = new ArrayList<>(numberOfRows);
+        List<Integer> usefulRows = new ArrayList<>(numberOfRows);
+        detectRedundantRows(redundantRows, usefulRows, rows, numberOfRows, numberOfColumns);
+        List<Integer> redundantColumns = new ArrayList<>(numberOfColumns);
+        List<Integer> usefulColumns = new ArrayList<>(numberOfColumns);
+        detectRedundantColumns(redundantColumns, usefulColumns, rows, numberOfRows, numberOfColumns);
+        if (redundantColumns.isEmpty() && redundantRows.isEmpty()) {
+			this.rows = rows;
+			this.numberOfRows = numberOfRows;
+			this.numberOfColumns = numberOfColumns;
+			return;
+        }
+        deleteRedundantRowsAndColumns(rows, numberOfRows, numberOfColumns, redundantRows, usefulRows, redundantColumns, usefulColumns);
+    }
+
+    private boolean processHorizontalLines(TableBorderRow[] rows, int numberOfRows, int numberOfColumns,
+                                        TableBorderBuilder builder) {
+        boolean[] hasTopBorder = new boolean[numberOfColumns];
+        boolean[] hasBottomBorder = new boolean[numberOfColumns];
         for (LineChunk line : builder.getHorizontalLines()) {
-            int i = getCoordinateY(line.getCenterY());
-            int j1 = getCoordinateX(line.getLeftX());
-            int j2 = getCoordinateX(line.getRightX());
-            if (i > 0 && j1 != -1 && j2 != -1) {
-                for (int j = j1; j < j2; j++) {
-                    rows[i - 1].cells[j].rowSpan = 1;
+            int rowNumber = getCoordinateY(line.getCenterY());
+            int firstColNumber = getCoordinateX(line.getLeftX());
+            int lastColNumber = getCoordinateX(line.getRightX());
+            if (rowNumber != -1 && firstColNumber != -1 && lastColNumber != -1) {
+                if (rowNumber > 0 && rowNumber < numberOfRows) {
+                    for (int colNumber = firstColNumber; colNumber < lastColNumber; colNumber++) {
+                        rows[rowNumber - 1].cells[colNumber].rowSpan = 1;
+                    }
+                } else if (rowNumber == 0) {
+                    for (int colNumber = firstColNumber; colNumber < lastColNumber; colNumber++) {
+                        hasTopBorder[colNumber] = true;
+                    }
+                } else if (rowNumber == numberOfRows) {
+                    for (int colNumber = firstColNumber; colNumber < lastColNumber; colNumber++) {
+                        hasBottomBorder[colNumber] = true;
+                    }
                 }
             }
         }
+        for (int i = 0; i < hasBottomBorder.length; i++) {
+            if (!hasBottomBorder[i] || !hasTopBorder[i]) {
+                isBadTable = true;
+                break;
+            }
+        }
+        return isBadTable;
+    }
+
+    private boolean processVerticalLines(TableBorderRow[] rows, int numberOfRows, int numberOfColumns,
+                                        TableBorderBuilder builder) {
+        boolean[] hasLeftBorder = new boolean[numberOfRows];
+        boolean[] hasRightBorder = new boolean[numberOfRows];
         for (LineChunk line : builder.getVerticalLines()) {
-            int j = getCoordinateX(line.getCenterX());
-            int i1 = getCoordinateY(line.getTopY());
-            int i2 = getCoordinateY(line.getBottomY());
-            if (j > 0 && i1 != -1 && i2 != -1) {
-                for (int i = i1; i < i2; i++) {
-                    rows[i].cells[j - 1].colSpan = 1;
+            int colNumber = getCoordinateX(line.getCenterX());
+            int firstRowNumber = getCoordinateY(line.getTopY());
+            int lastRowNumber = getCoordinateY(line.getBottomY());
+            if (firstRowNumber != -1 && lastRowNumber != -1 && colNumber != -1) {
+                if (colNumber > 0 && colNumber < numberOfColumns) {
+                    for (int rowNumber = firstRowNumber; rowNumber < lastRowNumber; rowNumber++) {
+                        rows[rowNumber].cells[colNumber - 1].colSpan = 1;
+                    }
+                } else if (colNumber == 0) {
+                    for (int rowNumber = firstRowNumber; rowNumber < lastRowNumber; rowNumber++) {
+                        hasLeftBorder[rowNumber] = true;
+                    }
+                } else if (colNumber == numberOfColumns) {
+                    for (int rowNumber = firstRowNumber; rowNumber < lastRowNumber; rowNumber++) {
+                        hasRightBorder[rowNumber] = true;
+                    }
                 }
             }
         }
+        for (int i = 0; i < hasRightBorder.length; i++) {
+            if (!hasRightBorder[i] || !hasLeftBorder[i]) {
+                isBadTable = true;
+                break;
+            }
+        }
+        return isBadTable;
+    }
+
+    private boolean processMergedCells(TableBorderRow[] rows, int numberOfRows, int numberOfColumns) {
         for (int rowNumber = numberOfRows - 2; rowNumber >= 0; rowNumber--) {
             if (rows[rowNumber].cells[numberOfColumns - 1].rowSpan != 1) {
                 rows[rowNumber].cells[numberOfColumns - 1].rowSpan = rows[rowNumber + 1].cells[numberOfColumns - 1].rowSpan + 1;
@@ -160,7 +242,7 @@ public class TableBorder {
                         rows[rowNumber].cells[colNumber + 1] = rows[rowNumber].cells[colNumber];
                     } else {
                         isBadTable = true;
-                        return;
+                        return true;
                     }
                 }
                 if (rows[rowNumber].cells[colNumber].rowNumber + rows[rowNumber].cells[colNumber].rowSpan > rowNumber + 1) {
@@ -169,27 +251,16 @@ public class TableBorder {
                         rows[rowNumber + 1].cells[colNumber] = rows[rowNumber].cells[colNumber];
                     } else {
                         isBadTable = true;
-                        return;
+                        return true;
                     }
                 }
             }
         }
-        for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
-            for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
-                if (rows[rowNumber].cells[colNumber].colNumber == colNumber &&
-                        rows[rowNumber].cells[colNumber].rowNumber == rowNumber) {
-                    TableBorderCell cell = rows[rowNumber].cells[colNumber];
-                    cell.setBoundingBox(new BoundingBox(rows[rowNumber].getPageNumber(),
-                            xCoordinates.get(colNumber) - 0.5 * xWidths.get(colNumber),
-                            yCoordinates.get(rowNumber + cell.rowSpan) - 0.5 * yWidths.get(rowNumber + cell.rowSpan),
-                            xCoordinates.get(colNumber + cell.colSpan) + 0.5 * xWidths.get(colNumber + cell.colSpan),
-                            yCoordinates.get(rowNumber) + 0.5 * yWidths.get(rowNumber)));
-                }
-            }
-        }
+        return false;
+    }
 
-        List<Integer> redundantRows = new ArrayList(numberOfRows);
-        List<Integer> usefulRows = new ArrayList(numberOfRows);
+    private void detectRedundantRows(List<Integer> redundantRows, List<Integer> usefulRows,
+                                     TableBorderRow[] rows, int numberOfRows, int numberOfColumns) {
         for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
             boolean redundantRow = true;
             for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
@@ -204,12 +275,13 @@ public class TableBorder {
                 usefulRows.add(rowNumber);
             }
         }
+    }
 
-        List<Integer> redundantColumns = new ArrayList(numberOfColumns);
-        List<Integer> usefulColumns = new ArrayList(numberOfColumns);
-        for(int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
+    private void detectRedundantColumns(List<Integer> redundantColumns, List<Integer> usefulColumns,
+                                        TableBorderRow[] rows, int numberOfRows, int numberOfColumns) {
+        for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
             boolean redundantColumn = true;
-            for(int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+            for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
                 if (rows[rowNumber].cells[colNumber].colNumber == colNumber) {
                     redundantColumn = false;
                     break;
@@ -221,21 +293,20 @@ public class TableBorder {
                 usefulColumns.add(colNumber);
             }
         }
-        if (redundantColumns.isEmpty() && redundantRows.isEmpty()) {
-			this.rows = rows;
-			this.numberOfRows = numberOfRows;
-			this.numberOfColumns = numberOfColumns;
-			return;
-        }
-        for (int colNumber = 0; colNumber < redundantColumns.size(); colNumber++) {
-            for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
-                if (rows[rowNumber].cells[colNumber].rowNumber == rowNumber) {
-                    rows[rowNumber].cells[colNumber].colSpan--;
+    }
+
+    private void deleteRedundantRowsAndColumns(TableBorderRow[] rows, int numberOfRows, int numberOfColumns,
+                                               List<Integer> redundantRows, List<Integer> usefulRows,
+                                               List<Integer> redundantColumns, List<Integer> usefulColumns) {
+        for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+            for (Integer columnNumber : redundantColumns) {
+                if (rows[rowNumber].cells[columnNumber].rowNumber == rowNumber) {
+                    rows[rowNumber].cells[columnNumber].colSpan--;
                 }
             }
         }
-        for (int colNumber = 0; colNumber < redundantColumns.size(); colNumber++) {
-            for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+        for (Integer rowNumber : redundantRows) {
+            for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
                 if (rows[rowNumber].cells[colNumber].colNumber == colNumber) {
                     rows[rowNumber].cells[colNumber].rowSpan--;
                 }
