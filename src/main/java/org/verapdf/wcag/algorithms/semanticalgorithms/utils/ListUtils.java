@@ -118,7 +118,8 @@ public class ListUtils {
 															  List<? extends InfoChunk> childrenFirstLines) {
 		ListIntervalsCollection listIntervalsCollection = new ListIntervalsCollection();
 		for (ListInterval listInterval : listIntervals) {
-			double right = -Double.MAX_VALUE;
+			INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(listInterval.start));
+			double right = accumulatedChild.getRightX();
 			int start = listInterval.start;
 			for (int i = listInterval.start + 1; i <= listInterval.end; i++) {
 				InfoChunk line1 = childrenFirstLines.get(i - 1);
@@ -127,7 +128,7 @@ public class ListUtils {
 					start = listInterval.end;
 					break;
 				}
-				INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(i));
+				accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(i));
 				if (Objects.equals(line1.getPageNumber(), line2.getPageNumber())) {
 					if (!NodeUtils.areCloseNumbers(line1.getLeftX(), line2.getLeftX(),
 							line1.getBoundingBox().getHeight() / 2) && right >= accumulatedChild.getLeftX()) {

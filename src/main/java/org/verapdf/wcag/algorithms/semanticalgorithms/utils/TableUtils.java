@@ -24,8 +24,8 @@ public class TableUtils {
     public static final double TABLE_GAP_FACTOR = 3.0;
 
     private static final Set<SemanticType> tableSemanticTypes = new HashSet<>(Arrays.asList(
-            SemanticType.TABLE, SemanticType.TABLE_ROW,
-            SemanticType.TABLE_HEADER, SemanticType.TABLE_CELL));
+            SemanticType.TABLE, SemanticType.TABLE_ROW, SemanticType.TABLE_HEADER, SemanticType.TABLE_CELL,
+            SemanticType.TABLE_HEADERS, SemanticType.TABLE_BODY, SemanticType.TABLE_FOOTER));
 
     private TableUtils() {}
 

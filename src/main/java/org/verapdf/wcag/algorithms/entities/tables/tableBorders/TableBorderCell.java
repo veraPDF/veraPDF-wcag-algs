@@ -30,6 +30,10 @@ public class TableBorderCell {
         this.boundingBox = boundingBox;
     }
 
+    public BoundingBox getBoundingBox() {
+        return boundingBox;
+    }
+
     public double getTopY() {
         return boundingBox.getTopY();
     }
@@ -52,10 +56,6 @@ public class TableBorderCell {
 
     public double getHeight() {
         return boundingBox.getHeight();
-    }
-
-    public BoundingBox getBoundingBox() {
-        return boundingBox;
     }
 
     public void addContent(TableToken token) {

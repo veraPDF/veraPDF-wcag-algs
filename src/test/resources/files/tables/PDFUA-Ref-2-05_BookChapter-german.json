@@ -41572,45 +41572,9 @@
         {
           "type":"LineChunk",
           "pageNumber":0,
-          "startX":131.074203,
-          "startY":536.527588,
-          "endX":131.074203,
-          "endY":536.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":470.610203,
-          "startY":536.527588,
-          "endX":470.610203,
-          "endY":536.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
           "startX":193.399795,
           "startY":523.027588,
           "endX":468.13479500000005,
-          "endY":523.027588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":188.449599,
-          "startY":523.027588,
-          "endX":188.449599,
-          "endY":523.027588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":470.609599,
-          "startY":523.027588,
-          "endX":470.609599,
           "endY":523.027588,
           "width":1.0
         },
@@ -41626,45 +41590,9 @@
         {
           "type":"LineChunk",
           "pageNumber":0,
-          "startX":255.374999,
-          "startY":509.527588,
-          "endX":255.374999,
-          "endY":509.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":470.609999,
-          "startY":509.527588,
-          "endX":470.609999,
-          "endY":509.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
           "startX":283.305205,
           "startY":496.027588,
           "endX":468.14520500000003,
-          "endY":496.027588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":278.376097,
-          "startY":496.027588,
-          "endX":278.376097,
-          "endY":496.027588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":470.610097,
-          "startY":496.027588,
-          "endX":470.610097,
           "endY":496.027588,
           "width":1.0
         },
@@ -41680,45 +41608,9 @@
         {
           "type":"LineChunk",
           "pageNumber":0,
-          "startX":198.700804,
-          "startY":469.027588,
-          "endX":198.700804,
-          "endY":469.027588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":470.609804,
-          "startY":469.027588,
-          "endX":470.609804,
-          "endY":469.027588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
           "startX":470.609801,
           "startY":455.527588,
           "endX":468.760801,
-          "endY":455.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":466.912688,
-          "startY":455.527588,
-          "endX":466.912688,
-          "endY":455.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":470.609688,
-          "startY":455.527588,
-          "endX":470.609688,
           "endY":455.527588,
           "width":1.0
         },
@@ -41734,45 +41626,9 @@
         {
           "type":"LineChunk",
           "pageNumber":0,
-          "startX":217.679397,
-          "startY":442.027588,
-          "endX":217.679397,
-          "endY":442.027588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":470.609397,
-          "startY":442.027588,
-          "endX":470.609397,
-          "endY":442.027588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
           "startX":455.355407,
           "startY":428.527588,
           "endX":468.067407,
-          "endY":428.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":450.270599,
-          "startY":428.527588,
-          "endX":450.270599,
-          "endY":428.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":470.609599,
-          "startY":428.527588,
-          "endX":470.609599,
           "endY":428.527588,
           "width":1.0
         },
@@ -41788,45 +41644,9 @@
         {
           "type":"LineChunk",
           "pageNumber":0,
-          "startX":249.214599,
-          "startY":415.027588,
-          "endX":249.214599,
-          "endY":415.027588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":470.609599,
-          "startY":415.027588,
-          "endX":470.609599,
-          "endY":415.027588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
           "startX":317.299896,
           "startY":401.527588,
           "endX":468.136896,
-          "endY":401.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":312.354492,
-          "startY":401.527588,
-          "endX":312.354492,
-          "endY":401.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":470.609492,
-          "startY":401.527588,
-          "endX":470.609492,
           "endY":401.527588,
           "width":1.0
         },
@@ -41842,45 +41662,9 @@
         {
           "type":"LineChunk",
           "pageNumber":0,
-          "startX":222.339706,
-          "startY":374.527588,
-          "endX":222.339706,
-          "endY":374.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":465.329706,
-          "startY":374.527588,
-          "endX":465.329706,
-          "endY":374.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
           "startX":304.926788,
           "startY":361.027588,
           "endX":462.823788,
-          "endY":361.027588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":299.914215,
-          "startY":361.027588,
-          "endX":299.914215,
-          "endY":361.027588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":465.330215,
-          "startY":361.027588,
-          "endX":465.330215,
           "endY":361.027588,
           "width":1.0
         },
@@ -41896,45 +41680,9 @@
         {
           "type":"LineChunk",
           "pageNumber":0,
-          "startX":320.417694,
-          "startY":347.527588,
-          "endX":320.417694,
-          "endY":347.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":465.329694,
-          "startY":347.527588,
-          "endX":465.329694,
-          "endY":347.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
           "startX":332.763306,
           "startY":334.027588,
           "endX":462.875306,
-          "endY":334.027588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":327.853485,
-          "startY":334.027588,
-          "endX":327.853485,
-          "endY":334.027588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":465.329485,
-          "startY":334.027588,
-          "endX":465.329485,
           "endY":334.027588,
           "width":1.0
         },
@@ -41950,45 +41698,9 @@
         {
           "type":"LineChunk",
           "pageNumber":0,
-          "startX":280.781005,
-          "startY":320.527588,
-          "endX":280.781005,
-          "endY":320.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":465.330005,
-          "startY":320.527588,
-          "endX":465.330005,
-          "endY":320.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
           "startX":285.205413,
           "startY":307.027588,
           "endX":462.828413,
-          "endY":307.027588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":280.201903,
-          "startY":307.027588,
-          "endX":280.201903,
-          "endY":307.027588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":465.329903,
-          "startY":307.027588,
-          "endX":465.329903,
           "endY":307.027588,
           "width":1.0
         },
@@ -42004,45 +41716,9 @@
         {
           "type":"LineChunk",
           "pageNumber":0,
-          "startX":270.301513,
-          "startY":293.527588,
-          "endX":270.301513,
-          "endY":293.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":465.329513,
-          "startY":293.527588,
-          "endX":465.329513,
-          "endY":293.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
           "startX":256.550597,
           "startY":266.527588,
           "endX":462.844597,
-          "endY":266.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":251.579696,
-          "startY":266.527588,
-          "endX":251.579696,
-          "endY":266.527588,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":465.329696,
-          "startY":266.527588,
-          "endX":465.329696,
           "endY":266.527588,
           "width":1.0
         },
@@ -42058,24 +41734,6 @@
         {
           "type":"LineChunk",
           "pageNumber":0,
-          "startX":323.859985,
-          "startY":253.027603,
-          "endX":323.859985,
-          "endY":253.027603,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":465.32998499999997,
-          "startY":253.027603,
-          "endX":465.32998499999997,
-          "endY":253.027603,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
           "startX":371.290802,
           "startY":239.527603,
           "endX":462.85480199999995,
@@ -42085,45 +41743,9 @@
         {
           "type":"LineChunk",
           "pageNumber":0,
-          "startX":366.3414,
-          "startY":239.527603,
-          "endX":366.3414,
-          "endY":239.527603,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":465.3294,
-          "startY":239.527603,
-          "endX":465.3294,
-          "endY":239.527603,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
           "startX":268.39209,
           "startY":226.027603,
           "endX":462.86809,
-          "endY":226.027603,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":263.468689,
-          "startY":226.027603,
-          "endX":263.468689,
-          "endY":226.027603,
-          "width":1.0
-        },
-        {
-          "type":"LineChunk",
-          "pageNumber":0,
-          "startX":465.329689,
-          "startY":226.027603,
-          "endX":465.329689,
           "endY":226.027603,
           "width":1.0
         }
