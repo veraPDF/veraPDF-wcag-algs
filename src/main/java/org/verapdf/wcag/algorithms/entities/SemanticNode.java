@@ -248,7 +248,8 @@ public abstract class SemanticNode implements INode {
 	@Override
 	public String toString() {
 		return "SemanticNode{" +
-		       "correctSemanticScore=" + correctSemanticScore +
+		       "initialSemanticType=" + initialSemanticType +
+		       ", correctSemanticScore=" + correctSemanticScore +
 		       ", pageNumber=" + boundingBox.getPageNumber() +
 		       ", boundingBox=" + boundingBox +
 		       ", semanticType=" + semanticType +

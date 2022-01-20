@@ -9,11 +9,10 @@ public class TableBorderRow {
     protected TableBorderCell[] cells;
     private SemanticType semanticType;
     private INode node;
-    private final BoundingBox boundingBox;
+    private BoundingBox boundingBox;
 
-    public TableBorderRow(int rowNumber, int numberOfColumns, BoundingBox boundingBox) {
+    public TableBorderRow(int rowNumber, int numberOfColumns) {
         this.rowNumber = rowNumber;
-        this.boundingBox = boundingBox;
         cells = new TableBorderCell[numberOfColumns];
     }
 
@@ -59,6 +58,10 @@ public class TableBorderRow {
 
     public Integer getPageNumber() {
         return boundingBox.getPageNumber();
+    }
+
+    public void setBoundingBox(BoundingBox boundingBox) {
+        this.boundingBox = boundingBox;
     }
 
     public BoundingBox getBoundingBox() {

@@ -3,6 +3,7 @@ package org.verapdf.wcag.algorithms.entities.tables.tableBorders;
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.Vertex;
 import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.tables.TableBorderBuilder;
@@ -103,10 +104,7 @@ public class TableBorder {
         }
         TableBorderRow[] rows = new TableBorderRow[numberOfRows];
         for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
-            rows[rowNumber] = new TableBorderRow(rowNumber, numberOfColumns,
-                    new BoundingBox(boundingBox.getPageNumber(), boundingBox.getLeftX(),
-                            yCoordinates.get(rowNumber + 1) - 0.5 * yWidths.get(rowNumber + 1),
-                            boundingBox.getRightX(), yCoordinates.get(rowNumber) + 0.5 * yWidths.get(rowNumber)));
+            rows[rowNumber] = new TableBorderRow(rowNumber, numberOfColumns);
             for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
                 rows[rowNumber].cells[colNumber] = new TableBorderCell(rowNumber, colNumber,
                         numberOfRows - rowNumber, numberOfColumns - colNumber);
@@ -120,17 +118,21 @@ public class TableBorder {
             return;
         }
         for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+            BoundingBox multiBoundingBox = new MultiBoundingBox();
             for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
                 if (rows[rowNumber].cells[colNumber].colNumber == colNumber &&
                         rows[rowNumber].cells[colNumber].rowNumber == rowNumber) {
                     TableBorderCell cell = rows[rowNumber].cells[colNumber];
-                    cell.setBoundingBox(new BoundingBox(rows[rowNumber].getPageNumber(),
+                    BoundingBox cellBoundingBox = new BoundingBox(boundingBox.getPageNumber(),
                             xCoordinates.get(colNumber) - 0.5 * xWidths.get(colNumber),
                             yCoordinates.get(rowNumber + cell.rowSpan) - 0.5 * yWidths.get(rowNumber + cell.rowSpan),
                             xCoordinates.get(colNumber + cell.colSpan) + 0.5 * xWidths.get(colNumber + cell.colSpan),
-                            yCoordinates.get(rowNumber) + 0.5 * yWidths.get(rowNumber)));
+                            yCoordinates.get(rowNumber) + 0.5 * yWidths.get(rowNumber));
+                    cell.setBoundingBox(cellBoundingBox);
+                    multiBoundingBox.union(cellBoundingBox);
                 }
             }
+            rows[rowNumber].setBoundingBox(multiBoundingBox);
         }
         List<Integer> redundantRows = new ArrayList<>(numberOfRows);
         List<Integer> usefulRows = new ArrayList<>(numberOfRows);
@@ -326,14 +328,10 @@ public class TableBorder {
         }
         this.rows = new TableBorderRow[this.numberOfRows];
         for (int rowNumber = 0; rowNumber < this.numberOfRows; rowNumber++) {
-            this.rows[rowNumber] = new TableBorderRow(rowNumber, this.numberOfColumns,
-                    new BoundingBox(boundingBox.getPageNumber(), boundingBox.getLeftX(),
-                            yCoordinates.get(rowNumber + 1) - 0.5 * yWidths.get(rowNumber + 1),
-                            boundingBox.getRightX(), yCoordinates.get(rowNumber) + 0.5 * yWidths.get(rowNumber)));
-        }
-        for (int rowNumber = 0; rowNumber < this.numberOfRows; rowNumber++) {
+            int oldRowNumber = usefulRows.get(rowNumber);
+            this.rows[rowNumber] = new TableBorderRow(rowNumber, this.numberOfColumns);
+            this.rows[rowNumber].setBoundingBox(rows[oldRowNumber].getBoundingBox());
             for (int colNumber = 0; colNumber < this.numberOfColumns; colNumber++) {
-                int oldRowNumber = usefulRows.get(rowNumber);
                 int oldColNumber = usefulColumns.get(colNumber);
                 if (rows[oldRowNumber].cells[oldColNumber].rowNumber == oldRowNumber &&
                         rows[oldRowNumber].cells[oldColNumber].colNumber == oldColNumber) {
