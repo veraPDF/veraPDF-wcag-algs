@@ -32,6 +32,7 @@ public class TableBordersTests {
                 Arguments.of("test-document-1", new int[][] {{},{},{154},{},{},{}}, new int[][] {{},{},{10},{},{},{}},
                         new int[][] {{},{},{4},{},{},{}}, true, true),
                 Arguments.of("pdfmaker", new int[][] {{55}}, new int[][] {{4}}, new int[][] {{4}}, true, true),
+                Arguments.of("GridTable6-pass", new int[][] {{33}}, new int[][] {{3}}, new int[][] {{4}}, true, true),
                 Arguments.of("table-word", new int[][] {{65}}, new int[][] {{4}}, new int[][] {{4}}, true, true),
                 Arguments.of("emptyCells", new int[][] {{36}}, new int[][] {{3}}, new int[][] {{3}}, true, true),
                 Arguments.of("emptyCells2", new int[][] {{36}}, new int[][] {{3}}, new int[][] {{3}}, true, true),

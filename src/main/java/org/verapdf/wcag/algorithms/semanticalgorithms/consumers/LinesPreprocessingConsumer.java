@@ -41,6 +41,7 @@ public class LinesPreprocessingConsumer {
         List<TableBorderBuilder> tableBorders = new LinkedList<>();
         Set<LineChunk> set = new HashSet<>(StaticContainers.getLinesCollection().getHorizontalLines(pageNumber));
         set.addAll(StaticContainers.getLinesCollection().getVerticalLines(pageNumber));
+        set.addAll(StaticContainers.getLinesCollection().getSquares(pageNumber));
         for (LineChunk line : set) {
             if (line.getWidth() > MAX_LINE_WIDTH) {
                 continue;

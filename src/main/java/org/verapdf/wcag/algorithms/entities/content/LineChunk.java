@@ -18,6 +18,7 @@ public class LineChunk extends InfoChunk {
 	private final double width;
 	private final boolean isHorizontalLine;
 	private final boolean isVerticalLine;
+	private final boolean isSquare;
 
 	public LineChunk(Integer pageNumber, double startX, double startY, double endX, double endY) {
 		this(pageNumber, startX, startY, endX, endY, 1.0);
@@ -32,6 +33,7 @@ public class LineChunk extends InfoChunk {
 		this.width = width;//one vertex case
 		boolean hasCloseX = NodeUtils.areCloseNumbers(startX, endX, Math.abs(startY - endY) / 100);
 		boolean hasCloseY = NodeUtils.areCloseNumbers(startY, endY, Math.abs(startX - endX) / 100);
+		isSquare = hasCloseX && hasCloseY;
 		isVerticalLine = hasCloseX && !hasCloseY;
 		isHorizontalLine = !hasCloseX && hasCloseY;
 	}
@@ -66,6 +68,10 @@ public class LineChunk extends InfoChunk {
 
 	public boolean isVerticalLine() {
 		return isVerticalLine;
+	}
+
+	public boolean isSquare() {
+		return isSquare;
 	}
 
 	public double getWidth() {

@@ -5,7 +5,7 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 public class TableBorderRow {
-    public int rowNumber;
+    private int rowNumber;
     protected TableBorderCell[] cells;
     private SemanticType semanticType;
     private INode node;
@@ -58,6 +58,10 @@ public class TableBorderRow {
 
     public Integer getPageNumber() {
         return boundingBox.getPageNumber();
+    }
+
+    public int getRowNumber() {
+        return rowNumber;
     }
 
     public void setBoundingBox(BoundingBox boundingBox) {

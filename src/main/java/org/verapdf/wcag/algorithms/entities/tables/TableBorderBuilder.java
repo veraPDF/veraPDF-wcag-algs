@@ -32,12 +32,14 @@ public class TableBorderBuilder {
     public void addLine(LineChunk lineChunk) {
         if (lineChunk.isHorizontalLine()) {
             horizontalLines.add(lineChunk);
-        } else {
+        } else if (lineChunk.isVerticalLine()){
             verticalLines.add(lineChunk);
         }
         boundingBox.union(lineChunk.getBoundingBox());
         addVertex(lineChunk.getStart());
-        addVertex(lineChunk.getEnd());
+        if (!lineChunk.isSquare()) {
+            addVertex(lineChunk.getEnd());
+        }
     }
 
     public boolean isConnectedBorder(TableBorderBuilder border) {

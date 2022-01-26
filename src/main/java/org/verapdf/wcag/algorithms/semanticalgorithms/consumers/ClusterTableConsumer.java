@@ -378,11 +378,10 @@ public class ClusterTableConsumer {
             elementsNodes.put(bodyNode, item.getBody().getSemanticType());
         }
 
-        if (labelNode != null && bodyNode != null && labelNode.equals(bodyNode)) {
-            return labelNode;
-        }
-
         INode itemNode = findLocalRoot(elementsNodes.keySet());
+        while (itemNode.getParent() != null && itemNode.getParent().getChildren().size() == 1) {
+            itemNode = itemNode.getParent();
+        }
 
         for (Map.Entry<INode, SemanticType> entry : elementsNodes.entrySet()) {
             INode elementNode = entry.getKey();
