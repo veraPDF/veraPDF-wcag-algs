@@ -132,7 +132,7 @@ public class TableBorderConsumer {
             INode cellNode;
             for (int colNumber = 0; colNumber < row.getCells().length; colNumber++) {
                 TableBorderCell cell = row.getCell(colNumber);
-                if (cell.getRowNumber() == row.rowNumber && cell.getColNumber() == colNumber) {
+                if (cell.getRowNumber() == row.getRowNumber() && cell.getColNumber() == colNumber) {
                     cellNode = rowNode.getChildren().get(number);
                     if (cell.getContent().isEmpty() && cellNode.getSemanticType() == null) {
                         cell.setNode(cellNode);
@@ -145,7 +145,7 @@ public class TableBorderConsumer {
         List<INode> cells = findParents(Arrays.stream(row.getCells()).map(TableBorderCell::getNode)
                         .collect(Collectors.toList()), depth + 1);
         for (int colNumber = 0; colNumber < cells.size(); colNumber++) {
-            if (cells.get(colNumber) != null && row.getCell(colNumber).getRowNumber() == row.rowNumber &&
+            if (cells.get(colNumber) != null && row.getCell(colNumber).getRowNumber() == row.getRowNumber() &&
                     row.getCell(colNumber).getColNumber() == colNumber) {
                 if (isHeaderCell(cells.get(colNumber), row.getCell(colNumber), table)) {
                     setType(cells.get(colNumber), SemanticType.TABLE_HEADER, table.getId());
@@ -207,7 +207,7 @@ public class TableBorderConsumer {
         Set<INode> cellNodes = new HashSet<>();
         for (int colNumber = 0; colNumber < row.getCells().length; colNumber++) {
             TableBorderCell cell = row.getCell(colNumber);
-            if (cell.getRowNumber() == row.rowNumber && cell.getColNumber() == colNumber) {
+            if (cell.getRowNumber() == row.getRowNumber() && cell.getColNumber() == colNumber) {
                 INode cellNode = getCellNode(cell);
                 if (cellNode != null) {
                     cell.setNode(cellNode);

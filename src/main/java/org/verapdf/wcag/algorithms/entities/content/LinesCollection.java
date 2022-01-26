@@ -10,56 +10,62 @@ import java.util.SortedSet;
 public class LinesCollection {
 	private final Map<Integer, SortedSet<LineChunk>> horizontalLines;
 	private final Map<Integer, SortedSet<LineChunk>> verticalLines;
+	private final Map<Integer, SortedSet<LineChunk>> squares;
 
 	private final IDocument document;
 
 	public LinesCollection(IDocument document) {
 		horizontalLines = new HashMap<>();
 		verticalLines = new HashMap<>();
+		squares = new HashMap<>();
 		this.document = document;
 	}
 
 	public SortedSet<LineChunk> getHorizontalLines(Integer pageNumber) {
-		SortedSet<LineChunk> lines = horizontalLines.get(pageNumber);
-		if (lines == null) {
-			lines = parseHorizontalLines(pageNumber);
+		SortedSet<LineChunk> horizontalLines = this.horizontalLines.get(pageNumber);
+		if (horizontalLines == null) {
+			parseLines(pageNumber);
+			horizontalLines = this.horizontalLines.get(pageNumber);
 		}
-		return lines;
+		return horizontalLines;
 	}
 
-	private SortedSet<LineChunk> parseHorizontalLines(Integer pageNumber) {
-		SortedSet<LineChunk> lines = new TreeSet<>(new LineChunk.HorizontalLineComparator());
+	private void parseLines(Integer pageNumber) {
+		SortedSet<LineChunk> horizontalLines = new TreeSet<>(new LineChunk.HorizontalLineComparator());
+		SortedSet<LineChunk> verticalLines = new TreeSet<>(new LineChunk.VerticalLineComparator());
+		SortedSet<LineChunk> squares = new TreeSet<>(new LineChunk.VerticalLineComparator());
 		for (IChunk chunk : document.getArtifacts(pageNumber)) {
 			if (chunk instanceof LineChunk) {
 				LineChunk lineChunk = (LineChunk) chunk;
 				if (lineChunk.isHorizontalLine()) {
-					lines.add(lineChunk);
+					horizontalLines.add(lineChunk);
+				} else if (lineChunk.isVerticalLine()) {
+					verticalLines.add(lineChunk);
+				} else if (lineChunk.isSquare()) {
+					squares.add(lineChunk);
 				}
 			}
 		}
-		horizontalLines.put(pageNumber, lines);
-		return lines;
+		this.horizontalLines.put(pageNumber, horizontalLines);
+		this.verticalLines.put(pageNumber, verticalLines);
+		this.squares.put(pageNumber, squares);
 	}
 
 	public SortedSet<LineChunk> getVerticalLines(Integer pageNumber) {
-		SortedSet<LineChunk> lines = verticalLines.get(pageNumber);
-		if (lines == null) {
-			lines = parseVerticalLines(pageNumber);
+		SortedSet<LineChunk> verticalLines = this.verticalLines.get(pageNumber);
+		if (verticalLines == null) {
+			parseLines(pageNumber);
+			verticalLines = this.verticalLines.get(pageNumber);
 		}
-		return lines;
+		return verticalLines;
 	}
 
-	private SortedSet<LineChunk> parseVerticalLines(Integer pageNumber) {
-		SortedSet<LineChunk> lines = new TreeSet<>(new LineChunk.VerticalLineComparator());
-		for (IChunk chunk : document.getArtifacts(pageNumber)) {
-			if (chunk instanceof LineChunk) {
-				LineChunk lineChunk = (LineChunk) chunk;
-				if (lineChunk.isVerticalLine()) {
-					lines.add(lineChunk);
-				}
-			}
+	public SortedSet<LineChunk> getSquares(Integer pageNumber) {
+		SortedSet<LineChunk> squares = this.squares.get(pageNumber);
+		if (squares == null) {
+			parseLines(pageNumber);
+			squares = this.squares.get(pageNumber);
 		}
-		verticalLines.put(pageNumber, lines);
-		return lines;
+		return squares;
 	}
 }
