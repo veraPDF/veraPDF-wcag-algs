@@ -2,12 +2,12 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.SemanticList;
+import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.content.InfoChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
 import org.verapdf.wcag.algorithms.entities.lists.ListIntervalsCollection;
-import org.verapdf.wcag.algorithms.entities.maps.AccumulatedNodeMapper;
 import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.tables.TableCell;
 import org.verapdf.wcag.algorithms.entities.tables.TableRow;
@@ -85,7 +85,9 @@ public class ListUtils {
 		if (node.getRecognizedStructureId() == null) {
 			double probability = ((double) (listInterval.end - listInterval.start + 1)) / children.size();
 			if (probability >= TABLE_PROBABILITY_THRESHOLD) {
-				StaticContainers.getAccumulatedNodeMapper().updateNode(node, new SemanticList(node), probability, SemanticType.LIST);
+				INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
+				StaticContainers.getAccumulatedNodeMapper().updateNode(node, new SemanticList((SemanticTextNode)accumulatedNode),
+				                                                       probability, SemanticType.LIST);
 				node.setRecognizedStructureId(listId);
 			}
 		}
