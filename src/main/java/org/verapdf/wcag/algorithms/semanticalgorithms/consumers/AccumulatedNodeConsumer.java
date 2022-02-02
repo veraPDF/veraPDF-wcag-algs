@@ -247,29 +247,23 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		if (isNullableSemanticType(node)) {
 			return null;
 		}
-		switch (node.getSemanticType()) {
-			case SPAN:
-				SemanticSpan span = (SemanticSpan) node;
-				return new SemanticParagraph(span.getBoundingBox(), span.getLines());
-			case PARAGRAPH:
-				return new SemanticParagraph((SemanticParagraph) node);
-			default:
-				return null;
+		if (node instanceof SemanticParagraph) {
+			return new SemanticParagraph((SemanticParagraph) node);
+		} else if (node instanceof SemanticTextNode) {
+			SemanticTextNode textNode = (SemanticTextNode) node;
+			return new SemanticParagraph(textNode.getBoundingBox(), textNode.getLines());
 		}
+		return null;
 	}
 
 	private double toParagraphMergeProbability(SemanticParagraph paragraph, INode node) {
 		if (isNullableSemanticType(node)) {
 			return 0d;
 		}
-		switch (node.getSemanticType()) {
-			case SPAN:
-				return toParagraphMergeProbability(paragraph, (SemanticSpan) node);
-			case PARAGRAPH:
-				return toParagraphMergeProbability(paragraph, (SemanticParagraph) node);
-			default:
-				return 0d;
+		if (node instanceof SemanticTextNode) {
+			return toParagraphMergeProbability(paragraph, (SemanticTextNode) node);
 		}
+		return 0d;
 	}
 
 	private boolean isNullableSemanticType(INode node) {
@@ -280,7 +274,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		return false;
 	}
 
-	private double toParagraphMergeProbability(SemanticParagraph paragraph, SemanticTextNode textNode) {
+	private double toParagraphMergeProbabilityCount(SemanticParagraph paragraph, SemanticTextNode textNode) {
 		List<TextLine> lines = textNode.getLines();
 		if (lines.isEmpty()) {
 			return 1;
@@ -325,16 +319,11 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		return mergeProbability;
 	}
 
-	private double toParagraphMergeProbability(SemanticParagraph paragraph, SemanticSpan span) {
-		double mergeProbability = toParagraphMergeProbability(paragraph, (SemanticTextNode) span);
-		paragraph.getBoundingBox().union(span.getBoundingBox());
-		return (span.getCorrectSemanticScore() == null) ? mergeProbability : (Math.min(span.getCorrectSemanticScore(), mergeProbability));
-	}
-
-	private double toParagraphMergeProbability(SemanticParagraph paragraph1, SemanticParagraph paragraph2) {
-		double mergeProbability = toParagraphMergeProbability(paragraph1, (SemanticTextNode) paragraph2);
-		paragraph1.getBoundingBox().union(paragraph2.getBoundingBox());
-		return (paragraph2.getCorrectSemanticScore() == null) ? mergeProbability : (Math.min(paragraph2.getCorrectSemanticScore(), mergeProbability));
+	private double toParagraphMergeProbability(SemanticParagraph paragraph, SemanticTextNode textNode) {
+		double mergeProbability = toParagraphMergeProbabilityCount(paragraph, textNode);
+		paragraph.getBoundingBox().union(textNode.getBoundingBox());
+		return (textNode.getCorrectSemanticScore() == null) ? mergeProbability : (Math.min(textNode.getCorrectSemanticScore(),
+		                                                                                   mergeProbability));
 	}
 
 	private void acceptChildrenSemanticHeading(INode node) {
