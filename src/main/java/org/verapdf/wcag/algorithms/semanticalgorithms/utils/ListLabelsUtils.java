@@ -20,7 +20,7 @@ public class ListLabelsUtils {
 			'\u2717', '\u2794', '\u27A2', '\uE00A', '\uE00C', '\uF076', '\u2588', '\u25A0', '\u2013', '\uF0B7'));//office labels examples (-, •, ✔, ✗, ●, ➔, ➢, o), pdf files labels examples (█, ■)
 
 	public static boolean isListLabel(Character label) {
-		return labels.contains(label);
+		return labels.contains(label) || Character.isDigit(label);
 	}
 
 	public static boolean isListLabels(List<String> listLabels) {
