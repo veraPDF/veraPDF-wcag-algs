@@ -38,6 +38,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 
 	public static final double MERGE_PROBABILITY_THRESHOLD = 0.75;
 	public static final double ONE_LINE_MIN_PROBABILITY_THRESHOLD = 0.1;
+	public static final double FOOTNOTE_MIN_PROBABILITY_THRESHOLD = 0.1;
 
 	public AccumulatedNodeConsumer() {
 	}
@@ -291,6 +292,12 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		double toColumnsMergeProbability = ChunksMergeUtils.toColumnsMergeProbability(lastLine, nextLine);
 		if (toColumnsMergeProbability > differentLinesProbability) {
 			differentLinesProbability = toColumnsMergeProbability;
+		}
+		double footnoteProbability = ChunksMergeUtils.getFootnoteProbability(paragraph, textNode, lastLine, nextLine);
+		if (footnoteProbability > Math.max(oneLineProbability, differentLinesProbability) &&
+		    footnoteProbability > FOOTNOTE_MIN_PROBABILITY_THRESHOLD) {
+			paragraph.getBoundingBox().union(textNode.getBoundingBox());
+			return footnoteProbability;
 		}
 
 		double mergeProbability;
