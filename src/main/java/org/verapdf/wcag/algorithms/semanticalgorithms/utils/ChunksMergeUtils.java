@@ -25,6 +25,7 @@ public class ChunksMergeUtils {
 	private static final double SUPERSCRIPT_FONTSIZE_THRESHOLD = 0.1;
 	private static final double SUBSCRIPT_BASELINE_THRESHOLD = 0.08;
 	private static final double SUBSCRIPT_FONTSIZE_THRESHOLD = 0.1;
+	private static final double[] FOOTNOTE_PROBABILITY_PARAMS = {0.35, 0.5, 0.15, 0.4, 0.55, 0.2, 0.05};
 
 	private ChunksMergeUtils() {
 	}
@@ -179,6 +180,37 @@ public class ChunksMergeUtils {
 			                                                                       SUBSCRIPT_PROBABILITY_PARAMS);
 		}
 		return 0.0;
+	}
+
+	public static double getFootnoteProbability(SemanticTextNode firstNode, SemanticTextNode secondNode,
+	                                            TextLine lastLine, TextLine nextLine) {
+		if (!firstNode.getPageNumber().equals(secondNode.getPageNumber()) ||
+		    lastLine.getBaseLine() < nextLine.getBaseLine() + FOOTNOTE_PROBABILITY_PARAMS[6]) {
+			return 0.0;
+		}
+		double footnoteProbability = 0.0;
+		TextChunk x = lastLine.getLastTextChunk();
+		TextChunk y = nextLine.getFirstTextChunk();
+
+		if (TextFormat.SUPERSCRIPT.equals(x.getTextFormat())) {
+			footnoteProbability += FOOTNOTE_PROBABILITY_PARAMS[0];
+		} else {
+			footnoteProbability -= FOOTNOTE_PROBABILITY_PARAMS[3];
+		}
+
+		String xValue = x.getValue();
+		String yValue = y.getValue();
+		if (xValue.equals(yValue.substring(0, Math.min(xValue.length(), yValue.length())))) {
+			footnoteProbability += FOOTNOTE_PROBABILITY_PARAMS[1];
+		} else {
+			footnoteProbability -= FOOTNOTE_PROBABILITY_PARAMS[4];
+		}
+		if (firstNode.getFontSize() > secondNode.getFontSize() + FOOTNOTE_PROBABILITY_PARAMS[6]) {
+			footnoteProbability += FOOTNOTE_PROBABILITY_PARAMS[2];
+		} else if (secondNode.getFontSize() > firstNode.getFontSize() + FOOTNOTE_PROBABILITY_PARAMS[6]) {
+			footnoteProbability -= FOOTNOTE_PROBABILITY_PARAMS[5];
+		}
+		return footnoteProbability;
 	}
 
 	/**
