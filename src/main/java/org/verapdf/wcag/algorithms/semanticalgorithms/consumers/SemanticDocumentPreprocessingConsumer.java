@@ -4,6 +4,7 @@ import org.verapdf.wcag.algorithms.entities.IDocument;
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.SemanticSpan;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
@@ -66,9 +67,11 @@ public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
     }
 
     private void checkUnderlinedText(SemanticSpan span) {
-        for (TextLine textLine : span.getLines()) {
-            for (TextChunk textChunk : textLine.getTextChunks()) {
-                checkUnderlinedText(textChunk);
+        for (TextColumn textColumn : span.getColumns()) {
+            for (TextLine textLine : textColumn.getLines()) {
+                for (TextChunk textChunk : textLine.getTextChunks()) {
+                    checkUnderlinedText(textChunk);
+                }
             }
         }
     }

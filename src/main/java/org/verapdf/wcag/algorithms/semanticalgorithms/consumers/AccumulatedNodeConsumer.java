@@ -14,6 +14,7 @@ import org.verapdf.wcag.algorithms.entities.SemanticFigure;
 import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.SemanticCaption;
 import org.verapdf.wcag.algorithms.entities.SemanticNumberHeading;
+import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.content.LineArtChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
@@ -97,16 +98,18 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			if (!(child instanceof SemanticSpan)) {
 				continue;
 			}
-			for (TextLine textLine : ((SemanticSpan)child).getLines()) {
-				for (TextChunk textChunk : textLine.getTextChunks()) {
-					if (TextChunkUtils.isWhiteSpaceChunk(textChunk)) {
-						continue;
-					}
-					if (!Objects.equals(textNode.getFontSize(), textChunk.getFontSize()) ||
-					    !Objects.equals(textNode.getItalicAngle(), textChunk.getItalicAngle()) ||
-					    !Objects.equals(textNode.getFontName(), textChunk.getFontName()) ||
-					    !Arrays.equals(textNode.getTextColor(), textChunk.getFontColor())) {
-						textChunk.setHasSpecialStyle();
+			for (TextColumn textColumn : ((SemanticSpan)child).getColumns()) {
+				for (TextLine textLine : textColumn.getLines()) {
+					for (TextChunk textChunk : textLine.getTextChunks()) {
+						if (TextChunkUtils.isWhiteSpaceChunk(textChunk)) {
+							continue;
+						}
+						if (!Objects.equals(textNode.getFontSize(), textChunk.getFontSize()) ||
+								!Objects.equals(textNode.getItalicAngle(), textChunk.getItalicAngle()) ||
+								!Objects.equals(textNode.getFontName(), textChunk.getFontName()) ||
+								!Arrays.equals(textNode.getTextColor(), textChunk.getFontColor())) {
+							textChunk.setHasSpecialStyle();
+						}
 					}
 				}
 			}
@@ -175,55 +178,10 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		}
 		switch (node.getSemanticType()) {
 			case SPAN:
-				return toSpanMergeProbability(span, (SemanticSpan) node);
+				return toTextNodeMergeProbability(span, (SemanticSpan) node);
 			default:
 				return 0d;
 		}
-	}
-
-	private double toSpanMergeProbability(SemanticSpan span, SemanticSpan secondSpan) {
-		if (secondSpan.getLinesNumber() == 0) {
-			return 1;
-		}
-		TextLine lastLine = span.getLastLine();
-		TextLine nextLine = secondSpan.getFirstLine();
-		double oneLineProbability = ChunksMergeUtils.countOneLineProbability(secondSpan, lastLine, nextLine);
-		double differentLinesProbability;
-		if (span.getLinesNumber() > 1 && secondSpan.getLinesNumber() > 1) {
-			differentLinesProbability = ChunksMergeUtils.toParagraphMergeProbability(lastLine, nextLine);
-		} else {
-			differentLinesProbability = ChunksMergeUtils.mergeLeadingProbability(lastLine, nextLine);
-		}
-		double toColumnsMergeProbability = ChunksMergeUtils.toColumnsMergeProbability(lastLine, nextLine);
-		if (toColumnsMergeProbability > differentLinesProbability) {
-			differentLinesProbability = toColumnsMergeProbability;
-		}
-
-		double mergeProbability;
-		if (oneLineProbability < Math.max(differentLinesProbability, ONE_LINE_MIN_PROBABILITY_THRESHOLD)) {
-			mergeProbability = differentLinesProbability;
-			span.getLines().addAll(secondSpan.getLines());
-			secondSpan.setTextFormat(TextFormat.NORMAL);
-		} else {
-			updateTextChunksFormat(secondSpan);
-			mergeProbability = oneLineProbability;
-			lastLine.setNotFullLine();
-			nextLine.setNotFullLine();
-			lastLine = new TextLine(lastLine);
-			lastLine.add(nextLine);
-			span.setLastLine(lastLine);
-			if (secondSpan.getLinesNumber() > 1) {
-				if (span.getLinesNumber() > 2 && secondSpan.getLinesNumber() > 1) {
-					mergeProbability *= ChunksMergeUtils.toParagraphMergeProbability(span.getPenultLine(), lastLine);
-				}
-				if (span.getLinesNumber() > 1 && secondSpan.getLinesNumber() > 2) {
-					mergeProbability *= ChunksMergeUtils.toParagraphMergeProbability(lastLine, secondSpan.getSecondLine());
-				}
-				span.getLines().addAll(secondSpan.getLines().subList(1, secondSpan.getLinesNumber() - 1));
-			}
-		}
-		span.getBoundingBox().union(secondSpan.getBoundingBox());
-		return (secondSpan.getCorrectSemanticScore() == null) ? mergeProbability : (Math.min(mergeProbability, secondSpan.getCorrectSemanticScore()));
 	}
 
 	private void acceptSemanticParagraph(INode node) {
@@ -252,7 +210,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			return new SemanticParagraph((SemanticParagraph) node);
 		} else if (node instanceof SemanticTextNode) {
 			SemanticTextNode textNode = (SemanticTextNode) node;
-			return new SemanticParagraph(textNode.getBoundingBox(), textNode.getLines());
+			return new SemanticParagraph(textNode.getBoundingBox(), textNode.getColumns());
 		}
 		return null;
 	}
@@ -262,7 +220,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			return 0d;
 		}
 		if (node instanceof SemanticTextNode) {
-			return toParagraphMergeProbability(paragraph, (SemanticTextNode) node);
+			return toTextNodeMergeProbability(paragraph, (SemanticTextNode) node);
 		}
 		return 0d;
 	}
@@ -275,62 +233,64 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		return false;
 	}
 
-	private double toParagraphMergeProbabilityCount(SemanticParagraph paragraph, SemanticTextNode textNode) {
-		List<TextLine> lines = textNode.getLines();
-		if (lines.isEmpty()) {
+	private double toTextNodeMergeProbability(SemanticTextNode currentTextNode, SemanticTextNode nextTextNode) {
+		if (nextTextNode.isEmpty()) {
 			return 1;
 		}
-		TextLine lastLine = paragraph.getLastLine();
-		TextLine nextLine = lines.get(0);
-		double oneLineProbability = ChunksMergeUtils.countOneLineProbability(textNode, lastLine, nextLine);
+		List<TextLine> lines = nextTextNode.getFirstColumn().getLines();
+		TextLine lastLine = currentTextNode.getLastLine();
+		TextLine nextLine = nextTextNode.getFirstLine();
+		double oneLineProbability = ChunksMergeUtils.countOneLineProbability(nextTextNode, lastLine, nextLine);
 		double differentLinesProbability;
-		if (paragraph.getLines().size() > 1 && lines.size() > 1) {
+		if (currentTextNode.getLastColumn().getLinesNumber() > 1 && nextTextNode.getFirstColumn().getLinesNumber() > 1) {
 			differentLinesProbability = ChunksMergeUtils.toParagraphMergeProbability(lastLine, nextLine);
 		} else {
 			differentLinesProbability = ChunksMergeUtils.mergeLeadingProbability(lastLine, nextLine);
 		}
 		double toColumnsMergeProbability = ChunksMergeUtils.toColumnsMergeProbability(lastLine, nextLine);
-		if (toColumnsMergeProbability > differentLinesProbability) {
-			differentLinesProbability = toColumnsMergeProbability;
-		}
-		double footnoteProbability = ChunksMergeUtils.getFootnoteProbability(paragraph, textNode, lastLine, nextLine);
+		double footnoteProbability = ChunksMergeUtils.getFootnoteProbability(currentTextNode, nextTextNode, lastLine, nextLine);
+		double mergeProbability;
 		if (footnoteProbability > Math.max(oneLineProbability, differentLinesProbability) &&
 		    footnoteProbability > FOOTNOTE_MIN_PROBABILITY_THRESHOLD) {
-			paragraph.getBoundingBox().union(textNode.getBoundingBox());
-			return footnoteProbability;
-		}
-
-		double mergeProbability;
-		if (oneLineProbability < Math.max(differentLinesProbability, ONE_LINE_MIN_PROBABILITY_THRESHOLD)) {
-			mergeProbability = differentLinesProbability;
-			paragraph.getLines().addAll(lines);
-			textNode.setTextFormat(TextFormat.NORMAL);
+			mergeProbability = footnoteProbability;
+		} else if (oneLineProbability < Math.max(Math.max(differentLinesProbability, toColumnsMergeProbability), ONE_LINE_MIN_PROBABILITY_THRESHOLD)) {
+			if (differentLinesProbability >= toColumnsMergeProbability) {
+				mergeProbability = differentLinesProbability;
+				TextColumn lastColumn = new TextColumn(currentTextNode.getLastColumn());
+				lastColumn.getLines().addAll(lines);
+				currentTextNode.setLastColumn(lastColumn);
+				if (nextTextNode.getColumnsNumber() > 1) {
+					currentTextNode.addAll(nextTextNode.getColumns().subList(1, nextTextNode.getColumnsNumber()));
+				}
+			} else {
+				mergeProbability = toColumnsMergeProbability;
+				currentTextNode.addAll(nextTextNode.getColumns());
+			}
+			nextTextNode.setTextFormat(TextFormat.NORMAL);
 		} else {
-			updateTextChunksFormat(textNode);
+			updateTextChunksFormat(nextTextNode);
 			mergeProbability = oneLineProbability;
 			lastLine.setNotFullLine();
 			nextLine.setNotFullLine();
+			currentTextNode.setLastColumn(new TextColumn(currentTextNode.getLastColumn()));
 			lastLine = new TextLine(lastLine);
 			lastLine.add(nextLine);
-			paragraph.setLastLine(lastLine);
+			currentTextNode.getLastColumn().setLastLine(lastLine);
 			if (lines.size() > 1) {
-				if (paragraph.getLinesNumber() > 2 && lines.size() > 1) {
-					mergeProbability *= ChunksMergeUtils.toParagraphMergeProbability(paragraph.getPenultLine(), lastLine);
+				if (currentTextNode.getLastColumn().getLinesNumber() > 2 && lines.size() > 1) {
+					mergeProbability *= ChunksMergeUtils.toParagraphMergeProbability(currentTextNode.getPenultLine(), lastLine);
 				}
-				if (paragraph.getLinesNumber() > 1 && lines.size() > 2) {
+				if (currentTextNode.getLastColumn().getLinesNumber() > 1 && lines.size() > 2) {
 					mergeProbability *= ChunksMergeUtils.toParagraphMergeProbability(lastLine, lines.get(1));
 				}
-				paragraph.getLines().addAll(lines.subList(1, lines.size() - 1));
+				currentTextNode.getLastColumn().getLines().addAll(lines.subList(1, lines.size()));
+			}
+			if (nextTextNode.getColumnsNumber() > 1) {
+				currentTextNode.addAll(nextTextNode.getColumns().subList(1, nextTextNode.getColumnsNumber()));
 			}
 		}
-		return mergeProbability;
-	}
-
-	private double toParagraphMergeProbability(SemanticParagraph paragraph, SemanticTextNode textNode) {
-		double mergeProbability = toParagraphMergeProbabilityCount(paragraph, textNode);
-		paragraph.getBoundingBox().union(textNode.getBoundingBox());
-		return (textNode.getCorrectSemanticScore() == null) ? mergeProbability : (Math.min(textNode.getCorrectSemanticScore(),
-		                                                                                   mergeProbability));
+		currentTextNode.getBoundingBox().union(nextTextNode.getBoundingBox());
+		return (nextTextNode.getCorrectSemanticScore() == null) ? mergeProbability : (Math.min(mergeProbability, nextTextNode.getCorrectSemanticScore()));
 	}
 
 	private void acceptChildrenSemanticHeading(INode node) {
@@ -492,9 +452,11 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 
 	private void updateTextChunksFormat(SemanticTextNode textNode) {
 		TextFormat format = textNode.getTextFormat();
-		for (TextLine line : textNode.getLines()) {
-			for (TextChunk chunk : line.getTextChunks()) {
-				chunk.setTextFormat(format);
+		for (TextColumn column : textNode.getColumns()) {
+			for (TextLine line : column.getLines()) {
+				for (TextChunk chunk : line.getTextChunks()) {
+					chunk.setTextFormat(format);
+				}
 			}
 		}
 	}
