@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.verapdf.wcag.algorithms.entities.*;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
@@ -60,10 +61,11 @@ public class ContrastRatioConsumerTests {
 		tree.forEach(contrastRatioConsumer);
 		tree.forEach(node -> {
 			if (node.getChildren().size() == 0 && SemanticType.SPAN.equals(node.getSemanticType())) {
-				List<TextLine> textLines = ((SemanticSpan)(node)).getLines();
-				for (TextLine line : textLines) {
-					for	(TextChunk chunk : line.getTextChunks())	{
-						Assertions.assertTrue(chunk.getContrastRatio() >= ratioThreshold);
+				for (TextColumn textColumn : ((SemanticSpan)node).getColumns()) {
+					for (TextLine line : textColumn.getLines()) {
+						for	(TextChunk chunk : line.getTextChunks())	{
+							Assertions.assertTrue(chunk.getContrastRatio() >= ratioThreshold);
+						}
 					}
 				}
 			}
@@ -96,10 +98,11 @@ public class ContrastRatioConsumerTests {
 		tree.forEach(contrastRatioConsumer);
 		tree.forEach(node -> {
 			if (node.getChildren().size() == 0 && SemanticType.SPAN.equals(node.getSemanticType())) {
-				List<TextLine> textLines = ((SemanticSpan)(node)).getLines();
-				for (TextLine line : textLines) {
-					for	(TextChunk chunk : line.getTextChunks())	{
-						Assertions.assertTrue(chunk.getContrastRatio() < ratioThreshold);
+				for (TextColumn textColumn : ((SemanticSpan)node).getColumns()) {
+					for (TextLine line : textColumn.getLines()) {
+						for	(TextChunk chunk : line.getTextChunks())	{
+							Assertions.assertTrue(chunk.getContrastRatio() < ratioThreshold);
+						}
 					}
 				}
 			}
@@ -111,10 +114,10 @@ public class ContrastRatioConsumerTests {
 		SemanticSpan nodeToCheck = new SemanticSpan();
 		nodeToCheck.add(new TextLine(new TextChunk(new BoundingBox(0, new double [] {100, 100, 100.1, 120}), ".", 14, 118)));
 		nodeToCheck.setPageNumber(0);
-		Assertions.assertEquals(0.1, nodeToCheck.getLines().get(0).getTextChunks().get(0).getBoundingBox().getWidth(), 0.0001);
+		Assertions.assertEquals(0.1, nodeToCheck.getFirstLine().getFirstTextChunk().getBoundingBox().getWidth(), 0.0001);
 		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + "1.4.3-t02-fail-a.pdf");
 		contrastRatioConsumer.accept(nodeToCheck);
-		Assertions.assertEquals(0.1, nodeToCheck.getLines().get(0).getTextChunks().get(0).getBoundingBox().getWidth(), 0.0001);
+		Assertions.assertEquals(0.1, nodeToCheck.getFirstLine().getFirstTextChunk().getBoundingBox().getWidth(), 0.0001);
 	}
 
 	@Test
@@ -122,9 +125,9 @@ public class ContrastRatioConsumerTests {
 		SemanticSpan nodeToCheck = new SemanticSpan();
 		nodeToCheck.add(new TextLine(new TextChunk(new BoundingBox(0, new double [] {100, 100, 110, 100.1}), ".", 14, 118)));
 		nodeToCheck.setPageNumber(0);
-		Assertions.assertEquals(0.1, nodeToCheck.getLines().get(0).getTextChunks().get(0).getBoundingBox().getHeight(), 0.0001);
+		Assertions.assertEquals(0.1, nodeToCheck.getFirstLine().getFirstTextChunk().getBoundingBox().getHeight(), 0.0001);
 		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + "1.4.3-t02-fail-a.pdf");
 		contrastRatioConsumer.accept(nodeToCheck);
-		Assertions.assertEquals(0.1, nodeToCheck.getLines().get(0).getTextChunks().get(0).getBoundingBox().getHeight(), 0.0001);
+		Assertions.assertEquals(0.1, nodeToCheck.getFirstLine().getFirstTextChunk().getBoundingBox().getHeight(), 0.0001);
 	}
 }

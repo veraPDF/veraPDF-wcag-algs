@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.verapdf.wcag.algorithms.entities.*;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.AccumulatedNodeConsumer;
@@ -83,10 +84,12 @@ class SubscriptSuperscriptTest {
 			if (accumulatedNode instanceof SemanticTextNode) {
 				SemanticTextNode textNode = ((SemanticTextNode) accumulatedNode);
 				Assertions.assertEquals(nodeChecks[count], textNode.getTextFormat());
-				for (TextLine line : textNode.getLines()) {
-					for (TextChunk chunk : line.getTextChunks()) {
-						Assertions.assertEquals(chunkChecks[countChunks], chunk.getTextFormat());
-						countChunks++;
+				for (TextColumn column : textNode.getColumns()) {
+					for (TextLine line : column.getLines()) {
+						for (TextChunk chunk : line.getTextChunks()) {
+							Assertions.assertEquals(chunkChecks[countChunks], chunk.getTextFormat());
+							countChunks++;
+						}
 					}
 				}
 				count++;

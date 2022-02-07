@@ -1,5 +1,6 @@
 package org.verapdf.wcag.algorithms.entities;
 
+import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
@@ -29,18 +30,13 @@ public class SemanticParagraph extends SemanticTextNode {
 		setSemanticType(SemanticType.PARAGRAPH);
 	}
 
-	public SemanticParagraph(BoundingBox bbox, List<TextLine> lines) {
-		super(bbox, lines);
+	public SemanticParagraph(BoundingBox bbox, List<TextColumn> columns) {
+		super(bbox, columns);
 		setSemanticType(SemanticType.PARAGRAPH);
 	}
 
 	public SemanticParagraph(BoundingBox bbox) {
 		super(bbox);
-		setSemanticType(SemanticType.PARAGRAPH);
-	}
-
-	public SemanticParagraph(BoundingBox bbox, List<TextLine> lines, SemanticType initialSemanticType) {
-		super(bbox, lines, initialSemanticType);
 		setSemanticType(SemanticType.PARAGRAPH);
 	}
 
@@ -92,24 +88,5 @@ public class SemanticParagraph extends SemanticTextNode {
 		int result = super.hashCode();
 		result = 31 * result + Objects.hash(enclosedTop, enclosedBottom, indentation);
 		return result;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder result = new StringBuilder("SemanticParagraph{");
-		result.append("enclosedTop=");
-		result.append(enclosedTop);
-		result.append(", enclosedBottom=");
-		result.append(enclosedBottom);
-		result.append(", indentation=");
-		result.append(indentation);
-		result.append(", lines=[");
-		result.append(lines.get(0));
-		for (int i = 1; i < lines.size(); ++i) {
-			result.append(", ");
-			result.append(lines.get(i));
-		}
-		result.append("]}");
-		return result.toString();
 	}
 }

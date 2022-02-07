@@ -261,9 +261,13 @@ public class ChunksMergeUtils {
 		if (x.getLastPageNumber() > y.getPageNumber()) {
 			return 0;
 		}
-
-		if (x.getLastPageNumber().equals(y.getPageNumber()) && x.getRightX() > y.getLeftX()) {
-			return 0;
+		if (x.getLastPageNumber().equals(y.getPageNumber())) {
+			if (x.getRightX() > y.getLeftX()) {
+				return 0;
+			}
+			if (y.getLeftX() - x.getRightX() < 5 && Math.abs(x.getBaseLine() - y.getBaseLine()) < 0.1) {
+				return 0;
+			}
 		}
 
 		return mergeByFontSizeProbability(x, y);

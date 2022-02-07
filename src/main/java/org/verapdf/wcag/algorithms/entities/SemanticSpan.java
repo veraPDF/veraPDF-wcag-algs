@@ -46,19 +46,4 @@ public class SemanticSpan extends SemanticTextNode {
         }
         return (o instanceof SemanticSpan);
     }
-
-    @Override
-    public String toString() {
-        if (lines.size() == 0) {
-            return "SemanticSpan{}";
-        }
-        StringBuilder result = new StringBuilder("SemanticSpan{");
-        result.append(lines.get(0));
-        for (int i = 1; i < lines.size(); ++i) {
-            result.append(", ");
-            result.append(lines.get(i));
-        }
-        result.append("}");
-        return result.toString();
-    }
 }

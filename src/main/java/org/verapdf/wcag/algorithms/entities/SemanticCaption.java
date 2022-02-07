@@ -50,19 +50,4 @@ public class SemanticCaption extends SemanticTextNode {
         }
         return (o instanceof SemanticCaption);
     }
-
-    @Override
-    public String toString() {
-        if (lines.size() == 0) {
-            return "SemanticCaption{}";
-        }
-        StringBuilder result = new StringBuilder("SemanticCaption{");
-        result.append(lines.get(0));
-        for (int i = 1; i < lines.size(); ++i) {
-            result.append(", ");
-            result.append(lines.get(i));
-        }
-        result.append("}");
-        return result.toString();
-    }
 }

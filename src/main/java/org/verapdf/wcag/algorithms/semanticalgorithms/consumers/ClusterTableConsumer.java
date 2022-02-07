@@ -2,6 +2,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
 import org.verapdf.wcag.algorithms.entities.*;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
@@ -82,15 +83,17 @@ public class ClusterTableConsumer {
             if (node instanceof SemanticTextNode) {
 
                 SemanticTextNode textNode = (SemanticTextNode) node;
-                for (TextLine line : textNode.getLines()) {
-                    for (TextChunk chunk : line.getTextChunks()) {
+                for (TextColumn column : textNode.getColumns()) {
+                    for (TextLine line : column.getLines()) {
+                        for (TextChunk chunk : line.getTextChunks()) {
 
-                        if (TextChunkUtils.isWhiteSpaceChunk(chunk)) {
-                            continue;
+                            if (TextChunkUtils.isWhiteSpaceChunk(chunk)) {
+                                continue;
+                            }
+
+                            TableToken token = new TableToken(chunk, node);
+                            accept(token);
                         }
-
-                        TableToken token = new TableToken(chunk, node);
-                        accept(token);
                     }
                 }
             } else if ((node instanceof SemanticImageNode)) {

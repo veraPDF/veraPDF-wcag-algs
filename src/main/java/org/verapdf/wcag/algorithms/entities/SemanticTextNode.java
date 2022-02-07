@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.entities;
 
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
@@ -16,7 +17,7 @@ import java.util.Map;
 import java.util.Comparator;
 
 public class SemanticTextNode extends SemanticNode {
-    protected final List<TextLine> lines;
+    private final List<TextColumn> columns;
 
     private Double fontWeight;
     private Double fontSize;
@@ -27,7 +28,7 @@ public class SemanticTextNode extends SemanticNode {
 
     public SemanticTextNode(SemanticTextNode textNode) {
         super(textNode.getBoundingBox(), textNode.getInitialSemanticType(), textNode.getSemanticType());
-        lines = new ArrayList<>(textNode.getLines());
+        columns = new ArrayList<>(textNode.getColumns());
         this.fontWeight = textNode.fontWeight;
         this.fontSize = textNode.fontSize;
         this.textColor = textNode.textColor;
@@ -37,37 +38,32 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     public SemanticTextNode() {
-        lines = new ArrayList<>();
+        columns = new ArrayList<>();
     }
 
     public SemanticTextNode(SemanticType initialSemanticType) {
         super(initialSemanticType);
-        lines = new ArrayList<>();
+        columns = new ArrayList<>();
     }
 
     public SemanticTextNode(BoundingBox bbox) {
         super(bbox);
-        lines = new ArrayList<>();
+        columns = new ArrayList<>();
     }
 
     public SemanticTextNode(BoundingBox bbox, SemanticType initialSemanticType) {
         super(bbox, initialSemanticType);
-        this.lines = new ArrayList<>();
+        this.columns = new ArrayList<>();
     }
 
-    public SemanticTextNode(BoundingBox bbox, List<TextLine> lines) {
+    public SemanticTextNode(BoundingBox bbox, List<TextColumn> columns) {
         super(bbox);
-        this.lines = new ArrayList<>(lines);
+        this.columns = new ArrayList<>(columns);
     }
 
     public SemanticTextNode(TextChunk textChunk) {
-        lines = new ArrayList<>();
+        columns = new ArrayList<>();
         add(new TextLine(textChunk));
-    }
-
-    public SemanticTextNode(BoundingBox bbox, List<TextLine> lines, SemanticType initialSemanticType) {
-        super(bbox, initialSemanticType);
-        this.lines = new ArrayList<>(lines);
     }
 
     public SemanticTextNode(TextChunk textChunk, SemanticType initialSemanticType) {
@@ -76,19 +72,17 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     public void add(TextLine textLine) {
-        lines.add(textLine);
+        if (columns.isEmpty()) {
+            columns.add(new TextColumn(textLine));
+        } else {
+            getLastColumn().add(textLine);
+        }
         getBoundingBox().union(textLine.getBoundingBox());
         updateVariables();
     }
 
-    public void addAll(List<TextLine> text) {
-        if (text == null || text.size() == 0) {
-            return;
-        }
-        lines.addAll(text);
-        for (TextLine textLine : text) {
-            getBoundingBox().union(textLine.getBoundingBox());
-        }
+    public void addAll(List<TextColumn> text) {
+        columns.addAll(text);
         updateVariables();
     }
 
@@ -100,76 +94,114 @@ public class SemanticTextNode extends SemanticNode {
         fontName = null;
     }
 
-    public List<TextLine> getLines() {
-        return lines;
+    public List<TextColumn> getColumns() {
+        return columns;
     }
 
     public int getLinesNumber() {
-        return lines.size();
+        int linesNumber = 0;
+        for (TextColumn textColumn : columns) {
+            linesNumber += textColumn.getLinesNumber();
+        }
+        return linesNumber;
+    }
+
+    public int getColumnsNumber() {
+        return columns.size();
     }
 
     public TextLine getFirstLine() {
-        if (!lines.isEmpty()) {
-            return lines.get(0);
+        if (!columns.isEmpty()) {
+            if (!getFirstColumn().getLines().isEmpty()) {
+                return getFirstColumn().getFirstLine();
+            }
         }
         return null;
     }
 
     public void setFirstLine(TextLine firstLine) {
-        if (!lines.isEmpty()) {
-            lines.set(0, firstLine);
+        if (!columns.isEmpty()) {
+            getFirstColumn().setFirstLine(firstLine);
         } else {
-            lines.add(firstLine);
+            columns.add(new TextColumn(firstLine));
         }
         updateVariables();
     }
 
     public void setLastLine(TextLine lastLine) {
-        if (!lines.isEmpty()) {
-            lines.set(lines.size() - 1, lastLine);
+        if (!columns.isEmpty()) {
+            getLastColumn().setLastLine(lastLine);
         } else {
-            lines.add(lastLine);
+            columns.add(new TextColumn(lastLine));
         }
         updateVariables();
     }
 
-    public TextLine getSecondLine() {
-        if (lines.size() > 1) {
-            return lines.get(1);
+    public void setLastColumn(TextColumn lastColumn) {
+        if (!columns.isEmpty()) {
+            columns.set(columns.size() - 1, lastColumn);
+        } else {
+            columns.add(lastColumn);
+        }
+        updateVariables();
+    }
+
+    public TextColumn getFirstColumn() {
+        if (columns.isEmpty()) {
+            return null;
+        }
+        return columns.get(0);
+    }
+
+    public TextColumn getLastColumn() {
+        if (columns.isEmpty()) {
+            return null;
+        }
+        return columns.get(columns.size() - 1);
+    }
+
+    public TextLine getSecondLine() {//fix?
+        if (!columns.isEmpty()) {
+            return getFirstColumn().getSecondLine();
         }
         return null;
     }
 
-    public TextLine getPenultLine() {
-        if (lines.size() > 1) {
-            return lines.get(lines.size() - 2);
+    public TextLine getPenultLine() {//fix?
+        if (!columns.isEmpty()) {
+            return getLastColumn().getPenultLine();
         }
         return null;
     }
 
     public TextLine getLastLine() {
-        if (!lines.isEmpty()) {
-            return lines.get(lines.size() - 1);
-        }
-        return null;
+        return getLastColumn().getLastLine();
     }
 
     public double getFirstBaseline() {
         if (!isEmpty()) {
-            return lines.get(0).getBaseLine();
+            double baseLine = -Double.MAX_VALUE;;
+            for (TextColumn column : columns) {
+                baseLine = Math.max(baseLine, column.getFirstLine().getBaseLine());
+            }
+            return baseLine;
         }
         return 0.0;
     }
 
     public double getLastBaseline() {
         if (!isEmpty()) {
-            return lines.get(lines.size() - 1).getBaseLine();
+            double baseLine = Double.MAX_VALUE;
+            for (TextColumn column : columns) {
+                baseLine = Math.min(baseLine, column.getLastLine().getBaseLine());
+            }
+            return baseLine;
         }
         return 0.0;
     }
 
     public boolean isEmpty() {
-        return lines.isEmpty();
+        return columns.isEmpty();
     }
 
     public double getFontWeight() {
@@ -181,12 +213,14 @@ public class SemanticTextNode extends SemanticNode {
 
     private double calculateFontWeight() {
         Map<Double, Double> fontWeightMap = new HashMap<>();
-        for (TextLine line : lines) {
-            for (TextChunk chunk : line.getTextChunks()) {
-                if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
-                    Double weightLength = fontWeightMap.get(chunk.getFontWeight());
-                    fontWeightMap.put(chunk.getFontWeight(),
-                                  ((weightLength == null) ? 0 : weightLength) + chunk.getBoundingBox().getWidth());
+        for (TextColumn column : columns) {
+            for (TextLine line : column.getLines()) {
+                for (TextChunk chunk : line.getTextChunks()) {
+                    if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
+                        Double weightLength = fontWeightMap.get(chunk.getFontWeight());
+                        fontWeightMap.put(chunk.getFontWeight(),
+                                ((weightLength == null) ? 0 : weightLength) + chunk.getBoundingBox().getWidth());
+                    }
                 }
             }
         }
@@ -215,12 +249,14 @@ public class SemanticTextNode extends SemanticNode {
 
     private double calculateFontSize() {
         Map<Double, Double> fontSizeMap = new HashMap<>();
-        for (TextLine line : lines) {
-            for (TextChunk chunk : line.getTextChunks()) {
-                if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
-                    Double sizeLength = fontSizeMap.get(chunk.getFontSize());
-                    fontSizeMap.put(chunk.getFontSize(),
+        for (TextColumn column : columns) {
+            for (TextLine line : column.getLines()) {
+                for (TextChunk chunk : line.getTextChunks()) {
+                    if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
+                        Double sizeLength = fontSizeMap.get(chunk.getFontSize());
+                        fontSizeMap.put(chunk.getFontSize(),
                                 ((sizeLength == null) ? 0 : sizeLength) + chunk.getBoundingBox().getWidth());
+                    }
                 }
             }
         }
@@ -242,12 +278,14 @@ public class SemanticTextNode extends SemanticNode {
 
     private double calculateItalicAngle() {
         Map<Double, Double> italicAngleMap = new HashMap<>();
-        for (TextLine line : lines) {
-            for (TextChunk chunk : line.getTextChunks()) {
-                if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
-                    Double sizeLength = italicAngleMap.get(chunk.getItalicAngle());
-                    italicAngleMap.put(chunk.getItalicAngle(),
-                                    ((sizeLength == null) ? 0 : sizeLength) + chunk.getBoundingBox().getWidth());
+        for (TextColumn column : columns) {
+            for (TextLine line : column.getLines()) {
+                for (TextChunk chunk : line.getTextChunks()) {
+                    if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
+                        Double sizeLength = italicAngleMap.get(chunk.getItalicAngle());
+                        italicAngleMap.put(chunk.getItalicAngle(),
+                                ((sizeLength == null) ? 0 : sizeLength) + chunk.getBoundingBox().getWidth());
+                    }
                 }
             }
         }
@@ -269,12 +307,14 @@ public class SemanticTextNode extends SemanticNode {
 
     private double[] calculateTextColor() {
         Map<double[], Double> textColorMap = new HashMap<>();
-        for (TextLine line : lines) {
-            for (TextChunk chunk : line.getTextChunks()) {
-                if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
-                    Double fontNameLength = textColorMap.get(chunk.getFontColor());
-                    textColorMap.put(chunk.getFontColor(),
-                                    ((fontNameLength == null) ? 0 : fontNameLength) + chunk.getBoundingBox().getWidth());
+        for (TextColumn column : columns) {
+            for (TextLine line : column.getLines()) {
+                for (TextChunk chunk : line.getTextChunks()) {
+                    if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
+                        Double fontNameLength = textColorMap.get(chunk.getFontColor());
+                        textColorMap.put(chunk.getFontColor(),
+                                ((fontNameLength == null) ? 0 : fontNameLength) + chunk.getBoundingBox().getWidth());
+                    }
                 }
             }
         }
@@ -296,12 +336,14 @@ public class SemanticTextNode extends SemanticNode {
 
     private String calculateFontName() {
         Map<String, Double> fontNameMap = new HashMap<>();
-        for (TextLine line : lines) {
-            for (TextChunk chunk : line.getTextChunks()) {
-                if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
-                    Double fontNameLength = fontNameMap.get(chunk.getFontName());
-                    fontNameMap.put(chunk.getFontName(),
-                                    ((fontNameLength == null) ? 0 : fontNameLength) + chunk.getBoundingBox().getWidth());
+        for (TextColumn column : columns) {
+            for (TextLine line : column.getLines()) {
+                for (TextChunk chunk : line.getTextChunks()) {
+                    if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
+                        Double fontNameLength = fontNameMap.get(chunk.getFontName());
+                        fontNameMap.put(chunk.getFontName(),
+                                ((fontNameLength == null) ? 0 : fontNameLength) + chunk.getBoundingBox().getWidth());
+                    }
                 }
             }
         }
@@ -320,10 +362,12 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     public boolean isSpaceNode() {
-        for (TextLine line : lines) {
-            for (TextChunk chunk : line.getTextChunks()) {
-                if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
-                    return false;
+        for (TextColumn column : columns) {
+            for (TextLine line : column.getLines()) {
+                for (TextChunk chunk : line.getTextChunks()) {
+                    if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
+                        return false;
+                    }
                 }
             }
         }
@@ -348,29 +392,30 @@ public class SemanticTextNode extends SemanticNode {
             return false;
         }
         SemanticTextNode that = (SemanticTextNode) o;
-        return this.lines.equals(that.getLines());
+        return this.columns.equals(that.getColumns());
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + lines.size();
-        for (TextLine textLine : lines) {
-            result = 31 * result + textLine.hashCode();
+        result = 31 * result + columns.size();
+        for (TextColumn textColumn : columns) {
+            result = 31 * result + textColumn.hashCode();
         }
         return result;
     }
 
     @Override
     public String toString() {
-        if (lines.size() == 0) {
-            return "SemanticTextNode{}";
+        if (columns.size() == 0) {
+            return this.getClass().getName() + "{}";
         }
-        StringBuilder result = new StringBuilder("SemanticTextNode{");
-        result.append(lines.get(0));
-        for (int i = 1; i < lines.size(); ++i) {
+        StringBuilder result = new StringBuilder(this.getClass().getSimpleName());
+        result.append("{");
+        result.append(columns.get(0));
+        for (int i = 1; i < columns.size(); ++i) {
             result.append(", ");
-            result.append(lines.get(i));
+            result.append(columns.get(i));
         }
         result.append("}");
         return result.toString();

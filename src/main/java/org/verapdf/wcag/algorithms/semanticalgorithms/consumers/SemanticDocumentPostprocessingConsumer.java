@@ -3,6 +3,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 import org.verapdf.wcag.algorithms.entities.*;
 import org.verapdf.wcag.algorithms.entities.ITree;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListUtils;
@@ -41,15 +42,17 @@ public class SemanticDocumentPostprocessingConsumer {
 		MultiBoundingBox multiBoundingBox = new MultiBoundingBox();
 		for (INode node : tree) {
 			if (node instanceof SemanticSpan) {
-				for (TextLine textLine : ((SemanticSpan) node).getLines()) {
-					for (TextChunk textChunk : textLine.getTextChunks()) {
-						if (!valueToCheck.isEmpty() && areTextChunksChained(valueToCheck, textChunk)) {
-							valueToCheck += textChunk.getValue();
-							multiBoundingBox.union(textChunk.getBoundingBox());
-						} else {
-							checkRepeatedAndAdd(valueToCheck, multiBoundingBox);
-							valueToCheck = textChunk.getValue();
-							multiBoundingBox = new MultiBoundingBox(textChunk.getBoundingBox());
+				for (TextColumn textColumn : ((SemanticSpan) node).getColumns()) {
+					for (TextLine textLine : textColumn.getLines()) {
+						for (TextChunk textChunk : textLine.getTextChunks()) {
+							if (!valueToCheck.isEmpty() && areTextChunksChained(valueToCheck, textChunk)) {
+								valueToCheck += textChunk.getValue();
+								multiBoundingBox.union(textChunk.getBoundingBox());
+							} else {
+								checkRepeatedAndAdd(valueToCheck, multiBoundingBox);
+								valueToCheck = textChunk.getValue();
+								multiBoundingBox = new MultiBoundingBox(textChunk.getBoundingBox());
+							}
 						}
 					}
 				}

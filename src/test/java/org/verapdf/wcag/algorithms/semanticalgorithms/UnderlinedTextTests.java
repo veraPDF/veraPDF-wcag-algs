@@ -10,6 +10,7 @@ import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.SemanticSpan;
 import org.verapdf.wcag.algorithms.entities.JsonToPdfTree;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.LinesPreprocessingConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.SemanticDocumentPreprocessingConsumer;
@@ -46,9 +47,11 @@ public class UnderlinedTextTests {
     private void testUnderlined(ITree tree, boolean isUnderlined) {
         for (INode node : tree) {
             if (node instanceof SemanticSpan) {
-                for (TextLine textLine : ((SemanticSpan)node).getLines()) {
-                    for (TextChunk textChunk : textLine.getTextChunks()) {
-                        Assertions.assertEquals(isUnderlined, textChunk.getIsUnderlinedText());
+                for (TextColumn column : ((SemanticSpan)node).getColumns()) {
+                    for (TextLine textLine : column.getLines()) {
+                        for (TextChunk textChunk : textLine.getTextChunks()) {
+                            Assertions.assertEquals(isUnderlined, textChunk.getIsUnderlinedText());
+                        }
                     }
                 }
             }

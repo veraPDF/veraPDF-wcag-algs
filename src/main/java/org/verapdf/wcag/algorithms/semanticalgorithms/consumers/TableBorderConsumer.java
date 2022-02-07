@@ -6,8 +6,10 @@ import org.verapdf.wcag.algorithms.entities.SemanticTable;
 import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.SemanticImageNode;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.tables.TableToken;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorderCell;
@@ -25,9 +27,11 @@ public class TableBorderConsumer {
             if (node.getChildren().isEmpty()) {
                 if (node instanceof SemanticTextNode) {
                     SemanticTextNode textNode = (SemanticTextNode) node;
-                    for (TextLine line : textNode.getLines()) {
-                        for (TextChunk chunk : line.getTextChunks()) {
-                            add(new TableToken(chunk, node));
+                    for (TextColumn column : textNode.getColumns()) {
+                        for (TextLine line : column.getLines()) {
+                            for (TextChunk chunk : line.getTextChunks()) {
+                                add(new TableToken(chunk, node));
+                            }
                         }
                     }
                 } else if ((node instanceof SemanticImageNode)) {
@@ -98,7 +102,7 @@ public class TableBorderConsumer {
         for (TableBorderRow row : table.getRows()) {
             INode node = findParent(row.getNode(), depth);
             row.setNode(node);
-            setType(node, SemanticType.TABLE_ROW, table.getId());
+            setType(node, SemanticType.TABLE_ROW, table.getId(), row.getBoundingBox());
             updateTreeWithRecognizedTableRow(row, table, depth);
         }
     }
@@ -108,14 +112,14 @@ public class TableBorderConsumer {
         Iterator<INode> iterator = nodes.iterator();
         if (nodes.size() < 4) {
             if (nodes.size() == 1) {
-                setType(iterator.next(),SemanticType.TABLE_BODY, table.getId());
+                setType(iterator.next(),SemanticType.TABLE_BODY, table.getId(), null);
             } else if (nodes.size() == 2) {
-                setType(iterator.next(),SemanticType.TABLE_HEADERS, table.getId());
-                setType(iterator.next(),SemanticType.TABLE_BODY, table.getId());
+                setType(iterator.next(),SemanticType.TABLE_HEADERS, table.getId(), null);
+                setType(iterator.next(),SemanticType.TABLE_BODY, table.getId(), null);
             } else if (nodes.size() == 3) {
-                setType(iterator.next(),SemanticType.TABLE_HEADERS, table.getId());
-                setType(iterator.next(),SemanticType.TABLE_BODY, table.getId());
-                setType(iterator.next(),SemanticType.TABLE_FOOTER, table.getId());
+                setType(iterator.next(),SemanticType.TABLE_HEADERS, table.getId(), null);
+                setType(iterator.next(),SemanticType.TABLE_BODY, table.getId(), null);
+                setType(iterator.next(),SemanticType.TABLE_FOOTER, table.getId(), null);
             }
             List<INode> newRowNodes = new ArrayList<>();
             for (INode node : nodes) {
@@ -145,20 +149,21 @@ public class TableBorderConsumer {
         List<INode> cells = findParents(Arrays.stream(row.getCells()).map(TableBorderCell::getNode)
                         .collect(Collectors.toList()), depth + 1);
         for (int colNumber = 0; colNumber < cells.size(); colNumber++) {
-            if (cells.get(colNumber) != null && row.getCell(colNumber).getRowNumber() == row.getRowNumber() &&
-                    row.getCell(colNumber).getColNumber() == colNumber) {
-                if (isHeaderCell(cells.get(colNumber), row.getCell(colNumber), table)) {
-                    setType(cells.get(colNumber), SemanticType.TABLE_HEADER, table.getId());
-                    row.getCell(colNumber).setSemanticType(SemanticType.TABLE_HEADER);
+            TableBorderCell cell = row.getCell(colNumber);
+            if (cells.get(colNumber) != null && cell.getRowNumber() == row.getRowNumber() &&
+                    cell.getColNumber() == colNumber) {
+                if (isHeaderCell(cells.get(colNumber), cell, table)) {
+                    setType(cells.get(colNumber), SemanticType.TABLE_HEADER, table.getId(), cell.getBoundingBox());
+                    cell.setSemanticType(SemanticType.TABLE_HEADER);
                 } else {
-                    setType(cells.get(colNumber), SemanticType.TABLE_CELL, table.getId());
-                    row.getCell(colNumber).setSemanticType(SemanticType.TABLE_CELL);
+                    setType(cells.get(colNumber), SemanticType.TABLE_CELL, table.getId(), cell.getBoundingBox());
+                    cell.setSemanticType(SemanticType.TABLE_CELL);
                 }
             }
         }
     }
 
-    private static void setType(INode node, SemanticType type, Long id) {
+    private static void setType(INode node, SemanticType type, Long id, BoundingBox boundingBox) {
         if (node != null) {
             if ((TableUtils.isTableNode(node)) && node.getRecognizedStructureId() != id) {
                 node.setRecognizedStructureId(null);
@@ -166,6 +171,7 @@ public class TableBorderConsumer {
                 node.setRecognizedStructureId(id);
                 node.setSemanticType(type);
                 node.setCorrectSemanticScore(1.0);
+                node.getBoundingBox().union(boundingBox);
             }
         }
     }

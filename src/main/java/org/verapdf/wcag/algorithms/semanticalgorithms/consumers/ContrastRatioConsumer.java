@@ -6,6 +6,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
@@ -69,9 +70,11 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 	private void calculateContrastRatio(SemanticTextNode node) {
 		BufferedImage renderedPage = getRenderPage(node.getPageNumber());
 		if (renderedPage != null) {
-			for (TextLine textLine : node.getLines()) {
-				for (TextChunk textChunk : textLine.getTextChunks()) {
-					calculateContrastRation(textChunk, renderedPage);
+			for (TextColumn column : node.getColumns()) {
+				for (TextLine textLine : column.getLines()) {
+					for (TextChunk textChunk : textLine.getTextChunks()) {
+						calculateContrastRation(textChunk, renderedPage);
+					}
 				}
 			}
 		}
