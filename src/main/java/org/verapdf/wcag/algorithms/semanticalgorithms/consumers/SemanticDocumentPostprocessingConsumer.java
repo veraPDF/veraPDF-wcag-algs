@@ -14,6 +14,10 @@ import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class SemanticDocumentPostprocessingConsumer {
 
 	public void runPostprocessingChecks(ITree tree) {
@@ -38,30 +42,27 @@ public class SemanticDocumentPostprocessingConsumer {
 	}
 
 	public void checkForRepeatedCharacters(ITree tree) {
-		String valueToCheck = "";
-		MultiBoundingBox multiBoundingBox = new MultiBoundingBox();
+		List<TextChunk> chunks = new ArrayList<>();
 		for (INode node : tree) {
 			if (node instanceof SemanticSpan) {
 				for (TextColumn textColumn : ((SemanticSpan) node).getColumns()) {
 					for (TextLine textLine : textColumn.getLines()) {
 						for (TextChunk textChunk : textLine.getTextChunks()) {
-							if (!valueToCheck.isEmpty() && areTextChunksChained(valueToCheck, textChunk)) {
-								valueToCheck += textChunk.getValue();
-								multiBoundingBox.union(textChunk.getBoundingBox());
+							if (!chunks.isEmpty() && areChunksChained(chunks.get(chunks.size() - 1).getValue(), textChunk)) {
+								chunks.add(textChunk);
 							} else {
-								checkRepeatedAndAdd(valueToCheck, multiBoundingBox);
-								valueToCheck = textChunk.getValue();
-								multiBoundingBox = new MultiBoundingBox(textChunk.getBoundingBox());
+								checkRepeatedAndAdd(chunks);
+								chunks = new ArrayList<>(Collections.singletonList(textChunk));
 							}
 						}
 					}
 				}
 			}
 		}
-		checkRepeatedAndAdd(valueToCheck, multiBoundingBox);
+		checkRepeatedAndAdd(chunks);
 	}
 
-	private boolean areTextChunksChained(String previousValue, TextChunk secondTextChunk) {
+	private boolean areChunksChained(String previousValue, TextChunk secondTextChunk) {
 		char firstChar = previousValue.charAt(previousValue.length() - 1);
 		char secondChar = secondTextChunk.getValue().charAt(0);
 		if (TextChunkUtils.isWhiteSpaceChar(firstChar) && TextChunkUtils.isWhiteSpaceChar(secondChar)) {
@@ -116,31 +117,48 @@ public class SemanticDocumentPostprocessingConsumer {
 		       SemanticType.NUMBER_HEADING.equals(node.getSemanticType()) && !SemanticType.NUMBER_HEADING.equals(node.getInitialSemanticType());
 	}
 
-	private void checkRepeatedAndAdd(String value, BoundingBox boundingBox) {
-		if (value == null || value.isEmpty()) {
+	private void checkRepeatedAndAdd(List<TextChunk> textChunks) {
+		if (textChunks.isEmpty()) {
 			return;
 		}
-		char[] characters = value.toCharArray();
-		char lastCharacter = characters[0];
-		boolean isLastCharacterWhiteSpace = TextChunkUtils.isWhiteSpaceChar(lastCharacter);
 		int length = 0;
-		for (char character : characters) {
-			if (isLastCharacterWhiteSpace && TextChunkUtils.isWhiteSpaceChar(character) ||
-			    lastCharacter == character) {
-				length++;
-			} else {
-				if (length > 2) {
-					StaticContainers.getRepeatedCharacters().add(new RepeatedCharacters(!isLastCharacterWhiteSpace,
-					                                                                    length, boundingBox));
+		boolean isLastCharacterWhiteSpace = false;
+		MultiBoundingBox resultBox = new MultiBoundingBox();
+		for (TextChunk textChunk : textChunks) {
+			char[] characters = textChunk.getValue().toCharArray();
+			char lastCharacter = characters[0];
+			isLastCharacterWhiteSpace = TextChunkUtils.isWhiteSpaceChar(lastCharacter);
+			int start = 0;
+			length++;
+			for (int charIndex = 1; charIndex < characters.length; charIndex++) {
+				char character = characters[charIndex];
+				if (isLastCharacterWhiteSpace && TextChunkUtils.isWhiteSpaceChar(character) || lastCharacter == character) {
+					length++;
+				} else {
+					if (length > 2) {
+						updateBoundingBox(resultBox, textChunk.getBoundingBox(), start, charIndex, characters.length);
+						StaticContainers.getRepeatedCharacters().add(new RepeatedCharacters(!isLastCharacterWhiteSpace,
+						                                                                    length, resultBox));
+						resultBox = new MultiBoundingBox();
+					}
+					length = 1;
+					start = charIndex;
+					lastCharacter = character;
+					isLastCharacterWhiteSpace = TextChunkUtils.isWhiteSpaceChar(lastCharacter);
 				}
-				length = 1;
-				lastCharacter = character;
-				isLastCharacterWhiteSpace = TextChunkUtils.isWhiteSpaceChar(lastCharacter);
 			}
+			updateBoundingBox(resultBox, textChunk.getBoundingBox(), start, characters.length, characters.length);
 		}
 		if (length > 2) {
 			StaticContainers.getRepeatedCharacters().add(new RepeatedCharacters(!isLastCharacterWhiteSpace,
-			                                                                    length, boundingBox));
+			                                                                    length, resultBox));
 		}
+	}
+
+	private void updateBoundingBox(MultiBoundingBox resultBox, BoundingBox currentBox, int start, int end, int length) {
+		double avgInterval = (currentBox.getRightX() - currentBox.getLeftX()) / length;
+		resultBox.union(new BoundingBox(currentBox.getPageNumber(), currentBox.getLeftX() + start * avgInterval,
+		                                currentBox.getBottomY(), currentBox.getLeftX() + end * avgInterval,
+		                                currentBox.getTopY()));
 	}
 }
