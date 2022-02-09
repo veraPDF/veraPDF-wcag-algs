@@ -25,6 +25,7 @@ public class SemanticTextNode extends SemanticNode {
     private Double italicAngle;
     private String fontName;
     private TextFormat textFormat = TextFormat.NORMAL;
+    private Double maxFontSize;
 
     public SemanticTextNode(SemanticTextNode textNode) {
         super(textNode.getBoundingBox(), textNode.getInitialSemanticType(), textNode.getSemanticType());
@@ -35,6 +36,7 @@ public class SemanticTextNode extends SemanticNode {
         this.italicAngle = textNode.italicAngle;
         this.fontName = textNode.fontName;
         this.textFormat = textNode.textFormat;
+        this.maxFontSize = textNode.maxFontSize;
     }
 
     public SemanticTextNode() {
@@ -92,6 +94,7 @@ public class SemanticTextNode extends SemanticNode {
         textColor = null;
         italicAngle = null;
         fontName = null;
+        maxFontSize = null;
     }
 
     public List<TextColumn> getColumns() {
@@ -249,6 +252,7 @@ public class SemanticTextNode extends SemanticNode {
 
     private double calculateFontSize() {
         Map<Double, Double> fontSizeMap = new HashMap<>();
+        maxFontSize = 0.0;
         for (TextColumn column : columns) {
             for (TextLine line : column.getLines()) {
                 for (TextChunk chunk : line.getTextChunks()) {
@@ -256,6 +260,7 @@ public class SemanticTextNode extends SemanticNode {
                         Double sizeLength = fontSizeMap.get(chunk.getFontSize());
                         fontSizeMap.put(chunk.getFontSize(),
                                 ((sizeLength == null) ? 0 : sizeLength) + chunk.getBoundingBox().getWidth());
+                        maxFontSize = Math.max(maxFontSize, chunk.getFontSize());
                     }
                 }
             }
@@ -359,6 +364,13 @@ public class SemanticTextNode extends SemanticNode {
 
     public void setTextFormat(TextFormat textFormat) {
         this.textFormat = textFormat;
+    }
+
+    public Double getMaxFontSize() {
+        if (maxFontSize == null) {
+            calculateFontSize();
+        }
+        return maxFontSize;
     }
 
     public boolean isSpaceNode() {
