@@ -22,7 +22,7 @@ public class NodeUtils {
 	public static final double TABLE_BORDER_EPSILON = 0.011;
 	public static final double[] UNDERLINED_TEXT_EPSILONS = {0.05, 0.3, 0.3, 0.3};
 	private static final double WITH_TOLERANCE_FACTOR = 0.33;
-	private static final double[] HEADING_PROBABILITY_PARAMS = {0.55, 0.55, 0.3, 0.0291, 0.15, 0.15, 0.1, 0.1, 0.05};
+	private static final double[] HEADING_PROBABILITY_PARAMS = {0.55, 0.5, 0.3, 0.0291, 0.15, 0.15, 0.1, 0.1, 0.05, 0.55, 0.4};
 	private static final double[] CAPTION_PROBABILITY_PARAMS = {1.0, 0.95, 0.9, 0.85, 0.2, 0.1, 0.03};
 	public static final String FIGURE = "Figure";
 
@@ -89,7 +89,11 @@ public class NodeUtils {
 		} else if (neighborTextNode.getFontWeight() > textNode.getFontWeight() + HEADING_PROBABILITY_PARAMS[8]) {
 			probability -= HEADING_PROBABILITY_PARAMS[4];
 		}
-		if (textNode.getFontSize() > neighborTextNode.getFontSize() + HEADING_PROBABILITY_PARAMS[8]) {
+		if (textNode.getFontSize() > neighborTextNode.getMaxFontSize() + HEADING_PROBABILITY_PARAMS[8]) {
+			probability += HEADING_PROBABILITY_PARAMS[9];
+		} else if (neighborTextNode.getFontSize() > textNode.getMaxFontSize() + HEADING_PROBABILITY_PARAMS[8]) {
+			probability -= HEADING_PROBABILITY_PARAMS[10];
+		} else if (textNode.getFontSize() > neighborTextNode.getFontSize() + HEADING_PROBABILITY_PARAMS[8]) {
 			probability += HEADING_PROBABILITY_PARAMS[1];
 		} else if (neighborTextNode.getFontSize() > textNode.getFontSize() + HEADING_PROBABILITY_PARAMS[8]) {
 			probability -= HEADING_PROBABILITY_PARAMS[5];
