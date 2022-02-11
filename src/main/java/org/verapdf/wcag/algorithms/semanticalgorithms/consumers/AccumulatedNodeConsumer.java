@@ -52,9 +52,15 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			return;
 		}
 
-		boolean isSpan  = node.getChildren()
-		                      .stream()
-		                      .allMatch(child -> ((child instanceof SemanticSpan) ||
+		boolean isLeafChild  = node.getChildren()
+				.stream()
+				.allMatch(child -> ((child instanceof SemanticSpan) ||
+						(child instanceof SemanticImageNode) ||
+						(child instanceof SemanticFigure) ||
+						child.getSemanticType() == null));
+		boolean isSpan  = isLeafChild || node.getChildren()
+		                      				.stream()
+		                      				.allMatch(child -> ((child instanceof SemanticSpan) ||
 		                                          (child instanceof SemanticImageNode) ||
 									              (child instanceof SemanticFigure) ||
 		                                          child.getSemanticType() == SemanticType.SPAN ||
@@ -69,12 +75,6 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 
 		checkSemanticSpanChildren(node);
 
-		boolean isLeafChild  = node.getChildren()
-		                           .stream()
-		                           .allMatch(child -> ((child instanceof SemanticSpan) ||
-		                                               (child instanceof SemanticImageNode) ||
-										               (child instanceof SemanticFigure) ||
-		                                               child.getSemanticType() == null));
 		if (!isLeafChild) {
 			acceptChildrenSemanticHeading(node);
 			acceptSemanticList(node);
@@ -107,7 +107,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 						if (!Objects.equals(textNode.getFontSize(), textChunk.getFontSize()) ||
 								!Objects.equals(textNode.getItalicAngle(), textChunk.getItalicAngle()) ||
 								!Objects.equals(textNode.getFontName(), textChunk.getFontName()) ||
-								!Arrays.equals(textNode.getTextColor(), textChunk.getFontColor())) {
+								!Arrays.equals(textNode.getTextColor(), textChunk.getFontColor()) ||
+								!Objects.equals(textNode.getFontWeight(), textChunk.getFontWeight())) {
 							textChunk.setHasSpecialStyle();
 						}
 					}

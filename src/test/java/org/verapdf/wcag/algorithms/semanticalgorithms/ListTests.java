@@ -27,6 +27,7 @@ public class ListTests {
 
     static Stream<Arguments> listDetectionTestParams() {
         return Stream.of(
+                Arguments.of("PDFUA-Ref-2-08_BookChapter_fix.json", new int[] {}, false, true),
                 Arguments.of("7NonTable.json", new int[] {6}, true, true),
                 Arguments.of("list-with-line-arts-labels.json", new int[] {}, true, true),
                 Arguments.of("list_start_with_Figure_pass.json", new int[] {}, true, true),

@@ -47,7 +47,7 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		return (l1 + 0.05) / (l2 + 0.05);
 	}
 
-	private BufferedImage getRenderPage(int pageNumber) {
+	public BufferedImage getRenderPage(int pageNumber) {
 		BufferedImage renderedPage = renderedPages.get(pageNumber);
 		if (renderedPage == null) {
 			try (PDDocument document = PDDocument.load(new FileInputStream(sourcePdfPath))) {

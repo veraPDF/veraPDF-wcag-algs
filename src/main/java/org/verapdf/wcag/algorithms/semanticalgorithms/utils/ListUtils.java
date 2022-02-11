@@ -144,6 +144,12 @@ public class ListUtils {
 				} else {
 					right = accumulatedChild.getRightX();
 				}
+				if (accumulatedChild instanceof SemanticTextNode) {
+					SemanticTextNode textNode = (SemanticTextNode)accumulatedChild;
+					if (textNode.getColumnsNumber() > 1) {
+						right = textNode.getPenultColumn().getRightX();
+					}
+				}
 			}
 			if (start < listInterval.end) {
 				listIntervalsCollection.put(new ListInterval(start, listInterval.end));
