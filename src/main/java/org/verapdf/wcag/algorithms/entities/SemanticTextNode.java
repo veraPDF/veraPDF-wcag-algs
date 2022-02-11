@@ -163,6 +163,13 @@ public class SemanticTextNode extends SemanticNode {
         return columns.get(columns.size() - 1);
     }
 
+    public TextColumn getPenultColumn() {
+        if (columns.size() < 2) {
+            return null;
+        }
+        return columns.get(columns.size() - 2);
+    }
+
     public TextLine getSecondLine() {//fix?
         if (!columns.isEmpty()) {
             return getFirstColumn().getSecondLine();

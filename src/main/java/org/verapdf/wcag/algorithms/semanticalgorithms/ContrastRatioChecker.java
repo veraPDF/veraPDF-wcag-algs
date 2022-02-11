@@ -2,6 +2,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms;
 
 import org.verapdf.wcag.algorithms.entities.IDocument;
 import org.verapdf.wcag.algorithms.entities.INode;
+import org.verapdf.wcag.algorithms.entities.IPage;
 import org.verapdf.wcag.algorithms.entities.ITree;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.enums.TextType;
@@ -32,9 +33,12 @@ public class ContrastRatioChecker {
 		if (document.getTree() != null) {
 			document.getTree().forEach(v);
 		}
-		document.getArtifacts().stream()
+		for (IPage page : document.getPages()) {
+			BufferedImage renderedPage = v.getRenderPage(page.getPageNumber());
+			page.getArtifacts().stream()
 				.filter(chunk -> chunk instanceof TextChunk)
-				.forEach(chunk -> v.calculateContrastRatio((TextChunk)chunk));
+				.forEach(chunk -> v.calculateContrastRation((TextChunk)chunk, renderedPage));
+		}
 	}
 
 	/**
