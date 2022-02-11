@@ -66,13 +66,17 @@ class AccumulatedNodeSemanticsCheckerTests {
 				Arguments.of("headings/Heading2.json"),
 				Arguments.of("headings/Heading3.json"),
 				Arguments.of("headings/Heading4.json"),
+				Arguments.of("headings/heading_before_list.json"),
+				Arguments.of("headings/heading_with_footnote.json"),
 				Arguments.of("captions/caption1.json"),
 				Arguments.of("captions/caption2.json"),
 				Arguments.of("captions/caption3.json"),
 				Arguments.of("captions/caption4.json"),
 				Arguments.of("captions/caption5.json"),
 				Arguments.of("titles/Title1.json"),
-				Arguments.of("spans/Span1.json"));
+				Arguments.of("spans/Span1.json"),
+				Arguments.of("paragraphs/paragraph1.json")
+		                );
 	}
 
 	@ParameterizedTest(name = "{index}: ({0}) => {0}")

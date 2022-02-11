@@ -1,0 +1,488 @@
+{
+  "type": "Document",
+  "children": [
+    {
+      "type": "H4",
+      "children": [
+        {
+          "type": "TextChunk",
+          "pageNumber": 12,
+          "value": "PDFlib",
+          "baseLine": 387.52760000000006,
+          "fontWeight": 600.0,
+          "italicAngle": 0.0,
+          "fontSize": 11.5,
+          "boundingBox": [
+            62.36219900000003,
+            383.3876000000001,
+            96.10319900000003,
+            399.1541000000001
+          ],
+          "fontName": "MinionPro-Semibold",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        }
+      ]
+    },
+    {
+      "type": "P",
+      "children": [
+        {
+          "type": "TextChunk",
+          "pageNumber": 12,
+          "value": "Bei PDFlib handelt es sich nicht um ein klassisches Desktopprogramm, sondern um eine Bib",
+          "baseLine": 374.02760000000006,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 11.0,
+          "boundingBox": [
+            62.36219900000003,
+            370.0676000000001,
+            477.9748319600002,
+            384.9066000000001
+          ],
+          "fontName": "MinionPro-Regular",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        },
+        {
+          "type": "Span",
+          "children": [
+            {
+              "type": "TextChunk",
+              "pageNumber": 12,
+              "value": "-",
+              "baseLine": 374.02760000000006,
+              "fontWeight": 400.0,
+              "italicAngle": 0.0,
+              "fontSize": 11.0,
+              "boundingBox": [
+                477.954962,
+                370.0676000000001,
+                481.8849172,
+                384.9066000000001
+              ],
+              "fontName": "MinionPro-Regular",
+              "color": [
+                0.071,
+                0.071,
+                0.05
+              ],
+              "fontColorSpace": "ICCBased"
+            }
+          ]
+        },
+        {
+          "type": "TextChunk",
+          "pageNumber": 12,
+          "value": "liothek zur serverseitigen PDF-Erstellung. Neben der direkten Erstellung von getaggten PDF-",
+          "baseLine": 360.52760000000006,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 11.0,
+          "boundingBox": [
+            62.36219900000003,
+            356.5676000000001,
+            481.8846422099999,
+            371.4066000000001
+          ],
+          "fontName": "MinionPro-Regular",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        },
+        {
+          "type": "TextChunk",
+          "pageNumber": 12,
+          "value": " ",
+          "baseLine": 360.52760000000006,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 11.0,
+          "boundingBox": [
+            481.884599,
+            356.5676000000001,
+            485.03390790000003,
+            371.4066000000001
+          ],
+          "fontName": "MinionPro-Regular",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        },
+        {
+          "type": "TextChunk",
+          "pageNumber": 12,
+          "value": "Dokumenten können eingeschränkt auch bestehende Dokumente konvertiert werden.",
+          "baseLine": 347.02760000000006,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 11.0,
+          "boundingBox": [
+            62.36219900000003,
+            343.0676000000001,
+            439.55769900000007,
+            357.9066000000001
+          ],
+          "fontName": "MinionPro-Regular",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        }
+      ]
+    },
+    {
+      "type": "P",
+      "children": [
+        {
+          "type": "TextChunk",
+          "pageNumber": 12,
+          "value": "Weitere Informationen unter: ",
+          "baseLine": 333.53060000000005,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 11.0,
+          "boundingBox": [
+            75.36419900000001,
+            329.57060000000007,
+            207.471999,
+            344.40960000000007
+          ],
+          "fontName": "MinionPro-Regular",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        },
+        {
+          "type": "P",
+          "children": [
+            {
+              "type": "Span",
+              "children": [
+                {
+                  "type": "TextChunk",
+                  "pageNumber": 12,
+                  "value": "http://bit.ly/2VtIOIc",
+                  "baseLine": 333.52760000000006,
+                  "fontWeight": 400.0,
+                  "italicAngle": 0.0,
+                  "fontSize": 9.0,
+                  "boundingBox": [
+                    207.46979900000002,
+                    330.0266000000001,
+                    292.97879900000004,
+                    343.1306000000001
+                  ],
+                  "fontName": "NotoSans-Regular",
+                  "color": [
+                    0.071,
+                    0.071,
+                    0.05
+                  ],
+                  "fontColorSpace": "ICCBased"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "TextChunk",
+          "pageNumber": 12,
+          "value": " (via ",
+          "baseLine": 333.52760000000006,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 11.0,
+          "boundingBox": [
+            292.977399,
+            329.5676000000001,
+            314.71339900000004,
+            344.4066000000001
+          ],
+          "fontName": "MinionPro-Regular",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        },
+        {
+          "type": "P",
+          "children": [
+            {
+              "type": "Span",
+              "children": [
+                {
+                  "type": "TextChunk",
+                  "pageNumber": 12,
+                  "value": "https://www.pdflib.com/",
+                  "baseLine": 333.52760000000006,
+                  "fontWeight": 400.0,
+                  "italicAngle": 0.0,
+                  "fontSize": 9.0,
+                  "boundingBox": [
+                    314.712599,
+                    330.0266000000001,
+                    421.245599,
+                    343.1306000000001
+                  ],
+                  "fontName": "NotoSans-Regular",
+                  "color": [
+                    0.071,
+                    0.071,
+                    0.05
+                  ],
+                  "fontColorSpace": "ICCBased"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "TextChunk",
+          "pageNumber": 12,
+          "value": ")",
+          "baseLine": 333.52760000000006,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 11.0,
+          "boundingBox": [
+            421.244299,
+            329.5676000000001,
+            425.050299,
+            344.4066000000001
+          ],
+          "fontName": "MinionPro-Regular",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        }
+      ]
+    },
+    {
+      "type": "H4",
+      "children": [
+        {
+          "type": "TextChunk",
+          "pageNumber": 12,
+          "value": "iText",
+          "baseLine": 306.52760000000006,
+          "fontWeight": 600.0,
+          "italicAngle": 0.0,
+          "fontSize": 11.5,
+          "boundingBox": [
+            62.36219900000003,
+            302.3876000000001,
+            85.93719900000005,
+            318.1541000000001
+          ],
+          "fontName": "MinionPro-Semibold",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        }
+      ]
+    },
+    {
+      "type": "P",
+      "children": [
+        {
+          "type": "TextChunk",
+          "pageNumber": 12,
+          "value": "Auch iText ist kein klassisches Desktopprogramm, sondern ebenfalls eine Bibliothek, die zur ",
+          "baseLine": 293.02760000000006,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 11.0,
+          "boundingBox": [
+            62.36219900000003,
+            289.0676000000001,
+            485.10909798,
+            303.9066000000001
+          ],
+          "fontName": "MinionPro-Regular",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        },
+        {
+          "type": "TextChunk",
+          "pageNumber": 12,
+          "value": "Erstellung von PDF-Dokumenten auf Servern, aber auch innerhalb von Applikationen genutzt ",
+          "baseLine": 279.52760000000006,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 11.0,
+          "boundingBox": [
+            62.36219900000003,
+            275.5676000000001,
+            485.04688268000007,
+            290.4066000000001
+          ],
+          "fontName": "MinionPro-Regular",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        },
+        {
+          "type": "TextChunk",
+          "pageNumber": 12,
+          "value": "werden kann. Auch hier ist das Erstellen von getaggten PDF-Dokumenten möglich, maßgeblich ",
+          "baseLine": 266.02760000000006,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 11.0,
+          "boundingBox": [
+            62.36219900000003,
+            262.0676000000001,
+            484.3980990000001,
+            276.9066000000001
+          ],
+          "fontName": "MinionPro-Regular",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        },
+        {
+          "type": "TextChunk",
+          "pageNumber": 12,
+          "value": "unterstützt wird dies aber nicht bei der Konvertierung aus bestehenden PDFs, sondern nur bei ",
+          "baseLine": 252.53060000000008,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 11.0,
+          "boundingBox": [
+            62.36219900000003,
+            248.57060000000007,
+            484.88979900000004,
+            263.40960000000007
+          ],
+          "fontName": "MinionPro-Regular",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        },
+        {
+          "type": "TextChunk",
+          "pageNumber": 12,
+          "value": "deren direkter Erstellung.",
+          "baseLine": 239.03360000000006,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 11.0,
+          "boundingBox": [
+            62.36219900000003,
+            235.07360000000006,
+            174.26299900000006,
+            249.91260000000005
+          ],
+          "fontName": "MinionPro-Regular",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        }
+      ]
+    },
+    {
+      "type": "P",
+      "children": [
+        {
+          "type": "TextChunk",
+          "pageNumber": 12,
+          "value": "Weitere Informationen unter: ",
+          "baseLine": 225.53660000000008,
+          "fontWeight": 400.0,
+          "italicAngle": 0.0,
+          "fontSize": 11.0,
+          "boundingBox": [
+            75.36419900000001,
+            221.57660000000007,
+            207.471999,
+            236.41560000000007
+          ],
+          "fontName": "MinionPro-Regular",
+          "color": [
+            0.071,
+            0.071,
+            0.05
+          ],
+          "fontColorSpace": "ICCBased"
+        },
+        {
+          "type": "P",
+          "children": [
+            {
+              "type": "Span",
+              "children": [
+                {
+                  "type": "TextChunk",
+                  "pageNumber": 12,
+                  "value": "https://itextpdf.com/de",
+                  "baseLine": 225.52760000000006,
+                  "fontWeight": 400.0,
+                  "italicAngle": 0.0,
+                  "fontSize": 9.0,
+                  "boundingBox": [
+                    207.46979900000002,
+                    222.02660000000006,
+                    309.63779900000003,
+                    235.13060000000007
+                  ],
+                  "fontName": "NotoSans-Regular",
+                  "color": [
+                    0.071,
+                    0.071,
+                    0.05
+                  ],
+                  "fontColorSpace": "ICCBased"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

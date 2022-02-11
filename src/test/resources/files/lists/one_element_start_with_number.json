@@ -1,0 +1,145 @@
+{
+  "type": "Document",
+  "children": [
+    {
+      "type": "P",
+      "children": [
+        {
+          "type": "TextChunk",
+          "pageNumber": 0,
+          "value": "Text",
+          "baseLine": 756.47,
+          "fontWeight": 700.0,
+          "italicAngle": 0.0,
+          "fontSize": 14.0,
+          "boundingBox": [
+            72.025,
+            752.97,
+            94.691,
+            766.97
+          ],
+          "fontName": "Calibri-Bold",
+          "color": [
+            0.0
+          ],
+          "fontColorSpace": "DeviceGray"
+        },
+        {
+          "type": "TextChunk",
+          "pageNumber": 0,
+          "value": " ",
+          "baseLine": 756.47,
+          "fontWeight": 700.0,
+          "italicAngle": 0.0,
+          "fontSize": 14.0,
+          "boundingBox": [
+            114.3,
+            752.97,
+            117.464,
+            766.97
+          ],
+          "fontName": "Calibri-Bold",
+          "color": [
+            0.0
+          ],
+          "fontColorSpace": "DeviceGray"
+        }
+      ]
+    },
+    {
+      "type": "L",
+      "children": [
+        {
+          "type": "LI",
+          "children": [
+            {
+              "type": "LBody",
+              "children": [
+                {
+                  "type": "TextChunk",
+                  "pageNumber": 0,
+                  "value": "1.",
+                  "baseLine": 732.97,
+                  "fontWeight": 400.0,
+                  "italicAngle": 0.0,
+                  "fontSize": 11.0,
+                  "boundingBox": [
+                    90.05,
+                    730.22,
+                    98.24499999999999,
+                    741.22
+                  ],
+                  "fontName": "Calibri",
+                  "color": [
+                    0.0
+                  ],
+                  "fontColorSpace": "DeviceGray"
+                },
+                {
+                  "type": "TextChunk",
+                  "pageNumber": 0,
+                  "value": " ",
+                  "baseLine": 732.97,
+                  "fontWeight": 400.0,
+                  "italicAngle": 0.0,
+                  "fontSize": 11.0,
+                  "boundingBox": [
+                    98.3,
+                    730.6600000000001,
+                    101.358,
+                    740.9780000000001
+                  ],
+                  "fontName": "ArialMT",
+                  "color": [
+                    0.0
+                  ],
+                  "fontColorSpace": "DeviceGray"
+                },
+                {
+                  "type": "TextChunk",
+                  "pageNumber": 0,
+                  "value": "One item",
+                  "baseLine": 732.97,
+                  "fontWeight": 400.0,
+                  "italicAngle": 0.0,
+                  "fontSize": 11.0,
+                  "boundingBox": [
+                    108.05,
+                    730.22,
+                    149.54199999999997,
+                    741.22
+                  ],
+                  "fontName": "Calibri",
+                  "color": [
+                    0.0
+                  ],
+                  "fontColorSpace": "DeviceGray"
+                },
+                {
+                  "type": "TextChunk",
+                  "pageNumber": 0,
+                  "value": " ",
+                  "baseLine": 732.97,
+                  "fontWeight": 400.0,
+                  "italicAngle": 0.0,
+                  "fontSize": 11.0,
+                  "boundingBox": [
+                    149.58,
+                    730.22,
+                    152.066,
+                    741.22
+                  ],
+                  "fontName": "Calibri",
+                  "color": [
+                    0.0
+                  ],
+                  "fontColorSpace": "DeviceGray"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
