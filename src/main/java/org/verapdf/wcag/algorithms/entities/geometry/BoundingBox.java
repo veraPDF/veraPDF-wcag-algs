@@ -29,7 +29,7 @@ public class BoundingBox {
     }
 
     public BoundingBox(Integer pageNumber, double[] bbox) {
-        init(bbox[0], bbox[1], bbox[2], bbox[3]);
+        init(Math.min(bbox[0], bbox[2]), Math.min(bbox[1], bbox[3]), Math.max(bbox[0], bbox[2]), Math.max(bbox[1], bbox[3]));
         this.pageNumber = this.lastPageNumber = pageNumber;
     }
 
