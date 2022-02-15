@@ -417,10 +417,12 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 					if (accumulatedChild instanceof SemanticTextNode) {
 						SemanticTextNode textNode = (SemanticTextNode)accumulatedChild;
 						if (!textNode.isSpaceNode() && !textNode.isEmpty()) {
-							TextLine line = textNode.getFirstLine();
-							if (!line.getValue().trim().isEmpty()) {
-								textChildren.add(child);
-								childrenFirstLines.add(line);
+							for (TextLine line : textNode.getFirstColumn().getLines()) {
+								if (!line.getValue().trim().isEmpty()) {
+									textChildren.add(child);
+									childrenFirstLines.add(line);
+									break;
+								}
 							}
 						}
 					}
