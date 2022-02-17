@@ -36,7 +36,7 @@ public class JsonToPdfTree {
 		return new TextChunk(new BoundingBox(jsonNode.getPageNumber(), jsonNode.getBoundingBox()),
 				jsonNode.getValue(), jsonNode.getFontName(), jsonNode.getFontSize(),
 				jsonNode.getFontWeight(), jsonNode.getItalicAngle(), jsonNode.getBaseLine(),
-				jsonNode.getColor(), jsonNode.getFontColorSpace());
+				jsonNode.getColor(), jsonNode.getFontColorSpace(), jsonNode.getSymbolEnds());
 	}
 
 	private static ImageChunk getImageChunk(JsonNode jsonNode) {
