@@ -52,6 +52,7 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		if (renderedPage == null) {
 			try (PDDocument document = PDDocument.load(new FileInputStream(sourcePdfPath))) {
 				renderedPage = renderPage(document, pageNumber);
+				renderedPages.clear();
 				renderedPages.put(pageNumber, renderedPage);
 			}
 			catch (IOException e) {
