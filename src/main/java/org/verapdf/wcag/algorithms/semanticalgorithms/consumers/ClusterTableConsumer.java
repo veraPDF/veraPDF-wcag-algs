@@ -159,13 +159,8 @@ public class ClusterTableConsumer {
             INode tableRoot = updateTreeWithRecognizedTable(table, root);
 
             if (tableRoot != null) {
-                if ((TableUtils.isTableNode(tableRoot) || (ListUtils.isListNode(tableRoot) &&
-                        table.getTableBorder() == null)) && tableRoot.getRecognizedStructureId() != table.getId()) {
-                    tableRoot.setRecognizedStructureId(null);
-                } else {
-                    tableRoot.setRecognizedStructureId(table.getId());
-                    tableRoot.setSemanticType(SemanticType.TABLE);
-                    tableRoot.setCorrectSemanticScore(1.0);
+                if (updateNode(tableRoot, table.getId(), SemanticType.TABLE,
+                        table.getTableBorder() != null, table.getBoundingBox())) {
                     detectTableCaptions(table.getBoundingBox(), tableRoot);
                 }
             }
@@ -202,14 +197,8 @@ public class ClusterTableConsumer {
             INode rowNode = updateTreeWithRecognizedTableRow(table, row, i == 0 ? null : table.getRows().get(i - 1));
 
             if (rowNode != null) {
-                if (((ListUtils.isListNode(rowNode) && table.getTableBorder() == null) ||
-                        TableUtils.isTableNode(rowNode)) && rowNode.getRecognizedStructureId() != table.getId()) {
-                    rowNode.setRecognizedStructureId(null);
-                } else {
-                    rowNode.setRecognizedStructureId(table.getId());
-                    rowNode.setSemanticType(SemanticType.TABLE_ROW);
-                    rowNode.setCorrectSemanticScore(1.0);
-                }
+                updateNode(rowNode, table.getId(), SemanticType.TABLE_ROW, table.getTableBorder() != null,
+                        table.getBoundingBox());
 
                 SemanticType rowType = row.getSemanticType();
                 Set<INode> nodes = rowNodes.get(rowType);
@@ -231,14 +220,8 @@ public class ClusterTableConsumer {
 
             INode localRoot = findLocalRoot(rows);
             if (localRoot != null) {
-                if ((TableUtils.isTableNode(localRoot) || (ListUtils.isListNode(localRoot) &&
-                        table.getTableBorder() == null)) && localRoot.getRecognizedStructureId() != table.getId()) {
-                    localRoot.setRecognizedStructureId(null);
-                } else {
-                    localRoot.setRecognizedStructureId(table.getId());
-                    localRoot.setSemanticType(type);
-                    localRoot.setCorrectSemanticScore(1.0);
-                }
+                updateNode(localRoot, table.getId(), type, table.getTableBorder() != null,
+                        table.getBoundingBox());
                 localRoots.add(localRoot);
             }
         }
@@ -280,24 +263,16 @@ public class ClusterTableConsumer {
         }
         for (Map.Entry<INode, Integer> entry : cellNodes.entrySet()) {
             INode cellNode = entry.getKey();
-            while (cellNode.getParent() != null && cellNode.getParent() != rowNode && cellNode.getParent().getChildren().size() == 1) {
+            while (cellNode.getParent() != null && cellNode.getParent() != rowNode &&
+                    cellNode.getParent().getChildren().size() == 1) {
                 cellNode = cellNode.getParent();
             }
-
-            if (((ListUtils.isListNode(cellNode) && table.getTableBorder() == null) ||
-                    TableUtils.isTableNode(cellNode)) && cellNode.getRecognizedStructureId() != id) {
-                cellNode.setRecognizedStructureId(null);
-            } else {
-                cellNode.setRecognizedStructureId(id);
-                if (isHeaderCell(cellNode, entry.getValue(),
-                        entry.getValue() == 0 ? null : row.getCells().get(entry.getValue() - 1), previousRow)) {
-                    cellNode.setSemanticType(SemanticType.TABLE_HEADER);
-                    row.getCells().get(entry.getValue()).setSemanticType(SemanticType.TABLE_HEADER);
-                } else {
-                    cellNode.setSemanticType(SemanticType.TABLE_CELL);
-                    row.getCells().get(entry.getValue()).setSemanticType(SemanticType.TABLE_CELL);
-                }
-                cellNode.setCorrectSemanticScore(1.0);
+            Integer colNumber = entry.getValue();
+            SemanticType cellType = isHeaderCell(cellNode, colNumber, colNumber == 0 ? null :
+                    row.getCells().get(colNumber - 1), previousRow) ?
+                    SemanticType.TABLE_HEADER : SemanticType.TABLE_CELL;
+            if (updateNode(cellNode, id, cellType, table.getTableBorder() != null, table.getBoundingBox())) {
+                row.getCells().get(colNumber).setSemanticType(cellType);
             }
         }
 
@@ -338,13 +313,7 @@ public class ClusterTableConsumer {
         for (PDFList list : lists) {
             INode listRoot = updateTreeWithRecognizedList(list);
             if (listRoot != null) {
-                if ((ListUtils.isListNode(listRoot) || TableUtils.isTableNode(listRoot)) && listRoot.getRecognizedStructureId() != list.getId()) {
-                    listRoot.setRecognizedStructureId(null);
-                } else {
-                    listRoot.setRecognizedStructureId(list.getId());
-                    listRoot.setSemanticType(SemanticType.LIST);
-                    listRoot.setCorrectSemanticScore(1.0);
-                }
+                updateNode(listRoot, list.getId(), SemanticType.LIST, false, list.getBoundingBox());
             }
         }
     }
@@ -352,15 +321,9 @@ public class ClusterTableConsumer {
     private INode updateTreeWithRecognizedList(PDFList list) {
         Set<INode> nodes = new HashSet<>();
         for (ListItem item : list.getListItems()) {
-            INode itemNode = updateTreeWithRecognizedListItem(item, list.getId());
+            INode itemNode = updateTreeWithRecognizedListItem(item, list);
             if (itemNode != null) {
-                if ((ListUtils.isListNode(itemNode) || TableUtils.isTableNode(itemNode)) && itemNode.getRecognizedStructureId() != list.getId()) {
-                    itemNode.setRecognizedStructureId(null);
-                } else {
-                    itemNode.setRecognizedStructureId(list.getId());
-                    itemNode.setSemanticType(SemanticType.LIST_ITEM);
-                    itemNode.setCorrectSemanticScore(1.0);
-                }
+                updateNode(itemNode, list.getId(), SemanticType.LIST_ITEM, false, list.getBoundingBox());
                 nodes.add(itemNode);
             }
         }
@@ -370,7 +333,20 @@ public class ClusterTableConsumer {
         return findLocalRoot(nodes);
     }
 
-    private INode updateTreeWithRecognizedListItem(ListItem item, Long id) {
+    private boolean updateNode(INode node, Long id, SemanticType semanticType, boolean hasTableBorder,
+                               BoundingBox boundingBox) {
+        if (((ListUtils.isListNode(node) && !hasTableBorder) || TableUtils.isTableNode(node)) &&
+                node.getRecognizedStructureId() != id && !boundingBox.contains(node.getBoundingBox())) {
+            node.setRecognizedStructureId(null);
+            return false;
+        }
+        node.setRecognizedStructureId(id);
+        node.setSemanticType(semanticType);
+        node.setCorrectSemanticScore(1.0);
+        return true;
+    }
+
+    private INode updateTreeWithRecognizedListItem(ListItem item, PDFList list) {
         Map<INode, SemanticType> elementsNodes = new HashMap<>();
         INode labelNode = updateTreeWithRecognizedListElement(item.getLabel());
         if (labelNode != null) {
@@ -388,17 +364,11 @@ public class ClusterTableConsumer {
 
         for (Map.Entry<INode, SemanticType> entry : elementsNodes.entrySet()) {
             INode elementNode = entry.getKey();
-            while (elementNode.getParent() != null && elementNode.getParent() != itemNode && elementNode.getParent().getChildren().size() == 1) {
+            while (elementNode.getParent() != null && elementNode.getParent() != itemNode &&
+                    elementNode.getParent().getChildren().size() == 1) {
                 elementNode = elementNode.getParent();
             }
-
-            if ((ListUtils.isListNode(elementNode) || TableUtils.isTableNode(elementNode)) && elementNode.getRecognizedStructureId() != id) {
-                elementNode.setRecognizedStructureId(null);
-            } else {
-                elementNode.setRecognizedStructureId(id);
-                elementNode.setSemanticType(entry.getValue());
-                elementNode.setCorrectSemanticScore(1.0);
-            }
+            updateNode(elementNode, list.getId(), entry.getValue(), false, list.getBoundingBox());
         }
 
         return itemNode;

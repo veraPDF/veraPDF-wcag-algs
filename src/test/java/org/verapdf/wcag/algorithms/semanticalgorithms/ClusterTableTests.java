@@ -30,13 +30,14 @@ public class ClusterTableTests {
                 Arguments.of("testdocument10.json", new int[][] {{2,25},{2,21},{2,13},{2,10}}, true, true),
                 Arguments.of("table-word.json", new int[][] {/*{4, 4}*/}, true, true),
                 Arguments.of("NEG-fake-table.json", new int[][] {/*{4, 4}*/}, false, true),
+                Arguments.of("PDFUA-Ref-2-07_FormalDocument.json", new int[][] {}, true, true),
                 Arguments.of("NEG-bad-table.json", new int[][] {{4, 5}}, false, false),
                 Arguments.of("NEG-bad-table2.json", new int[][] {{4, 5}}, false, false),
                 Arguments.of("no-table.json", new int[][] {}, false, true),
                 Arguments.of("NEG-floating-text-box.json", new int[][] {}, false, true),
                 Arguments.of("2columns2.json", new int[][] {}, false, true),
                 Arguments.of("2columns3.json", new int[][] {}, false, false),
-                Arguments.of("NEG-bad-table3.json", new int[][] {{2, 4}}, false, false),
+                Arguments.of("NEG-bad-table3.json", new int[][] {{2, 4}}, true, true),
                 Arguments.of("NEG-bad-table3-full.json", new int[][] {{2, 24}}, false, false), // should be 6 separated tables
                 Arguments.of("fake-table1.json", new int[][] {{2, 3}, {2, 4}, {2, 4}, {2, 2}, {2, 2}, {2, 2}, {2, 4},
                         {2, 3}, {2, 5}}, false, true), // contents page is recognized as a set of tables
@@ -46,7 +47,7 @@ public class ClusterTableTests {
                 Arguments.of("fake-table3.json", new int[][] {}, false, true),
                 Arguments.of("tableBorder.json", new int[][] {/*{3, 4}*/}, true, true),
                 Arguments.of("three-tables.json", new int[][] {{5, 6}, {4, 10}, {5, 4}}, false, false), // third table contains images
-                Arguments.of("PDFUA-Ref-2-05_BookChapter-german.json", new int[][] {{2, 24}}, false, false), // contents page is recognized as table, table on 6th page is not recognized
+                Arguments.of("PDFUA-Ref-2-05_BookChapter-german.json", new int[][] {{2, 24}}, false, true), // contents page is recognized as table, table on 6th page is not recognized
                 Arguments.of("PDFUA-Ref-2-02_Invoice.json", new int[][] {{4, 9}}, false, false),
                 Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[][] {}, true, true)
                 );

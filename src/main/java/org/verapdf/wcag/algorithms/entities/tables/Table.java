@@ -242,7 +242,8 @@ public class Table extends InfoChunk {
     }
 
     public void validate() {
-        if (rows.size() < 2 || numberOfColumns() < 2) {
+        if (rows.size() < 2 || numberOfColumns() < 2 ||
+                (rows.size() == 2 && numberOfColumns() == 2 && getNumberOfCellsWithContent() < 4)) {
             validationScore = 0.0;
             return;
         }
@@ -288,5 +289,13 @@ public class Table extends InfoChunk {
         if (tableBorder != null) {
             setBoundingBox(tableBorder.getBoundingBox());
         }
+    }
+
+    public int getNumberOfCellsWithContent() {
+        int numberOfCellsWithContent = 0;
+        for (TableRow row : rows) {
+            numberOfCellsWithContent += row.getNumberOfCellsWithContent();
+        }
+        return numberOfCellsWithContent;
     }
 }
