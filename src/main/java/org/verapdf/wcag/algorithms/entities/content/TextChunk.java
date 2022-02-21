@@ -3,9 +3,11 @@ package org.verapdf.wcag.algorithms.entities.content;
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class TextChunk extends TextInfoChunk {
     private String value;
@@ -18,6 +20,7 @@ public class TextChunk extends TextInfoChunk {
     private boolean hasSpecialStyle = false;
     private boolean isUnderlinedText = false;
     private TextFormat textFormat = TextFormat.NORMAL;
+    private List<Double> symbolEnds = new ArrayList<>();
 
     public TextChunk() {
     }
@@ -27,8 +30,8 @@ public class TextChunk extends TextInfoChunk {
         this.value = value;
     }
 
-    public TextChunk(BoundingBox bbox, String value, String fontName, double fontSize,
-                     double fontWeight, double italicAngle, double baseLine, double[] fontColor, String fontColorSpace) {
+    public TextChunk(BoundingBox bbox, String value, String fontName, double fontSize, double fontWeight, double italicAngle,
+                     double baseLine, double[] fontColor, String fontColorSpace, List<Double> symbolEnds) {
         super(bbox, fontSize, baseLine);
         this.value = value;
         this.fontName = fontName;
@@ -36,11 +39,13 @@ public class TextChunk extends TextInfoChunk {
         this.italicAngle = italicAngle;
         this.fontColor = fontColor.clone();
         this.fontColorSpace = fontColorSpace;
+        this.symbolEnds = symbolEnds;
+        adjustSymbolEndsToBoundingBox();
     }
 
     public TextChunk(TextChunk chunk) {
-        this(chunk.getBoundingBox(), chunk.value, chunk.fontName, chunk.fontSize,
-                chunk.fontWeight, chunk.italicAngle, chunk.baseLine, chunk.fontColor, chunk.fontColorSpace);
+        this(chunk.getBoundingBox(), chunk.value, chunk.fontName, chunk.fontSize, chunk.fontWeight, chunk.italicAngle,
+             chunk.baseLine, chunk.fontColor, chunk.fontColorSpace, chunk.symbolEnds);
     }
 
     public String getValue() {
@@ -121,6 +126,35 @@ public class TextChunk extends TextInfoChunk {
 
     public void setTextFormat(TextFormat textFormat) {
         this.textFormat = textFormat;
+    }
+
+    public List<Double> getSymbolEnds() {
+        return symbolEnds;
+    }
+
+    public void setSymbolEnds(List<Double> symbolEnds) {
+        this.symbolEnds = symbolEnds;
+    }
+
+    public Double getSymbolStartCoordinate(int index) {
+        return index >= 0 && index < this.symbolEnds.size() - 1 ? this.symbolEnds.get(index) : null;
+    }
+
+    public Double getSymbolEndCoordinate(int index) {
+        return index >= 0 && index < this.symbolEnds.size() - 1 ? this.symbolEnds.get(index + 1) : null;
+    }
+
+    public Double getSymbolWidth(int index) {
+        return index >= 0 && index < this.symbolEnds.size() - 1 ?
+               this.symbolEnds.get(index + 1) - this.symbolEnds.get(index) : null;
+    }
+
+    private void adjustSymbolEndsToBoundingBox() {
+        if (this.symbolEnds == null) {
+            return;
+        }
+        double leftX = this.getBoundingBox().getLeftX();
+        this.symbolEnds = this.symbolEnds.stream().map(e -> e + leftX).collect(Collectors.toList());
     }
 
     public void addAll(List<TextChunk> otherChunks) {

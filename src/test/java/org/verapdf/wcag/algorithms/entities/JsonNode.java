@@ -22,6 +22,7 @@ public class JsonNode {
 	private double width;
 	private String fontColorSpace;
 	private double[] boundingBox;
+	private List<Double> symbolEnds;
 	private List<JsonNode> children;
 	private List<JsonNode> pages;
 	private List<JsonNode> artifacts;
@@ -123,6 +124,14 @@ public class JsonNode {
 
 	public void setBoundingBox(double[] boundingBox) {
 		this.boundingBox = boundingBox;
+	}
+
+	public List<Double> getSymbolEnds() {
+		return symbolEnds;
+	}
+
+	public void setSymbolEnds(List<Double> symbolEnds) {
+		this.symbolEnds = symbolEnds;
 	}
 
 	public List<JsonNode> getChildren() {
