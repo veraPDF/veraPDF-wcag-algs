@@ -99,6 +99,10 @@ public class ChunksMergeUtils {
 		TextChunk x = lastLine.getLastTextChunk();
 		TextChunk y = nextLine.getFirstTextChunk();
 
+		if (!NodeUtils.areCloseNumbers(x.getSlantDegree(), y.getSlantDegree())) {
+			return 0.0;
+		}
+
 		double baseLineDiff = getBaseLineDifference(x, y);
 		double fontSizeDiff = getFontSizeDifference(x, y);
 		if (!TextFormat.NORMAL.equals(x.getTextFormat())) {
@@ -335,18 +339,33 @@ public class ChunksMergeUtils {
 //            replace with mergeYAlmostNestedProbability
 //            We assume that x < y
 
-		double leftChunkRightX = x.getRightX();
-		double rightChunkLeftX = y.getLeftX();
+		double firstChunkEnd = x.getRightX();
+		double secondChunkStart = y.getLeftX();
+
+		if (!NodeUtils.areCloseNumbers(y.getSlantDegree(), x.getSlantDegree())) {
+			return 0.0;
+		}
+
+		if (NodeUtils.areCloseNumbers(180.0, Math.abs(x.getSlantDegree()))) {
+			firstChunkEnd = x.getLeftX();
+			secondChunkStart = y.getRightX();
+		} else if (NodeUtils.areCloseNumbers(90.0, x.getSlantDegree())) {
+			firstChunkEnd = x.getTopY();
+			secondChunkStart = y.getBottomY();
+		} else if (NodeUtils.areCloseNumbers(-90.0, x.getSlantDegree())) {
+			firstChunkEnd = x.getBottomY();
+			secondChunkStart = y.getTopY();
+		}
 
 		if (lastCharIsWhitespace(x.getValue())) {
-			leftChunkRightX -= whitespaceSize(x.getFontSize());
+			firstChunkEnd -= whitespaceSize(x.getFontSize());
 		}
 
 		if (firstCharIsWhitespace(y.getValue())) {
-			rightChunkLeftX += whitespaceSize(y.getFontSize());
+			secondChunkStart += whitespaceSize(y.getFontSize());
 		}
 
-		double distanceBetweenChunks = Math.abs(leftChunkRightX - rightChunkLeftX);
+		double distanceBetweenChunks = Math.abs(firstChunkEnd - secondChunkStart);
 		double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
 
 		return getUniformProbability(DEFAULT_FONT_CHAR_SPACING_INTERVAL, distanceBetweenChunks / maxFontSize,
@@ -408,11 +427,11 @@ public class ChunksMergeUtils {
 	}
 
 	private static boolean lastCharIsWhitespace(String str) {
-		return str.length() > 0 && str.charAt(str.length() - 1) == ' ';
+		return str.length() > 0 && TextChunkUtils.isWhiteSpaceChar(str.charAt(str.length() - 1));
 	}
 
 	private static boolean firstCharIsWhitespace(String str) {
-		return str.length() > 0 && Character.isWhitespace(str.charAt(0));
+		return str.length() > 0 && TextChunkUtils.isWhiteSpaceChar(str.charAt(0));
 	}
 
 	private static double whitespaceSize(double fontSize) {

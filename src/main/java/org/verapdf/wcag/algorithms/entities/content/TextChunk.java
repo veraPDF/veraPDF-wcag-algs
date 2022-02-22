@@ -15,12 +15,12 @@ public class TextChunk extends TextInfoChunk {
     private double fontWeight;
     private double italicAngle;
     private double[] fontColor;
-    private String fontColorSpace;
     private double contrastRatio;
     private boolean hasSpecialStyle = false;
     private boolean isUnderlinedText = false;
     private TextFormat textFormat = TextFormat.NORMAL;
     private List<Double> symbolEnds = new ArrayList<>();
+    private double slantDegree;
 
     public TextChunk() {
     }
@@ -30,22 +30,22 @@ public class TextChunk extends TextInfoChunk {
         this.value = value;
     }
 
-    public TextChunk(BoundingBox bbox, String value, String fontName, double fontSize, double fontWeight, double italicAngle,
-                     double baseLine, double[] fontColor, String fontColorSpace, List<Double> symbolEnds) {
+    public TextChunk(BoundingBox bbox, String value, String fontName, double fontSize, double fontWeight,
+                double italicAngle, double baseLine, double[] fontColor, List<Double> symbolEnds, double slantDegree) {
         super(bbox, fontSize, baseLine);
         this.value = value;
         this.fontName = fontName;
         this.fontWeight = fontWeight;
         this.italicAngle = italicAngle;
         this.fontColor = fontColor.clone();
-        this.fontColorSpace = fontColorSpace;
         this.symbolEnds = symbolEnds;
+        this.slantDegree = slantDegree;
         adjustSymbolEndsToBoundingBox();
     }
 
     public TextChunk(TextChunk chunk) {
         this(chunk.getBoundingBox(), chunk.value, chunk.fontName, chunk.fontSize, chunk.fontWeight, chunk.italicAngle,
-             chunk.baseLine, chunk.fontColor, chunk.fontColorSpace, chunk.symbolEnds);
+                chunk.baseLine, chunk.fontColor, chunk.symbolEnds, chunk.slantDegree);
     }
 
     public String getValue() {
@@ -112,14 +112,6 @@ public class TextChunk extends TextInfoChunk {
         this.isUnderlinedText = true;
     }
 
-    public String getFontColorSpace() {
-        return fontColorSpace;
-    }
-
-    public void setFontColorSpace(String fontColorSpace) {
-        this.fontColorSpace = fontColorSpace;
-    }
-
     public TextFormat getTextFormat() {
         return textFormat;
     }
@@ -157,6 +149,14 @@ public class TextChunk extends TextInfoChunk {
         this.symbolEnds = this.symbolEnds.stream().map(e -> e + leftX).collect(Collectors.toList());
     }
 
+    public double getSlantDegree() {
+        return slantDegree;
+    }
+
+    public void setSlantDegree(double slantDegree) {
+        this.slantDegree = slantDegree;
+    }
+
     public void addAll(List<TextChunk> otherChunks) {
         StringBuilder text = new StringBuilder(value);
         for (TextChunk chunk : otherChunks) {
@@ -181,7 +181,6 @@ public class TextChunk extends TextInfoChunk {
                 && Double.compare(that.italicAngle, italicAngle) == 0
                 && Objects.equals(value, that.value)
                 && Objects.equals(fontName, that.fontName)
-                && Objects.equals(fontColorSpace, that.fontColorSpace)
                 && Arrays.equals(fontColor, that.fontColor);
     }
 
@@ -202,7 +201,6 @@ public class TextChunk extends TextInfoChunk {
                 ", italicAngle=" + italicAngle +
                 ", baseLine=" + baseLine +
                 ", fontColor=" + Arrays.toString(fontColor) +
-                ", fontColorSpace='" + fontColorSpace + '\'' +
                 '}';
     }
 }
