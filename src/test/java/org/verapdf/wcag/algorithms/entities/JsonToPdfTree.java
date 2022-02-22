@@ -33,10 +33,10 @@ public class JsonToPdfTree {
 	}
 
 	private static TextChunk getTextChunk(JsonNode jsonNode) {
-		return new TextChunk(new BoundingBox(jsonNode.getPageNumber(), jsonNode.getBoundingBox()),
-				jsonNode.getValue(), jsonNode.getFontName(), jsonNode.getFontSize(),
-				jsonNode.getFontWeight(), jsonNode.getItalicAngle(), jsonNode.getBaseLine(),
-				jsonNode.getColor(), jsonNode.getFontColorSpace(), jsonNode.getSymbolEnds());
+		return new TextChunk(new BoundingBox(jsonNode.getPageNumber(), jsonNode.getBoundingBox()), jsonNode.getValue(),
+				jsonNode.getFontName(), jsonNode.getFontSize(), jsonNode.getFontWeight(), jsonNode.getItalicAngle(),
+				jsonNode.getBaseLine(), jsonNode.getColor(), jsonNode.getSymbolEnds(),
+				jsonNode.getSlantDegree());
 	}
 
 	private static ImageChunk getImageChunk(JsonNode jsonNode) {

@@ -6,6 +6,7 @@ import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.entities.lists.ListElement;
 import org.verapdf.wcag.algorithms.entities.lists.ListItem;
 import org.verapdf.wcag.algorithms.entities.lists.PDFList;
@@ -335,8 +336,9 @@ public class ClusterTableConsumer {
 
     private boolean updateNode(INode node, Long id, SemanticType semanticType, boolean hasTableBorder,
                                BoundingBox boundingBox) {
-        if (((ListUtils.isListNode(node) && !hasTableBorder) || TableUtils.isTableNode(node)) &&
-                node.getRecognizedStructureId() != id && !boundingBox.contains(node.getBoundingBox())) {
+        if ((((ListUtils.isListNode(node) && !hasTableBorder) || TableUtils.isTableNode(node)) &&
+                node.getRecognizedStructureId() != id) || !containsNode(boundingBox, node.getBoundingBox(),
+                TableBorder.TABLE_BORDER_EPSILON, TableBorder.TABLE_BORDER_EPSILON)) {
             node.setRecognizedStructureId(null);
             return false;
         }
@@ -344,6 +346,20 @@ public class ClusterTableConsumer {
         node.setSemanticType(semanticType);
         node.setCorrectSemanticScore(1.0);
         return true;
+    }
+
+    private boolean containsNode(BoundingBox boundingBox, BoundingBox nodeBoundingBox,
+                             double horizontalOffset, double verticalOffset) {
+        if (nodeBoundingBox instanceof MultiBoundingBox) {
+            for (BoundingBox box : ((MultiBoundingBox)nodeBoundingBox).getBoundingBoxes()) {
+                if (boundingBox.getPageNumber() <= box.getPageNumber() && boundingBox.getLastPageNumber() >=
+                        box.getLastPageNumber() && !boundingBox.contains(box, horizontalOffset, verticalOffset)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return boundingBox.contains(nodeBoundingBox, horizontalOffset, verticalOffset);
     }
 
     private INode updateTreeWithRecognizedListItem(ListItem item, PDFList list) {

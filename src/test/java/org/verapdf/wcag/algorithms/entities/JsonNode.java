@@ -21,6 +21,7 @@ public class JsonNode {
 	private double endY;
 	private double width;
 	private String fontColorSpace;
+	private double slantDegree;
 	private double[] boundingBox;
 	private List<Double> symbolEnds;
 	private List<JsonNode> children;
@@ -190,6 +191,14 @@ public class JsonNode {
 		this.artifacts = artifacts;
 	}
 
+	public double getSlantDegree() {
+		return slantDegree;
+	}
+
+	public void setSlantDegree(double slantDegree) {
+		this.slantDegree = slantDegree;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -204,7 +213,7 @@ public class JsonNode {
 				Double.compare(jsonNode.baseLine, baseLine) == 0 && Objects.equals(value, jsonNode.value) &&
 				Objects.equals(type, jsonNode.type) && jsonNode.pageNumber == pageNumber &&
 				Arrays.equals(boundingBox, jsonNode.boundingBox) && Arrays.equals(color, jsonNode.color) &&
-				Objects.equals(fontColorSpace, jsonNode.fontColorSpace) && Objects.equals(pages, jsonNode.pages) &&
+				Double.compare(jsonNode.slantDegree, slantDegree) == 0 && Objects.equals(pages, jsonNode.pages) &&
 				Objects.equals(fontName, jsonNode.fontName) && Double.compare(jsonNode.fontWeight, fontWeight) == 0 &&
 				Double.compare(jsonNode.startX, startX) == 0 && Double.compare(jsonNode.startY, startY) == 0 &&
 				Double.compare(jsonNode.endX, endX) == 0 && Double.compare(jsonNode.endY, endY) == 0 &&
@@ -214,7 +223,7 @@ public class JsonNode {
 	@Override
 	public int hashCode() {
 		int result = Objects.hash(type, value, fontName, fontSize, fontWeight, italicAngle, baseLine, pageNumber,
-				children, pages, artifacts, startX, startY, endX, endY, width);
+				children, pages, artifacts, startX, startY, endX, endY, width, slantDegree);
 		result = 31 * result + Arrays.hashCode(color);
 		result = 31 * result + Arrays.hashCode(boundingBox);
 		return result;
@@ -236,8 +245,8 @@ public class JsonNode {
 				", endX=" + endX +
 				", endY=" + endY +
 				", width=" + width +
+				", slantDegree=" + slantDegree +
 				", color=" + Arrays.toString(color) +
-		       ", fontColorSpace='" + fontColorSpace + '\'' +
 		       ", boundingBox=" + Arrays.toString(boundingBox) +
 		       ", children=" + children +
 				", artifacts=" + artifacts +
