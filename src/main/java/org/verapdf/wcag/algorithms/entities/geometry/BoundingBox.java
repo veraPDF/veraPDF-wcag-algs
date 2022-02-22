@@ -230,35 +230,44 @@ public class BoundingBox {
         }
     }
 
-    static public BoundingBox cross(BoundingBox first, BoundingBox second) {
+    public static BoundingBox cross(BoundingBox first, BoundingBox second) {
         BoundingBox result = new BoundingBox(first);
-        return result.cross(second);
+        return result.cross(second, 0, 0);
     }
 
     public BoundingBox cross(BoundingBox other) {
+        return this.cross(other, 0,0);
+    }
+
+     public static BoundingBox cross(BoundingBox first, BoundingBox second, double horizontalOffset, double verticalOffset) {
+        BoundingBox result = new BoundingBox(first);
+        return result.cross(second, horizontalOffset, verticalOffset);
+    }
+
+    public BoundingBox cross(BoundingBox other, double horizontalOffset, double verticalOffset) {
         if (notOverlaps(other)) {
             return null;
         }
 
-        if (leftX < other.leftX) {
-            leftX = other.leftX;
+        if (leftX < other.leftX - horizontalOffset) {
+            leftX = other.leftX - horizontalOffset;
         }
-        if (rightX > other.rightX) {
-            rightX = other.rightX;
+        if (rightX > other.rightX + horizontalOffset) {
+            rightX = other.rightX + horizontalOffset;
         }
         if (pageNumber < other.pageNumber) {
             pageNumber = other.pageNumber;
             topY = other.topY;
         }
-        else if (pageNumber.equals(other.pageNumber) && other.topY < topY) {
-            topY = other.topY;
+        else if (pageNumber.equals(other.pageNumber) && other.topY + verticalOffset < topY) {
+            topY = other.topY + verticalOffset;
         }
         if (lastPageNumber > other.lastPageNumber) {
             lastPageNumber = other.lastPageNumber;
             bottomY = other.bottomY;
         }
-        else if (lastPageNumber.equals(other.lastPageNumber) && bottomY < other.bottomY) {
-            bottomY = other.bottomY;
+        else if (lastPageNumber.equals(other.lastPageNumber) && bottomY < other.bottomY - verticalOffset) {
+            bottomY = other.bottomY - verticalOffset;
         }
 
         return this;
