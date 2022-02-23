@@ -6,9 +6,9 @@ import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.SemanticImageNode;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
-import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ArabicNumbersListLabelsDetectionAlgorithm;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ListLabelsDetectionAlgorithm;
 
@@ -106,23 +106,17 @@ public class NodeUtils {
 				(textNode.getLinesNumber() - 1) * (textNode.getLinesNumber() - 1));
 	}
 
-	public static double imageCaptionProbability(INode node, INode neighborNode) {
-		if (node == null) {
+	public static double imageCaptionProbability(INode node, SemanticImageNode imageNode) {
+		if (node == null || node.getSemanticType() == SemanticType.HEADING || node.getSemanticType() == SemanticType.NUMBER_HEADING) {
+			return 0;
+		}
+		INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
+		if (!(accumulatedNode instanceof SemanticTextNode)) {
 			return 0.0;
 		}
-		if (neighborNode == null) {
-			return 1.0;
-		}
-		if (!(node instanceof SemanticTextNode)) {
-			return 0.0;
-		}
-		if (!(neighborNode instanceof SemanticImageNode)) {
-			return 0.0;
-		}
-		SemanticTextNode textNode = (SemanticTextNode) node;
-		SemanticImageNode neighborImageNode = (SemanticImageNode) neighborNode;
-		double captionProbability = captionVerticalProbability(textNode, neighborImageNode.getBoundingBox());
-		captionProbability *= captionHorizontalProbability(textNode, neighborImageNode.getBoundingBox());
+		SemanticTextNode textNode = (SemanticTextNode) accumulatedNode;
+		double captionProbability = captionVerticalProbability(textNode, imageNode.getBoundingBox());
+		captionProbability *= captionHorizontalProbability(textNode, imageNode.getBoundingBox());
 		captionProbability *= getLinesNumberCaptionProbability(textNode);
 		captionProbability += captionContentProbability(textNode, FIGURE);
 		return Math.min(captionProbability, 1.0);
