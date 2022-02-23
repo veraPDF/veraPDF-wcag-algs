@@ -25,7 +25,11 @@
                      "color":[
                         0.0
                      ],
-                     "fontColorSpace":"DeviceGray"
+                     "symbolEnds":[
+                        72.025,
+                        74.73700000000001
+                     ],
+                     "slantDegree":0.0
                   }
                ]
             },
@@ -45,6 +49,16 @@
                                        "type":"P",
                                        "children":[
                                           {
+                                             "type":"LineArtChunk",
+                                             "pageNumber":0,
+                                             "boundingBox":[
+                                                77.525,
+                                                690.22,
+                                                183.325,
+                                                704.72
+                                             ]
+                                          },
+                                          {
                                              "type":"TextChunk",
                                              "pageNumber":0,
                                              "value":"Column1",
@@ -55,14 +69,24 @@
                                              "boundingBox":[
                                                 77.525,
                                                 690.47,
-                                                122.06900000000002,
+                                                122.069,
                                                 702.47
                                              ],
                                              "fontName":"Calibri-Bold",
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                77.525,
+                                                83.873,
+                                                90.233,
+                                                93.221,
+                                                99.70100000000001,
+                                                109.505,
+                                                115.94900000000001,
+                                                122.069
+                                             ],
+                                             "slantDegree":0.0
                                           },
                                           {
                                              "type":"TextChunk",
@@ -82,7 +106,11 @@
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                122.05,
+                                                124.762
+                                             ],
+                                             "slantDegree":0.0
                                           }
                                        ]
                                     }
@@ -95,6 +123,16 @@
                                        "type":"P",
                                        "children":[
                                           {
+                                             "type":"LineArtChunk",
+                                             "pageNumber":0,
+                                             "boundingBox":[
+                                                194.08,
+                                                690.22,
+                                                299.88,
+                                                704.72
+                                             ]
+                                          },
+                                          {
                                              "type":"TextChunk",
                                              "pageNumber":0,
                                              "value":"Column2",
@@ -105,14 +143,24 @@
                                              "boundingBox":[
                                                 194.08,
                                                 690.47,
-                                                238.624,
+                                                238.62400000000002,
                                                 702.47
                                              ],
                                              "fontName":"Calibri-Bold",
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                194.08,
+                                                200.42800000000003,
+                                                206.788,
+                                                209.776,
+                                                216.256,
+                                                226.06,
+                                                232.50400000000002,
+                                                238.62400000000002
+                                             ],
+                                             "slantDegree":0.0
                                           },
                                           {
                                              "type":"TextChunk",
@@ -132,7 +180,11 @@
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                238.6,
+                                                241.31199999999998
+                                             ],
+                                             "slantDegree":0.0
                                           }
                                        ]
                                     }
@@ -145,6 +197,16 @@
                                        "type":"P",
                                        "children":[
                                           {
+                                             "type":"LineArtChunk",
+                                             "pageNumber":0,
+                                             "boundingBox":[
+                                                310.63,
+                                                690.22,
+                                                416.43,
+                                                704.72
+                                             ]
+                                          },
+                                          {
                                              "type":"TextChunk",
                                              "pageNumber":0,
                                              "value":"Column3",
@@ -155,14 +217,24 @@
                                              "boundingBox":[
                                                 310.63,
                                                 690.47,
-                                                355.17400000000004,
+                                                355.174,
                                                 702.47
                                              ],
                                              "fontName":"Calibri-Bold",
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                310.63,
+                                                316.978,
+                                                323.338,
+                                                326.326,
+                                                332.806,
+                                                342.61,
+                                                349.054,
+                                                355.174
+                                             ],
+                                             "slantDegree":0.0
                                           },
                                           {
                                              "type":"TextChunk",
@@ -182,7 +254,11 @@
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                355.15,
+                                                357.86199999999997
+                                             ],
+                                             "slantDegree":0.0
                                           }
                                        ]
                                     }
@@ -195,6 +271,16 @@
                                        "type":"P",
                                        "children":[
                                           {
+                                             "type":"LineArtChunk",
+                                             "pageNumber":0,
+                                             "boundingBox":[
+                                                427.18,
+                                                690.22,
+                                                534.23,
+                                                704.72
+                                             ]
+                                          },
+                                          {
                                              "type":"TextChunk",
                                              "pageNumber":0,
                                              "value":"Column4",
@@ -205,14 +291,24 @@
                                              "boundingBox":[
                                                 427.18,
                                                 690.47,
-                                                471.7240000000001,
+                                                471.724,
                                                 702.47
                                              ],
                                              "fontName":"Calibri-Bold",
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                427.18,
+                                                433.528,
+                                                439.88800000000003,
+                                                442.87600000000003,
+                                                449.356,
+                                                459.16,
+                                                465.604,
+                                                471.724
+                                             ],
+                                             "slantDegree":0.0
                                           },
                                           {
                                              "type":"TextChunk",
@@ -232,7 +328,11 @@
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                471.7,
+                                                474.412
+                                             ],
+                                             "slantDegree":0.0
                                           }
                                        ]
                                     }
@@ -255,6 +355,16 @@
                                        "type":"P",
                                        "children":[
                                           {
+                                             "type":"LineArtChunk",
+                                             "pageNumber":0,
+                                             "boundingBox":[
+                                                77.525,
+                                                673.95,
+                                                183.325,
+                                                688.7250000000001
+                                             ]
+                                          },
+                                          {
                                              "type":"TextChunk",
                                              "pageNumber":0,
                                              "value":"Structural ",
@@ -265,14 +375,28 @@
                                              "boundingBox":[
                                                 77.525,
                                                 674.22,
-                                                129.65300000000005,
+                                                129.65300000000002,
                                                 686.22
                                              ],
                                              "fontName":"Calibri-Bold",
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                77.525,
+                                                83.20100000000001,
+                                                87.42500000000001,
+                                                91.757,
+                                                98.20100000000001,
+                                                103.25300000000001,
+                                                107.417,
+                                                113.921,
+                                                118.22900000000001,
+                                                123.893,
+                                                126.905,
+                                                129.65300000000002
+                                             ],
+                                             "slantDegree":0.0
                                           },
                                           {
                                              "type":"TextChunk",
@@ -285,14 +409,23 @@
                                              "boundingBox":[
                                                 129.8,
                                                 674.22,
-                                                145.95199999999994,
+                                                145.952,
                                                 686.22
                                              ],
                                              "fontName":"Calibri-Bold",
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                129.8,
+                                                132.512,
+                                                135.24800000000002,
+                                                137.984,
+                                                140.48000000000002,
+                                                143.216,
+                                                145.952
+                                             ],
+                                             "slantDegree":0.0
                                           },
                                           {
                                              "type":"TextChunk",
@@ -312,7 +445,17 @@
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                77.525,
+                                                83.561,
+                                                86.477,
+                                                92.549,
+                                                102.269,
+                                                108.305,
+                                                114.71300000000001,
+                                                118.92500000000001
+                                             ],
+                                             "slantDegree":0.0
                                           },
                                           {
                                              "type":"TextChunk",
@@ -332,7 +475,21 @@
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                119.05,
+                                                121.762
+                                             ],
+                                             "slantDegree":0.0
+                                          },
+                                          {
+                                             "type":"LineArtChunk",
+                                             "pageNumber":0,
+                                             "boundingBox":[
+                                                77.525,
+                                                659.45,
+                                                183.325,
+                                                673.95
+                                             ]
                                           }
                                        ]
                                     }
@@ -345,6 +502,16 @@
                                        "type":"P",
                                        "children":[
                                           {
+                                             "type":"LineArtChunk",
+                                             "pageNumber":0,
+                                             "boundingBox":[
+                                                194.08,
+                                                673.95,
+                                                299.88,
+                                                688.7250000000001
+                                             ]
+                                          },
+                                          {
                                              "type":"TextChunk",
                                              "pageNumber":0,
                                              "value":"Structural element",
@@ -355,14 +522,35 @@
                                              "boundingBox":[
                                                 194.08,
                                                 674.22,
-                                                285.35200000000003,
+                                                285.352,
                                                 686.22
                                              ],
                                              "fontName":"Calibri",
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                194.08,
+                                                199.58800000000002,
+                                                203.608,
+                                                207.79600000000002,
+                                                214.096,
+                                                219.17200000000003,
+                                                223.096,
+                                                229.39600000000002,
+                                                233.512,
+                                                239.308,
+                                                242.068,
+                                                244.78,
+                                                250.756,
+                                                253.56400000000002,
+                                                259.54,
+                                                269.128,
+                                                275.032,
+                                                281.332,
+                                                285.352
+                                             ],
+                                             "slantDegree":0.0
                                           },
                                           {
                                              "type":"TextChunk",
@@ -382,7 +570,11 @@
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                285.63,
+                                                288.342
+                                             ],
+                                             "slantDegree":0.0
                                           }
                                        ]
                                     }
@@ -395,6 +587,16 @@
                                        "type":"P",
                                        "children":[
                                           {
+                                             "type":"LineArtChunk",
+                                             "pageNumber":0,
+                                             "boundingBox":[
+                                                310.63,
+                                                673.95,
+                                                416.43,
+                                                688.7250000000001
+                                             ]
+                                          },
+                                          {
                                              "type":"TextChunk",
                                              "pageNumber":0,
                                              "value":"Structural element",
@@ -405,14 +607,35 @@
                                              "boundingBox":[
                                                 310.63,
                                                 674.22,
-                                                401.90199999999993,
+                                                401.902,
                                                 686.22
                                              ],
                                              "fontName":"Calibri",
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                310.63,
+                                                316.138,
+                                                320.158,
+                                                324.346,
+                                                330.646,
+                                                335.722,
+                                                339.646,
+                                                345.94599999999997,
+                                                350.062,
+                                                355.858,
+                                                358.618,
+                                                361.33,
+                                                367.306,
+                                                370.114,
+                                                376.09,
+                                                385.678,
+                                                391.582,
+                                                397.88199999999995,
+                                                401.902
+                                             ],
+                                             "slantDegree":0.0
                                           },
                                           {
                                              "type":"TextChunk",
@@ -432,7 +655,11 @@
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                402.17,
+                                                404.882
+                                             ],
+                                             "slantDegree":0.0
                                           }
                                        ]
                                     }
@@ -445,6 +672,16 @@
                                        "type":"P",
                                        "children":[
                                           {
+                                             "type":"LineArtChunk",
+                                             "pageNumber":0,
+                                             "boundingBox":[
+                                                427.18,
+                                                673.95,
+                                                534.23,
+                                                688.7250000000001
+                                             ]
+                                          },
+                                          {
                                              "type":"TextChunk",
                                              "pageNumber":0,
                                              "value":"Structural element",
@@ -455,14 +692,35 @@
                                              "boundingBox":[
                                                 427.18,
                                                 674.22,
-                                                518.4519999999999,
+                                                518.452,
                                                 686.22
                                              ],
                                              "fontName":"Calibri",
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                427.18,
+                                                432.688,
+                                                436.708,
+                                                440.896,
+                                                447.196,
+                                                452.272,
+                                                456.196,
+                                                462.496,
+                                                466.612,
+                                                472.408,
+                                                475.168,
+                                                477.88,
+                                                483.856,
+                                                486.664,
+                                                492.64,
+                                                502.228,
+                                                508.132,
+                                                514.432,
+                                                518.452
+                                             ],
+                                             "slantDegree":0.0
                                           },
                                           {
                                              "type":"TextChunk",
@@ -482,7 +740,11 @@
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                518.73,
+                                                521.442
+                                             ],
+                                             "slantDegree":0.0
                                           }
                                        ]
                                     }
@@ -510,14 +772,35 @@
                                              "boundingBox":[
                                                 77.525,
                                                 644.7,
-                                                171.07700000000003,
+                                                171.077,
                                                 656.7
                                              ],
                                              "fontName":"Calibri-Bold",
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                77.525,
+                                                83.20100000000001,
+                                                87.42500000000001,
+                                                91.757,
+                                                98.20100000000001,
+                                                103.25300000000001,
+                                                107.417,
+                                                113.921,
+                                                118.22900000000001,
+                                                123.893,
+                                                126.905,
+                                                129.65300000000002,
+                                                135.71300000000002,
+                                                138.62900000000002,
+                                                144.70100000000002,
+                                                154.421,
+                                                160.457,
+                                                166.865,
+                                                171.077
+                                             ],
+                                             "slantDegree":0.0
                                           },
                                           {
                                              "type":"TextChunk",
@@ -537,7 +820,11 @@
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                171.08,
+                                                173.792
+                                             ],
+                                             "slantDegree":0.0
                                           }
                                        ]
                                     }
@@ -560,14 +847,35 @@
                                              "boundingBox":[
                                                 194.08,
                                                 644.7,
-                                                285.35200000000003,
+                                                285.352,
                                                 656.7
                                              ],
                                              "fontName":"Calibri",
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                194.08,
+                                                199.58800000000002,
+                                                203.608,
+                                                207.79600000000002,
+                                                214.096,
+                                                219.17200000000003,
+                                                223.096,
+                                                229.39600000000002,
+                                                233.512,
+                                                239.308,
+                                                242.068,
+                                                244.78,
+                                                250.756,
+                                                253.56400000000002,
+                                                259.54,
+                                                269.128,
+                                                275.032,
+                                                281.332,
+                                                285.352
+                                             ],
+                                             "slantDegree":0.0
                                           },
                                           {
                                              "type":"TextChunk",
@@ -587,7 +895,11 @@
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                285.63,
+                                                288.342
+                                             ],
+                                             "slantDegree":0.0
                                           }
                                        ]
                                     }
@@ -610,14 +922,35 @@
                                              "boundingBox":[
                                                 310.63,
                                                 644.7,
-                                                401.90199999999993,
+                                                401.902,
                                                 656.7
                                              ],
                                              "fontName":"Calibri",
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                310.63,
+                                                316.138,
+                                                320.158,
+                                                324.346,
+                                                330.646,
+                                                335.722,
+                                                339.646,
+                                                345.94599999999997,
+                                                350.062,
+                                                355.858,
+                                                358.618,
+                                                361.33,
+                                                367.306,
+                                                370.114,
+                                                376.09,
+                                                385.678,
+                                                391.582,
+                                                397.88199999999995,
+                                                401.902
+                                             ],
+                                             "slantDegree":0.0
                                           },
                                           {
                                              "type":"TextChunk",
@@ -637,7 +970,11 @@
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                402.17,
+                                                404.882
+                                             ],
+                                             "slantDegree":0.0
                                           }
                                        ]
                                     }
@@ -660,14 +997,35 @@
                                              "boundingBox":[
                                                 427.18,
                                                 644.7,
-                                                518.4519999999999,
+                                                518.452,
                                                 656.7
                                              ],
                                              "fontName":"Calibri",
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                427.18,
+                                                432.688,
+                                                436.708,
+                                                440.896,
+                                                447.196,
+                                                452.272,
+                                                456.196,
+                                                462.496,
+                                                466.612,
+                                                472.408,
+                                                475.168,
+                                                477.88,
+                                                483.856,
+                                                486.664,
+                                                492.64,
+                                                502.228,
+                                                508.132,
+                                                514.432,
+                                                518.452
+                                             ],
+                                             "slantDegree":0.0
                                           },
                                           {
                                              "type":"TextChunk",
@@ -687,7 +1045,11 @@
                                              "color":[
                                                 0.0
                                              ],
-                                             "fontColorSpace":"DeviceGray"
+                                             "symbolEnds":[
+                                                518.73,
+                                                521.442
+                                             ],
+                                             "slantDegree":0.0
                                           }
                                        ]
                                     }
@@ -720,7 +1082,11 @@
                      "color":[
                         0.0
                      ],
-                     "fontColorSpace":"DeviceGray"
+                     "symbolEnds":[
+                        72.025,
+                        74.73700000000001
+                     ],
+                     "slantDegree":0.0
                   }
                ]
             },
@@ -745,7 +1111,11 @@
                      "color":[
                         0.0
                      ],
-                     "fontColorSpace":"DeviceGray"
+                     "symbolEnds":[
+                        72.025,
+                        74.73700000000001
+                     ],
+                     "slantDegree":0.0
                   }
                ]
             },
@@ -770,7 +1140,11 @@
                      "color":[
                         0.0
                      ],
-                     "fontColorSpace":"DeviceGray"
+                     "symbolEnds":[
+                        72.025,
+                        74.73700000000001
+                     ],
+                     "slantDegree":0.0
                   }
                ]
             }
@@ -3402,6 +3776,16 @@
                "endX":539.855,
                "endY":644.325,
                "width":0.25
+            },
+            {
+               "type":"LineArtChunk",
+               "pageNumber":0,
+               "boundingBox":[
+                  71.275,
+                  644.2,
+                  539.98,
+                  704.72
+               ]
             }
          ]
       }

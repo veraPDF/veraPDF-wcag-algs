@@ -30,7 +30,12 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              56.8,
+                              59.535999999999994,
+                              63.123999999999995
+                           ],
+                           "slantDegree":0.0
                         }
                      ]
                   },
@@ -54,7 +59,11 @@
                         0.0,
                         0.0
                      ],
-                     "fontColorSpace":"DeviceRGB"
+                     "symbolEnds":[
+                        63.2,
+                        66.944
+                     ],
+                     "slantDegree":0.0
                   },
                   {
                      "type":"Span",
@@ -70,7 +79,7 @@
                            "boundingBox":[
                               67.0,
                               768.173,
-                              89.64399999999999,
+                              89.644,
                               785.6089999999999
                            ],
                            "fontName":"Tahoma",
@@ -79,7 +88,14 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              67.0,
+                              73.996,
+                              80.30799999999999,
+                              84.304,
+                              89.644
+                           ],
+                           "slantDegree":0.0
                         }
                      ]
                   }
@@ -102,7 +118,7 @@
                            "boundingBox":[
                               56.8,
                               753.673,
-                              65.82399999999998,
+                              65.824,
                               771.1089999999999
                            ],
                            "fontName":"Tahoma",
@@ -111,7 +127,13 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              56.8,
+                              59.535999999999994,
+                              62.236,
+                              65.824
+                           ],
+                           "slantDegree":0.0
                         }
                      ]
                   },
@@ -135,7 +157,11 @@
                         0.0,
                         0.0
                      ],
-                     "fontColorSpace":"DeviceRGB"
+                     "symbolEnds":[
+                        65.9,
+                        69.644
+                     ],
+                     "slantDegree":0.0
                   },
                   {
                      "type":"Span",
@@ -160,7 +186,14 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              69.7,
+                              76.696,
+                              83.00800000000001,
+                              88.348,
+                              92.392
+                           ],
+                           "slantDegree":0.0
                         }
                      ]
                   }
@@ -183,7 +216,7 @@
                            "boundingBox":[
                               56.8,
                               739.173,
-                              68.60799999999999,
+                              68.608,
                               756.6089999999999
                            ],
                            "fontName":"Tahoma",
@@ -192,7 +225,14 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              56.8,
+                              59.535999999999994,
+                              62.236,
+                              65.02,
+                              68.608
+                           ],
+                           "slantDegree":0.0
                         }
                      ]
                   },
@@ -216,7 +256,11 @@
                         0.0,
                         0.0
                      ],
-                     "fontColorSpace":"DeviceRGB"
+                     "symbolEnds":[
+                        68.7,
+                        72.444
+                     ],
+                     "slantDegree":0.0
                   },
                   {
                      "type":"Span",
@@ -232,7 +276,7 @@
                            "boundingBox":[
                               72.4,
                               739.173,
-                              95.092,
+                              95.09200000000001,
                               756.6089999999999
                            ],
                            "fontName":"Tahoma",
@@ -241,7 +285,14 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              72.4,
+                              79.396,
+                              85.708,
+                              91.048,
+                              95.09200000000001
+                           ],
+                           "slantDegree":0.0
                         }
                      ]
                   }
@@ -273,7 +324,15 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              56.8,
+                              59.535999999999994,
+                              62.236,
+                              65.02,
+                              67.72,
+                              71.30799999999999
+                           ],
+                           "slantDegree":0.0
                         }
                      ]
                   },
@@ -297,7 +356,11 @@
                         0.0,
                         0.0
                      ],
-                     "fontColorSpace":"DeviceRGB"
+                     "symbolEnds":[
+                        71.4,
+                        75.144
+                     ],
+                     "slantDegree":0.0
                   },
                   {
                      "type":"Span",
@@ -322,7 +385,14 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              75.2,
+                              82.196,
+                              88.50800000000001,
+                              93.848,
+                              97.892
+                           ],
+                           "slantDegree":0.0
                         }
                      ]
                   }
@@ -354,7 +424,16 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              56.8,
+                              59.535999999999994,
+                              62.236,
+                              65.02,
+                              67.72,
+                              70.42,
+                              74.092
+                           ],
+                           "slantDegree":0.0
                         }
                      ]
                   },
@@ -378,7 +457,11 @@
                         0.0,
                         0.0
                      ],
-                     "fontColorSpace":"DeviceRGB"
+                     "symbolEnds":[
+                        74.2,
+                        77.944
+                     ],
+                     "slantDegree":0.0
                   },
                   {
                      "type":"Span",
@@ -394,7 +477,7 @@
                            "boundingBox":[
                               77.9,
                               710.173,
-                              100.592,
+                              100.59200000000001,
                               727.6089999999999
                            ],
                            "fontName":"Tahoma",
@@ -403,7 +486,14 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              77.9,
+                              84.896,
+                              91.208,
+                              96.548,
+                              100.59200000000001
+                           ],
+                           "slantDegree":0.0
                         }
                      ]
                   }
@@ -435,7 +525,17 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              56.8,
+                              59.535999999999994,
+                              62.236,
+                              65.02,
+                              67.72,
+                              70.42,
+                              73.20400000000001,
+                              76.792
+                           ],
+                           "slantDegree":0.0
                         }
                      ]
                   },
@@ -459,7 +559,11 @@
                         0.0,
                         0.0
                      ],
-                     "fontColorSpace":"DeviceRGB"
+                     "symbolEnds":[
+                        76.9,
+                        80.644
+                     ],
+                     "slantDegree":0.0
                   },
                   {
                      "type":"Span",
@@ -475,7 +579,7 @@
                            "boundingBox":[
                               80.7,
                               695.673,
-                              106.90800000000002,
+                              106.908,
                               713.1089999999999
                            ],
                            "fontName":"Tahoma",
@@ -484,7 +588,15 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              80.7,
+                              87.432,
+                              91.71600000000001,
+                              96.108,
+                              102.58800000000001,
+                              106.908
+                           ],
+                           "slantDegree":0.0
                         },
                         {
                            "type":"TextChunk",
@@ -506,7 +618,11 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              107.0,
+                              110.744
+                           ],
+                           "slantDegree":0.0
                         },
                         {
                            "type":"TextChunk",
@@ -528,7 +644,13 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              110.7,
+                              114.516,
+                              121.00800000000001,
+                              125.328
+                           ],
+                           "slantDegree":0.0
                         },
                         {
                            "type":"TextChunk",
@@ -550,7 +672,11 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              125.4,
+                              129.144
+                           ],
+                           "slantDegree":0.0
                         },
                         {
                            "type":"TextChunk",
@@ -563,7 +689,7 @@
                            "boundingBox":[
                               129.1,
                               695.673,
-                              175.88800000000003,
+                              175.88799999999998,
                               713.1089999999999
                            ],
                            "fontName":"Tahoma",
@@ -572,7 +698,18 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              129.1,
+                              133.42,
+                              139.708,
+                              146.32,
+                              152.692,
+                              158.968,
+                              162.976,
+                              169.27599999999998,
+                              175.88799999999998
+                           ],
+                           "slantDegree":0.0
                         },
                         {
                            "type":"TextChunk",
@@ -594,7 +731,11 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              176.0,
+                              179.744
+                           ],
+                           "slantDegree":0.0
                         },
                         {
                            "type":"TextChunk",
@@ -607,7 +748,7 @@
                            "boundingBox":[
                               179.7,
                               695.673,
-                              234.28800000000004,
+                              234.28799999999998,
                               713.1089999999999
                            ],
                            "fontName":"Tahoma",
@@ -616,7 +757,20 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              179.7,
+                              185.232,
+                              191.88,
+                              198.16799999999998,
+                              202.488,
+                              208.75199999999998,
+                              214.38,
+                              218.35199999999998,
+                              224.652,
+                              228.95999999999998,
+                              234.28799999999998
+                           ],
+                           "slantDegree":0.0
                         },
                         {
                            "type":"TextChunk",
@@ -638,7 +792,11 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              234.4,
+                              238.144
+                           ],
+                           "slantDegree":0.0
                         },
                         {
                            "type":"TextChunk",
@@ -660,7 +818,18 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              238.2,
+                              242.784,
+                              249.408,
+                              255.696,
+                              259.5,
+                              265.776,
+                              272.46,
+                              275.19599999999997,
+                              279.168
+                           ],
+                           "slantDegree":0.0
                         },
                         {
                            "type":"TextChunk",
@@ -682,7 +851,11 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              279.3,
+                              283.04400000000004
+                           ],
+                           "slantDegree":0.0
                         },
                         {
                            "type":"TextChunk",
@@ -704,7 +877,11 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              283.0,
+                              289.96
+                           ],
+                           "slantDegree":0.0
                         },
                         {
                            "type":"TextChunk",
@@ -726,7 +903,11 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              290.0,
+                              293.744
+                           ],
+                           "slantDegree":0.0
                         },
                         {
                            "type":"TextChunk",
@@ -748,7 +929,11 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              293.7,
+                              302.424
+                           ],
+                           "slantDegree":0.0
                         },
                         {
                            "type":"TextChunk",
@@ -770,7 +955,11 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              302.5,
+                              306.244
+                           ],
+                           "slantDegree":0.0
                         },
                         {
                            "type":"TextChunk",
@@ -792,7 +981,12 @@
                               0.0,
                               0.0
                            ],
-                           "fontColorSpace":"DeviceRGB"
+                           "symbolEnds":[
+                              306.2,
+                              312.74,
+                              317.372
+                           ],
+                           "slantDegree":0.0
                         }
                      ]
                   }
