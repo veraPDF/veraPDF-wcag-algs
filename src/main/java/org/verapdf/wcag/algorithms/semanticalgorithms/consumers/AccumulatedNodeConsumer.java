@@ -352,38 +352,51 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	}
 
 	private void acceptChildrenSemanticCaption(INode node) {
-		List<INode> children = new ArrayList<>(node.getChildren().size());
+		INode imageNode = null;
+		INode lastTextNode = null;
 		for (INode child : node.getChildren()) {
 			if (child != null) {
 				INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
 				if (accumulatedChild instanceof SemanticTextNode) {
 					SemanticTextNode textNode = (SemanticTextNode)accumulatedChild;
 					if (!textNode.isSpaceNode() && !textNode.isEmpty()) {
-						children.add(child);
+						if (imageNode != null) {
+							acceptImageCaption(imageNode, lastTextNode, child);
+							imageNode = null;
+						}
+						lastTextNode = child;
 					}
 				} else if (accumulatedChild instanceof SemanticImageNode) {
-					children.add(child);
+					if (imageNode != null) {
+						acceptImageCaption(imageNode, lastTextNode, null);
+						lastTextNode = null;
+					}
+					imageNode = child;
 				}
 			}
 		}
-		if (children.size() <= 1) {
-			return;
-		}
-		for (int i = 0; i < children.size() - 1; i++) {
-			acceptSemanticCaption(children.get(i), children.get(i + 1));
-			acceptSemanticCaption(children.get(i + 1), children.get(i));
+		if (imageNode != null) {
+			acceptImageCaption(imageNode, lastTextNode, null);
 		}
 	}
 
-	private void acceptSemanticCaption(INode node, INode neighborNode) {
-		if (node.getSemanticType() == SemanticType.HEADING || node.getSemanticType() == SemanticType.NUMBER_HEADING) {
-			return;
+	private void acceptImageCaption(INode imageNode, INode previousNode, INode nextNode) {
+		SemanticImageNode image = (SemanticImageNode)StaticContainers.getAccumulatedNodeMapper().get(imageNode);
+		double previousCaptionProbability = NodeUtils.imageCaptionProbability(previousNode, image);
+		double nextCaptionProbability = NodeUtils.imageCaptionProbability(nextNode, image);
+		double captionProbability;
+		INode captionNode;
+		if (previousCaptionProbability > nextCaptionProbability) {
+			captionProbability = previousCaptionProbability;
+			captionNode = previousNode;
+		} else {
+			captionProbability = nextCaptionProbability;
+			captionNode = nextNode;
 		}
-		INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
-		double captionProbability = NodeUtils.imageCaptionProbability(accumulatedNode, StaticContainers.getAccumulatedNodeMapper().get(neighborNode));
 		if (captionProbability >= MERGE_PROBABILITY_THRESHOLD) {
-			StaticContainers.getAccumulatedNodeMapper().updateNode(node, new SemanticCaption((SemanticTextNode) accumulatedNode),
-			           captionProbability * node.getCorrectSemanticScore(), SemanticType.CAPTION);
+			StaticContainers.getAccumulatedNodeMapper().updateNode(captionNode,
+					new SemanticCaption((SemanticTextNode) StaticContainers.getAccumulatedNodeMapper().get(captionNode)),
+					captionProbability * captionNode.getCorrectSemanticScore(), SemanticType.CAPTION);
 		}
 	}
 

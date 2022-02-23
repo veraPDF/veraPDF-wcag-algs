@@ -357,13 +357,9 @@ public class ChunksMergeUtils {
 			secondChunkStart = y.getTopY();
 		}
 
-		if (lastCharIsWhitespace(x.getValue())) {
-			firstChunkEnd -= whitespaceSize(x.getFontSize());
-		}
+		firstChunkEnd -= numberOfEndWhiteSpaces(x.getValue()) * whitespaceSize(x.getFontSize());
 
-		if (firstCharIsWhitespace(y.getValue())) {
-			secondChunkStart += whitespaceSize(y.getFontSize());
-		}
+		secondChunkStart += numberOfStartsWhiteSpaces(y.getValue()) * whitespaceSize(y.getFontSize());
 
 		double distanceBetweenChunks = Math.abs(firstChunkEnd - secondChunkStart);
 		double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
@@ -426,12 +422,22 @@ public class ChunksMergeUtils {
 		return (initIntervalLength - deviation) * probabilityFactor + targetProbabilityInterval[0];
 	}
 
-	private static boolean lastCharIsWhitespace(String str) {
-		return str.length() > 0 && TextChunkUtils.isWhiteSpaceChar(str.charAt(str.length() - 1));
+	private static int numberOfEndWhiteSpaces(String str) {
+		for (int i = str.length() - 1; i >= 0 ; i--) {
+			if (!TextChunkUtils.isWhiteSpaceChar(str.charAt(i))) {
+				return str.length() - 1 - i;
+			}
+		}
+		return str.length();
 	}
 
-	private static boolean firstCharIsWhitespace(String str) {
-		return str.length() > 0 && TextChunkUtils.isWhiteSpaceChar(str.charAt(0));
+	private static int numberOfStartsWhiteSpaces(String str) {
+		for (int i = 0; i < str.length(); i++) {
+			if (!TextChunkUtils.isWhiteSpaceChar(str.charAt(i))) {
+				return i;
+			}
+		}
+		return str.length();
 	}
 
 	private static double whitespaceSize(double fontSize) {
