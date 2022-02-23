@@ -136,7 +136,7 @@ public class SemanticDocumentPostprocessingConsumer {
 					length++;
 				} else {
 					if (length > 2) {
-						updateBoundingBox(resultBox, textChunk.getBoundingBox(), start, charIndex, characters.length);
+						updateBoundingBox(resultBox, textChunk, start, charIndex);
 						StaticContainers.getRepeatedCharacters().add(new RepeatedCharacters(!isLastCharacterWhiteSpace,
 						                                                                    length, resultBox));
 						resultBox = new MultiBoundingBox();
@@ -147,7 +147,7 @@ public class SemanticDocumentPostprocessingConsumer {
 					isLastCharacterWhiteSpace = TextChunkUtils.isWhiteSpaceChar(lastCharacter);
 				}
 			}
-			updateBoundingBox(resultBox, textChunk.getBoundingBox(), start, characters.length, characters.length);
+			updateBoundingBox(resultBox, textChunk, start, characters.length);
 		}
 		if (length > 2) {
 			StaticContainers.getRepeatedCharacters().add(new RepeatedCharacters(!isLastCharacterWhiteSpace,
@@ -155,10 +155,17 @@ public class SemanticDocumentPostprocessingConsumer {
 		}
 	}
 
-	private void updateBoundingBox(MultiBoundingBox resultBox, BoundingBox currentBox, int start, int end, int length) {
-		double avgInterval = (currentBox.getRightX() - currentBox.getLeftX()) / length;
-		resultBox.union(new BoundingBox(currentBox.getPageNumber(), currentBox.getLeftX() + start * avgInterval,
-		                                currentBox.getBottomY(), currentBox.getLeftX() + end * avgInterval,
-		                                currentBox.getTopY()));
+	private void updateBoundingBox(MultiBoundingBox resultBox, TextChunk textChunk, int start, int end) {
+		BoundingBox currentBox = textChunk.getBoundingBox();
+		if (textChunk.getSymbolEnds() != null) {
+			resultBox.union(new BoundingBox(currentBox.getPageNumber(), textChunk.getSymbolStartCoordinate(start),
+			                                currentBox.getBottomY(), textChunk.getSymbolEndCoordinate(end - 1),
+			                                currentBox.getTopY()));
+		} else {
+			double avgInterval = (currentBox.getRightX() - currentBox.getLeftX()) / textChunk.getValue().length();
+			resultBox.union(new BoundingBox(currentBox.getPageNumber(), currentBox.getLeftX() + start * avgInterval,
+			                                currentBox.getBottomY(), currentBox.getLeftX() + end * avgInterval,
+			                                currentBox.getTopY()));
+		}
 	}
 }
