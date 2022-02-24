@@ -48,6 +48,9 @@ public class SemanticDocumentPostprocessingConsumer {
 				for (TextColumn textColumn : ((SemanticSpan) node).getColumns()) {
 					for (TextLine textLine : textColumn.getLines()) {
 						for (TextChunk textChunk : textLine.getTextChunks()) {
+							if (textChunk.getValue().isEmpty()) {
+								continue;
+							}
 							if (!chunks.isEmpty() && areChunksChained(chunks.get(chunks.size() - 1).getValue(), textChunk)) {
 								chunks.add(textChunk);
 							} else {
