@@ -15,11 +15,12 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ContrastRatioConsumer implements Consumer<INode> {
 
@@ -204,7 +205,11 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		double[] contrastColors = get2MostPresentElements(getLuminosityPresenceList(image));
 		if (Math.abs(approximatedTextLuminosity - contrastColors[0]) <= LUMINOSITY_DIFFERENCE) {
 			if (contrastColors[1] == -1) {
-				return 1;
+				if (textColor != null && Math.abs(contrastColors[0] - textLuminosity) > LUMINOSITY_DIFFERENCE){
+					contrastColors[1] = textLuminosity;
+				} else {
+					return 1;
+				}
 			}
 			return getContrastRatio(approximatedTextLuminosity, contrastColors[1]);
 		} else if ((Math.abs(approximatedTextLuminosity - contrastColors[1]) <= LUMINOSITY_DIFFERENCE) || textColor != null) {
