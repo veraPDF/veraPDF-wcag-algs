@@ -402,6 +402,14 @@ public class SemanticTextNode extends SemanticNode {
         return false;
     }
 
+    public String getValue() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (TextColumn textColumn : columns) {
+            stringBuilder.append(textColumn);
+        }
+        return stringBuilder.toString();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!super.equals(o)) {

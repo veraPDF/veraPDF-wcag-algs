@@ -290,7 +290,6 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 				currentTextNode.addAll(nextTextNode.getColumns().subList(1, nextTextNode.getColumnsNumber()));
 			}
 		}
-		currentTextNode.getBoundingBox().union(nextTextNode.getBoundingBox());
 		return (nextTextNode.getCorrectSemanticScore() == null) ? mergeProbability : (Math.min(mergeProbability, nextTextNode.getCorrectSemanticScore()));
 	}
 
@@ -319,6 +318,10 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			acceptSemanticHeading(children.get(i), children.get(i - 1), children.get(i + 1), children.get(i + 2));
 		}
 		acceptSemanticHeading(children.get(children.size() - 2), children.get(children.size() - 3), children.get(children.size() - 1), null);
+		if (node.getNextNode() == null || !children.get(children.size() - 1).getPageNumber()
+		                                           .equals(node.getNextNode().getPageNumber())) {
+			return;
+		}
 		acceptSemanticHeading(children.get(children.size() - 1), children.get(children.size() - 2), null, null);
 	}
 
