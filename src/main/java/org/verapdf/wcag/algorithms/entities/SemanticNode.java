@@ -193,6 +193,16 @@ public abstract class SemanticNode implements INode {
 	}
 
 	@Override
+	public INode getNextNode() {
+		INode nextNeighbor = getNextNeighbor();
+		if (nextNeighbor != null) {
+			return nextNeighbor;
+		} else {
+			return parent != null ? parent.getNextNode() : null;
+		}
+	}
+
+	@Override
 	public boolean isRoot() {
 		return parent == null;
 	}

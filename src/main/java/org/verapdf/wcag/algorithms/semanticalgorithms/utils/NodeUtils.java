@@ -12,6 +12,8 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainer
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ArabicNumbersListLabelsDetectionAlgorithm;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ListLabelsDetectionAlgorithm;
 
+import java.util.Arrays;
+
 public class NodeUtils {
 
 	private static final double FLOATING_POINT_OPERATIONS_EPS = 1e-7;
@@ -22,7 +24,10 @@ public class NodeUtils {
 	public static final double TABLE_BORDER_EPSILON = 0.011;
 	public static final double[] UNDERLINED_TEXT_EPSILONS = {0.05, 0.3, 0.3, 0.3};
 	private static final double WITH_TOLERANCE_FACTOR = 0.33;
-	private static final double[] HEADING_PROBABILITY_PARAMS = {0.55, 0.5, 0.3, 0.0291, 0.15, 0.15, 0.1, 0.1, 0.05, 0.55, 0.4};
+	private static final double[] HEADING_PROBABILITY_PARAMS = {0.3, 0.0291, 0.15, 0.27, 0.1, 0.25, 0.2, 0.5};
+	private static final double[] HEADING_PROBABILITY_PARAMS_SAME_FONT = {0.55, 0.15, 0.55, 0.4, 0.5, 0.15};
+	private static final double[] HEADING_PROBABILITY_PARAMS_DIFF_FONT = {0.44, 0.1, 0.4, 0.23, 0.35, 0.1};
+	private static final double[] HEADING_EPSILONS = {0.05, 0.08};
 	private static final double[] CAPTION_PROBABILITY_PARAMS = {1.0, 0.95, 0.9, 0.85, 0.2, 0.1, 0.03};
 	public static final String FIGURE = "Figure";
 
@@ -63,15 +68,17 @@ public class NodeUtils {
 			}
 		}
 		if (textNode.hasFullLines()) {
-			headingProbability += HEADING_PROBABILITY_PARAMS[2];
+			headingProbability += HEADING_PROBABILITY_PARAMS[0];
 		}
 		if (textNode.isStartsWithArabicNumber()) {
-			headingProbability += HEADING_PROBABILITY_PARAMS[6];
+			headingProbability += HEADING_PROBABILITY_PARAMS[2];
 		}
 		if (SemanticType.HEADING.equals(initialSemanticType) || SemanticType.NUMBER_HEADING.equals(initialSemanticType)) {
-			headingProbability += HEADING_PROBABILITY_PARAMS[7];
+			headingProbability += HEADING_PROBABILITY_PARAMS[3];
 		}
-
+		if (nextNode != null && !node.getPageNumber().equals(nextNode.getPageNumber())) {
+			headingProbability -= HEADING_PROBABILITY_PARAMS[7];
+		}
 		return Math.max(Math.min(headingProbability * getLinesNumberHeadingProbability(textNode), 1.0), 0.0);
 	}
 
@@ -83,26 +90,47 @@ public class NodeUtils {
 			return 0.0;
 		}
 		SemanticTextNode neighborTextNode = (SemanticTextNode) neighborNode;
-		double probability = 0.0;
-		if (textNode.getFontWeight() > neighborTextNode.getFontWeight() + HEADING_PROBABILITY_PARAMS[8]) {
-			probability += HEADING_PROBABILITY_PARAMS[0];
-		} else if (neighborTextNode.getFontWeight() > textNode.getFontWeight() + HEADING_PROBABILITY_PARAMS[8]) {
-			probability -= HEADING_PROBABILITY_PARAMS[4];
+		double probability;
+		if (textNode.getFontName().equals(neighborTextNode.getFontName())) {
+			probability = headingProbability(textNode, neighborTextNode, HEADING_PROBABILITY_PARAMS_SAME_FONT,
+			                                 HEADING_EPSILONS[0], HEADING_EPSILONS[0]);
+		} else {
+			probability = headingProbability(textNode, neighborTextNode, HEADING_PROBABILITY_PARAMS_DIFF_FONT,
+			                                 HEADING_EPSILONS[0], HEADING_EPSILONS[1]);
 		}
-		if (textNode.getFontSize() > neighborTextNode.getMaxFontSize() + HEADING_PROBABILITY_PARAMS[8]) {
-			probability += HEADING_PROBABILITY_PARAMS[9];
-		} else if (neighborTextNode.getFontSize() > textNode.getMaxFontSize() + HEADING_PROBABILITY_PARAMS[8]) {
-			probability -= HEADING_PROBABILITY_PARAMS[10];
-		} else if (textNode.getFontSize() > neighborTextNode.getFontSize() + HEADING_PROBABILITY_PARAMS[8]) {
-			probability += HEADING_PROBABILITY_PARAMS[1];
-		} else if (neighborTextNode.getFontSize() > textNode.getFontSize() + HEADING_PROBABILITY_PARAMS[8]) {
-			probability -= HEADING_PROBABILITY_PARAMS[5];
+		if (!Arrays.equals(textNode.getTextColor(), neighborTextNode.getTextColor())) {
+			probability += HEADING_PROBABILITY_PARAMS[4];
+		}
+		if (isUpperCaseString(textNode.getValue()) && !isUpperCaseString(neighborTextNode.getValue())) {
+			probability += HEADING_PROBABILITY_PARAMS[5];
+		} else if (!isUpperCaseString(textNode.getValue()) && isUpperCaseString(neighborTextNode.getValue())) {
+			probability -= HEADING_PROBABILITY_PARAMS[6];
+		}
+		return probability;
+	}
+
+	private static double headingProbability(SemanticTextNode textNode, SemanticTextNode neighborTextNode, double[] params,
+	                                         double weightEps, double fontEps) {
+		double probability = 0.0;
+		if (textNode.getFontWeight() > neighborTextNode.getFontWeight() + weightEps) {
+			probability += params[0];
+		} else if (neighborTextNode.getFontWeight() > textNode.getFontWeight() + weightEps) {
+			probability -= params[1];
+		}
+		if (textNode.getFontSize() > neighborTextNode.getMaxFontSize() + fontEps) {
+			probability += params[2];
+		} else if (neighborTextNode.getFontSize() > textNode.getMaxFontSize() + fontEps) {
+			probability -= params[3];
+		} else if (textNode.getFontSize() > neighborTextNode.getFontSize() + fontEps) {
+			probability += params[4];
+		} else if (neighborTextNode.getFontSize() > textNode.getFontSize() + fontEps) {
+			probability -= params[5];
 		}
 		return probability;
 	}
 
 	private static double getLinesNumberHeadingProbability(SemanticTextNode textNode) {
-		return Math.max(0, 1 - HEADING_PROBABILITY_PARAMS[3] *
+		return Math.max(0, 1 - HEADING_PROBABILITY_PARAMS[1] *
 				(textNode.getLinesNumber() - 1) * (textNode.getLinesNumber() - 1));
 	}
 
@@ -241,6 +269,20 @@ public class NodeUtils {
 			return CAPTION_PROBABILITY_PARAMS[3];
 		}
 		return 0.0;
+	}
+
+	private static boolean isUpperCaseString(String str) {
+		int nonLetters = 0;
+		for (char character : str.toCharArray()) {
+			if (!Character.isLetter(character)) {
+				nonLetters++;
+				continue;
+			}
+			if (!Character.isUpperCase(character)) {
+				return false;
+			}
+		}
+		return nonLetters != str.length();
 	}
 
 	public static boolean areCloseNumbers(double d1, double d2, double epsilon) {
