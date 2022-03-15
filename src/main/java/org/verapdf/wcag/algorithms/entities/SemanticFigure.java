@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.entities;
 
 import org.verapdf.wcag.algorithms.entities.content.LineArtChunk;
+import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 
 public class SemanticFigure extends SemanticNode {
 
@@ -9,11 +10,13 @@ public class SemanticFigure extends SemanticNode {
     public SemanticFigure(SemanticFigure figureNode) {
         super(figureNode.getBoundingBox());
         this.lineArt = figureNode.getLineArt();
+        setSemanticType(SemanticType.FIGURE);
     }
 
     public SemanticFigure(LineArtChunk lineArt) {
         super(lineArt.getBoundingBox());
         this.lineArt = lineArt;
+        setSemanticType(SemanticType.FIGURE);
     }
 
 	public LineArtChunk getLineArt() {

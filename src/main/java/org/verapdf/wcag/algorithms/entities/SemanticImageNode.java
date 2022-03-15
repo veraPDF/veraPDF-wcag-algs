@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.entities;
 
 import org.verapdf.wcag.algorithms.entities.content.ImageChunk;
+import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 
 public class SemanticImageNode extends SemanticNode {
 
@@ -9,11 +10,13 @@ public class SemanticImageNode extends SemanticNode {
     public SemanticImageNode(SemanticImageNode imageNode) {
         super(imageNode.getBoundingBox());
         this.image = imageNode.getImage();
+        setSemanticType(SemanticType.FIGURE);
     }
 
     public SemanticImageNode(ImageChunk image) {
         super(image.getBoundingBox());
         this.image = image;
+        setSemanticType(SemanticType.FIGURE);
     }
 
 	public ImageChunk getImage() {

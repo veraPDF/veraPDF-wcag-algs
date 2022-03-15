@@ -20,7 +20,7 @@ public enum SemanticType {
 	LIST_LABEL("Lbl"),
 	LIST_BODY("LBody"),
 	LIST_ITEM("LI"),
-	FIFURE("Figure"),
+	FIGURE("Figure"),
 	NUMBER_HEADING("Hn"),
 	HEADING("H"),
 	TITLE("Title");
