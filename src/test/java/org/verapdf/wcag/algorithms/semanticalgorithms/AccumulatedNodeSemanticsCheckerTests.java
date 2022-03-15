@@ -31,6 +31,7 @@ class AccumulatedNodeSemanticsCheckerTests {
 		ignoredSemanticTypes.add(SemanticType.TABLE_CELL);
 		ignoredSemanticTypes.add(SemanticType.TABLE_ROW);
 		ignoredSemanticTypes.add(SemanticType.TABLE_HEADER);
+		ignoredSemanticTypes.add(SemanticType.BLOCK_QUOTE);
 	}
 
 	public AccumulatedNodeSemanticsCheckerTests() {
@@ -87,7 +88,7 @@ class AccumulatedNodeSemanticsCheckerTests {
 				Arguments.of("headings/headings_danish_learn1.json"),
 				Arguments.of("headings/headings_danish_learn_last_link.json"),
 				Arguments.of("headings/headings_danish_learn_link.json"),
-//        		Arguments.of("headings/headings_magazine_danish1.json"),
+        		Arguments.of("headings/headings_magazine_danish_block_quote.json"),
 				Arguments.of("headings/headings_magazine_danish2.json"),
 				Arguments.of("headings/nutshell_heading.json"),
 				Arguments.of("headings/span_as_heading.json"),

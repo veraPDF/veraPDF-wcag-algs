@@ -297,7 +297,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	private void acceptChildrenSemanticHeading(INode node) {
 		List<INode> children = new ArrayList<>(node.getChildren().size());
 		for (INode child : node.getChildren()) {
-			if (child != null) {
+			if (child != null && !SemanticType.BLOCK_QUOTE.equals(child.getInitialSemanticType())) {
 				INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
 				if (accumulatedChild instanceof SemanticTextNode) {
 					SemanticTextNode textNode = (SemanticTextNode)accumulatedChild;
