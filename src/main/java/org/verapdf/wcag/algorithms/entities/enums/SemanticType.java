@@ -23,7 +23,8 @@ public enum SemanticType {
 	FIGURE("Figure"),
 	NUMBER_HEADING("Hn"),
 	HEADING("H"),
-	TITLE("Title");
+	TITLE("Title"),
+	BLOCK_QUOTE("BlockQuote");
 
 	private final String value;
 
