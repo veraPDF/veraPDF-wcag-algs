@@ -1,14 +1,13 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
-import org.verapdf.wcag.algorithms.entities.IDocument;
-import org.verapdf.wcag.algorithms.entities.INode;
-import org.verapdf.wcag.algorithms.entities.SemanticSpan;
+import org.verapdf.wcag.algorithms.entities.*;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
@@ -34,19 +33,15 @@ public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
         nodeStack.push(root);
         root.setDepth(0);
         nodeStack.add(root);
-        BoundingBox boundingBox;
         while (!nodeStack.isEmpty()) {
             INode node = nodeStack.pop();
-            boundingBox = node.getBoundingBox();
             for (int i = 0; i < node.getChildren().size(); i++) {
                 INode child = node.getChildren().get(i);
-                boundingBox.union(child.getBoundingBox());
                 child.setParent(node);
                 child.setIndex(i);
                 child.setDepth(node.getDepth() + 1);
                 nodeStack.push(child);
             }
-            node.setBoundingBox(boundingBox);
         }
     }
 
@@ -69,6 +64,16 @@ public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
         if (node instanceof SemanticSpan) {
             checkUnderlinedText(((SemanticSpan)node));
         }
+        if (node.getChildren().isEmpty()) {
+            return;
+        }
+        MultiBoundingBox boundingBox = new MultiBoundingBox(node.getBoundingBox());
+        for (INode child : node.getChildren()) {
+            if (!(child instanceof SemanticFigure)) {
+                boundingBox.union(child.getBoundingBox());
+            }
+        }
+        node.setBoundingBox(boundingBox);
     }
 
     private void checkUnderlinedText(SemanticSpan span) {

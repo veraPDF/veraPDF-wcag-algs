@@ -10,9 +10,11 @@ import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.AccumulatedNodeConsumer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.SemanticDocumentPreprocessingConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 class SubscriptSuperscriptTest {
@@ -68,7 +70,10 @@ class SubscriptSuperscriptTest {
 		IDocument document = JsonToPdfTree.getDocument("/files/" + filename);
 		ITree tree = document.getTree();
 
-		StaticContainers.clearAllContainers(null);
+		StaticContainers.clearAllContainers(document);
+
+		Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document);
+		tree.forEach(semanticDocumentValidator);
 
 		AccumulatedNodeConsumer paragraphValidator = new AccumulatedNodeConsumer();
 		tree.forEach(paragraphValidator);
