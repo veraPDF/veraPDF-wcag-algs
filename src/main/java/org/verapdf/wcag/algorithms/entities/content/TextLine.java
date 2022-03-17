@@ -7,7 +7,8 @@ import java.util.List;
 
 public class TextLine extends TextInfoChunk {
     private final List<TextChunk> textChunks = new ArrayList<>();
-    private boolean fullLine = true;
+    private boolean isLineStart = true;
+    private boolean isLineEnd = true;
 
     public TextLine() {
     }
@@ -71,12 +72,24 @@ public class TextLine extends TextInfoChunk {
         return result.toString();
     }
 
-    public void setNotFullLine() {
-        fullLine = false;
+    public boolean isFullLine() {
+        return isLineStart && isLineEnd;
     }
 
-    public boolean isFullLine() {
-        return fullLine;
+    public boolean isLineStart() {
+        return isLineStart;
+    }
+
+    public void setNotLineStart() {
+        isLineStart = false;
+    }
+
+    public boolean isLineEnd() {
+        return isLineEnd;
+    }
+
+    public void setNotLineEnd() {
+        isLineEnd = false;
     }
 
     @Override

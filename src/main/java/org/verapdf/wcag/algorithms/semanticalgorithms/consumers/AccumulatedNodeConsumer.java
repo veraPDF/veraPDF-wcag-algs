@@ -272,8 +272,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		} else {
 			updateTextChunksFormat(nextTextNode);
 			mergeProbability = oneLineProbability;
-			lastLine.setNotFullLine();
-			nextLine.setNotFullLine();
+			lastLine.setNotLineEnd();
+			nextLine.setNotLineStart();
 			currentTextNode.setLastColumn(new TextColumn(currentTextNode.getLastColumn()));
 			lastLine = new TextLine(lastLine);
 			lastLine.add(nextLine);
