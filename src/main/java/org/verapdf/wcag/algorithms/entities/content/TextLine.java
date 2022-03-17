@@ -13,12 +13,12 @@ public class TextLine extends TextInfoChunk {
     }
 
     public TextLine(TextChunk chunk) {
-        super(chunk.getBoundingBox(), chunk.getFontSize(), chunk.getBaseLine());
+        super(chunk.getBoundingBox(), chunk.getFontSize(), chunk.getBaseLine(), chunk.getSlantDegree());
         textChunks.add(chunk);
     }
 
     public TextLine(TextLine line) {
-        super(line.getBoundingBox(), line.getFontSize(), line.getBaseLine());
+        super(line.getBoundingBox(), line.getFontSize(), line.getBaseLine(), line.getSlantDegree());
         textChunks.addAll(line.getTextChunks());
     }
 
