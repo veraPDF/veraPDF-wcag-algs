@@ -5,10 +5,7 @@ import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.Vertex;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class TableBorderBuilder {
 
@@ -43,8 +40,31 @@ public class TableBorderBuilder {
     }
 
     public boolean isConnectedBorder(TableBorderBuilder border) {
-        if (boundingBox.overlaps(border.boundingBox, NodeUtils.TABLE_BORDER_EPSILON)) {
-            return true;
+        if (!boundingBox.overlaps(border.boundingBox, NodeUtils.TABLE_BORDER_EPSILON)) {
+            return false;
+        }
+        for (LineChunk horizontalLine : getHorizontalLines()) {
+            for (LineChunk verticalLine : border.getVerticalLines()) {
+                if (LineChunk.haveIntersection(horizontalLine, verticalLine)) {
+                    return true;
+                }
+            }
+        }
+        for (LineChunk verticalLine : getVerticalLines()) {
+            for (LineChunk horizontalLine : border.getHorizontalLines()) {
+                if (LineChunk.haveIntersection(horizontalLine, verticalLine)) {
+                    return true;
+                }
+            }
+        }
+        List<Vertex> vertexList1 = new ArrayList<>(vertexes);
+        List<Vertex> vertexList2 = new ArrayList<>(border.vertexes);
+        for (Vertex vertex1 : vertexList1) {
+            for (Vertex vertex2 : vertexList2) {
+                if (Vertex.areCloseVertexes(vertex1, vertex2)) {
+                    return true;
+                }
+            }
         }
         return false;
     }

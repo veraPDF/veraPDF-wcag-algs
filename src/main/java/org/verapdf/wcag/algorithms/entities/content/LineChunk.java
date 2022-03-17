@@ -130,17 +130,24 @@ public class LineChunk extends InfoChunk {
 	}
 
 	public static Vertex getIntersectionVertex(LineChunk horizontalLine, LineChunk verticalLine) {
+		if (haveIntersection(horizontalLine, verticalLine)) {
+			return new Vertex(verticalLine.getBoundingBox().getPageNumber(),
+					verticalLine.getCenterX(), horizontalLine.getCenterY(),
+					Math.max(0.5 * verticalLine.width, 0.5 * horizontalLine.width));
+		}
+		return null;
+	}
+
+	public static boolean haveIntersection(LineChunk horizontalLine, LineChunk verticalLine) {
 		if (verticalLine.getCenterX() < horizontalLine.getBoundingBox().getLeftX() ||
 				verticalLine.getCenterX() > horizontalLine.getBoundingBox().getRightX()) {
-			return null;//epsilon
+			return false;
 		}
 		if (horizontalLine.getCenterY() < verticalLine.getBoundingBox().getBottomY() ||
 				horizontalLine.getCenterY() > verticalLine.getBoundingBox().getTopY()) {
-			return null;
+			return false;
 		}
-		return new Vertex(verticalLine.getBoundingBox().getPageNumber(),
-				verticalLine.getCenterX(), horizontalLine.getCenterY(),
-				Math.max(0.5 * verticalLine.width, 0.5 * horizontalLine.width));//min?
+		return true;
 	}
 
 	public static LineChunk createLineChunk(Integer pageNumber, double startX, double startY, double endX, double endY,
