@@ -37,7 +37,7 @@ public class AccumulatedNodeMapper {
         }
         node.setCorrectSemanticScore(correctSemanticScore);
         node.setSemanticType(semanticType);
-        node.setBoundingBox(accumulatedNode.getBoundingBox());
+        accumulatedNode.setBoundingBox(node.getBoundingBox());
         accumulatedNode.setCorrectSemanticScore(correctSemanticScore);
         put(node, accumulatedNode);
     }
