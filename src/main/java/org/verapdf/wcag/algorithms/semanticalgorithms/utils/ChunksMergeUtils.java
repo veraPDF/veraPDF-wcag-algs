@@ -21,6 +21,8 @@ public class ChunksMergeUtils {
 	private static final double[] NORMAL_LINE_PROBABILITY_PARAMS = {2, 0.033};
 	private static final double[] SUPERSCRIPT_PROBABILITY_PARAMS = {0.69438, 1.70575, 1.43819};
 	private static final double[] SUBSCRIPT_PROBABILITY_PARAMS = {0.71932, 1.0483, 0.37555};
+	private static final double[] COLUMNS_PROBABILITY_PARAMS = {5, 0.1};
+	private static final double[] FONT_SIZE_DIFFERENCE_PARAMS = {0.95, 2.95};
 	private static final double SUPERSCRIPT_BASELINE_THRESHOLD = 0.1;
 	private static final double SUPERSCRIPT_FONTSIZE_THRESHOLD = 0.1;
 	private static final double SUBSCRIPT_BASELINE_THRESHOLD = 0.08;
@@ -44,6 +46,10 @@ public class ChunksMergeUtils {
 
 	public static double getBaseLineDifference(TextChunk x, TextChunk y) {
 		double baseLineDiff = x.getBaseLine() - y.getBaseLine();
+		if (NodeUtils.areCloseNumbers(180.0, Math.abs(x.getSlantDegree())) ||
+				NodeUtils.areCloseNumbers(-90.0, x.getSlantDegree())) {
+			baseLineDiff = -baseLineDiff;
+		}
 		baseLineDiff /= Math.max(x.getFontSize(), y.getFontSize());
 		return baseLineDiff;
 	}
@@ -254,7 +260,7 @@ public class ChunksMergeUtils {
 	}
 
 	public static double toColumnsMergeProbability(TextLine x, TextLine y) {
-		if (Math.abs(x.getFontSize() - y.getFontSize()) > 0.95) {
+		if (Math.abs(x.getFontSize() - y.getFontSize()) > FONT_SIZE_DIFFERENCE_PARAMS[0]) {
 			return 0;
 		}
 
@@ -266,10 +272,11 @@ public class ChunksMergeUtils {
 			return 0;
 		}
 		if (x.getLastPageNumber().equals(y.getPageNumber())) {
-			if (x.getRightX() > y.getLeftX()) {
+			if (x.getTextEnd() > y.getTextStart()) {
 				return 0;
 			}
-			if (y.getLeftX() - x.getRightX() < 5 && Math.abs(x.getBaseLine() - y.getBaseLine()) < 0.1) {
+			if (y.getTextStart() - x.getTextEnd() < COLUMNS_PROBABILITY_PARAMS[0] &&
+					Math.abs(x.getBaseLine() - y.getBaseLine()) < COLUMNS_PROBABILITY_PARAMS[1]) {
 				return 0;
 			}
 		}
@@ -278,7 +285,7 @@ public class ChunksMergeUtils {
 	}
 
 	public static double mergeLeadingProbability(TextLine x, TextLine y) {
-		if (Math.abs(x.getFontSize() - y.getFontSize()) > 2.95) {
+		if (Math.abs(x.getFontSize() - y.getFontSize()) > FONT_SIZE_DIFFERENCE_PARAMS[1]) {
 			return 0;
 		}
 
@@ -339,23 +346,12 @@ public class ChunksMergeUtils {
 //            replace with mergeYAlmostNestedProbability
 //            We assume that x < y
 
-		double firstChunkEnd = x.getRightX();
-		double secondChunkStart = y.getLeftX();
-
 		if (!NodeUtils.areCloseNumbers(y.getSlantDegree(), x.getSlantDegree())) {
 			return 0.0;
 		}
 
-		if (NodeUtils.areCloseNumbers(180.0, Math.abs(x.getSlantDegree()))) {
-			firstChunkEnd = x.getLeftX();
-			secondChunkStart = y.getRightX();
-		} else if (NodeUtils.areCloseNumbers(90.0, x.getSlantDegree())) {
-			firstChunkEnd = x.getTopY();
-			secondChunkStart = y.getBottomY();
-		} else if (NodeUtils.areCloseNumbers(-90.0, x.getSlantDegree())) {
-			firstChunkEnd = x.getBottomY();
-			secondChunkStart = y.getTopY();
-		}
+		double firstChunkEnd = x.getTextEnd();
+		double secondChunkStart = y.getTextStart();
 
 		firstChunkEnd -= numberOfEndWhiteSpaces(x.getValue()) * whitespaceSize(x.getFontSize());
 
@@ -372,9 +368,9 @@ public class ChunksMergeUtils {
 		// We assume that x, y have approx the same fontSize
 		double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
 
-		double leftXDifference = Math.abs(x.getLeftX() - y.getLeftX());
-		double rightXDifference = Math.abs(x.getRightX() - y.getRightX());
-		double centerXDifference = 0.5 * Math.abs((x.getRightX() + x.getLeftX()) - (y.getRightX() + y.getLeftX()));
+		double leftXDifference = Math.abs(x.getTextStart() - y.getTextStart());
+		double rightXDifference = Math.abs(x.getTextEnd() - y.getTextEnd());
+		double centerXDifference = Math.abs(x.getTextCenter() - y.getTextCenter());
 
 		double minDifference = Math.min(leftXDifference, rightXDifference);
 		minDifference = Math.min(minDifference, centerXDifference);

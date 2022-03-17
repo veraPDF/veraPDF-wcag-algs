@@ -20,7 +20,6 @@ public class TextChunk extends TextInfoChunk {
     private boolean isUnderlinedText = false;
     private TextFormat textFormat = TextFormat.NORMAL;
     private List<Double> symbolEnds = new ArrayList<>();
-    private double slantDegree;
 
     public TextChunk() {
     }
@@ -32,14 +31,13 @@ public class TextChunk extends TextInfoChunk {
 
     public TextChunk(BoundingBox bbox, String value, String fontName, double fontSize, double fontWeight,
                 double italicAngle, double baseLine, double[] fontColor, List<Double> symbolEnds, double slantDegree) {
-        super(bbox, fontSize, baseLine);
+        super(bbox, fontSize, baseLine, slantDegree);
         this.value = value;
         this.fontName = fontName;
         this.fontWeight = fontWeight;
         this.italicAngle = italicAngle;
         this.fontColor = fontColor.clone();
         this.symbolEnds = symbolEnds;
-        this.slantDegree = slantDegree;
         adjustSymbolEndsToBoundingBox();
     }
 
@@ -147,14 +145,6 @@ public class TextChunk extends TextInfoChunk {
         }
         double leftX = this.getBoundingBox().getLeftX();
         this.symbolEnds = this.symbolEnds.stream().map(e -> e + leftX).collect(Collectors.toList());
-    }
-
-    public double getSlantDegree() {
-        return slantDegree;
-    }
-
-    public void setSlantDegree(double slantDegree) {
-        this.slantDegree = slantDegree;
     }
 
     public void addAll(List<TextChunk> otherChunks) {
