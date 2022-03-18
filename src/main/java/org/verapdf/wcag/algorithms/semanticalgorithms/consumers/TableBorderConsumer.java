@@ -196,6 +196,12 @@ public class TableBorderConsumer {
                 }
             }
         }
+        if (tableNode != null) {
+            while (TableUtils.isInitialTableNode(tableNode) && tableNode.getInitialSemanticType() != SemanticType.TABLE &&
+                    !tableNode.isRoot() && tableNode.getParent().getChildren().size() == 1) {
+                tableNode = tableNode.getParent();
+            }
+        }
         return tableNode;
     }
 
