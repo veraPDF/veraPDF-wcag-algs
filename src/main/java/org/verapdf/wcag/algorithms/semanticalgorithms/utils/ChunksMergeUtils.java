@@ -54,6 +54,15 @@ public class ChunksMergeUtils {
 		return baseLineDiff;
 	}
 
+	public static double getCentersDifference(TextChunk x, TextChunk y) {
+		double centersDiff = x.getCenterY() - y.getCenterY();
+		if (NodeUtils.areCloseNumbers(90.0, Math.abs(x.getSlantDegree()))) {
+			centersDiff = x.getCenterX() - y.getCenterX();
+		}
+		centersDiff /= Math.max(x.getFontSize(), y.getFontSize());
+		return Math.abs(centersDiff);
+	}
+
 	public static double getFontSizeDifference(TextChunk x, TextChunk y) {
 		double fontSizeDiff = x.getFontSize() - y.getFontSize();
 		fontSizeDiff /= Math.max(x.getFontSize(), y.getFontSize());
@@ -110,16 +119,20 @@ public class ChunksMergeUtils {
 		}
 
 		double baseLineDiff = getBaseLineDifference(x, y);
+		double centersDiff = getCentersDifference(x, y);
 		double fontSizeDiff = getFontSizeDifference(x, y);
+
 		if (!TextFormat.NORMAL.equals(x.getTextFormat())) {
 			TextChunk z = lastLine.getLastNormalTextChunk();
 			if (z != null) {
 				baseLineDiff = getBaseLineDifference(z, y);
+				centersDiff = getCentersDifference(z, y);
 				fontSizeDiff = getFontSizeDifference(z, y);
 			}
 		}
 
-		double normalTextProbability = getNormalTextProbabilitySecondChunk(x, y, baseLineDiff, fontSizeDiff);
+		double normalTextProbability = getNormalTextProbabilitySecondChunk(x, y, Math.abs(baseLineDiff) < centersDiff ?
+		                                                                         baseLineDiff : centersDiff, fontSizeDiff);
 		double superscriptProbability = getSuperscriptProbabilitySecondChunk(x, y, baseLineDiff, fontSizeDiff);
 		double subscriptProbability = getSubscriptProbabilitySecondChunk(x, y, baseLineDiff, fontSizeDiff);
 
