@@ -22,7 +22,7 @@ public class NodeUtils {
 	private static final double IMAGE_INTERVAL_STANDARD = 1;
 	public static final double EPSILON = 0.0001;
 	public static final double TABLE_BORDER_EPSILON = 0.011;
-	public static final double[] UNDERLINED_TEXT_EPSILONS = {0.05, 0.3, 0.3, 0.3};
+	public static final double[] UNDERLINED_TEXT_EPSILONS = {0.08, 0.3, 0.3, 0.3};
 	private static final double WITH_TOLERANCE_FACTOR = 0.33;
 	private static final double[] HEADING_PROBABILITY_PARAMS = {0.3, 0.0291, 0.15, 0.27, 0.1, 0.25, 0.2, 0.5, 0.05};
 	private static final double[] HEADING_PROBABILITY_PARAMS_SAME_FONT = {0.55, 0.15, 0.55, 0.4, 0.5, 0.15};

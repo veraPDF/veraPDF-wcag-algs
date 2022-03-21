@@ -426,7 +426,7 @@ public class TableBorder {
     public TableBorderCell getTableBorderCell(BoundingBox box) {
         int xIndex = getClosestLeftX(box.getLeftX());
         int yIndex = getClosestTopY(box.getTopY());
-        if (xIndex < 0 || yIndex < 0) {
+        if (xIndex < 0 || yIndex < 0 || xIndex == xWidths.size() - 1 || yIndex == yWidths.size() - 1) {
             return null;
         }
         TableBorderCell cell = rows[yIndex].cells[xIndex];
