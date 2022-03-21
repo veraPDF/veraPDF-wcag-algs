@@ -147,7 +147,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		double spanProbability = 1;
 		SemanticSpan span  = null;
 		for (INode child : node.getChildren()) {
-			if (child.getSemanticType() == null || SemanticType.isIgnoredStandardType(child.getInitialSemanticType())) {
+			if (child.getSemanticType() == null || SemanticType.isIgnoredStandardType(child.getInitialSemanticType()) ||
+					child.getSemanticType().equals(SemanticType.FIGURE)) {
 				continue;
 			}
 			INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
@@ -189,8 +190,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		double paragraphProbability = 1;
 		SemanticParagraph paragraph = null;
 		for (INode child : node.getChildren()) {
-			if (child.getSemanticType() == null || SemanticType.isIgnoredStandardType(child.getInitialSemanticType())
-			|| child.getSemanticType().equals(SemanticType.FIGURE)) {
+			if (child.getSemanticType() == null || SemanticType.isIgnoredStandardType(child.getInitialSemanticType()) ||
+					child.getSemanticType().equals(SemanticType.FIGURE)) {
 				continue;
 			}
 			INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
