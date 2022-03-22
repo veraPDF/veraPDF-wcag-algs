@@ -293,6 +293,22 @@ public class BoundingBox {
         return rightX;
     }
 
+    public void setBottomY(double bottomY) {
+        this.bottomY = bottomY;
+    }
+
+    public void setTopY(double topY) {
+        this.topY = topY;
+    }
+
+    public void setLeftX(double leftX) {
+        this.leftX = leftX;
+    }
+
+    public void setRightX(double rightX) {
+        this.rightX = rightX;
+    }
+
     public double getCenterX() {
         return 0.5 * (leftX + rightX);
     }

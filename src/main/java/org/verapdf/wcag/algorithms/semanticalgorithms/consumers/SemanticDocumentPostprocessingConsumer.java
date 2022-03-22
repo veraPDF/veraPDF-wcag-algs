@@ -159,16 +159,20 @@ public class SemanticDocumentPostprocessingConsumer {
 	}
 
 	private void updateBoundingBox(MultiBoundingBox resultBox, TextChunk textChunk, int start, int end) {
-		BoundingBox currentBox = textChunk.getBoundingBox();
-		if (textChunk.getSymbolEnds() != null) {
-			resultBox.union(new BoundingBox(currentBox.getPageNumber(), textChunk.getSymbolStartCoordinate(start),
-			                                currentBox.getBottomY(), textChunk.getSymbolEndCoordinate(end - 1),
-			                                currentBox.getTopY()));
-		} else {
-			double avgInterval = (currentBox.getRightX() - currentBox.getLeftX()) / textChunk.getValue().length();
-			resultBox.union(new BoundingBox(currentBox.getPageNumber(), currentBox.getLeftX() + start * avgInterval,
-			                                currentBox.getBottomY(), currentBox.getLeftX() + end * avgInterval,
-			                                currentBox.getTopY()));
+		BoundingBox boundingBox = new BoundingBox(textChunk.getBoundingBox());
+		if (textChunk.isLeftRightHorizontalText()) {
+			boundingBox.setLeftX(textChunk.getSymbolStartCoordinate(start));
+			boundingBox.setRightX(textChunk.getSymbolEndCoordinate(end - 1));
+		} else if (textChunk.isRightLeftHorizontalText()) {
+			boundingBox.setLeftX(textChunk.getSymbolEndCoordinate(end - 1));
+			boundingBox.setRightX(textChunk.getSymbolStartCoordinate(start));
+		} else if (textChunk.isBottomUpVerticalText()) {
+			boundingBox.setBottomY(textChunk.getSymbolStartCoordinate(start));
+			boundingBox.setTopY(textChunk.getSymbolEndCoordinate(end - 1));
+		} else if (textChunk.isUpBottomVerticalText()) {
+			boundingBox.setBottomY(textChunk.getSymbolEndCoordinate(end - 1));
+			boundingBox.setTopY(textChunk.getSymbolStartCoordinate(start));
 		}
+		resultBox.union(boundingBox);
 	}
 }

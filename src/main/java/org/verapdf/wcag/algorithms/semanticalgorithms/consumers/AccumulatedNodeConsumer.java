@@ -420,29 +420,32 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		List<LineArtChunk> childrenLineArts = new ArrayList<>(node.getChildren().size());
 		for (INode child : node.getChildren()) {
 			if (child != null) {
+				INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
+				if (!(accumulatedChild instanceof SemanticTextNode)) {
+					continue;
+				}
+				SemanticTextNode textNode = (SemanticTextNode)accumulatedChild;
+				if (textNode.isSpaceNode() || textNode.isEmpty()) {
+					continue;
+				}
+				TextLine line = textNode.getFirstNonSpaceLine();
+				textChildren.add(child);
+				childrenFirstLines.add(line);
 				INode newChild = child;
 				while (!newChild.getChildren().isEmpty()) {
 					newChild = newChild.getChildren().get(0);
 				}
 				if (newChild instanceof SemanticImageNode) {
-					imageChildren.add(child);
-					childrenImages.add(((SemanticImageNode) newChild).getImage());
+					ImageChunk image = ((SemanticImageNode) newChild).getImage();
+					if (image.getRightX() <= line.getLeftX()) {
+						imageChildren.add(child);
+						childrenImages.add(image);
+					}
 				} else if (newChild instanceof SemanticFigure) {
-					lineArtChildren.add(child);
-					childrenLineArts.add(((SemanticFigure) newChild).getLineArt());
-				} else {
-					INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
-					if (accumulatedChild instanceof SemanticTextNode) {
-						SemanticTextNode textNode = (SemanticTextNode)accumulatedChild;
-						if (!textNode.isSpaceNode() && !textNode.isEmpty()) {
-							for (TextLine line : textNode.getFirstColumn().getLines()) {
-								if (!line.getValue().trim().isEmpty()) {
-									textChildren.add(child);
-									childrenFirstLines.add(line);
-									break;
-								}
-							}
-						}
+					LineArtChunk lineArt = ((SemanticFigure) newChild).getLineArt();
+					if (lineArt.getRightX() <= line.getLeftX()) {
+						lineArtChildren.add(child);
+						childrenLineArts.add(lineArt);
 					}
 				}
 			}
