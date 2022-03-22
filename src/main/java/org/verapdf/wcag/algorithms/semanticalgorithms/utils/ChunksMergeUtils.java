@@ -46,8 +46,7 @@ public class ChunksMergeUtils {
 
 	public static double getBaseLineDifference(TextChunk x, TextChunk y) {
 		double baseLineDiff = x.getBaseLine() - y.getBaseLine();
-		if (NodeUtils.areCloseNumbers(180.0, Math.abs(x.getSlantDegree())) ||
-				NodeUtils.areCloseNumbers(-90.0, x.getSlantDegree())) {
+		if (x.isRightLeftHorizontalText() || x.isBottomUpVerticalText()) {
 			baseLineDiff = -baseLineDiff;
 		}
 		baseLineDiff /= Math.max(x.getFontSize(), y.getFontSize());
@@ -56,7 +55,7 @@ public class ChunksMergeUtils {
 
 	public static double getCentersDifference(TextChunk x, TextChunk y) {
 		double centersDiff = x.getCenterY() - y.getCenterY();
-		if (NodeUtils.areCloseNumbers(90.0, Math.abs(x.getSlantDegree()))) {
+		if (x.isVerticalText()) {
 			centersDiff = x.getCenterX() - y.getCenterX();
 		}
 		centersDiff /= Math.max(x.getFontSize(), y.getFontSize());

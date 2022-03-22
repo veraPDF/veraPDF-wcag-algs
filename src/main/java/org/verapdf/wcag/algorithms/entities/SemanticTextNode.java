@@ -229,7 +229,7 @@ public class SemanticTextNode extends SemanticNode {
                     if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
                         Double weightLength = fontWeightMap.get(chunk.getFontWeight());
                         fontWeightMap.put(chunk.getFontWeight(),
-                                ((weightLength == null) ? 0 : weightLength) + chunk.getBoundingBox().getWidth());
+                                ((weightLength == null) ? 0 : weightLength) + chunk.getTextLength());
                     }
                 }
             }
@@ -241,6 +241,17 @@ public class SemanticTextNode extends SemanticNode {
                                 .get().getKey();
         }
         return 0.0;
+    }
+
+    public TextLine getFirstNonSpaceLine() {
+        for (TextColumn column : columns) {
+            for (TextLine line : column.getLines()) {
+                if (!line.getValue().trim().isEmpty()) {
+                    return line;
+                }
+            }
+        }
+        return null;
     }
 
     public boolean hasFullLines() {
@@ -266,7 +277,7 @@ public class SemanticTextNode extends SemanticNode {
                     if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
                         Double sizeLength = fontSizeMap.get(chunk.getFontSize());
                         fontSizeMap.put(chunk.getFontSize(),
-                                ((sizeLength == null) ? 0 : sizeLength) + chunk.getBoundingBox().getWidth());
+                                ((sizeLength == null) ? 0 : sizeLength) + chunk.getTextLength());
                         maxFontSize = Math.max(maxFontSize, chunk.getFontSize());
                     }
                 }
@@ -296,7 +307,7 @@ public class SemanticTextNode extends SemanticNode {
                     if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
                         Double sizeLength = italicAngleMap.get(chunk.getItalicAngle());
                         italicAngleMap.put(chunk.getItalicAngle(),
-                                ((sizeLength == null) ? 0 : sizeLength) + chunk.getBoundingBox().getWidth());
+                                ((sizeLength == null) ? 0 : sizeLength) + chunk.getTextLength());
                     }
                 }
             }
@@ -325,7 +336,7 @@ public class SemanticTextNode extends SemanticNode {
                     if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
                         Double fontNameLength = textColorMap.get(chunk.getFontColor());
                         textColorMap.put(chunk.getFontColor(),
-                                ((fontNameLength == null) ? 0 : fontNameLength) + chunk.getBoundingBox().getWidth());
+                                ((fontNameLength == null) ? 0 : fontNameLength) + chunk.getTextLength());
                     }
                 }
             }
@@ -354,7 +365,7 @@ public class SemanticTextNode extends SemanticNode {
                     if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
                         Double fontNameLength = fontNameMap.get(chunk.getFontName());
                         fontNameMap.put(chunk.getFontName(),
-                                ((fontNameLength == null) ? 0 : fontNameLength) + chunk.getBoundingBox().getWidth());
+                                ((fontNameLength == null) ? 0 : fontNameLength) + chunk.getTextLength());
                     }
                 }
             }

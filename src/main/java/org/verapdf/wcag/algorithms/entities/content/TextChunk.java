@@ -19,7 +19,7 @@ public class TextChunk extends TextInfoChunk {
     private boolean hasSpecialStyle = false;
     private boolean isUnderlinedText = false;
     private TextFormat textFormat = TextFormat.NORMAL;
-    private List<Double> symbolEnds = new ArrayList<>();
+    private List<Double> symbolEnds;
 
     public TextChunk() {
     }
@@ -141,10 +141,43 @@ public class TextChunk extends TextInfoChunk {
 
     private void adjustSymbolEndsToBoundingBox() {
         if (this.symbolEnds == null) {
+            symbolEnds = new ArrayList<>(value.length() + 1);
+            double symbolEnd = getTextStart();
+            symbolEnds.add(symbolEnd);
+            double averageWidth = getAverageSymbolWidth();
+            if (isRightLeftHorizontalText() || isUpBottomVerticalText()) {
+                for (int i = 0; i < value.length(); i++) {
+                    symbolEnd -= averageWidth;
+                    symbolEnds.add(symbolEnd);
+                }
+            } else {
+                for (int i = 0; i < value.length(); i++) {
+                    symbolEnd += averageWidth;
+                    symbolEnds.add(symbolEnd);
+                }
+            }
             return;
         }
-        double leftX = this.getBoundingBox().getLeftX();
-        this.symbolEnds = this.symbolEnds.stream().map(e -> e + leftX).collect(Collectors.toList());
+        double textStart = getTextStart();
+        if (isRightLeftHorizontalText() || isUpBottomVerticalText()) {
+            this.symbolEnds = this.symbolEnds.stream().map(e -> e - textStart).collect(Collectors.toList());
+        } else {
+            this.symbolEnds = this.symbolEnds.stream().map(e -> e + textStart).collect(Collectors.toList());
+        }
+    }
+
+    public double getAverageSymbolWidth() {
+        return getTextLength() / getValue().length();
+    }
+
+    public double getTextLength() {
+        if (isHorizontalText()) {
+            return getBoundingBox().getWidth();
+        }
+        if (isVerticalText()) {
+            return getBoundingBox().getHeight();
+        }
+        return getBoundingBox().getWidth();
     }
 
     public void addAll(List<TextChunk> otherChunks) {
@@ -172,6 +205,25 @@ public class TextChunk extends TextInfoChunk {
                 && Objects.equals(value, that.value)
                 && Objects.equals(fontName, that.fontName)
                 && Arrays.equals(fontColor, that.fontColor);
+    }
+
+    public static boolean areTextChunksHaveSameStyle(TextChunk firstTextChunk, TextChunk secondTextChunk) {
+        return Objects.equals(firstTextChunk.fontName, secondTextChunk.fontName) &&
+                Double.compare(firstTextChunk.fontWeight, secondTextChunk.fontWeight) == 0 &&
+                Double.compare(firstTextChunk.italicAngle, secondTextChunk.italicAngle) == 0 &&
+                Arrays.equals(firstTextChunk.fontColor, secondTextChunk.fontColor) &&
+                Double.compare(firstTextChunk.fontSize, secondTextChunk.fontSize) == 0 &&
+                Double.compare(firstTextChunk.slantDegree, secondTextChunk.slantDegree) == 0;
+    }
+
+    public static boolean areTextChunksHaveSameBaseLine(TextChunk firstTextChunk, TextChunk secondTextChunk) {
+        return Double.compare(firstTextChunk.baseLine, secondTextChunk.baseLine) == 0;
+    }
+
+    public static void unionTextChunks(TextChunk textChunk, TextChunk secondTextChunk) {
+        textChunk.setValue(textChunk.getValue() + secondTextChunk.getValue());
+        textChunk.getBoundingBox().union(secondTextChunk.getBoundingBox());
+        textChunk.getSymbolEnds().addAll(secondTextChunk.getSymbolEnds().subList(1, secondTextChunk.getSymbolEnds().size()));
     }
 
     @Override

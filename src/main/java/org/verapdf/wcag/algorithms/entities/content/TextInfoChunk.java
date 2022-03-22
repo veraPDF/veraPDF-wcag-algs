@@ -48,13 +48,11 @@ public abstract class TextInfoChunk extends InfoChunk {
         if (fontSize < chunk.getFontSize()) {
             fontSize = chunk.getFontSize();
         }
-        if (NodeUtils.areCloseNumbers(0.0, Math.abs(slantDegree)) ||
-                NodeUtils.areCloseNumbers(90.0, Math.abs(slantDegree))) {
+        if (isLeftRightHorizontalText() || isUpBottomVerticalText()) {
             if (chunk.getBaseLine() < baseLine) {
                 baseLine = chunk.getBaseLine();
             }
-        } else if (NodeUtils.areCloseNumbers(180.0, Math.abs(slantDegree)) ||
-                NodeUtils.areCloseNumbers(-90.0, slantDegree)) {
+        } else if (isRightLeftHorizontalText() || isBottomUpVerticalText()) {
             if (chunk.getBaseLine() > baseLine) {
                 baseLine = chunk.getBaseLine();
             }
@@ -76,43 +74,66 @@ public abstract class TextInfoChunk extends InfoChunk {
     }
 
     public double getTextStart() {
-        if (NodeUtils.areCloseNumbers(0.0, Math.abs(slantDegree))) {
+        if (isLeftRightHorizontalText()) {
             return getLeftX();
         }
-        if (NodeUtils.areCloseNumbers(180.0, Math.abs(slantDegree))) {
+        if (isRightLeftHorizontalText()) {
             return getRightX();
         }
-        if (NodeUtils.areCloseNumbers(90.0, slantDegree)) {
+        if (isBottomUpVerticalText()) {
             return getBottomY();
         }
-        if (NodeUtils.areCloseNumbers(-90.0, slantDegree)) {
+        if (isUpBottomVerticalText()) {
             return getTopY();
         }
         return getLeftX();
     }
 
+    public boolean isHorizontalText() {
+        return isLeftRightHorizontalText() || isRightLeftHorizontalText();
+    }
+
+    public boolean isRightLeftHorizontalText() {
+        return NodeUtils.areCloseNumbers(180.0, Math.abs(slantDegree));
+    }
+
+    public boolean isLeftRightHorizontalText() {
+        return NodeUtils.areCloseNumbers(0.0, Math.abs(slantDegree));
+    }
+
+    public boolean isVerticalText() {
+        return NodeUtils.areCloseNumbers(90.0, Math.abs(slantDegree));
+    }
+
+    public boolean isBottomUpVerticalText() {
+        return NodeUtils.areCloseNumbers(90.0, slantDegree);
+    }
+
+    public boolean isUpBottomVerticalText() {
+        return NodeUtils.areCloseNumbers(-90.0, slantDegree);
+    }
+
     public double getTextEnd() {
-        if (NodeUtils.areCloseNumbers(0.0, Math.abs(slantDegree))) {
+        if (isLeftRightHorizontalText()) {
             return getRightX();
         }
-        if (NodeUtils.areCloseNumbers(180.0, Math.abs(slantDegree))) {
+        if (isRightLeftHorizontalText()) {
             return getLeftX();
         }
-        if (NodeUtils.areCloseNumbers(90.0, slantDegree)) {
+        if (isBottomUpVerticalText()) {
             return getTopY();
         }
-        if (NodeUtils.areCloseNumbers(-90.0, slantDegree)) {
+        if (isUpBottomVerticalText()) {
             return getBottomY();
         }
         return getRightX();
     }
 
     public double getTextCenter() {
-        if (NodeUtils.areCloseNumbers(0.0, Math.abs(slantDegree)) ||
-                NodeUtils.areCloseNumbers(180.0, Math.abs(slantDegree))) {
+        if (isHorizontalText()) {
             return getCenterX();
         }
-        if (NodeUtils.areCloseNumbers(90.0, Math.abs(slantDegree))) {
+        if (isVerticalText()) {
             return getCenterY();
         }
         return getCenterX();
