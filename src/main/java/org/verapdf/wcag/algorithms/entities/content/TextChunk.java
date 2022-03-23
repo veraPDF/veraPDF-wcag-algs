@@ -2,6 +2,7 @@ package org.verapdf.wcag.algorithms.entities.content;
 
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -209,15 +210,15 @@ public class TextChunk extends TextInfoChunk {
 
     public static boolean areTextChunksHaveSameStyle(TextChunk firstTextChunk, TextChunk secondTextChunk) {
         return Objects.equals(firstTextChunk.fontName, secondTextChunk.fontName) &&
-                Double.compare(firstTextChunk.fontWeight, secondTextChunk.fontWeight) == 0 &&
-                Double.compare(firstTextChunk.italicAngle, secondTextChunk.italicAngle) == 0 &&
+                NodeUtils.areCloseNumbers(firstTextChunk.fontWeight, secondTextChunk.fontWeight) &&
+                NodeUtils.areCloseNumbers(firstTextChunk.italicAngle, secondTextChunk.italicAngle) &&
                 Arrays.equals(firstTextChunk.fontColor, secondTextChunk.fontColor) &&
-                Double.compare(firstTextChunk.fontSize, secondTextChunk.fontSize) == 0 &&
-                Double.compare(firstTextChunk.slantDegree, secondTextChunk.slantDegree) == 0;
+                NodeUtils.areCloseNumbers(firstTextChunk.fontSize, secondTextChunk.fontSize) &&
+                NodeUtils.areCloseNumbers(firstTextChunk.slantDegree, secondTextChunk.slantDegree);
     }
 
     public static boolean areTextChunksHaveSameBaseLine(TextChunk firstTextChunk, TextChunk secondTextChunk) {
-        return Double.compare(firstTextChunk.baseLine, secondTextChunk.baseLine) == 0;
+        return NodeUtils.areCloseNumbers(firstTextChunk.baseLine, secondTextChunk.baseLine);
     }
 
     public static void unionTextChunks(TextChunk textChunk, TextChunk secondTextChunk) {
