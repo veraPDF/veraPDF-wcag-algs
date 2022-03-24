@@ -437,13 +437,15 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 				}
 				if (newChild instanceof SemanticImageNode) {
 					ImageChunk image = ((SemanticImageNode) newChild).getImage();
-					if (image.getRightX() <= line.getLeftX()) {
+					if (image.getRightX() <= line.getLeftX() && image.getBoundingBox().getHeight() <
+							ListUtils.LIST_LABEL_HEIGHT_EPSILON * line.getBoundingBox().getHeight()) {
 						imageChildren.add(child);
 						childrenImages.add(image);
 					}
 				} else if (newChild instanceof SemanticFigure) {
 					LineArtChunk lineArt = ((SemanticFigure) newChild).getLineArt();
-					if (lineArt.getRightX() <= line.getLeftX()) {
+					if (lineArt.getRightX() <= line.getLeftX() && lineArt.getBoundingBox().getHeight() <
+							ListUtils.LIST_LABEL_HEIGHT_EPSILON * line.getBoundingBox().getHeight()) {
 						lineArtChildren.add(child);
 						childrenLineArts.add(lineArt);
 					}

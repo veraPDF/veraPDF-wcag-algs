@@ -20,6 +20,8 @@ import static org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils.TA
 
 public class ListUtils {
 
+	public static final double LIST_LABEL_HEIGHT_EPSILON = 2.5;
+
 	private static final Set<SemanticType> listSemanticTypes = new HashSet<>(Arrays.asList(
 			SemanticType.LIST, SemanticType.LIST_ITEM,
 			SemanticType.LIST_LABEL, SemanticType.LIST_BODY));
@@ -83,7 +85,7 @@ public class ListUtils {
 			updateTreeWithRecognizedListItem(children.get(i), listId);
 		}
 		if (node.getRecognizedStructureId() == null) {
-			double probability = ((double) (listInterval.end - listInterval.start + 1)) / children.size();
+			double probability = ((double) (listInterval.end - listInterval.start + 1)) / node.getChildren().size();
 			if (probability >= TABLE_PROBABILITY_THRESHOLD) {
 				INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
 				StaticContainers.getAccumulatedNodeMapper().updateNode(node, new SemanticList((SemanticTextNode)accumulatedNode),
