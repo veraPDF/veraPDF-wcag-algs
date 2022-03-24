@@ -112,6 +112,10 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		int y = (int) (Math.round(scaledBBox.getTopY()));
 		int width = getIntegerBBoxValueForProcessing(scaledBBox.getWidth(), 1);
 		int height = getIntegerBBoxValueForProcessing(scaledBBox.getHeight(), 1);
+		if (width <= 1 || height <= 1) {
+			textChunk.setContrastRatio(Integer.MAX_VALUE);
+			return;
+		}
 		try {
 			BufferedImage targetBim = renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
 			double contrastRatio = getContrastRatio(targetBim, textColorForProcessing);
