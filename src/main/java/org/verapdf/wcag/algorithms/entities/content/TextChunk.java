@@ -4,10 +4,7 @@ import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TextChunk extends TextInfoChunk {
@@ -32,19 +29,25 @@ public class TextChunk extends TextInfoChunk {
 
     public TextChunk(BoundingBox bbox, String value, String fontName, double fontSize, double fontWeight,
                 double italicAngle, double baseLine, double[] fontColor, List<Double> symbolEnds, double slantDegree) {
+        this(bbox, value, fontName, fontSize, fontWeight, italicAngle, baseLine, fontColor, slantDegree);
+        this.symbolEnds = symbolEnds;
+        adjustSymbolEndsToBoundingBox();
+    }
+
+    public TextChunk(BoundingBox bbox, String value, String fontName, double fontSize, double fontWeight,
+                     double italicAngle, double baseLine, double[] fontColor, double slantDegree) {
         super(bbox, fontSize, baseLine, slantDegree);
         this.value = value;
         this.fontName = fontName;
         this.fontWeight = fontWeight;
         this.italicAngle = italicAngle;
         this.fontColor = fontColor.clone();
-        this.symbolEnds = symbolEnds;
-        adjustSymbolEndsToBoundingBox();
     }
 
     public TextChunk(TextChunk chunk) {
         this(chunk.getBoundingBox(), chunk.value, chunk.fontName, chunk.fontSize, chunk.fontWeight, chunk.italicAngle,
-                chunk.baseLine, chunk.fontColor, chunk.symbolEnds, chunk.slantDegree);
+                chunk.baseLine, chunk.fontColor, chunk.slantDegree);
+        this.symbolEnds = new LinkedList<>(chunk.symbolEnds);
     }
 
     public String getValue() {
@@ -221,10 +224,12 @@ public class TextChunk extends TextInfoChunk {
         return NodeUtils.areCloseNumbers(firstTextChunk.baseLine, secondTextChunk.baseLine);
     }
 
-    public static void unionTextChunks(TextChunk textChunk, TextChunk secondTextChunk) {
-        textChunk.setValue(textChunk.getValue() + secondTextChunk.getValue());
-        textChunk.getBoundingBox().union(secondTextChunk.getBoundingBox());
-        textChunk.getSymbolEnds().addAll(secondTextChunk.getSymbolEnds().subList(1, secondTextChunk.getSymbolEnds().size()));
+    public static TextChunk unionTextChunks(TextChunk textChunk, TextChunk secondTextChunk) {
+        TextChunk newTextChunk = new TextChunk(textChunk);
+        newTextChunk.setValue(textChunk.getValue() + secondTextChunk.getValue());
+        newTextChunk.getBoundingBox().union(secondTextChunk.getBoundingBox());
+        newTextChunk.getSymbolEnds().addAll(secondTextChunk.getSymbolEnds().subList(1, secondTextChunk.getSymbolEnds().size()));
+        return newTextChunk;
     }
 
     @Override
