@@ -2,6 +2,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
 
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
+import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.entities.tables.TableToken;
 import org.verapdf.wcag.algorithms.entities.tables.TableTokenRow;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
@@ -34,6 +35,7 @@ public class TableCluster extends TextInfoChunk {
     }
 
     public TableCluster() {
+        super(new MultiBoundingBox());
     }
 
     public TableCluster(TableToken token) {
