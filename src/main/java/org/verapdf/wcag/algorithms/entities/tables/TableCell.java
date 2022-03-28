@@ -2,6 +2,7 @@ package org.verapdf.wcag.algorithms.entities.tables;
 
 import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableCluster;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ public class TableCell extends TextInfoChunk {
     private SemanticType semanticType = null;
 
     public TableCell() {
+        super(new MultiBoundingBox());
         content = new ArrayList<>();
     }
 

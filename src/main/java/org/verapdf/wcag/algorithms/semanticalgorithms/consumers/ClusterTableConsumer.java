@@ -337,14 +337,49 @@ public class ClusterTableConsumer {
     private boolean updateNode(INode node, Long id, SemanticType semanticType, boolean hasTableBorder,
                                BoundingBox boundingBox) {
         if ((((ListUtils.isListNode(node) && !hasTableBorder) || TableUtils.isTableNode(node)) &&
-                node.getRecognizedStructureId() != id) || !containsNode(boundingBox, node.getBoundingBox(),
-                TableBorder.TABLE_BORDER_EPSILON, TableBorder.TABLE_BORDER_EPSILON)) {
-            node.setRecognizedStructureId(null);
+            node.getRecognizedStructureId() != id) || !isNodeInsideTable(node, id, boundingBox)) {
+                node.setRecognizedStructureId(null);
             return false;
         }
         node.setRecognizedStructureId(id);
         node.setSemanticType(semanticType);
         node.setCorrectSemanticScore(1.0);
+        return true;
+    }
+
+    private boolean isNodeInsideTable(INode node, Long id, BoundingBox boundingBox) {
+        if (node.getRecognizedStructureId() == id) {
+            return true;
+        }
+        if (node instanceof SemanticFigure) {
+            return true;
+        }
+        if (node instanceof SemanticTextNode) {
+            SemanticTextNode textNode = (SemanticTextNode) node;
+            for (TextColumn column : textNode.getColumns()) {
+                for (TextLine line : column.getLines()) {
+                    for (TextChunk chunk : line.getTextChunks()) {
+                        if (!TextChunkUtils.isWhiteSpaceChunk(chunk) && boundingBox.getPageNumber() <= chunk.getPageNumber()
+                                && boundingBox.getLastPageNumber() >= chunk.getLastPageNumber() &&
+                                !boundingBox.contains(chunk.getBoundingBox(), TableBorder.TABLE_BORDER_EPSILON,
+                                        TableBorder.TABLE_BORDER_EPSILON)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        if (node instanceof SemanticImageNode) {
+            return boundingBox.getPageNumber() > node.getPageNumber() || boundingBox.getLastPageNumber() <
+                    node.getLastPageNumber() || boundingBox.contains(node.getBoundingBox(),
+                    TableBorder.TABLE_BORDER_EPSILON, TableBorder.TABLE_BORDER_EPSILON);
+        }
+        for (INode child : node.getChildren()) {
+            if (!isNodeInsideTable(child, id, boundingBox)) {
+                return false;
+            }
+        }
         return true;
     }
 

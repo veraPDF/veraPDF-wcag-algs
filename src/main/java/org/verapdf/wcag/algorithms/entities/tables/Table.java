@@ -4,6 +4,7 @@ import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.content.InfoChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableCluster;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
@@ -111,6 +112,14 @@ public class Table extends InfoChunk {
             }
         }
         rows = result;
+        recalculateTableBoundingBox();
+    }
+
+    private void recalculateTableBoundingBox() {
+        setBoundingBox(new MultiBoundingBox());
+        for (TableRow row : rows) {
+            unionBoundingBox(row.getBoundingBox());
+        }
     }
 
     private boolean areSeparateRows(TableRow row, TableRow nextRow, List<Double> maxRowGaps) {
