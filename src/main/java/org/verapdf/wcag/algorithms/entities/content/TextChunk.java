@@ -211,27 +211,6 @@ public class TextChunk extends TextInfoChunk {
                 && Arrays.equals(fontColor, that.fontColor);
     }
 
-    public static boolean areTextChunksHaveSameStyle(TextChunk firstTextChunk, TextChunk secondTextChunk) {
-        return Objects.equals(firstTextChunk.fontName, secondTextChunk.fontName) &&
-                NodeUtils.areCloseNumbers(firstTextChunk.fontWeight, secondTextChunk.fontWeight) &&
-                NodeUtils.areCloseNumbers(firstTextChunk.italicAngle, secondTextChunk.italicAngle) &&
-                Arrays.equals(firstTextChunk.fontColor, secondTextChunk.fontColor) &&
-                NodeUtils.areCloseNumbers(firstTextChunk.fontSize, secondTextChunk.fontSize) &&
-                NodeUtils.areCloseNumbers(firstTextChunk.slantDegree, secondTextChunk.slantDegree);
-    }
-
-    public static boolean areTextChunksHaveSameBaseLine(TextChunk firstTextChunk, TextChunk secondTextChunk) {
-        return NodeUtils.areCloseNumbers(firstTextChunk.baseLine, secondTextChunk.baseLine);
-    }
-
-    public static TextChunk unionTextChunks(TextChunk textChunk, TextChunk secondTextChunk) {
-        TextChunk newTextChunk = new TextChunk(textChunk);
-        newTextChunk.setValue(textChunk.getValue() + secondTextChunk.getValue());
-        newTextChunk.getBoundingBox().union(secondTextChunk.getBoundingBox());
-        newTextChunk.getSymbolEnds().addAll(secondTextChunk.getSymbolEnds().subList(1, secondTextChunk.getSymbolEnds().size()));
-        return newTextChunk;
-    }
-
     @Override
     public int hashCode() {
         int result = super.hashCode();
