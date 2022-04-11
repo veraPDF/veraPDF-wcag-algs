@@ -1,5 +1,6 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
+import com.github.jaiimageio.jpeg2000.impl.J2KImageReaderSpi;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -11,6 +12,7 @@ import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
+import javax.imageio.spi.IIORegistry;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
@@ -20,7 +22,6 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class ContrastRatioConsumer implements Consumer<INode> {
 
@@ -33,6 +34,8 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 
 	public ContrastRatioConsumer(String sourcePdfPath) {
 		this.sourcePdfPath = sourcePdfPath;
+		IIORegistry registry = IIORegistry.getDefaultInstance();
+		registry.registerServiceProvider(new J2KImageReaderSpi());
 	}
 
 	@Override
