@@ -1,0 +1,29 @@
+name: Execute regression tests for WCAG-algs
+
+on:
+  pull_request:
+    branches:
+      [ master ]
+
+jobs:
+  trigger_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Set up JDK 1.11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.11
+      - name: Create workflow dispatch
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.WORKFLOW_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+             owner: 'veraPDF',
+             repo: 'veraPDF-integration-tests',
+             workflow_id: 'run-tests-workflow.yml',
+             ref: 'integration'
+            })
