@@ -139,12 +139,12 @@ public class LineChunk extends InfoChunk {
 	}
 
 	public static boolean haveIntersection(LineChunk horizontalLine, LineChunk verticalLine) {
-		if (verticalLine.getCenterX() < horizontalLine.getBoundingBox().getLeftX() ||
-				verticalLine.getCenterX() > horizontalLine.getBoundingBox().getRightX()) {
+		if (verticalLine.getRightX() < horizontalLine.getBoundingBox().getLeftX() ||
+				verticalLine.getLeftX() > horizontalLine.getBoundingBox().getRightX()) {
 			return false;
 		}
-		if (horizontalLine.getCenterY() < verticalLine.getBoundingBox().getBottomY() ||
-				horizontalLine.getCenterY() > verticalLine.getBoundingBox().getTopY()) {
+		if (horizontalLine.getTopY() < verticalLine.getBoundingBox().getBottomY() ||
+				horizontalLine.getBottomY() > verticalLine.getBoundingBox().getTopY()) {
 			return false;
 		}
 		return true;
