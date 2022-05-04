@@ -31,6 +31,8 @@ public class TableBordersTests {
         return Stream.of(
                 Arguments.of("test-document-1", new int[][] {{},{},{154},{},{},{}}, new int[][] {{},{},{10},{},{},{}},
                         new int[][] {{},{},{4},{},{},{}}, true, true),
+                Arguments.of("af_css_js_sort_table", new int[][] {{72}}, new int[][] {{14}},
+                        new int[][] {{3}}, false, false),
                 Arguments.of("pdfmaker", new int[][] {{55}}, new int[][] {{4}}, new int[][] {{4}}, true, true),
                 Arguments.of("GridTable6-pass", new int[][] {{33}}, new int[][] {{3}}, new int[][] {{4}}, true, true),
                 Arguments.of("table-word", new int[][] {{65}}, new int[][] {{4}}, new int[][] {{4}}, true, true),
