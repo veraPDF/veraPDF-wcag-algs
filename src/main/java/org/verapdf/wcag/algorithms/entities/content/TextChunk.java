@@ -198,6 +198,10 @@ public class TextChunk extends TextInfoChunk {
         super.add(chunk);
     }
 
+    public boolean isEmpty() {
+        return value.isEmpty() || value.matches("\u0000+");
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!super.equals(o)) {

@@ -211,7 +211,7 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     public boolean isEmpty() {
-        return columns.isEmpty();
+        return columns.isEmpty() || columns.stream().allMatch(TextColumn::isEmpty);
     }
 
     public double getFontWeight() {
@@ -246,7 +246,7 @@ public class SemanticTextNode extends SemanticNode {
     public TextLine getFirstNonSpaceLine() {
         for (TextColumn column : columns) {
             for (TextLine line : column.getLines()) {
-                if (!line.getValue().trim().isEmpty()) {
+                if (!line.isEmpty() && !line.isSpaceLine()) {
                     return line;
                 }
             }
