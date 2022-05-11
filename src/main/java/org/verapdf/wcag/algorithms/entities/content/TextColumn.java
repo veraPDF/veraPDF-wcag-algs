@@ -81,6 +81,10 @@ public class TextColumn extends TextInfoChunk {
         super.add(column);
     }
 
+    public boolean isEmpty() {
+        return textLines.isEmpty() || textLines.stream().allMatch(TextLine::isEmpty);
+    }
+
     @Override
     public String toString() {
         if (textLines.isEmpty()) {

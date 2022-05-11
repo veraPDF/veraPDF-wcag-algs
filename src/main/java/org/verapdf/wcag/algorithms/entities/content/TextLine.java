@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.entities.content;
 
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +71,19 @@ public class TextLine extends TextInfoChunk {
             result.append(textChunks.get(i).getValue());
         }
         return result.toString();
+    }
+
+    public boolean isEmpty() {
+        return textChunks.isEmpty() || textChunks.stream().allMatch(TextChunk::isEmpty);
+    }
+
+    public boolean isSpaceLine() {
+        for (TextChunk textChunk : textChunks) {
+            if (!TextChunkUtils.isWhiteSpaceChunk(textChunk)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean isFullLine() {
