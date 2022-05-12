@@ -59,7 +59,7 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 				renderedPages.clear();
 				renderedPages.put(pageNumber, renderedPage);
 			}
-			catch (IOException e) {
+			catch (IOException | IllegalArgumentException e) {
 				e.printStackTrace();
 				logger.warning(e.getMessage());
 			}
