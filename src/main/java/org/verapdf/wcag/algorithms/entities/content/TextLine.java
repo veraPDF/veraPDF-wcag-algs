@@ -58,8 +58,14 @@ public class TextLine extends TextInfoChunk {
     }
 
     public void add(TextLine line) {
+        double size = this.fontSize;
         textChunks.addAll(line.getTextChunks());
         super.add(line);
+        if (line.isSpaceLine()) {
+            this.fontSize = size;
+        } else if (isSpaceLine()) {
+            this.fontSize = line.getFontSize();
+        }
     }
 
     public String getValue() {
