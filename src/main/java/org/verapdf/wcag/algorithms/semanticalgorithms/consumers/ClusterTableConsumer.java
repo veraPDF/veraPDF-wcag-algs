@@ -178,7 +178,8 @@ public class ClusterTableConsumer {
             return;
         }
         if (node.getSemanticType() == SemanticType.HEADING ||
-                node.getSemanticType() == SemanticType.NUMBER_HEADING) {
+            node.getSemanticType() == SemanticType.NUMBER_HEADING ||
+            node.getSemanticType() == SemanticType.LIST) {
             return;
         }
         INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
