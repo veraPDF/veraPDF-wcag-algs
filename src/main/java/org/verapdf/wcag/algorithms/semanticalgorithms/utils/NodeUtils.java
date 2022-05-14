@@ -139,7 +139,7 @@ public class NodeUtils {
 	}
 
 	public static double imageCaptionProbability(INode node, SemanticImageNode imageNode) {
-		if (node == null || node.getSemanticType() == SemanticType.HEADING || node.getSemanticType() == SemanticType.NUMBER_HEADING) {
+		if (node == null) {
 			return 0;
 		}
 		INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);

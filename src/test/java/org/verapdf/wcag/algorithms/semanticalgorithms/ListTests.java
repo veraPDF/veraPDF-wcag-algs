@@ -41,7 +41,8 @@ public class ListTests {
                 Arguments.of("ordered-list1.json", new int[] {5, 5}, true, true),
                 Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[] {7, 4, 4}, true, true),
                 Arguments.of("one_element_list.json", new int[]{}, true, true),
-                Arguments.of("one_element_start_with_number.json", new int[]{}, true, true)
+                Arguments.of("one_element_start_with_number.json", new int[]{}, true, true),
+                Arguments.of("list_not_caption.json", new int[]{}, true, true)
                 );
     }
 
