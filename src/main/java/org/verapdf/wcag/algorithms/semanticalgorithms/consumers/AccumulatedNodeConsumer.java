@@ -118,7 +118,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	}
 
 	private void acceptSemanticImage(INode node) {
-		INode imageNode = null;
+		SemanticImageNode imageNode = null;
+		SemanticFigure lineArtNode = null;
 		for (INode child : node.getChildren()) {
 			INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
 			if (accumulatedChild instanceof SemanticTextNode) {
@@ -126,20 +127,23 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 					return;
 				}
 			} else if (accumulatedChild instanceof SemanticImageNode) {
-				if (imageNode != null) {
+				if (imageNode != null || lineArtNode != null) {
 					return;
 				}
-				imageNode = accumulatedChild;
+				imageNode = (SemanticImageNode)accumulatedChild;
 			} else if (accumulatedChild instanceof SemanticFigure) {
-				if (imageNode != null) {
+				if (imageNode != null || lineArtNode != null) {
 					return;
 				}
-				imageNode = accumulatedChild;
+				lineArtNode = (SemanticFigure)accumulatedChild;
 			}
 		}
 		if (imageNode != null) {
-			StaticContainers.getAccumulatedNodeMapper().updateNode(node, imageNode,
+			StaticContainers.getAccumulatedNodeMapper().updateNode(node, new SemanticImageNode(imageNode),
 					imageNode.getCorrectSemanticScore(), SemanticType.FIGURE);
+		} else if (lineArtNode != null) {
+			StaticContainers.getAccumulatedNodeMapper().updateNode(node, new SemanticFigure(lineArtNode),
+					lineArtNode.getCorrectSemanticScore(), SemanticType.FIGURE);
 		}
 	}
 

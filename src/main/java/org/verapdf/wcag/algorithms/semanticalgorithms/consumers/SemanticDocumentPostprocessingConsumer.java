@@ -21,11 +21,23 @@ import java.util.List;
 public class SemanticDocumentPostprocessingConsumer {
 
 	public void runPostprocessingChecks(ITree tree) {
+		updateBoundingBoxes(tree);
 		checkForTitle(tree);
 		checkForRepeatedCharacters(tree);
 		setLowestDepthErrorFlag(tree);
 	}
 
+	public void updateBoundingBoxes(ITree tree) {
+		for (INode node : tree) {
+			MultiBoundingBox boundingBox = new MultiBoundingBox();
+			for (INode child : node.getChildren()) {
+				boundingBox.union(child.getBoundingBox());
+			}
+			if (!node.getChildren().isEmpty()) {
+				node.setBoundingBox(boundingBox);
+			}
+		}
+	}
 
 	public void setLowestDepthErrorFlag(ITree tree) {
 		for (INode child : tree.getRoot().getChildren()) {
