@@ -17,7 +17,7 @@ import java.util.Arrays;
 public class NodeUtils {
 
 	private static final double FLOATING_POINT_OPERATIONS_EPS = 1e-7;
-	private static final double[] DEFAULT_INTERVAL_BEFORE_IMAGE = {0, 1.75};
+	private static final double[] DEFAULT_INTERVAL_BEFORE_IMAGE = {0, 1.8};
 	private static final double[] DEFAULT_INTERVAL_AFTER_IMAGE = {0, 1.8};
 	private static final double IMAGE_INTERVAL_STANDARD = 1;
 	public static final double EPSILON = 0.0001;
@@ -237,11 +237,11 @@ public class NodeUtils {
 		double lastBaseline = textNode.getLastBaseline();
 		if (lastBaseline > imageBoundingBox.getTopY() + FLOATING_POINT_OPERATIONS_EPS) {
 			return ChunksMergeUtils.getUniformProbability(DEFAULT_INTERVAL_BEFORE_IMAGE,
-					(lastBaseline - imageBoundingBox.getTopY()) / textNode.getFontSize(), IMAGE_INTERVAL_STANDARD);
+					(textNode.getBottomY() - imageBoundingBox.getTopY()) / textNode.getFontSize(), IMAGE_INTERVAL_STANDARD);
 		}
 		if (firstBaseline < imageBoundingBox.getBottomY() - FLOATING_POINT_OPERATIONS_EPS) {
 			return ChunksMergeUtils.getUniformProbability(DEFAULT_INTERVAL_AFTER_IMAGE,
-					(imageBoundingBox.getBottomY() - firstBaseline) / textNode.getFontSize(), IMAGE_INTERVAL_STANDARD);
+					(imageBoundingBox.getBottomY() - textNode.getTopY()) / textNode.getFontSize(), IMAGE_INTERVAL_STANDARD);
 		}
 		return 0.0;
 	}
