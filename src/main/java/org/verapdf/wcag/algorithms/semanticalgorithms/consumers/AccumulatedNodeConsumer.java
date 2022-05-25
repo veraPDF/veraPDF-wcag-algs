@@ -471,7 +471,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 					ListUtils.getChildrenListIntervals(ListLabelsUtils.getListItemsIntervals(listItems), textChildren,
 							childrenFirstLines));
 		} else if (textChildren.size() == 1 && SemanticType.LIST.equals(node.getInitialSemanticType()) &&
-		           ListLabelsUtils.isListLabel(childrenFirstLines.get(0).getValue().trim().charAt(0))) {
+		           (ListLabelsUtils.isListLabel(childrenFirstLines.get(0).getValue().trim()))) {
 			ListUtils.updateTreeWithRecognizedList(node, textChildren, new ListInterval(0, 0));
 		}
 		if (imageChildren.size() > 1) {
