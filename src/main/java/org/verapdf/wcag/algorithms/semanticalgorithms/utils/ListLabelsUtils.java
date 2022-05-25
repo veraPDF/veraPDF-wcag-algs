@@ -16,11 +16,19 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.
 
 public class ListLabelsUtils {
 
-	private static final Set<Character> labels = new HashSet<>(Arrays.asList('\u002D', '\u006F', '\u2022', '\u25CF', '\u2714',
-			'\u2717', '\u2794', '\u27A2', '\uE00A', '\uE00C', '\uF076', '\u2588', '\u25A0', '\u2013', '\uF0B7'));//office labels examples (-, •, ✔, ✗, ●, ➔, ➢, o), pdf files labels examples (█, ■)
+	private static final Set<Character> labels = new HashSet<>(Arrays.asList('\u002D', '\u2022', '\u25CF', '\u2714',
+			'\u2717', '\u2794', '\u27A2', '\uE00A', '\uE00C', '\uF076', '\u2588', '\u25A0', '\u2013', '\uF0B7'));//office labels examples (-, •, ✔, ✗, ●, ➔, ➢), pdf files labels examples (█, ■)
 
-	public static boolean isListLabel(Character label) {
-		return labels.contains(label) || Character.isDigit(label);
+	public static boolean isListLabel(String value) {
+		char label = value.charAt(0);
+		return labels.contains(label) || Character.isDigit(label) || isLetterLabel(value);
+	}
+
+	public static boolean isLetterLabel(String value) {
+		if (value.length() < 2) {
+			return false;
+		}
+		return Character.isLetter(value.charAt(0)) && !Character.isLetter(value.charAt(1));
 	}
 
 	public static boolean isListLabels(List<String> listLabels) {
