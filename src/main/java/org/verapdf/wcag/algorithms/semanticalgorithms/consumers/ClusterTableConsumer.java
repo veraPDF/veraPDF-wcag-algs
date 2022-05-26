@@ -15,10 +15,7 @@ import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognitionArea;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognizer;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListUtils;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.*;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -183,7 +180,7 @@ public class ClusterTableConsumer {
             return;
         }
         INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
-        double captionProbability = NodeUtils.tableCaptionProbability(accumulatedNode, tableBoundingBox);
+        double captionProbability = CaptionUtils.tableCaptionProbability(accumulatedNode, tableBoundingBox);
         if (captionProbability >= TableUtils.MERGE_PROBABILITY_THRESHOLD) {
             StaticContainers.getAccumulatedNodeMapper().updateNode(node, new SemanticCaption((SemanticTextNode) accumulatedNode),
                     captionProbability * node.getCorrectSemanticScore(), SemanticType.CAPTION);

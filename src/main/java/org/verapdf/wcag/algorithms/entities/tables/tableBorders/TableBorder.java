@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 public class TableBorder {
     public static final double TABLE_BORDER_EPSILON = 0.6;
+    private static final double MIN_CELL_CONTENT_INTERSECTION_PERCENT = 0.8;
 
     private final List<Double> xCoordinates;
     private final List<Double> xWidths;
@@ -376,6 +377,15 @@ public class TableBorder {
         return -1;
     }
 
+    private int getClosestRightX(double x) {
+        for (int i = 0; i < xCoordinates.size(); i++) {
+            if (x <= xCoordinates.get(i) + 0.5 * xWidths.get(i) + TABLE_BORDER_EPSILON) {
+                return i;
+            }
+        }
+        return xCoordinates.size();
+    }
+
     private int getClosestTopY(double y) {
         for (int i = yCoordinates.size() - 1; i >= 0; i--) {
             if (y <= yCoordinates.get(i) + 0.5 * yWidths.get(i) + TABLE_BORDER_EPSILON) {
@@ -383,6 +393,15 @@ public class TableBorder {
             }
         }
         return -1;
+    }
+
+    private int getClosestBottomY(double y) {
+        for (int i = 0; i < yCoordinates.size(); i++) {
+            if (y >= yCoordinates.get(i) - 0.5 * yWidths.get(i) - TABLE_BORDER_EPSILON) {
+                return i;
+            }
+        }
+        return yCoordinates.size();
     }
 
     public int getNumberOfRows() {
@@ -424,16 +443,48 @@ public class TableBorder {
     }
 
     public TableBorderCell getTableBorderCell(BoundingBox box) {
-        int xIndex = getClosestLeftX(box.getLeftX());
-        int yIndex = getClosestTopY(box.getTopY());
-        if (xIndex < 0 || yIndex < 0 || xIndex == xWidths.size() - 1 || yIndex == yWidths.size() - 1) {
+        int xLeftIndex = getClosestLeftX(box.getLeftX());
+        int xRightIndex = getClosestRightX(box.getRightX());
+        int yTopIndex = getClosestTopY(box.getTopY());
+        int yBottomIndex = getClosestBottomY(box.getBottomY());
+        if (xLeftIndex == xCoordinates.size() - 1 || yTopIndex == yCoordinates.size() - 1 ||
+                xRightIndex == 0 || yBottomIndex == 0) {
             return null;
         }
-        TableBorderCell cell = rows[yIndex].cells[xIndex];
-        if (cell.getRightX() + TABLE_BORDER_EPSILON > box.getRightX() &&
-                cell.getBottomY() - TABLE_BORDER_EPSILON < box.getBottomY()) {
-            return cell;
+        if (xLeftIndex < 0) {
+            xLeftIndex = 0;
+        }
+        if (yTopIndex < 0) {
+            yTopIndex = 0;
+        }
+        if (xRightIndex == xCoordinates.size()) {
+            xRightIndex--;
+        }
+        if (yBottomIndex == yCoordinates.size()) {
+            yBottomIndex--;
+        }
+        if (xLeftIndex >= xRightIndex || yTopIndex >= yBottomIndex) {
+            return null;
+        }
+        for (int xIndex = xLeftIndex; xIndex < xRightIndex; xIndex++) {
+            for (int yIndex = yTopIndex; yIndex < yBottomIndex; yIndex++) {
+                TableBorderCell cell = rows[yIndex].cells[xIndex];
+                if (getIntersectionPercent(cell, box) > MIN_CELL_CONTENT_INTERSECTION_PERCENT) {
+                    return cell;
+                }
+            }
         }
         return null;
+    }
+
+    private static double getIntersectionPercent(TableBorderCell cell, BoundingBox boundingBox) {
+        double xIntersection = Math.min(Math.min(cell.getWidth(), boundingBox.getWidth()),
+                Math.min(cell.getRightX() - boundingBox.getLeftX(), boundingBox.getRightX() - cell.getLeftX()));
+        double yIntersection = Math.min(Math.min(cell.getHeight(), boundingBox.getHeight()),
+                Math.min(cell.getTopY() - boundingBox.getBottomY(), boundingBox.getTopY() - cell.getBottomY()));
+        if (xIntersection <= 0.0 || yIntersection <= 0.0) {
+            return 0.0;
+        }
+        return (xIntersection / boundingBox.getWidth()) * (yIntersection / boundingBox.getHeight());
     }
 }

@@ -5,7 +5,7 @@ import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.*;
 import org.verapdf.wcag.algorithms.entities.SemanticParagraph;
 import org.verapdf.wcag.algorithms.entities.SemanticSpan;
 import org.verapdf.wcag.algorithms.entities.SemanticHeading;
@@ -18,12 +18,8 @@ import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.content.LineArtChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.ImageChunk;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListLabelsUtils;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -397,8 +393,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 
 	private void acceptImageCaption(INode imageNode, INode previousNode, INode nextNode) {
 		SemanticImageNode image = (SemanticImageNode)StaticContainers.getAccumulatedNodeMapper().get(imageNode);
-		double previousCaptionProbability = NodeUtils.imageCaptionProbability(previousNode, image);
-		double nextCaptionProbability = NodeUtils.imageCaptionProbability(nextNode, image);
+		double previousCaptionProbability = CaptionUtils.imageCaptionProbability(previousNode, image);
+		double nextCaptionProbability = CaptionUtils.imageCaptionProbability(nextNode, image);
 		double captionProbability;
 		INode captionNode;
 		if (previousCaptionProbability > nextCaptionProbability) {
