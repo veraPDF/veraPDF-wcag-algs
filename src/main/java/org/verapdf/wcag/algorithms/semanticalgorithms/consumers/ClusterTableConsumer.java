@@ -166,24 +166,23 @@ public class ClusterTableConsumer {
     }
 
     public static void detectTableCaptions(BoundingBox tableBoundingBox, INode tableRoot) {
-        detectTableCaption(tableBoundingBox, tableRoot.getPreviousNeighbor());
-        detectTableCaption(tableBoundingBox, tableRoot.getNextNeighbor());
-    }
-
-    private static void detectTableCaption(BoundingBox tableBoundingBox, INode node) {
-        if (node == null) {
-            return;
+        INode previousNode = tableRoot.getPreviousNeighbor();
+        INode nextNode = tableRoot.getNextNeighbor();
+        double previousCaptionProbability = CaptionUtils.tableCaptionProbability(previousNode, tableBoundingBox);
+        double nextCaptionProbability = CaptionUtils.tableCaptionProbability(nextNode, tableBoundingBox);
+        double captionProbability;
+        INode captionNode;
+        if (previousCaptionProbability > nextCaptionProbability) {
+            captionProbability = previousCaptionProbability;
+            captionNode = previousNode;
+        } else {
+            captionProbability = nextCaptionProbability;
+            captionNode = nextNode;
         }
-        if (node.getSemanticType() == SemanticType.HEADING ||
-            node.getSemanticType() == SemanticType.NUMBER_HEADING ||
-            node.getSemanticType() == SemanticType.LIST) {
-            return;
-        }
-        INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
-        double captionProbability = CaptionUtils.tableCaptionProbability(accumulatedNode, tableBoundingBox);
         if (captionProbability >= TableUtils.MERGE_PROBABILITY_THRESHOLD) {
-            StaticContainers.getAccumulatedNodeMapper().updateNode(node, new SemanticCaption((SemanticTextNode) accumulatedNode),
-                    captionProbability * node.getCorrectSemanticScore(), SemanticType.CAPTION);
+            StaticContainers.getAccumulatedNodeMapper().updateNode(captionNode,
+                    new SemanticCaption((SemanticTextNode) StaticContainers.getAccumulatedNodeMapper().get(captionNode)),
+                    captionProbability * captionNode.getCorrectSemanticScore(), SemanticType.CAPTION);
         }
     }
 

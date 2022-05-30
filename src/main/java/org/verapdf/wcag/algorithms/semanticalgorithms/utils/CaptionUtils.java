@@ -38,10 +38,19 @@ public class CaptionUtils {
 		if (node == null) {
 			return 0.0;
 		}
-		if (!(node instanceof SemanticTextNode)) {
+		if (node.getSemanticType() == SemanticType.HEADING ||
+				node.getSemanticType() == SemanticType.NUMBER_HEADING ||
+				node.getSemanticType() == SemanticType.LIST) {
 			return 0.0;
 		}
-		SemanticTextNode textNode = (SemanticTextNode) node;
+		INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
+		if (accumulatedNode == null) {
+			return 0.0;
+		}
+		if (!(accumulatedNode instanceof SemanticTextNode)) {
+			return 0.0;
+		}
+		SemanticTextNode textNode = (SemanticTextNode) accumulatedNode;
 		double captionProbability = captionVerticalProbability(textNode, tableBoundingBox);
 		captionProbability *= captionHorizontalProbability(textNode, tableBoundingBox);
 		captionProbability *= getLinesNumberCaptionProbability(textNode);
