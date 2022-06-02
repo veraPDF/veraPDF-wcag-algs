@@ -96,6 +96,7 @@ class AccumulatedNodeSemanticsCheckerTests {
 				Arguments.of("headings/nutshell_heading.json"),
 				Arguments.of("headings/span_as_heading.json"),
 				Arguments.of("headings/nutshell_before_table.json"),
+				Arguments.of("headings/heading_only_image_after.json"),
 //				Arguments.of("headings/nutshell_contents.json"),
 //				Arguments.of("headings/heading_Nota.De.Tweede.json"),
 				Arguments.of("captions/caption1.json"),

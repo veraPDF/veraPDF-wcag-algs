@@ -19,7 +19,8 @@ public class NodeUtils {
 	private static final double[] HEADING_PROBABILITY_PARAMS_DIFF_FONT = {0.44, 0.1, 0.4, 0.23, 0.35, 0.1};
 	private static final double[] HEADING_EPSILONS = {0.05, 0.08};
 
-	public static double headingProbability(INode node, INode previousNode, INode nextNode, INode nextNextNode, SemanticType initialSemanticType) {
+	public static double headingProbability(INode node, INode previousNode, INode nextNode, INode nextNextNode,
+	                                        INode initialNode) {
 		if (node == null) {
 			return 0.0;
 		}
@@ -65,12 +66,15 @@ public class NodeUtils {
 		if (textNode.isStartsWithArabicNumber()) {
 			headingProbability += HEADING_PROBABILITY_PARAMS[2];
 		}
+		SemanticType initialSemanticType = initialNode.getInitialSemanticType();
 		if (SemanticType.HEADING.equals(initialSemanticType) || SemanticType.NUMBER_HEADING.equals(initialSemanticType)) {
 			headingProbability += HEADING_PROBABILITY_PARAMS[3];
 		}
-		if (nextNode != null && !node.getPageNumber().equals(nextNode.getPageNumber())) {
+		INode nextNeighbor = initialNode.getNextNode();
+		if (nextNeighbor != null && !node.getPageNumber().equals(nextNeighbor.getPageNumber())) {
 			headingProbability -= HEADING_PROBABILITY_PARAMS[7];
 		}
+
 		return Math.max(Math.min(headingProbability * getLinesNumberHeadingProbability(textNode), 1.0), 0.0);
 	}
 
