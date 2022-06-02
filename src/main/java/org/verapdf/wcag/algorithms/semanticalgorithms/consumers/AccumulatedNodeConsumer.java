@@ -333,7 +333,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		}
 		double headingProbability = NodeUtils.headingProbability(StaticContainers.getAccumulatedNodeMapper().get(node),
 				StaticContainers.getAccumulatedNodeMapper().get(previousNode), StaticContainers.getAccumulatedNodeMapper().get(nextNode),
-				StaticContainers.getAccumulatedNodeMapper().get(nextNextNode), node.getInitialSemanticType());
+				StaticContainers.getAccumulatedNodeMapper().get(nextNextNode), node);
 		if (headingProbability >= MERGE_PROBABILITY_THRESHOLD) {
 			INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
 			if (node.getInitialSemanticType() == SemanticType.NUMBER_HEADING) {
