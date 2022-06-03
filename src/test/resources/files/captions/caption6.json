@@ -5,7 +5,7 @@
       "type":"Document",
       "children":[
         {
-          "type":"Part",
+          "type":"Sect",
           "children":[
             {
               "type":"P",

@@ -2,120 +2,178 @@ package org.verapdf.wcag.algorithms.entities.content;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class TextColumn extends TextInfoChunk {
-    private final List<TextLine> textLines = new ArrayList<>();
+
+    private final List<TextBlock> textBlocks = new ArrayList<>();
 
     public TextColumn() {
     }
 
     public TextColumn(TextLine line) {
-        super(line.getBoundingBox(), line.getFontSize(), line.getBaseLine());
-        textLines.add(line);
+        textBlocks.add(new TextBlock(line));
     }
 
     public TextColumn(TextColumn column) {
         super(column.getBoundingBox(), column.getFontSize(), column.getBaseLine());
-        textLines.addAll(column.getLines());
+        textBlocks.addAll(column.getBlocks());
     }
 
-    public List<TextLine> getLines() {
-        return textLines;
+    public List<TextBlock> getBlocks() {
+        return textBlocks;
     }
+
+	public int getBlocksNumber() {
+		return textBlocks.size();
+	}
+
+
+	public TextBlock getFirstTextBlock() {
+    	if (!textBlocks.isEmpty()) {
+    		return textBlocks.get(0);
+	    }
+    	return null;
+    }
+
+	public TextBlock getLastTextBlock() {
+		if (!textBlocks.isEmpty()) {
+			return textBlocks.get(textBlocks.size() - 1);
+		}
+		return null;
+	}
+
+	public void setLastTextBlock(TextBlock block) {
+    	if (!textBlocks.isEmpty()) {
+    		textBlocks.set(textBlocks.size() - 1, block);
+	    } else {
+		    textBlocks.add(block);
+	    }
+	}
+
+	public TextBlock getSecondTextBlock() {
+		if (textBlocks.size() > 1) {
+			return textBlocks.get(1);
+		}
+		return null;
+	}
+
+	public TextBlock getPenultTextBlock() {
+		if (textBlocks.size() > 1) {
+			return textBlocks.get(textBlocks.size() - 2);
+		}
+		return null;
+	}
+
+	public List<TextLine> getLines() {
+    	List<TextLine> textLines = new ArrayList<>();
+    	for (TextBlock textBlock : textBlocks) {
+    		textLines.addAll(textBlock.getLines());
+	    }
+		return textLines;
+	}
 
     public TextLine getFirstLine() {
-        if (textLines.isEmpty()) {
+        if (textBlocks.isEmpty()) {
             return null;
         }
-        return textLines.get(0);
+        return textBlocks.get(0).getFirstLine();
     }
 
     public TextLine getLastLine() {
-        if (textLines.isEmpty()) {
+        if (textBlocks.isEmpty()) {
             return null;
         }
-        return textLines.get(textLines.size() - 1);
+        return textBlocks.get(textBlocks.size() - 1).getLastLine();
     }
 
     public void setLastLine(TextLine lastLine) {
-        if (!textLines.isEmpty()) {
-            textLines.set(textLines.size() - 1, lastLine);
+        if (!textBlocks.isEmpty()) {
+            textBlocks.get(textBlocks.size() - 1).setLastLine(lastLine);
         } else {
-            textLines.add(lastLine);
+            textBlocks.add(new TextBlock(lastLine));
         }
     }
 
-    public void setFirstLine(TextLine lastLine) {
-        if (!textLines.isEmpty()) {
-            textLines.set(0, lastLine);
+    public void setFirstLine(TextLine firstLine) {
+        if (!textBlocks.isEmpty()) {
+            textBlocks.get(0).setFirstLine(firstLine);
         } else {
-            textLines.add(lastLine);
+            textBlocks.add(new TextBlock(firstLine));
         }
     }
 
     public TextLine getSecondLine() {
-        if (textLines.size() > 1) {
-            return textLines.get(1);
+        if (!textBlocks.isEmpty()) {
+            TextBlock firstBlock =  getFirstTextBlock();
+            if (firstBlock.getLinesNumber() > 1) {
+                return firstBlock.getSecondLine();
+            }
+            if (textBlocks.size() > 1) {
+            	return getSecondTextBlock().getFirstLine();
+            }
         }
         return null;
     }
 
     public TextLine getPenultLine() {
-        if (textLines.size() > 1) {
-            return textLines.get(textLines.size() - 2);
-        }
+	    if (!textBlocks.isEmpty()) {
+		    TextBlock lastBlock =  getLastTextBlock();
+		    if (lastBlock.getLines().size() > 1) {
+			    return lastBlock.getPenultLine();
+		    }
+		    if (textBlocks.size() > 1) {
+		    	return getPenultTextBlock().getLastLine();
+		    }
+	    }
         return null;
     }
 
     public void add(TextLine line) {
-        textLines.add(line);
+        textBlocks.add(new TextBlock(line));
         super.add(line);
     }
 
     public int getLinesNumber() {
-        return textLines.size();
+        return textBlocks.stream().mapToInt(TextBlock::getLinesNumber).sum();
     }
 
     public void add(TextColumn column) {
-        textLines.addAll(column.getLines());
+        textBlocks.addAll(column.getBlocks());
         super.add(column);
     }
 
     public boolean isEmpty() {
-        return textLines.isEmpty() || textLines.stream().allMatch(TextLine::isEmpty);
+        return textBlocks.isEmpty() || textBlocks.stream().allMatch(TextBlock::isEmpty);
     }
 
-    @Override
-    public String toString() {
-        if (textLines.isEmpty()) {
-            return "";
-        }
-        StringBuilder result = new StringBuilder(textLines.get(0).getValue());
-        for (int i = 1; i < textLines.size(); ++i) {
-            result.append('\n').append(textLines.get(i).getValue());
-        }
-        return result.toString();
+    public boolean hasOnlyOneBlock() {
+    	return textBlocks.size() == 1;
     }
 
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + textLines.size();
-        for (TextLine textLine : textLines) {
-            result = 31 * result + textLine.hashCode();
-        }
-        return result;
-    }
+	@Override
+	public String toString() {
+		StringBuilder stringBuilder = new StringBuilder("");
+		for (TextBlock textBlock : textBlocks) {
+			stringBuilder.append(textBlock);
+		}
+		return stringBuilder.toString();
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (!super.equals(o)) {
-            return false;
-        }
-        if (!(o instanceof TextColumn)) {
-            return false;
-        }
-        TextColumn that = (TextColumn) o;
-        return this.textLines.equals(that.getLines());
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (!super.equals(o)) {
+			return false;
+		}
+		if (!(o instanceof TextColumn)) {
+			return false;
+		}
+		TextColumn that = (TextColumn) o;
+		return this.textBlocks.equals(that.textBlocks);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), textBlocks);
+	}
 }

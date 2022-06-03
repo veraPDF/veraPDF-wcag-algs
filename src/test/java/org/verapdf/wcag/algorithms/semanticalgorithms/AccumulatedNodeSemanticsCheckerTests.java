@@ -40,7 +40,7 @@ class AccumulatedNodeSemanticsCheckerTests {
 
 	static Stream<Arguments> semanticCorrectnessTestParams() {
 		return Stream.of(
-				Arguments.of("0.json", 0.042d, SemanticType.PARAGRAPH),
+				Arguments.of("0.json", 0d, SemanticType.PART),
 				Arguments.of("1.json", 1d, SemanticType.PARAGRAPH),
 				Arguments.of("2.json", 1d, SemanticType.SPAN),
 				Arguments.of("3.json", 1d, SemanticType.PARAGRAPH),
@@ -109,7 +109,8 @@ class AccumulatedNodeSemanticsCheckerTests {
 				Arguments.of("spans/Span1.json"),
 				Arguments.of("paragraphs/one_line_vertical_paragraph.json"),
 				Arguments.of("paragraphs/paragraph1.json"),
-				Arguments.of("paragraphs/paragraph_arrows.json")
+				Arguments.of("paragraphs/paragraph_arrows.json"),
+				Arguments.of("paragraphs/lwg_footnote.json")
 		                );
 	}
 

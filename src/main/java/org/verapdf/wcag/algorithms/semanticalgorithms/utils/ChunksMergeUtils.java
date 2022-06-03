@@ -16,6 +16,7 @@ public class ChunksMergeUtils {
 	private static final double FONT_LEADING_INTERVAL_STANDARD = 1;
 	private static final double[] DEFAULT_FONT_CHAR_SPACING_INTERVAL = {0, 0.67};
 	private static final double[] DEFAULT_FONT_LEADING_INTERVAL = {0.2, 1.5};
+	private static final double[] PART_FONT_LEADING_INTERVAL = {0.2, 1.5};
 
 	private static final double TO_LINE_PROBABILITY_THRESHOLD = 0.75;
 	private static final double[] NORMAL_LINE_PROBABILITY_PARAMS = {2, 0.033};
@@ -271,6 +272,15 @@ public class ChunksMergeUtils {
 		return resultProbability;
 	}
 
+	public static double toPartMergeProbability(TextLine x, TextLine y, TextLine penultLine, TextLine secondLine) {
+		double resultProbability = 1;
+
+		resultProbability *= mergeLeadingProbability(x, y, PART_FONT_LEADING_INTERVAL);
+		resultProbability *= mergeIndentationProbability(secondLine, penultLine);
+
+		return resultProbability;
+	}
+
 	public static double toColumnsMergeProbability(TextLine x, TextLine y) {
 		if (Math.abs(x.getFontSize() - y.getFontSize()) > FONT_SIZE_DIFFERENCE_PARAMS[0]) {
 			return 0;
@@ -297,6 +307,10 @@ public class ChunksMergeUtils {
 	}
 
 	public static double mergeLeadingProbability(TextLine x, TextLine y) {
+		return mergeLeadingProbability(x, y, DEFAULT_FONT_LEADING_INTERVAL);
+	}
+
+	public static double mergeLeadingProbability(TextLine x, TextLine y, double[] fontLeadingInterval) {
 		if (Math.abs(x.getFontSize() - y.getFontSize()) > FONT_SIZE_DIFFERENCE_PARAMS[1]) {
 			return 0;
 		}
@@ -314,7 +328,7 @@ public class ChunksMergeUtils {
 		double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
 		double baseLineDifference = Math.abs(x.getBaseLine() - y.getBaseLine());
 
-		return getUniformProbability(DEFAULT_FONT_LEADING_INTERVAL, baseLineDifference / maxFontSize,
+		return getUniformProbability(fontLeadingInterval, baseLineDifference / maxFontSize,
 		                             FONT_LEADING_INTERVAL_STANDARD);
 	}
 
