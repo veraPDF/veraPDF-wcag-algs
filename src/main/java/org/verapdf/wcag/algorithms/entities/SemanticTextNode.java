@@ -3,18 +3,14 @@ package org.verapdf.wcag.algorithms.entities;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
-import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ArabicNumbersListLabelsDetectionAlgorithm;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ListLabelsDetectionAlgorithm;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Comparator;
+import java.util.*;
 
 public class SemanticTextNode extends SemanticNode {
     private final List<TextColumn> columns;
@@ -103,20 +99,21 @@ public class SemanticTextNode extends SemanticNode {
 
     public int getLinesNumber() {
         int linesNumber = 0;
-        for (TextColumn textColumn : columns) {
+        for (TextColumn textColumn : getColumns()) {
             linesNumber += textColumn.getLinesNumber();
         }
         return linesNumber;
     }
 
     public int getColumnsNumber() {
-        return columns.size();
+        return getColumns().size();
     }
 
     public TextLine getFirstLine() {
-        if (!columns.isEmpty()) {
-            if (!getFirstColumn().getLines().isEmpty()) {
-                return getFirstColumn().getFirstLine();
+        if (!getColumns().isEmpty()) {
+            TextColumn firstColumn = getFirstColumn();
+            if (!firstColumn.getLines().isEmpty()) {
+                return firstColumn.getFirstLine();
             }
         }
         return null;
@@ -150,6 +147,7 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     public TextColumn getFirstColumn() {
+        List<TextColumn> columns = getColumns();
         if (columns.isEmpty()) {
             return null;
         }
@@ -157,6 +155,7 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     public TextColumn getLastColumn() {
+        List<TextColumn> columns = getColumns();
         if (columns.isEmpty()) {
             return null;
         }
@@ -164,6 +163,7 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     public TextColumn getPenultColumn() {
+        List<TextColumn> columns = getColumns();
         if (columns.size() < 2) {
             return null;
         }
@@ -171,14 +171,14 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     public TextLine getSecondLine() {//fix?
-        if (!columns.isEmpty()) {
+        if (!getColumns().isEmpty()) {
             return getFirstColumn().getSecondLine();
         }
         return null;
     }
 
     public TextLine getPenultLine() {//fix?
-        if (!columns.isEmpty()) {
+        if (!getColumns().isEmpty()) {
             return getLastColumn().getPenultLine();
         }
         return null;
@@ -190,8 +190,8 @@ public class SemanticTextNode extends SemanticNode {
 
     public double getFirstBaseline() {
         if (!isEmpty()) {
-            double baseLine = -Double.MAX_VALUE;;
-            for (TextColumn column : columns) {
+            double baseLine = -Double.MAX_VALUE;
+            for (TextColumn column : getColumns()) {
                 baseLine = Math.max(baseLine, column.getFirstLine().getBaseLine());
             }
             return baseLine;
@@ -202,7 +202,7 @@ public class SemanticTextNode extends SemanticNode {
     public double getLastBaseline() {
         if (!isEmpty()) {
             double baseLine = Double.MAX_VALUE;
-            for (TextColumn column : columns) {
+            for (TextColumn column : getColumns()) {
                 baseLine = Math.min(baseLine, column.getLastLine().getBaseLine());
             }
             return baseLine;
@@ -211,6 +211,7 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     public boolean isEmpty() {
+        List<TextColumn> columns = getColumns();
         return columns.isEmpty() || columns.stream().allMatch(TextColumn::isEmpty);
     }
 
@@ -223,7 +224,7 @@ public class SemanticTextNode extends SemanticNode {
 
     private double calculateFontWeight() {
         Map<Double, Double> fontWeightMap = new HashMap<>();
-        for (TextColumn column : columns) {
+        for (TextColumn column : getColumns()) {
             for (TextLine line : column.getLines()) {
                 for (TextChunk chunk : line.getTextChunks()) {
                     if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
@@ -244,7 +245,7 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     public TextLine getFirstNonSpaceLine() {
-        for (TextColumn column : columns) {
+        for (TextColumn column : getColumns()) {
             for (TextLine line : column.getLines()) {
                 if (!line.isEmpty() && !line.isSpaceLine()) {
                     return line;
@@ -271,7 +272,7 @@ public class SemanticTextNode extends SemanticNode {
     private double calculateFontSize() {
         Map<Double, Double> fontSizeMap = new HashMap<>();
         maxFontSize = 0.0;
-        for (TextColumn column : columns) {
+        for (TextColumn column : getColumns()) {
             for (TextLine line : column.getLines()) {
                 for (TextChunk chunk : line.getTextChunks()) {
                     if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
@@ -301,7 +302,7 @@ public class SemanticTextNode extends SemanticNode {
 
     private double calculateItalicAngle() {
         Map<Double, Double> italicAngleMap = new HashMap<>();
-        for (TextColumn column : columns) {
+        for (TextColumn column : getColumns()) {
             for (TextLine line : column.getLines()) {
                 for (TextChunk chunk : line.getTextChunks()) {
                     if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
@@ -330,7 +331,7 @@ public class SemanticTextNode extends SemanticNode {
 
     private double[] calculateTextColor() {
         Map<double[], Double> textColorMap = new HashMap<>();
-        for (TextColumn column : columns) {
+        for (TextColumn column : getColumns()) {
             for (TextLine line : column.getLines()) {
                 for (TextChunk chunk : line.getTextChunks()) {
                     if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
@@ -359,7 +360,7 @@ public class SemanticTextNode extends SemanticNode {
 
     private String calculateFontName() {
         Map<String, Double> fontNameMap = new HashMap<>();
-        for (TextColumn column : columns) {
+        for (TextColumn column : getColumns()) {
             for (TextLine line : column.getLines()) {
                 for (TextChunk chunk : line.getTextChunks()) {
                     if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
@@ -392,7 +393,7 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     public boolean isSpaceNode() {
-        for (TextColumn column : columns) {
+        for (TextColumn column : getColumns()) {
             for (TextLine line : column.getLines()) {
                 for (TextChunk chunk : line.getTextChunks()) {
                     if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
@@ -415,7 +416,7 @@ public class SemanticTextNode extends SemanticNode {
 
     public String getValue() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (TextColumn textColumn : columns) {
+        for (TextColumn textColumn : getColumns()) {
             stringBuilder.append(textColumn);
         }
         return stringBuilder.toString();

@@ -1,25 +1,13 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
-import org.verapdf.wcag.algorithms.entities.INode;
+import org.verapdf.wcag.algorithms.entities.*;
+import org.verapdf.wcag.algorithms.entities.content.*;
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.*;
-import org.verapdf.wcag.algorithms.entities.SemanticParagraph;
-import org.verapdf.wcag.algorithms.entities.SemanticSpan;
-import org.verapdf.wcag.algorithms.entities.SemanticHeading;
-import org.verapdf.wcag.algorithms.entities.SemanticImageNode;
-import org.verapdf.wcag.algorithms.entities.SemanticFigure;
-import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
-import org.verapdf.wcag.algorithms.entities.SemanticCaption;
-import org.verapdf.wcag.algorithms.entities.SemanticNumberHeading;
-import org.verapdf.wcag.algorithms.entities.content.TextColumn;
-import org.verapdf.wcag.algorithms.entities.content.TextLine;
-import org.verapdf.wcag.algorithms.entities.content.LineArtChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
-import org.verapdf.wcag.algorithms.entities.content.TextChunk;
-import org.verapdf.wcag.algorithms.entities.content.ImageChunk;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,18 +42,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 						(child instanceof SemanticImageNode) ||
 						(child instanceof SemanticFigure) ||
 						child.getSemanticType() == null));
-		boolean isSpan  = isLeafChild || node.getChildren()
-		                      				.stream()
-		                      				.allMatch(child -> ((child instanceof SemanticSpan) ||
-		                                          (child instanceof SemanticImageNode) ||
-									              (child instanceof SemanticFigure) ||
-		                                          child.getSemanticType() == SemanticType.SPAN ||
-		                                          child.getSemanticType() == null));
-		if (node.getInitialSemanticType() == SemanticType.SPAN && isSpan) {
-			acceptSemanticSpan(node);
-		} else {
-			acceptSemanticParagraph(node);
-		}
+
+		acceptSpanParagraphPart(node, isLeafChild);
 
 		acceptSemanticImage(node);
 
@@ -143,87 +121,61 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		}
 	}
 
-	private void acceptSemanticSpan(INode node) {
-		double spanProbability = 1;
-		SemanticSpan span  = null;
+	private void acceptSpanParagraphPart(INode node, boolean isLeafChild) {
+		double probability = 1;
+		SemanticPart part = null;
 		for (INode child : node.getChildren()) {
 			if (child.getSemanticType() == null || SemanticType.isIgnoredStandardType(child.getInitialSemanticType()) ||
 					child.getSemanticType().equals(SemanticType.FIGURE)) {
 				continue;
 			}
 			INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
-			if (span == null) {
-				span = buildSpanFromNode(accumulatedChild);
-				spanProbability = accumulatedChild.getCorrectSemanticScore();
+			if (part == null) {
+				part = buildPartFromNode(accumulatedChild);
+				probability = accumulatedChild.getCorrectSemanticScore();
 			} else {
-				spanProbability = Math.min(spanProbability, toSpanMergeProbability(span, accumulatedChild));
+				probability = Math.min(probability, toPartMergeProbability(part, accumulatedChild));
 			}
 		}
-		StaticContainers.getAccumulatedNodeMapper().updateNode(node, span, spanProbability, SemanticType.SPAN);
+
+		SemanticType semanticType = SemanticType.PART;
+		INode accumulatedNode = part;
+		if (part != null && part.getColumns().stream().allMatch(TextColumn::hasOnlyOneBlock)) {
+			boolean isSpan  = SemanticType.SPAN.equals(node.getInitialSemanticType()) &&
+			                  (isLeafChild || node.getChildren().stream()
+			                                      .allMatch(child -> ((child instanceof SemanticSpan) ||
+			                                                          (child instanceof SemanticImageNode) ||
+			                                                          (child instanceof SemanticFigure) ||
+			                                                          child.getSemanticType() == SemanticType.SPAN ||
+			                                                          child.getSemanticType() == null)));
+			if (isSpan) {
+				semanticType = SemanticType.SPAN;
+				accumulatedNode = new SemanticSpan(part.getBoundingBox(), part.getColumns());
+			} else {
+				semanticType = SemanticType.PARAGRAPH;
+				accumulatedNode = new SemanticParagraph(part.getBoundingBox(), part.getColumns());
+			}
+		}
+		StaticContainers.getAccumulatedNodeMapper().updateNode(node, accumulatedNode, probability, semanticType);
 	}
 
-	private SemanticSpan buildSpanFromNode(INode node) {
+	private SemanticPart buildPartFromNode(INode node) {
 		if (isNullableSemanticType(node)) {
 			return null;
 		}
-		switch (node.getSemanticType()) {
-			case SPAN:
-				return new SemanticSpan((SemanticSpan) node);
-			default:
-				return null;
-		}
-	}
-
-	private double toSpanMergeProbability(SemanticSpan span, INode node) {
-		if (isNullableSemanticType(node)) {
-			return 0d;
-		}
-		switch (node.getSemanticType()) {
-			case SPAN:
-				return toTextNodeMergeProbability(span, (SemanticSpan) node);
-			default:
-				return 0d;
-		}
-	}
-
-	private void acceptSemanticParagraph(INode node) {
-		double paragraphProbability = 1;
-		SemanticParagraph paragraph = null;
-		for (INode child : node.getChildren()) {
-			if (child.getSemanticType() == null || SemanticType.isIgnoredStandardType(child.getInitialSemanticType()) ||
-					child.getSemanticType().equals(SemanticType.FIGURE)) {
-				continue;
-			}
-			INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
-			if (paragraph == null) {
-				paragraph = buildParagraphFromNode(accumulatedChild);
-				paragraphProbability = accumulatedChild.getCorrectSemanticScore();
-			} else {
-				paragraphProbability = Math.min(paragraphProbability, toParagraphMergeProbability(paragraph, accumulatedChild));
-			}
-		}
-		StaticContainers.getAccumulatedNodeMapper().updateNode(node, paragraph, paragraphProbability, SemanticType.PARAGRAPH);
-	}
-
-	private SemanticParagraph buildParagraphFromNode(INode node) {
-		if (isNullableSemanticType(node)) {
-			return null;
-		}
-		if (node instanceof SemanticParagraph) {
-			return new SemanticParagraph((SemanticParagraph) node);
-		} else if (node instanceof SemanticTextNode) {
+		 if (node instanceof SemanticTextNode) {
 			SemanticTextNode textNode = (SemanticTextNode) node;
-			return new SemanticParagraph(textNode.getBoundingBox(), textNode.getColumns());
+			return new SemanticPart(textNode.getBoundingBox(), textNode.getColumns());
 		}
 		return null;
 	}
 
-	private double toParagraphMergeProbability(SemanticParagraph paragraph, INode node) {
+	private double toPartMergeProbability(SemanticPart part, INode node) {
 		if (isNullableSemanticType(node)) {
 			return 0d;
 		}
 		if (node instanceof SemanticTextNode) {
-			return toTextNodeMergeProbability(paragraph, (SemanticTextNode) node);
+			return toTextNodeMergeProbability(part, (SemanticTextNode) node);
 		}
 		return 0d;
 	}
@@ -236,7 +188,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		return false;
 	}
 
-	private double toTextNodeMergeProbability(SemanticTextNode currentTextNode, SemanticTextNode nextTextNode) {
+	private double toTextNodeMergeProbability(SemanticPart currentTextNode, SemanticTextNode nextTextNode) {
 		if (nextTextNode.isEmpty()) {
 			return 1;
 		}
@@ -251,21 +203,42 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			differentLinesProbability = ChunksMergeUtils.mergeLeadingProbability(lastLine, nextLine);
 		}
 		double toColumnsMergeProbability = ChunksMergeUtils.toColumnsMergeProbability(lastLine, nextLine);
-		double footnoteProbability = ChunksMergeUtils.getFootnoteProbability(currentTextNode, nextTextNode, lastLine, nextLine);
+		double footnoteProbability = ChunksMergeUtils.getFootnoteProbability(currentTextNode, nextTextNode,
+		                                                                     lastLine, nextLine);
 		double mergeProbability;
-		if (footnoteProbability > Math.max(oneLineProbability, differentLinesProbability) &&
+		if (footnoteProbability > Math.max(toColumnsMergeProbability, Math.max(oneLineProbability,
+		                                                                       differentLinesProbability)) &&
 		    footnoteProbability > FOOTNOTE_MIN_PROBABILITY_THRESHOLD) {
 			mergeProbability = footnoteProbability;
-		} else if (oneLineProbability < Math.max(Math.max(differentLinesProbability, toColumnsMergeProbability), ONE_LINE_MIN_PROBABILITY_THRESHOLD)) {
-			if (differentLinesProbability >= toColumnsMergeProbability) {
-				mergeProbability = differentLinesProbability;
+		} else if (oneLineProbability < Math.max(Math.max(differentLinesProbability, toColumnsMergeProbability),
+		                                         ONE_LINE_MIN_PROBABILITY_THRESHOLD)) {
+			if (Math.max(differentLinesProbability, toColumnsMergeProbability) < MERGE_PROBABILITY_THRESHOLD) {
+				double toPartMergeProbability = 0.0;
+				TextLine penultLine = currentTextNode.getPenultLine();
+				TextLine secondLine = nextTextNode.getSecondLine();
+				if (penultLine != null && secondLine != null) {
+					toPartMergeProbability = ChunksMergeUtils.toPartMergeProbability(lastLine, nextLine, penultLine, secondLine);
+				}
+				mergeProbability = toPartMergeProbability;
 				TextColumn lastColumn = new TextColumn(currentTextNode.getLastColumn());
-				lastColumn.getLines().addAll(lines);
+				lastColumn.getBlocks().addAll(nextTextNode.getFirstColumn().getBlocks());
 				currentTextNode.setLastColumn(lastColumn);
 				if (nextTextNode.getColumnsNumber() > 1) {
 					currentTextNode.addAll(nextTextNode.getColumns().subList(1, nextTextNode.getColumnsNumber()));
 				}
-			} else {
+			}
+			else if (differentLinesProbability >= toColumnsMergeProbability) {
+				mergeProbability = differentLinesProbability;
+				TextColumn lastColumn = new TextColumn(currentTextNode.getLastColumn());
+				TextBlock lastBlock = new TextBlock(lastColumn.getLastTextBlock());
+				lastBlock.getLines().addAll(lines);
+				lastColumn.setLastTextBlock(lastBlock);
+				currentTextNode.setLastColumn(lastColumn);
+				if (nextTextNode.getColumnsNumber() > 1) {
+					currentTextNode.addAll(nextTextNode.getColumns().subList(1, nextTextNode.getColumnsNumber()));
+				}
+			}
+			else {
 				mergeProbability = toColumnsMergeProbability;
 				currentTextNode.addAll(nextTextNode.getColumns());
 			}
@@ -276,9 +249,11 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			lastLine.setNotLineEnd();
 			nextLine.setNotLineStart();
 			currentTextNode.setLastColumn(new TextColumn(currentTextNode.getLastColumn()));
+			TextBlock lastBlock = new TextBlock(currentTextNode.getLastColumn().getLastTextBlock());
 			lastLine = new TextLine(lastLine);
 			lastLine.add(nextLine);
-			currentTextNode.getLastColumn().setLastLine(lastLine);
+			lastBlock.setLastLine(lastLine);
+			currentTextNode.getLastColumn().setLastTextBlock(lastBlock);
 			if (lines.size() > 1) {
 				if (currentTextNode.getLastColumn().getLinesNumber() > 2 && lines.size() > 1) {
 					mergeProbability *= ChunksMergeUtils.toParagraphMergeProbability(currentTextNode.getPenultLine(), lastLine);
@@ -286,7 +261,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 				if (currentTextNode.getLastColumn().getLinesNumber() > 1 && lines.size() > 2) {
 					mergeProbability *= ChunksMergeUtils.toParagraphMergeProbability(lastLine, lines.get(1));
 				}
-				currentTextNode.getLastColumn().getLines().addAll(lines.subList(1, lines.size()));
+				currentTextNode.getLastColumn().getLastTextBlock().getLines().addAll(lines.subList(1, lines.size()));
 			}
 			if (nextTextNode.getColumnsNumber() > 1) {
 				currentTextNode.addAll(nextTextNode.getColumns().subList(1, nextTextNode.getColumnsNumber()));
@@ -343,6 +318,9 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 				} else if (accumulatedNode instanceof SemanticParagraph) {
 					StaticContainers.getAccumulatedNodeMapper().updateNode(node, new SemanticNumberHeading((SemanticParagraph)accumulatedNode),
 					           headingProbability * node.getCorrectSemanticScore(), SemanticType.NUMBER_HEADING);
+				} else if (accumulatedNode instanceof SemanticPart) {
+					StaticContainers.getAccumulatedNodeMapper().updateNode(node, new SemanticNumberHeading((SemanticPart)accumulatedNode),
+					           headingProbability * node.getCorrectSemanticScore(), SemanticType.NUMBER_HEADING);
 				}
 			} else {
 				if (accumulatedNode instanceof SemanticSpan) {
@@ -350,6 +328,9 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 					           headingProbability * node.getCorrectSemanticScore(), SemanticType.HEADING);
 				} else if (accumulatedNode instanceof SemanticParagraph) {
 					StaticContainers.getAccumulatedNodeMapper().updateNode(node, new SemanticHeading((SemanticParagraph)accumulatedNode),
+					           headingProbability * node.getCorrectSemanticScore(), SemanticType.HEADING);
+				} else if (accumulatedNode instanceof SemanticPart) {
+					StaticContainers.getAccumulatedNodeMapper().updateNode(node, new SemanticHeading((SemanticPart)accumulatedNode),
 					           headingProbability * node.getCorrectSemanticScore(), SemanticType.HEADING);
 				}
 			}

@@ -19,6 +19,11 @@ public class SemanticHeading extends SemanticParagraph {
 		setSemanticType(SemanticType.HEADING);
 	}
 
+	public SemanticHeading(SemanticPart part) {
+		super(part);
+		setSemanticType(SemanticType.HEADING);
+	}
+
 	public SemanticHeading(SemanticTextNode textNode) {
 		super(textNode);
 		setSemanticType(SemanticType.HEADING);

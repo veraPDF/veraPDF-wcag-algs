@@ -31,6 +31,7 @@ public class SemanticTypeMapper {
         map.put(SemanticType.CAPTION.getValue(), SemanticType.CAPTION);
         map.put(SemanticType.TITLE.getValue(), SemanticType.TITLE);
         map.put(SemanticType.BLOCK_QUOTE.getValue(), SemanticType.BLOCK_QUOTE);
+        map.put(SemanticType.PART.getValue(), SemanticType.PART);
     }
 
     public static boolean containsType(String type) {
