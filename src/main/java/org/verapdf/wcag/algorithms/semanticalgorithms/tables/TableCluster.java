@@ -117,7 +117,8 @@ public class TableCluster extends TextInfoChunk {
     public void mergeWithoutRowNumbers(TableCluster other) {
         List<TableTokenRow> result = new ArrayList<>();
 
-        int i = 0, j = 0;
+        int i = 0;
+        int j = 0;
         while (i < rows.size() && j < other.rows.size()) {
             TableTokenRow line = rows.get(i);
             TableTokenRow otherLine = other.rows.get(j);

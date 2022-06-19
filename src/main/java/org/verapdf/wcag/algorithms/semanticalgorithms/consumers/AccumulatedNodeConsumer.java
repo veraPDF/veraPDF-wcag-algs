@@ -80,7 +80,6 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 						}
 						if (!Objects.equals(textNode.getFontSize(), textChunk.getFontSize()) ||
 								!Objects.equals(textNode.getItalicAngle(), textChunk.getItalicAngle()) ||
-								!Objects.equals(textNode.getFontName(), textChunk.getFontName()) ||
 								!Arrays.equals(textNode.getTextColor(), textChunk.getFontColor()) ||
 								!Objects.equals(textNode.getFontWeight(), textChunk.getFontWeight())) {
 							textChunk.setHasSpecialStyle();

@@ -26,8 +26,12 @@ class AccumulatedNodeSemanticsCheckerTests {
 
 	static {
 		ignoredSemanticTypes.add(SemanticType.LINK);
+		ignoredSemanticTypes.add(SemanticType.ANNOT);
+		ignoredSemanticTypes.add(SemanticType.FORM);
 		ignoredSemanticTypes.add(SemanticType.TABLE);
 		ignoredSemanticTypes.add(SemanticType.TABLE_BODY);
+		ignoredSemanticTypes.add(SemanticType.TABLE_FOOTER);
+		ignoredSemanticTypes.add(SemanticType.TABLE_HEADERS);
 		ignoredSemanticTypes.add(SemanticType.TABLE_CELL);
 		ignoredSemanticTypes.add(SemanticType.TABLE_ROW);
 		ignoredSemanticTypes.add(SemanticType.TABLE_HEADER);

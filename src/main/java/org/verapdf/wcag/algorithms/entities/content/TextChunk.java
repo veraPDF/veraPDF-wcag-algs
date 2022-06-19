@@ -2,7 +2,6 @@ package org.verapdf.wcag.algorithms.entities.content;
 
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
