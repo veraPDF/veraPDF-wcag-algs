@@ -7,8 +7,6 @@ import java.util.Objects;
 
 public class TextChunkUtils {
 
-    private TextChunkUtils() {}
-
     public static final double WHITE_SPACE_FACTOR = 0.25;
 
     public static final double NEIGHBORS_EPSILON = 0.2;

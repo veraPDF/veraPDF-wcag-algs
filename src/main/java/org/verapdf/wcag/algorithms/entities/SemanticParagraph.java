@@ -1,7 +1,6 @@
 package org.verapdf.wcag.algorithms.entities;
 
 import org.verapdf.wcag.algorithms.entities.content.TextColumn;
-import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 

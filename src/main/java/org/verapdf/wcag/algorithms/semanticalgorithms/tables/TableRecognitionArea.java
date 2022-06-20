@@ -278,7 +278,7 @@ public class TableRecognitionArea {
         }
         result.append("    }, clusters={\n");
         for (TableCluster cluster : clusters) {
-            result.append('[').append(cluster).append("] : [").append(String.valueOf(cluster.getHeader())).append("]\n");
+            result.append('[').append(cluster).append("] : [").append(cluster.getHeader()).append("]\n");
         }
         result.append("    }, boundingBox=").append(boundingBox).append('\n');
         result.append("    , baseLine=").append(baseLine).append("\n}");

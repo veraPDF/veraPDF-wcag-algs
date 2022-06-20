@@ -13,7 +13,7 @@ import java.util.List;
 public class PDFList extends InfoChunk {
 
     private final Long id;
-    private final java.util.List<ListItem> listItems;
+    private final List<ListItem> listItems;
 
     public PDFList(Table table) {
         super(table.getBoundingBox());
@@ -26,7 +26,7 @@ public class PDFList extends InfoChunk {
         return listItems.size();
     }
 
-    public java.util.List<ListItem> getListItems() {
+    public List<ListItem> getListItems() {
         return listItems;
     }
 

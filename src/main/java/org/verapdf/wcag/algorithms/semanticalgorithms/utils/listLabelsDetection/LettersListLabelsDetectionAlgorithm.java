@@ -26,7 +26,7 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
         if (number == null) {
             return false;
         }
-        if (!substring.toUpperCase().equals(getStringFromNumber(number))) {
+        if (!substring.equalsIgnoreCase(getStringFromNumber(number))) {
             return false;
         }
         for (int i = 1; i < labels.size(); i++) {
@@ -39,7 +39,7 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
             if (nextNumber == null) {
                 return false;
             }
-            if (!substring.toUpperCase().equals(getStringFromNumber(nextNumber)) || nextNumber != ++number) {
+            if (!substring.equalsIgnoreCase(getStringFromNumber(nextNumber)) || nextNumber != ++number) {
                 return false;
             }
         }
