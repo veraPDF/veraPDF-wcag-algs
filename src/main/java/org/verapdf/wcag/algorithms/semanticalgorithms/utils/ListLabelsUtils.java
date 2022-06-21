@@ -18,6 +18,7 @@ public class ListLabelsUtils {
 
 	private static final Set<Character> labels = new HashSet<>(Arrays.asList('\u002D', '\u2022', '\u25CF', '\u2714',
 			'\u2717', '\u2794', '\u27A2', '\uE00A', '\uE00C', '\uF076', '\u2588', '\u25A0', '\u2013', '\uF0B7'));//office labels examples (-, •, ✔, ✗, ●, ➔, ➢), pdf files labels examples (█, ■)
+	private static final Character o =  '\u006F';
 
 	public static boolean isListLabel(String value) {
 		char label = value.charAt(0);
@@ -25,10 +26,11 @@ public class ListLabelsUtils {
 	}
 
 	public static boolean isLetterLabel(String value) {
-		if (value.length() < 2) {
-			return false;
+		boolean isFirstCharLetter = Character.isLetter(value.charAt(0));
+		if (value.length() > 2) {
+			return isFirstCharLetter && !Character.isLetter(value.charAt(1));
 		}
-		return Character.isLetter(value.charAt(0)) && !Character.isLetter(value.charAt(1));
+		return isFirstCharLetter;
 	}
 
 	public static boolean isListLabels(List<String> listLabels) {
@@ -140,17 +142,21 @@ public class ListLabelsUtils {
 	public static Set<ListInterval> getItemsWithEqualsLabels(List<String> items) {
 		Set<ListInterval> listIntervals = new HashSet<>();
 		char firstChar = items.get(0).charAt(0);
+		char secondChar = items.get(0).length() > 1 ? items.get(0).charAt(1) : ' ';
 		int index = 0;
 		for (int i = 1; i < items.size(); i++) {
 			if (items.get(i).charAt(0) != firstChar) {
-				if (index < i - 1 && labels.contains(firstChar)) {
+				if (index < i - 1 && (labels.contains(firstChar) ||
+				                      o.equals(firstChar) && !Character.isLetter(secondChar))) {
 					listIntervals.add(new ListInterval(index, i - 1));
 				}
 				firstChar = items.get(i).charAt(0);
+				secondChar = items.get(i).length() > 1 ? items.get(i).charAt(1) : ' ';
 				index = i;
 			}
 		}
-		if (index < items.size() - 1 && labels.contains(firstChar)) {
+		if (index < items.size() - 1 && (labels.contains(firstChar) ||
+		                                 o.equals(firstChar) && !Character.isLetter(secondChar))) {
 			listIntervals.add(new ListInterval(index, items.size() - 1));
 		}
 		return listIntervals;

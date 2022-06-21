@@ -43,7 +43,9 @@ public class ListTests {
                 Arguments.of("one_element_list.json", new int[]{}, true, true),
                 Arguments.of("one_element_start_with_number.json", new int[]{}, true, true),
                 Arguments.of("list_not_caption.json", new int[]{}, true, true),
-                Arguments.of("one_elem_list_letter_label.json", new int[]{}, true, true)
+                Arguments.of("one_elem_list_letter_label.json", new int[]{}, true, true),
+                Arguments.of("pdf_tagging_list_with_o_labels.json", new int[]{5}, true, true),
+                Arguments.of("pdf_tagging_one_elem_list_with_o_label.json", new int[]{4}, true, true)
                 );
     }
 
