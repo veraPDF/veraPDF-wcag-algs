@@ -341,12 +341,6 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		INode lastTextNode = null;
 		for (INode child : node.getChildren()) {
 			if (child != null) {
-				if (child.getSemanticType() == SemanticType.HEADING ||
-				    child.getSemanticType() == SemanticType.NUMBER_HEADING ||
-				    child.getSemanticType() == SemanticType.LIST) {
-					lastTextNode = null;
-					continue;
-				}
 				INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
 				if (accumulatedChild instanceof SemanticTextNode) {
 					SemanticTextNode textNode = (SemanticTextNode)accumulatedChild;

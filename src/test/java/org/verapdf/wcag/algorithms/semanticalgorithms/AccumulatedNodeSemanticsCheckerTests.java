@@ -114,7 +114,8 @@ class AccumulatedNodeSemanticsCheckerTests {
 				Arguments.of("paragraphs/one_line_vertical_paragraph.json"),
 				Arguments.of("paragraphs/paragraph1.json"),
 				Arguments.of("paragraphs/paragraph_arrows.json"),
-				Arguments.of("paragraphs/lwg_footnote.json")
+				Arguments.of("paragraphs/lwg_footnote.json"),
+				Arguments.of("paragraphs/paragraph_not_caption_danish.json")
 		                );
 	}
 
