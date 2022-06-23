@@ -153,13 +153,46 @@ public class ClusterTableConsumer {
      */
     private void updateTreeWithRecognizedTables(INode root) {
         initTreeNodeInfo(root);
+        List<INode> tableRoots = new ArrayList<>(tables.size());
         for (Table table : tables) {
-            INode tableRoot = updateTreeWithRecognizedTable(table, root);
-
-            if (tableRoot != null) {
-                if (updateNode(tableRoot, table.getId(), SemanticType.TABLE,
-                        table.getTableBorder() != null, table.getBoundingBox())) {
-                    detectTableCaptions(table.getBoundingBox(), tableRoot);
+            tableRoots.add(updateTreeWithRecognizedTable(table, root));
+        }
+        Integer firstTablePartIndex = null;
+        for (int i = 0; i < tables.size(); i++) {
+            Table table = tables.get(i);
+            INode tableRoot = tableRoots.get(i);
+            if (tableRoot == null) {
+                firstTablePartIndex = null;
+                continue;
+            }
+            if (firstTablePartIndex != null) {
+                if (tables.get(i - 1).getPageNumber() + 1 != table.getPageNumber()) {
+                    firstTablePartIndex = null;
+                } else if (tableRoots.get(i - 1) != tableRoot) {
+                    firstTablePartIndex = null;
+                } else if (!isNodeInsideTable(tableRoot, table.getId(), table.getBoundingBox())) {
+                    firstTablePartIndex = null;
+                    continue;
+                } else if (tableRoot.getLastPageNumber() == null || table.getPageNumber().equals(tableRoot.getLastPageNumber())) {
+                    if (updateNode(tableRoot, table.getId(), SemanticType.TABLE,
+                            table.getTableBorder() != null, table.getBoundingBox())) {
+                        detectTableCaptions(table.getBoundingBox(), tableRoot);
+                    }
+                }
+            }
+            if (firstTablePartIndex != null) {
+                continue;
+            }
+            if (tableRoot.getPageNumber() == null || table.getPageNumber().equals(tableRoot.getPageNumber())) {
+                if (tableRoot.getPageNumber() != null && tableRoot.getLastPageNumber() > table.getPageNumber()) {
+                    if (isNodeInsideTable(tableRoot, table.getId(), table.getBoundingBox())) {
+                        firstTablePartIndex = i;
+                    }
+                } else {
+                    if (updateNode(tableRoot, table.getId(), SemanticType.TABLE,
+                            table.getTableBorder() != null, table.getBoundingBox())) {
+                        detectTableCaptions(table.getBoundingBox(), tableRoot);
+                    }
                 }
             }
         }
@@ -334,7 +367,8 @@ public class ClusterTableConsumer {
     private boolean updateNode(INode node, Long id, SemanticType semanticType, boolean hasTableBorder,
                                BoundingBox boundingBox) {
         if ((((ListUtils.isListNode(node) && !hasTableBorder) || TableUtils.isTableNode(node)) &&
-            node.getRecognizedStructureId() != id) || !isNodeInsideTable(node, id, boundingBox)) {
+            node.getRecognizedStructureId() != id) || (semanticType != SemanticType.TABLE && (!isNodeInsideTable(node, id,
+                boundingBox) || (node.getPageNumber() != null && node.getPageNumber() < boundingBox.getPageNumber())))) {
                 node.setRecognizedStructureId(null);
             return false;
         }

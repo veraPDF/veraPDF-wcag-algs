@@ -258,6 +258,12 @@ public class TableRecognitionArea {
             return false;
         }
 
+        if (Math.min(boundingBox.getLeftX() - token.getBoundingBox().getLeftX(), token.getBoundingBox().getRightX() -
+                boundingBox.getRightX()) > TableUtils.NEXT_TOKEN_LENGTH_THRESHOLD * token.getFontSize()) {
+             isComplete = true;
+             return false;
+        }
+
         TableCluster cluster = new TableCluster(token);
         clusters.add(cluster);
         boundingBox.union(cluster.getBoundingBox());
