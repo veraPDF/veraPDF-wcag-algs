@@ -22,6 +22,11 @@ public class CaptionUtils {
 		if (node == null) {
 			return 0;
 		}
+		if (node.getSemanticType() == SemanticType.HEADING ||
+		    node.getSemanticType() == SemanticType.NUMBER_HEADING ||
+		    node.getSemanticType() == SemanticType.LIST) {
+			return 0;
+		}
 		INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
 		if (!(accumulatedNode instanceof SemanticTextNode)) {
 			return 0.0;
