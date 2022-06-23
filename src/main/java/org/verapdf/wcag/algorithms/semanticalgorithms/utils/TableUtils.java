@@ -18,6 +18,8 @@ public class TableUtils {
     public static final double MERGE_PROBABILITY_THRESHOLD = 0.75;
     public static final double HEADERS_PROBABILITY_THRESHOLD = 0.75;
 
+
+    public static final double NEXT_TOKEN_LENGTH_THRESHOLD = 1.2;
     public static final double NEXT_LINE_TOLERANCE_FACTOR = 1.05;
     public static final double NEXT_LINE_MAX_TOLERANCE_FACTOR = 1.5;
     public static final double ONE_LINE_TOLERANCE_FACTOR = 0.9;
