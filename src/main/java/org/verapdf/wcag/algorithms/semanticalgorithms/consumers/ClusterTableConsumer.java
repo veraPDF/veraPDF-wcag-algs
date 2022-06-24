@@ -178,6 +178,9 @@ public class ClusterTableConsumer {
                             table.getTableBorder() != null, table.getBoundingBox())) {
                         detectTableCaptions(table.getBoundingBox(), tableRoot);
                     }
+                    for (int index = firstTablePartIndex; index < i; index++) {
+                        StaticContainers.getIdMapper().put(tables.get(index).getId(), table.getId());
+                    }
                 }
             }
             if (firstTablePartIndex != null) {
@@ -189,9 +192,11 @@ public class ClusterTableConsumer {
                         firstTablePartIndex = i;
                     }
                 } else {
-                    if (updateNode(tableRoot, table.getId(), SemanticType.TABLE,
-                            table.getTableBorder() != null, table.getBoundingBox())) {
-                        detectTableCaptions(table.getBoundingBox(), tableRoot);
+                    if (isNodeInsideTable(tableRoot, table.getId(), table.getBoundingBox())) {
+                        if (updateNode(tableRoot, table.getId(), SemanticType.TABLE,
+                                table.getTableBorder() != null, table.getBoundingBox())) {
+                            detectTableCaptions(table.getBoundingBox(), tableRoot);
+                        }
                     }
                 }
             }
