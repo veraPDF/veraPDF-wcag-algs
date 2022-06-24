@@ -10,11 +10,7 @@ import org.verapdf.wcag.algorithms.entities.JsonToPdfTree;
 import org.verapdf.wcag.algorithms.entities.IDocument;
 import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
-import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.AccumulatedNodeConsumer;
-import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.TableBorderConsumer;
-import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ClusterTableConsumer;
-import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.LinesPreprocessingConsumer;
-import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.SemanticDocumentPreprocessingConsumer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 
@@ -46,7 +42,8 @@ public class ClusterTableTests {
                 Arguments.of("fake-table2-fix.json", new int[][] {{4, 5}, {4, 9}}, true, true),
                 Arguments.of("fake-table3.json", new int[][] {}, false, true),
                 Arguments.of("tableBorder.json", new int[][] {/*{3, 4}*/}, true, true),
-                Arguments.of("13-page-make-your-Acrobat-PDF-learning-resources-accessible.json", new int[][] {}, true, true),
+                Arguments.of("make-your-Acrobat-PDF-learning-resources-accessible-page-13.json", new int[][] {}, true, true),
+                Arguments.of("PDFUA-Ref-2-08_BookChapter-page-18.json", new int[][] {{2, 14}}, true, true),
                 Arguments.of("three-tables.json", new int[][] {{5, 6}, {4, 10}, {5, 4}}, false, false), // third table contains images
                 Arguments.of("PDFUA-Ref-2-05_BookChapter-german.json", new int[][] {{2, 24}}, false, true), // contents page is recognized as table, table on 6th page is not recognized
                 Arguments.of("PDFUA-Ref-2-02_Invoice.json", new int[][] {{4, 9}}, false, false),
@@ -81,6 +78,9 @@ public class ClusterTableTests {
 
         ClusterTableConsumer tableFinder = new ClusterTableConsumer();
         tableFinder.findTables(tree.getRoot());
+
+        SemanticDocumentPostprocessingConsumer documentPostprocessingConsumer = new SemanticDocumentPostprocessingConsumer();
+        documentPostprocessingConsumer.runPostprocessingChecks(tree);
 
         List<Table> resultTables = tableFinder.getTables();
 

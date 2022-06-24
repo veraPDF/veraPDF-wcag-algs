@@ -25,6 +25,7 @@ public class SemanticDocumentPostprocessingConsumer {
 		checkForTitle(tree);
 		checkForRepeatedCharacters(tree);
 		setLowestDepthErrorFlag(tree);
+		updateIDs(tree);
 	}
 
 	public void updateBoundingBoxes(ITree tree) {
@@ -186,5 +187,14 @@ public class SemanticDocumentPostprocessingConsumer {
 			boundingBox.setTopY(textChunk.getSymbolStartCoordinate(start));
 		}
 		resultBox.union(boundingBox);
+	}
+
+	private void updateIDs(ITree tree) {
+		for (INode node : tree) {
+			Long newId = StaticContainers.getIdMapper().get(node.getRecognizedStructureId());
+			if (newId != null) {
+				node.setRecognizedStructureId(newId);
+			}
+		}
 	}
 }
