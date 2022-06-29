@@ -25,11 +25,10 @@ import org.verapdf.wcag.algorithms.entities.RepeatedCharacters;
 import org.verapdf.wcag.algorithms.entities.content.LinesCollection;
 import org.verapdf.wcag.algorithms.entities.maps.AccumulatedNodeMapper;
 import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.IdMapper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class StaticContainers {
 
@@ -41,14 +40,14 @@ public class StaticContainers {
 
 	private static final ThreadLocal<List<RepeatedCharacters>> repeatedCharacters = new ThreadLocal<>();
 
-	private static final ThreadLocal<Map<Long,Long>> idMapper = new ThreadLocal<>();
+	private static final ThreadLocal<IdMapper> idMapper = new ThreadLocal<>();
 
 	public static void clearAllContainers(IDocument document) {
 		StaticContainers.accumulatedNodeMapper.set(new AccumulatedNodeMapper());
 		StaticContainers.tableBordersCollection.set(new TableBordersCollection());
 		StaticContainers.linesCollection.set(new LinesCollection(document));
 		StaticContainers.repeatedCharacters.set(new ArrayList<>());
-		StaticContainers.idMapper.set(new HashMap<>());
+		StaticContainers.idMapper.set(new IdMapper());
 	}
 
 	public static AccumulatedNodeMapper getAccumulatedNodeMapper() {
@@ -83,11 +82,11 @@ public class StaticContainers {
 		StaticContainers.repeatedCharacters.set(repeatedCharacters);
 	}
 
-	public static Map<Long,Long> getIdMapper() {
+	public static IdMapper getIdMapper() {
 		return idMapper.get();
 	}
 
-	public static void setIdMapper(Map<Long,Long> idMapper) {
+	public static void setIdMapper(IdMapper idMapper) {
 		StaticContainers.idMapper.set(idMapper);
 	}
 }

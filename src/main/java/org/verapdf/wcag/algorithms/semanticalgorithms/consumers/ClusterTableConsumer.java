@@ -180,6 +180,7 @@ public class ClusterTableConsumer {
                     }
                     for (int index = firstTablePartIndex; index < i; index++) {
                         StaticContainers.getIdMapper().put(tables.get(index).getId(), table.getId());
+                        tables.get(index).setId(table.getId());
                     }
                 }
             }
