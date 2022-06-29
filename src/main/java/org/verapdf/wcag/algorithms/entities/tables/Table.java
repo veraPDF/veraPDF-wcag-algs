@@ -18,7 +18,7 @@ public class Table extends InfoChunk {
     private static final double ROW_WIDTH_FACTOR = 1.2; // Validation parameter
     private static final double INTER_TABLE_GAP_FACTOR = 1.8; // Parameter for table separation
 
-    private final Long id = tableCounter++;
+    private Long id = tableCounter++;
     private List<TableRow> rows;
 
     private Double validationScore = null;
@@ -53,6 +53,10 @@ public class Table extends InfoChunk {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void add(TableRow row) {

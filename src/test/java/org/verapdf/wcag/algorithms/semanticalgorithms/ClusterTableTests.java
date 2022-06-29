@@ -33,7 +33,7 @@ public class ClusterTableTests {
                 Arguments.of("NEG-floating-text-box.json", new int[][] {}, false, true),
                 Arguments.of("2columns2.json", new int[][] {}, false, true),
                 Arguments.of("2columns3.json", new int[][] {}, false, false),
-                Arguments.of("NEG-bad-table3.json", new int[][] {{2, 4}}, true, true),
+                Arguments.of("NEG-bad-table3.json", new int[][] {}, false, false),//table with merged cells
                 Arguments.of("NEG-bad-table3-full.json", new int[][] {{2, 24}}, false, false), // should be 6 separated tables
                 Arguments.of("fake-table1.json", new int[][] {{2, 3}, {2, 4}, {2, 4}, {2, 2}, {2, 2}, {2, 2}, {2, 4},
                         {2, 3}, {2, 5}}, false, true), // contents page is recognized as a set of tables

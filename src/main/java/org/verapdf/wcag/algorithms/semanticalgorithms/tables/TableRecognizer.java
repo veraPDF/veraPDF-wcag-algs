@@ -79,6 +79,7 @@ public class TableRecognizer {
             addClusterToColumnByHeader(cluster);
         }
         clusters = getActualClusters(clusters);
+        updateMinGaps();
     }
 
     private void setupStrongHeaderForCluster(TableCluster cluster) {
@@ -147,6 +148,7 @@ public class TableRecognizer {
         }
 
         clusters = getActualClusters(clusters);
+        updateMinGaps();
     }
 
     private int getNextWeakCluster(int position) {
@@ -314,6 +316,9 @@ public class TableRecognizer {
 
     private Table constructTable() {
         updateColumns();
+        if (clusters.size() <= 1) {
+            return null;
+        }
         Table table = new Table(headers);
         table.setTableBorder(tableBorder);
 

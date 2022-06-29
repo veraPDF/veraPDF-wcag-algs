@@ -326,7 +326,7 @@ public class ChunksMergeUtils {
 		}
 
 		double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
-		double baseLineDifference = Math.abs(x.getBaseLine() - y.getBaseLine());
+		double baseLineDifference = x.getBaseLine() - y.getBaseLine();
 
 		return getUniformProbability(fontLeadingInterval, baseLineDifference / maxFontSize,
 		                             FONT_LEADING_INTERVAL_STANDARD);
