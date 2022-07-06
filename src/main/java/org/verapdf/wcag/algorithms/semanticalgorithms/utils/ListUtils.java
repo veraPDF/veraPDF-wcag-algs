@@ -88,8 +88,8 @@ public class ListUtils {
 			double probability = ((double) (listInterval.end - listInterval.start + 1)) / node.getChildren().size();
 			if (probability >= TABLE_PROBABILITY_THRESHOLD) {
 				INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
-				StaticContainers.getAccumulatedNodeMapper().updateNode(node, new SemanticList((SemanticTextNode)accumulatedNode),
-				                                                       probability, SemanticType.LIST);
+				StaticContainers.getAccumulatedNodeMapper().updateNode(node,
+						new SemanticList((SemanticTextNode)accumulatedNode, listInterval), probability, SemanticType.LIST);
 				node.setRecognizedStructureId(listId);
 			}
 		}
@@ -124,39 +124,60 @@ public class ListUtils {
 		for (ListInterval listInterval : listIntervals) {
 			INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(listInterval.start));
 			double right = accumulatedChild.getRightX();
+			int lastChildNumberOFColumns;
 			int start = listInterval.start;
+			int numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
 			for (int i = listInterval.start + 1; i <= listInterval.end; i++) {
-				InfoChunk line1 = childrenFirstLines.get(i - 1);
-				InfoChunk line2 = childrenFirstLines.get(i);
-				if (line1.getPageNumber() + 1 < line2.getPageNumber()) {
-					start = listInterval.end;
-					break;
-				}
-				accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(i));
-				if (Objects.equals(line1.getPageNumber(), line2.getPageNumber())) {
-					if (!NodeUtils.areCloseNumbers(line1.getLeftX(), line2.getLeftX(),
-							line1.getBoundingBox().getHeight() / 2) && right >= accumulatedChild.getLeftX()) {
-						if (start < i - 1) {
-							listIntervalsCollection.put(new ListInterval(start, i - 1));
-						}
-						start = i;
-						right = -Double.MAX_VALUE;
-					}
-					right = Math.max(right, accumulatedChild.getRightX());
-				} else {
-					right = accumulatedChild.getRightX();
-				}
+				lastChildNumberOFColumns = 0;
 				if (accumulatedChild instanceof SemanticTextNode) {
 					SemanticTextNode textNode = (SemanticTextNode)accumulatedChild;
 					if (textNode.getColumnsNumber() > 1) {
 						right = textNode.getPenultColumn().getRightX();
 					}
+					lastChildNumberOFColumns = Math.max(textNode.getColumnsNumber() - 2, 0);
+				}
+				InfoChunk line1 = childrenFirstLines.get(i - 1);
+				InfoChunk line2 = childrenFirstLines.get(i);
+				accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(i));
+				if (line1.getPageNumber() + 1 < line2.getPageNumber()) {
+					if (start < i - 1) {
+						listIntervalsCollection.put(new ListInterval(start, i - 1, numberOfColumns));
+					}
+					start = i;
+					right = -Double.MAX_VALUE;
+					numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
+					continue;
+				}
+				if (Objects.equals(line1.getPageNumber(), line2.getPageNumber())) {
+					if (!isOneColumn(line1, line2) && right >= accumulatedChild.getLeftX()) {
+						if (start < i - 1) {
+							listIntervalsCollection.put(new ListInterval(start, i - 1, numberOfColumns));
+						}
+						start = i;
+						right = -Double.MAX_VALUE;
+						numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
+					}
+					if (!isOneColumn(line1, line2)) {
+						numberOfColumns += lastChildNumberOFColumns + 1;
+					}
+					right = Math.max(right, accumulatedChild.getRightX());
+				} else {
+					numberOfColumns++;
+					right = accumulatedChild.getRightX();
 				}
 			}
 			if (start < listInterval.end) {
-				listIntervalsCollection.put(new ListInterval(start, listInterval.end));
+				listIntervalsCollection.put(new ListInterval(start, listInterval.end, numberOfColumns));
 			}
 		}
 		return listIntervalsCollection.getSet();
+	}
+
+	private static int getInitialListColumnsNumber(INode node) {
+		return (node instanceof SemanticTextNode) ? Math.max(((SemanticTextNode)node).getColumnsNumber() - 1, 1) : 1;
+	}
+
+	private static boolean isOneColumn(InfoChunk line1, InfoChunk line2) {
+		return NodeUtils.areCloseNumbers(line1.getLeftX(), line2.getLeftX(), line1.getBoundingBox().getHeight() / 2);
 	}
 }

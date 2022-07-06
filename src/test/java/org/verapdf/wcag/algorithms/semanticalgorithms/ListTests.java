@@ -27,25 +27,26 @@ public class ListTests {
 
     static Stream<Arguments> listDetectionTestParams() {
         return Stream.of(
-                Arguments.of("PDFUA-Ref-2-08_BookChapter_fix.json", new int[] {}, false, true),
                 Arguments.of("list-with-wrong-order-text-chunks.json", new int[] {}, true, true),
-                Arguments.of("7NonTable.json", new int[] {6}, true, true),
+                Arguments.of("7NonTable.json", new int[] {}, true, true),
                 Arguments.of("list-with-line-arts-labels.json", new int[] {}, true, true),
                 Arguments.of("list_start_with_Figure_pass.json", new int[] {}, true, true),
                 Arguments.of("test-document-13.json", new int[] {}, true, true),
                 Arguments.of("fake_list_fail.json", new int[] {}, true, true),
                 Arguments.of("list_start_from_005_pass.json", new int[] {}, true, true),
                 Arguments.of("fake_list_with_i_item_diff_formatting_fail.json", new int[] {}, true, true),
-                Arguments.of("list-with-image-label.json", new int[] {3}, false, true),
+                Arguments.of("list-with-image-label.json", new int[] {}, false, true),
                 Arguments.of("NEG-fake-list.json", new int[] {4}, false, true),
-                Arguments.of("ordered-list1.json", new int[] {5, 5}, true, true),
-                Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[] {7, 4, 4}, true, true),
+                Arguments.of("ordered-list1.json", new int[] {}, true, true),
+                Arguments.of("PDFUA-Ref-2-03_AcademicAbstract.json", new int[] {}, false, false),
+                Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[] {}, true, true),
+                Arguments.of("PDFUA-Ref-2-08_BookChapter_fix.json", new int[] {}, false, true),
                 Arguments.of("one_element_list.json", new int[]{}, true, true),
                 Arguments.of("one_element_start_with_number.json", new int[]{}, true, true),
                 Arguments.of("list_not_caption.json", new int[]{}, true, true),
                 Arguments.of("one_elem_list_letter_label.json", new int[]{}, true, true),
-                Arguments.of("pdf_tagging_list_with_o_labels.json", new int[]{5}, true, true),
-                Arguments.of("pdf_tagging_one_elem_list_with_o_label.json", new int[]{4}, true, true)
+                Arguments.of("pdf_tagging_list_with_o_labels.json", new int[]{}, true, true),
+                Arguments.of("pdf_tagging_one_elem_list_with_o_label.json", new int[]{}, true, true)
                 );
     }
 

@@ -173,11 +173,16 @@ public class TableRecognizer {
         }
         List<TableCluster> cleanClusters = new ArrayList<>();
         for (TableCluster cluster : clusters) {
-            for (TableTokenRow row : cluster.getRows()) {
-                TableCluster cleanCluster = new TableCluster(row);
-                cleanCluster.setHeader(cluster.getHeader());
-                cleanCluster.setId(generateClusterId());
-                cleanClusters.add(cleanCluster);
+            if (cluster.getRows().size() > 1) {
+                cluster.setId(generateClusterId());
+                cleanClusters.add(cluster);
+            } else {
+                for (TableTokenRow row : cluster.getRows()) {
+                    TableCluster cleanCluster = new TableCluster(row);
+                    cleanCluster.setHeader(cluster.getHeader());
+                    cleanCluster.setId(generateClusterId());
+                    cleanClusters.add(cleanCluster);
+                }
             }
         }
         clusters = cleanClusters;
@@ -190,18 +195,24 @@ public class TableRecognizer {
     private void setupRowNumbers() {
         int currentRow = 1;
         TableCluster firstCluster = clusters.get(0);
-        firstCluster.setRowNumber(0, currentRow);
+        for (int num = 0; num < firstCluster.getRows().size(); num++) {
+            firstCluster.setRowNumber(num, currentRow);
+        }
         for (int i = 1; i < clusters.size(); ++i) {
             TableCluster cluster = clusters.get(i);
 
             double fontSize = cluster.getFirstRow().getFontSize();
             double baseLineTolerance = fontSize * TableUtils.ONE_LINE_TOLERANCE_FACTOR;
 
-            if (firstCluster.getBaseLine() > cluster.getBaseLine() + baseLineTolerance) {
+            if (firstCluster.getBaseLine() > cluster.getFirstBaseLine() + baseLineTolerance) {
                 currentRow += 1;
                 firstCluster = cluster;
+            } else if (firstCluster.getBaseLine() > cluster.getBaseLine() + baseLineTolerance) {
+                firstCluster = cluster;
             }
-            cluster.setRowNumber(0, currentRow);
+            for (int num = 0; num < cluster.getRows().size(); num++) {
+                cluster.setRowNumber(num, currentRow);
+            }
         }
         numRows = currentRow + 1;
     }
@@ -210,6 +221,7 @@ public class TableRecognizer {
         TableUtils.sortClustersLeftToRight(headers);
         for (int i = 0; i < headers.size(); ++i) {
             TableCluster header = headers.get(i);
+            header.setId(generateClusterId());
             header.setColNumber(i);
         }
     }
@@ -326,10 +338,11 @@ public class TableRecognizer {
         for (TableCluster cluster : clusters) {
             rowIds.add(cluster.getFirstRow().getRowNumber());
         }
+        List<TableCluster> list = new ArrayList<>(columns.values());
+        list.sort(Comparator.comparingInt(TableCluster::getColNumber));
         for (int i = 1; i < numRows; ++i) {
             TableRow tableRow = new TableRow(SemanticType.TABLE_BODY);
-            for (Map.Entry<TableCluster, TableCluster> entry : columns.entrySet()) {
-                TableCluster column = entry.getValue();
+            for (TableCluster column : list) {
                 if (column == null || rowIds.get(column.getColNumber()) >= column.getRows().size()) {
                     tableRow.add(new TableCell(SemanticType.TABLE_CELL));
                     continue;
@@ -339,7 +352,11 @@ public class TableRecognizer {
                 Integer rowNumber = column.getRows().get(rowId).getRowNumber();
                 if (rowNumber == null || rowNumber <= i) {
                     if (rowNumber == i) {
-                        tableRow.add(new TableCell(column.getRows().get(rowId), SemanticType.TABLE_CELL));
+                        TableCell cell = new TableCell(column.getRows().get(rowId), SemanticType.TABLE_CELL);
+                        while (rowId + 1 < column.getRows().size() && column.getRows().get(rowId + 1).getRowNumber() == rowNumber) {
+                            cell.add(column.getRows().get(++rowId));
+                        }
+                        tableRow.add(cell);
                     }
                     rowIds.set(column.getColNumber(), rowId + 1);
                 } else {

@@ -1,5 +1,6 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
 
+import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.entities.tables.TableToken;
@@ -65,31 +66,31 @@ public class TableRecognitionArea {
         return clusters;
     }
 
-    public boolean addTokenToRecognitionArea(TableToken token) {
+    public boolean addTokenToRecognitionArea(TextInfoChunk chunk) {
         if (isComplete) {
             return false;
         }
 
-        if (token.getPageNumber() == null) {
+        if (chunk.getPageNumber() == null) {
             return false;
         } else if (boundingBox.getPageNumber() == null) {
-            boundingBox.setPageNumber(token.getPageNumber());
-        } else if (!boundingBox.getPageNumber().equals(token.getPageNumber())) {
+            boundingBox.setPageNumber(chunk.getPageNumber());
+        } else if (!boundingBox.getPageNumber().equals(chunk.getPageNumber())) {
             hasCompleteHeaders = isComplete = true;
             headersBaseLine = baseLine;
             return false;
         }
 
         if (hasCompleteHeaders) {
-            return addCluster(token);
+            return addCluster(chunk);
         } else {
-            if (belongsToHeadersArea(token)) {
-                return expandHeaders(token);//check bounding box?
+            if (belongsToHeadersArea(chunk)) {
+                return expandHeaders(chunk);//check bounding box?
             } else {
                 hasCompleteHeaders = true;
                 headersBaseLine = baseLine;
                 if (checkHeaders()) {
-                    return addCluster(token);
+                    return addCluster(chunk);
                 } else {
                     isComplete = true;
                 }
@@ -143,11 +144,11 @@ public class TableRecognitionArea {
         return headersProbability > TableUtils.HEADERS_PROBABILITY_THRESHOLD;
     }
 
-    private boolean belongsToHeadersArea(TableToken token) {
+    private boolean belongsToHeadersArea(TextInfoChunk token) {
         if (headers.isEmpty()) {
             return true;
         }
-        if (baseLine - token.getBaseLine() > adaptiveNextLineToleranceFactor * token.getFontSize()) {
+        if (baseLine - token.getFirstBaseLine() > adaptiveNextLineToleranceFactor * token.getFontSize()) {
             return false;
         }
         if (token.getBottomY() > boundingBox.getTopY() + TableUtils.TABLE_GAP_FACTOR * token.getFontSize()) {
@@ -157,9 +158,9 @@ public class TableRecognitionArea {
         return true;
     }
 
-    private boolean expandHeaders(TableToken token) {
+    private boolean expandHeaders(TextInfoChunk token) {
         if (headers.isEmpty()) {
-            TableCluster header = new TableCluster(token);
+            TableCluster header = TableCluster.getTableCluster(token);
             header.setHeader(header);
             headers.add(header);
             boundingBox = new BoundingBox(token.getBoundingBox());
@@ -184,7 +185,7 @@ public class TableRecognitionArea {
         }
 
         if (currentHeader == null) {
-            TableCluster header = new TableCluster(token);
+            TableCluster header = TableCluster.getTableCluster(token);
             header.setHeader(header);
             headers.add(header);
             boundingBox.union(token.getBoundingBox());
@@ -198,15 +199,18 @@ public class TableRecognitionArea {
         return tokenAdded;
     }
 
-    private boolean expandHeader(TableCluster header, TableToken token) {
-        double headerBaseLine = header.getBaseLine();
-        double tokenBaseLine = token.getBaseLine();
-        double baseLineDiff = Math.abs(headerBaseLine - tokenBaseLine);
+    private boolean expandHeader(TableCluster header, TextInfoChunk token) {
+        double baseLineDiff = Math.min(Math.abs(header.getBaseLine() - token.getBaseLine()),
+                Math.abs(header.getFirstBaseLine() - token.getFirstBaseLine()));
 
         if (baseLineDiff < TableUtils.ONE_LINE_TOLERANCE_FACTOR * token.getFontSize() &&
                 ChunksMergeUtils.toLineMergeProbability(header.getLastToken(), token) > TableUtils.MERGE_PROBABILITY_THRESHOLD) {
             // token can be appended to the last line of the header
-            header.add(token);
+            if (token instanceof TableCluster) {
+                header.mergeWithoutRowNumbers((TableCluster) token);
+            } else {
+                header.add((TableToken) token);
+            }
             if (token.getBaseLine() < baseLine) {
                 baseLine = token.getBaseLine();
             }
@@ -221,8 +225,11 @@ public class TableRecognitionArea {
                 if (adaptiveNextLineToleranceFactor < lineSpacingFactor) {
                     adaptiveNextLineToleranceFactor = lineSpacingFactor * TableUtils.NEXT_LINE_TOLERANCE_FACTOR;
                 }
-
-                header.add(token, true);
+                if (token instanceof TableCluster) {
+                    header.mergeWithoutRowNumbers((TableCluster) token);
+                } else {
+                    header.add((TableToken) token, true);
+                }
                 if (token.getBaseLine() < baseLine) {
                     baseLine = token.getBaseLine();
                 }
@@ -233,7 +240,7 @@ public class TableRecognitionArea {
         return false;
     }
 
-    private boolean joinHeaders(TableCluster currentHeader, TableCluster header, TableToken token) {
+    private boolean joinHeaders(TableCluster currentHeader, TableCluster header, TextInfoChunk token) {
         BoundingBox headerBBox = header.getBoundingBox();
 
         if (headerBBox.getLeftX() < token.getRightX() && token.getLeftX() < headerBBox.getRightX()) {
@@ -250,8 +257,13 @@ public class TableRecognitionArea {
         return false;
     }
 
-    private boolean addCluster(TableToken token) {
-        if (baseLine - token.getBaseLine() > TableUtils.TABLE_GAP_FACTOR * token.getFontSize() ||
+    private boolean addCluster(TextInfoChunk token) {
+        if (token.getPageNumber() != token.getLastPageNumber()) {
+            isComplete = true;
+            return false;
+        }
+
+        if (baseLine - token.getFirstBaseLine() > TableUtils.TABLE_GAP_FACTOR * token.getFontSize() ||
                 headersBaseLine < token.getBaseLine() ||
                 (tableBorder != null && !tableBorder.getBoundingBox().contains(token.getBoundingBox()))) {
             isComplete = true;
@@ -264,7 +276,7 @@ public class TableRecognitionArea {
              return false;
         }
 
-        TableCluster cluster = new TableCluster(token);
+        TableCluster cluster = TableCluster.getTableCluster(token);
         clusters.add(cluster);
         boundingBox.union(cluster.getBoundingBox());
         if (cluster.getBaseLine() < baseLine) {

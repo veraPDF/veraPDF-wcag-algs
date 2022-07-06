@@ -3,6 +3,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 import org.verapdf.wcag.algorithms.entities.*;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextColumn;
+import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
@@ -13,6 +14,7 @@ import org.verapdf.wcag.algorithms.entities.lists.PDFList;
 import org.verapdf.wcag.algorithms.entities.tables.*;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
+import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableCluster;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognitionArea;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableRecognizer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.*;
@@ -62,12 +64,27 @@ public class ClusterTableConsumer {
     }
 
     private void acceptChildren(INode node) {
-        if (node.getSemanticType() == SemanticType.TABLE) {
+        if (node.getSemanticType() == SemanticType.TABLE || node.getSemanticType() == SemanticType.PARAGRAPH ||
+                node.getSemanticType() == SemanticType.LIST) {
             INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
             if (accumulatedNode instanceof SemanticTable) {
                 TableToken token = new TableToken(((SemanticTable)accumulatedNode).getTableBorder());
-                accept(token);
+                accept(token, node);
                 return;
+            } else if (accumulatedNode instanceof SemanticParagraph) {
+                if (((SemanticParagraph)accumulatedNode).getColumnsNumber() == 1) {
+                      TableCluster cluster = new TableCluster((SemanticTextNode) accumulatedNode, node);
+                      accept(cluster, node);
+                      return;
+                }
+            } else if (accumulatedNode instanceof SemanticList) {
+                SemanticList list = (SemanticList)accumulatedNode;
+                if (list.getNumberOfListColumns() == 1 && node.getChildren().size() == (list.getListInterval().end -
+                        list.getListInterval().start + 1)) {
+                    TableCluster cluster = new TableCluster((SemanticTextNode)accumulatedNode, node);
+                    accept(cluster, node);
+                    return;
+                }
             }
         }
         for (INode child : node.getChildren()) {
@@ -90,7 +107,7 @@ public class ClusterTableConsumer {
                             }
 
                             TableToken token = new TableToken(chunk, node);
-                            accept(token);
+                            accept(token, node);
                         }
                     }
                 }
@@ -98,7 +115,7 @@ public class ClusterTableConsumer {
                 SemanticImageNode imageNode = (SemanticImageNode) node;
 
                 TableToken token = new TableToken(imageNode.getImage(), imageNode);
-                accept(token);
+                accept(token, node);
             }
         }
     }
@@ -110,7 +127,7 @@ public class ClusterTableConsumer {
         }
     }
 
-    private void accept(TableToken token) {
+    private void accept(TextInfoChunk token, INode node) {
         if (recognitionArea.addTokenToRecognitionArea(token) && recognitionArea.getTableBorder() == null) {
             findTableBorder();
         }
@@ -121,8 +138,9 @@ public class ClusterTableConsumer {
             }
             init();
 
-            restNodes.add(token.getNode());
+            restNodes.add(node);
             for (INode restNode : restNodes) {
+                acceptChildren(restNode);
                 accept(restNode);
             }
         }
@@ -337,8 +355,14 @@ public class ClusterTableConsumer {
                 if (chunk instanceof TableToken) {
                     TableToken token = (TableToken) chunk;
                     if (token.getNode() != null) {
-                        tableLeafNodes.add(token.getNode());
+                        if (token.getNode().getChildren().isEmpty()) {
+                            tableLeafNodes.add(token.getNode());
+                        } else {
+                            tableLeafNodes.addAll(token.getNode().getChildren());
+                        }
                     }
+//                } else if (chunk instanceof TextChunk) {
+//                    tableLeafNodes.add(chunk);
                 }
             }
         }

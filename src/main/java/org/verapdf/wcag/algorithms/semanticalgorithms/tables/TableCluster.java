@@ -1,10 +1,15 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.tables;
 
+import org.verapdf.wcag.algorithms.entities.INode;
+import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.entities.tables.TableToken;
 import org.verapdf.wcag.algorithms.entities.tables.TableTokenRow;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 
 import java.util.*;
@@ -45,6 +50,32 @@ public class TableCluster extends TextInfoChunk {
     public TableCluster(TableTokenRow row) {
         super(row.getBoundingBox(), row.getFontSize(), row.getBaseLine());
         rows.add(row);
+    }
+
+    public TableCluster(SemanticTextNode textNode, INode node) {
+        super(textNode.getBoundingBox(), textNode.getFontSize(), textNode.getLastBaseline());
+        for (TextColumn column : textNode.getColumns()) {
+            for (TextLine line : column.getLines()) {
+                if (!line.isEmpty()) {
+                    TableTokenRow row = new TableTokenRow(new TableToken(line.getTextChunks().get(0), node));
+                    for (int i = 1; i < line.getTextChunks().size(); i++) {
+                        TextChunk chunk = line.getTextChunks().get(i);
+                        row.add(new TableToken(chunk, node));
+                    }
+                    rows.add(row);
+                }
+            }
+        }
+    }
+
+    public static TableCluster getTableCluster(TextInfoChunk chunk) {
+        if (chunk instanceof TableCluster) {
+            return (TableCluster) chunk;
+        } else if (chunk instanceof TableToken) {
+            return new TableCluster((TableToken) chunk);
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void setId(Long id) {
@@ -146,6 +177,7 @@ public class TableCluster extends TextInfoChunk {
         for (; j < other.rows.size(); ++j) {
             result.add(other.rows.get(j));
         }
+        rows = result;
         super.add(other);
     }
 
@@ -220,13 +252,13 @@ public class TableCluster extends TextInfoChunk {
             return;
         }
 
-        TableClusterGap minGap = (side == Side.LEFT) ? minLeftGap : minRightGap;
+        TableClusterGap minGap = (side == Side.LEFT) ? getMinLeftGap() : getMinRightGap();
         if (minGap == null) {
             minGap = new TableClusterGap(null, Double.MAX_VALUE);
             if (side == Side.LEFT) {
-                minLeftGap = minGap;
+                setMinLeftGap(minGap);
             } else {
-                minRightGap = minGap;
+                setMinRightGap(minGap);
             }
         }
         minGap.setGap(Double.MAX_VALUE);
@@ -326,6 +358,7 @@ public class TableCluster extends TextInfoChunk {
         }
 
         Collections.sort(rows, Comparator.comparingInt(TableTokenRow::getRowNumber).
+                thenComparingDouble(y -> -y.getBaseLine()).
                 thenComparingDouble(TableTokenRow::getLeftX));
 
         List<TableTokenRow> result = new ArrayList<>();
@@ -333,7 +366,8 @@ public class TableCluster extends TextInfoChunk {
         result.add(currentRow);
         for (int i = 1; i < rows.size(); ++i) {
             TableTokenRow row = rows.get(i);
-            if (row.getRowNumber() == currentRow.getRowNumber()) {
+            if (Math.abs(row.getBaseLine() - currentRow.getBaseLine()) < TableUtils.ONE_LINE_TOLERANCE_FACTOR * row.getFontSize() &&
+                    ChunksMergeUtils.toLineMergeProbability(currentRow, row) > TableUtils.MERGE_PROBABILITY_THRESHOLD) {
                 currentRow.add(row);
             } else {
                 currentRow = row;
@@ -341,6 +375,10 @@ public class TableCluster extends TextInfoChunk {
             }
         }
         rows = result;
+    }
+
+    public double getFirstBaseLine() {
+        return getFirstRow().getFirstBaseLine();
     }
 
     @Override

@@ -40,7 +40,6 @@ public class TableToken extends TextChunk {
     public enum TableTokenType {
         IMAGE,
         TEXT,
-        LIST,
         TABLE
     }
 }

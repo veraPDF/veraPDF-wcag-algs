@@ -94,7 +94,7 @@ public class TableUtils {
     }
 
     static public void sortClustersUpToBottom(List<TableCluster> clusters) {
-        Collections.sort(clusters, Comparator.comparingDouble(TableCluster::getBaseLine).reversed());
+        Collections.sort(clusters, Comparator.comparingDouble(TableCluster::getFirstBaseLine).reversed());
     }
 
     static public boolean isWeakCluster(TableCluster cluster, List<TableCluster> headers) {
