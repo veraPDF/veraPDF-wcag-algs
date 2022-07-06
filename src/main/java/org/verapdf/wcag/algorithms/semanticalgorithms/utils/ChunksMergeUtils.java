@@ -2,6 +2,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
 import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 
@@ -22,7 +23,7 @@ public class ChunksMergeUtils {
 	private static final double[] NORMAL_LINE_PROBABILITY_PARAMS = {2, 0.033};
 	private static final double[] SUPERSCRIPT_PROBABILITY_PARAMS = {0.69438, 1.70575, 1.43819};
 	private static final double[] SUBSCRIPT_PROBABILITY_PARAMS = {0.71932, 1.0483, 0.37555};
-	private static final double[] COLUMNS_PROBABILITY_PARAMS = {5, 0.1};
+	private static final double[] COLUMNS_PROBABILITY_PARAMS = {0.75, 0.75};
 	private static final double[] FONT_SIZE_DIFFERENCE_PARAMS = {0.95, 2.95};
 	private static final double SUPERSCRIPT_BASELINE_THRESHOLD = 0.1;
 	private static final double SUPERSCRIPT_FONTSIZE_THRESHOLD = 0.1;
@@ -45,7 +46,7 @@ public class ChunksMergeUtils {
 		return resultProbability;
 	}
 
-	public static double getBaseLineDifference(TextChunk x, TextChunk y) {
+	public static double getBaseLineDifference(TextInfoChunk x, TextInfoChunk y) {
 		double baseLineDiff = x.getBaseLine() - y.getBaseLine();
 		if (x.isRightLeftHorizontalText() || x.isBottomUpVerticalText()) {
 			baseLineDiff = -baseLineDiff;
@@ -63,13 +64,13 @@ public class ChunksMergeUtils {
 		return Math.abs(centersDiff);
 	}
 
-	public static double getFontSizeDifference(TextChunk x, TextChunk y) {
+	public static double getFontSizeDifference(TextInfoChunk x, TextInfoChunk y) {
 		double fontSizeDiff = x.getFontSize() - y.getFontSize();
 		fontSizeDiff /= Math.max(x.getFontSize(), y.getFontSize());
 		return fontSizeDiff;
 	}
 
-	public static double toLineMergeProbability(TextChunk x, TextChunk y) {
+	public static double toLineMergeProbability(TextInfoChunk x, TextInfoChunk y) {
 		double baseLineDiff = getBaseLineDifference(x, y);
 		double fontSizeDiff = getFontSizeDifference(x, y);
 
@@ -297,8 +298,9 @@ public class ChunksMergeUtils {
 			if (x.getTextEnd() > y.getTextStart()) {
 				return 0;
 			}
-			if (y.getTextStart() - x.getTextEnd() < COLUMNS_PROBABILITY_PARAMS[0] &&
-					Math.abs(x.getBaseLine() - y.getBaseLine()) < COLUMNS_PROBABILITY_PARAMS[1]) {
+			double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
+			if ((y.getTextStart() - x.getTextEnd()) / maxFontSize < COLUMNS_PROBABILITY_PARAMS[0] &&
+					(Math.abs(x.getBaseLine() - y.getBaseLine())) / maxFontSize < COLUMNS_PROBABILITY_PARAMS[1]) {
 				return 0;
 			}
 		}
@@ -366,7 +368,7 @@ public class ChunksMergeUtils {
 		                             FONT_METRIC_UNIVERSAL_TEMPORARY_THRESHOLD);
 	}
 
-	private static double mergeByCharSpacingProbability(TextChunk x, TextChunk y) {
+	private static double mergeByCharSpacingProbability(TextInfoChunk x, TextInfoChunk y) {
 //todo        if (Math.abs(x.getBaseLine() - y.getBaseLine()) > 0.95)
 //            return 1;
 //            replace with mergeYAlmostNestedProbability

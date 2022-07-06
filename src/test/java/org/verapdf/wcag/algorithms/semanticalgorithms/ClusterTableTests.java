@@ -23,31 +23,37 @@ public class ClusterTableTests {
 
     static Stream<Arguments> clusterTableDetectionTestParams() {
         return Stream.of(
-                Arguments.of("testdocument10.json", new int[][] {{2,25},{2,21},{2,13},{2,10}}, true, true),
+                Arguments.of("Prevent-Document-Frustration-JAWS-and-PDFs.json", new int[][] {}, false, false),
+                Arguments.of("testdocument10.json", new int[][] {{2,15},{2,12},{2,8},{2,9}}, true, true),
                 Arguments.of("table-word.json", new int[][] {/*{4, 4}*/}, true, true),
                 Arguments.of("NEG-fake-table.json", new int[][] {/*{4, 4}*/}, false, true),
                 Arguments.of("PDFUA-Ref-2-07_FormalDocument.json", new int[][] {}, true, true),
                 Arguments.of("NEG-bad-table.json", new int[][] {{4, 5}}, false, false),
                 Arguments.of("NEG-bad-table2.json", new int[][] {{4, 5}}, false, false),
-                Arguments.of("no-table.json", new int[][] {}, false, true),
-                Arguments.of("NEG-floating-text-box.json", new int[][] {}, false, true),
-                Arguments.of("2columns2.json", new int[][] {}, false, true),
-                Arguments.of("2columns3.json", new int[][] {}, false, false),
-                Arguments.of("NEG-bad-table3.json", new int[][] {}, false, false),//table with merged cells
-                Arguments.of("NEG-bad-table3-full.json", new int[][] {{2, 24}}, false, false), // should be 6 separated tables
+                Arguments.of("no-table.json", new int[][] {}, true, true),
+                Arguments.of("NEG-floating-text-box.json", new int[][] {}, true, true),
+                Arguments.of("2columns2.json", new int[][] {}, true, true),
+                Arguments.of("2columns3.json", new int[][] {}, true, true),
+                Arguments.of("NEG-bad-table3.json", new int[][] {}, true, false),//table with merged cells
+                Arguments.of("NEG-bad-table3-full.json", new int[][] {{2, 7}}, false, false), // should be 6 separated tables
                 Arguments.of("fake-table1.json", new int[][] {{2, 3}, {2, 4}, {2, 4}, {2, 2}, {2, 2}, {2, 2}, {2, 4},
                         {2, 3}, {2, 5}}, false, true), // contents page is recognized as a set of tables
                 Arguments.of("real-table.json", new int[][] {{4, 5}, {4, 9}}, false, false),
                 Arguments.of("fake-table2.json", new int[][] {{4, 5}, {4, 9}}, false, false),
                 Arguments.of("fake-table2-fix.json", new int[][] {{4, 5}, {4, 9}}, true, true),
-                Arguments.of("fake-table3.json", new int[][] {}, false, true),
+                Arguments.of("fake-table3.json", new int[][] {}, true, true),
                 Arguments.of("tableBorder.json", new int[][] {/*{3, 4}*/}, true, true),
-                Arguments.of("make-your-Acrobat-PDF-learning-resources-accessible-page-13.json", new int[][] {}, true, true),
-                Arguments.of("PDFUA-Ref-2-08_BookChapter-page-18.json", new int[][] {{2, 14}}, true, true),
-                Arguments.of("three-tables.json", new int[][] {{5, 6}, {4, 10}, {5, 4}}, false, false), // third table contains images
-                Arguments.of("PDFUA-Ref-2-05_BookChapter-german.json", new int[][] {{2, 24}}, false, true), // contents page is recognized as table, table on 6th page is not recognized
+                Arguments.of("Make-your-Acrobat-PDF-learning-resources-accessible-page-13.json", new int[][] {}, true, true),
+                Arguments.of("Make-your-Acrobat-PDF-learning-resources-accessible-page-23.json", new int[][] {}, true, true),
+                Arguments.of("PDFUA-Reference-08_(English-2013-EU-Conference).json", new int[][] {{2,4}}, false, false), // to fix
                 Arguments.of("PDFUA-Ref-2-02_Invoice.json", new int[][] {{4, 9}}, false, false),
-                Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[][] {}, true, true)
+                Arguments.of("../lists/PDFUA-Ref-2-03_AcademicAbstract.json", new int[][] {{2,4}}, false, true),//to fix
+                Arguments.of("PDFUA-Ref-2-05_BookChapter-german.json", new int[][] {}, false, true), // contents page is recognized as table, table on 6th page is not recognized
+                Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[][] {}, true, true),
+                Arguments.of("PDFUA-Ref-2-08_BookChapter-page-6.json", new int[][] {{2,2}}, false, true),// to fix
+                Arguments.of("PDFUA-Ref-2-08_BookChapter-page-18.json", new int[][] {}, true, true),
+                Arguments.of("PDFUA-Ref-2-08_BookChapter-page-24.json", new int[][] {{2,4}}, false, true),//to fix
+                Arguments.of("three-tables.json", new int[][] {{5, 6}, {4, 7}, {5, 4}}, false, false) // third table contains images
                 );
     }
 
@@ -95,7 +101,7 @@ public class ClusterTableTests {
             testTableTreeStructure(tree);
         }
 
-        if (initialSemanticIsValid) {
+        if (initialSemanticIsValid) {//should be false for documents without table tags
             testTableInitialTreeStructure(tree);
         }
     }

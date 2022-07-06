@@ -3,10 +3,17 @@ package org.verapdf.wcag.algorithms.entities.lists;
 public class ListInterval {
 	public final int start;
 	public final int end;
+	public Integer numberOfColumns;
 
 	public ListInterval(int start, int end) {
 		this.start = start;
 		this.end = end;
+	}
+
+	public ListInterval(int start, int end, Integer numberOfColumns) {
+		this.start = start;
+		this.end = end;
+		this.numberOfColumns = numberOfColumns;
 	}
 
 	public int getStart() {
@@ -15,6 +22,10 @@ public class ListInterval {
 
 	public int getEnd() {
 		return start;
+	}
+
+	public Integer getNumberOfColumns() {
+		return numberOfColumns;
 	}
 
 	@Override

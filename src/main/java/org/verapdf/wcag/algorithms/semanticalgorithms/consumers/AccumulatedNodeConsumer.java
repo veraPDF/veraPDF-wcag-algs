@@ -442,7 +442,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 							childrenFirstLines));
 		} else if (textChildren.size() == 1 && SemanticType.LIST.equals(node.getInitialSemanticType()) &&
 		           (ListLabelsUtils.isListLabel(childrenFirstLines.get(0).getValue().trim()))) {
-			ListUtils.updateTreeWithRecognizedList(node, textChildren, new ListInterval(0, 0));
+			ListUtils.updateTreeWithRecognizedList(node, textChildren, new ListInterval(0, 0, 1));
 		}
 		if (imageChildren.size() > 1) {
 			ListUtils.updateTreeWithRecognizedLists(node, imageChildren,

@@ -139,6 +139,14 @@ public abstract class TextInfoChunk extends InfoChunk {
         return getCenterX();
     }
 
+    public String getValue() {
+        return "";
+    }
+
+    public double getFirstBaseLine() {
+        return getBaseLine();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!super.equals(o)) {
