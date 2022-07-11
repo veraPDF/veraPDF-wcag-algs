@@ -72,15 +72,18 @@ public class ClusterTableConsumer {
                 accept(token, node);
                 return;
             } else if (accumulatedNode instanceof SemanticParagraph) {
-                if (((SemanticParagraph)accumulatedNode).getColumnsNumber() == 1) {
-                      TableCluster cluster = new TableCluster((SemanticTextNode) accumulatedNode, node);
+                SemanticParagraph paragraph = (SemanticParagraph)accumulatedNode;
+                if (paragraph.isEmpty()) {
+                    return;
+                }
+                if (paragraph.getColumnsNumber() == 1) {
+                      TableCluster cluster = new TableCluster(paragraph, node);
                       accept(cluster, node);
                       return;
                 }
             } else if (accumulatedNode instanceof SemanticList) {
                 SemanticList list = (SemanticList)accumulatedNode;
-                if (list.getNumberOfListColumns() == 1 && node.getChildren().size() == (list.getListInterval().end -
-                        list.getListInterval().start + 1)) {
+                if (list.getNumberOfListColumns() == 1 && node.getChildren().size() == list.getNumberOfListItems()) {
                     TableCluster cluster = new TableCluster((SemanticTextNode)accumulatedNode, node);
                     accept(cluster, node);
                     return;
@@ -319,7 +322,7 @@ public class ClusterTableConsumer {
         for (Map.Entry<INode, Integer> entry : cellNodes.entrySet()) {
             INode cellNode = entry.getKey();
             while (cellNode.getParent() != null && cellNode.getParent() != rowNode &&
-                    cellNode.getParent().getChildren().size() == 1) {
+                    !hasOtherChildrenWithContents(cellNode.getParent(), cellNode)) {
                 cellNode = cellNode.getParent();
             }
             Integer colNumber = entry.getValue();
@@ -361,8 +364,6 @@ public class ClusterTableConsumer {
                             tableLeafNodes.addAll(token.getNode().getChildren());
                         }
                     }
-//                } else if (chunk instanceof TextChunk) {
-//                    tableLeafNodes.add(chunk);
                 }
             }
         }
@@ -585,5 +586,23 @@ public class ClusterTableConsumer {
                 nodeStack.push(child);
             }
         }
+    }
+
+    private static boolean hasOtherChildrenWithContents(INode parent, INode node) {
+        for (INode child : parent.getChildren()) {
+            if (child == node) {
+                continue;
+            } else if (child instanceof SemanticFigure || child instanceof SemanticImageNode) {
+                return true;
+            } else if (child instanceof SemanticSpan) {
+                SemanticSpan span = (SemanticSpan)child;
+                if (!span.isSpaceNode() && !span.isEmpty()) {
+                    return true;
+                }
+            } else if (hasOtherChildrenWithContents(child, null)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

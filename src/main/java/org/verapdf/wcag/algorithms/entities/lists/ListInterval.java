@@ -1,8 +1,8 @@
 package org.verapdf.wcag.algorithms.entities.lists;
 
 public class ListInterval {
-	public final int start;
-	public final int end;
+	private final int start;
+	private final int end;
 	public Integer numberOfColumns;
 
 	public ListInterval(int start, int end) {
@@ -21,11 +21,15 @@ public class ListInterval {
 	}
 
 	public int getEnd() {
-		return start;
+		return end;
 	}
 
 	public Integer getNumberOfColumns() {
 		return numberOfColumns;
+	}
+
+	public int getNumberOfListItems() {
+		return end - start + 1;
 	}
 
 	@Override

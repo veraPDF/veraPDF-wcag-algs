@@ -17,7 +17,7 @@ public class SemanticList extends SemanticTextNode {
 		return listInterval.getNumberOfColumns();
 	}
 
-	public ListInterval getListInterval() {
-		return listInterval;
+	public int getNumberOfListItems() {
+		return listInterval.getNumberOfListItems();
 	}
 }

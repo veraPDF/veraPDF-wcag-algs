@@ -81,11 +81,11 @@ public class ListUtils {
 
 	public static void updateTreeWithRecognizedList(INode node, List<INode> children, ListInterval listInterval) {
 		Long listId = Table.getNextTableListId();
-		for (int i = listInterval.start; i <= listInterval.end; i++) {
+		for (int i = listInterval.getStart(); i <= listInterval.getEnd(); i++) {
 			updateTreeWithRecognizedListItem(children.get(i), listId);
 		}
 		if (node.getRecognizedStructureId() == null) {
-			double probability = ((double) (listInterval.end - listInterval.start + 1)) / node.getChildren().size();
+			double probability = ((double) (listInterval.getNumberOfListItems())) / node.getChildren().size();
 			if (probability >= TABLE_PROBABILITY_THRESHOLD) {
 				INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
 				StaticContainers.getAccumulatedNodeMapper().updateNode(node,
@@ -122,12 +122,12 @@ public class ListUtils {
 															  List<? extends InfoChunk> childrenFirstLines) {
 		ListIntervalsCollection listIntervalsCollection = new ListIntervalsCollection();
 		for (ListInterval listInterval : listIntervals) {
-			INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(listInterval.start));
+			INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(listInterval.getStart()));
 			double right = accumulatedChild.getRightX();
 			int lastChildNumberOFColumns;
-			int start = listInterval.start;
+			int start = listInterval.getStart();
 			int numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
-			for (int i = listInterval.start + 1; i <= listInterval.end; i++) {
+			for (int i = listInterval.getStart() + 1; i <= listInterval.getEnd(); i++) {
 				lastChildNumberOFColumns = 0;
 				if (accumulatedChild instanceof SemanticTextNode) {
 					SemanticTextNode textNode = (SemanticTextNode)accumulatedChild;
@@ -166,8 +166,8 @@ public class ListUtils {
 					right = accumulatedChild.getRightX();
 				}
 			}
-			if (start < listInterval.end) {
-				listIntervalsCollection.put(new ListInterval(start, listInterval.end, numberOfColumns));
+			if (start < listInterval.getEnd()) {
+				listIntervalsCollection.put(new ListInterval(start, listInterval.getEnd(), numberOfColumns));
 			}
 		}
 		return listIntervalsCollection.getSet();
