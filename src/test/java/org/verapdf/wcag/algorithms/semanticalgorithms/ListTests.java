@@ -4,10 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.verapdf.wcag.algorithms.entities.INode;
-import org.verapdf.wcag.algorithms.entities.ITree;
-import org.verapdf.wcag.algorithms.entities.JsonToPdfTree;
-import org.verapdf.wcag.algorithms.entities.IDocument;
+import org.verapdf.wcag.algorithms.entities.*;
+import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.lists.PDFList;
 import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
@@ -27,33 +25,37 @@ public class ListTests {
 
     static Stream<Arguments> listDetectionTestParams() {
         return Stream.of(
-                Arguments.of("list-with-wrong-order-text-chunks.json", new int[] {}, true, true),
-                Arguments.of("7NonTable.json", new int[] {}, true, true),
-                Arguments.of("list-with-line-arts-labels.json", new int[] {}, true, true),
-                Arguments.of("list_start_with_Figure_pass.json", new int[] {}, true, true),
-                Arguments.of("test-document-13.json", new int[] {}, true, true),
-                Arguments.of("fake_list_fail.json", new int[] {}, true, true),
-                Arguments.of("list_start_from_005_pass.json", new int[] {}, true, true),
-                Arguments.of("fake_list_with_i_item_diff_formatting_fail.json", new int[] {}, true, true),
-                Arguments.of("list-with-image-label.json", new int[] {}, false, true),
-                Arguments.of("NEG-fake-list.json", new int[] {4}, false, true),
-                Arguments.of("ordered-list1.json", new int[] {}, true, true),
-                Arguments.of("PDFUA-Ref-2-03_AcademicAbstract.json", new int[] {}, false, false),
-                Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[] {}, true, true),
-                Arguments.of("PDFUA-Ref-2-08_BookChapter_fix.json", new int[] {}, false, true),
-                Arguments.of("one_element_list.json", new int[]{}, true, true),
-                Arguments.of("one_element_start_with_number.json", new int[]{}, true, true),
-                Arguments.of("list_not_caption.json", new int[]{}, true, true),
-                Arguments.of("one_elem_list_letter_label.json", new int[]{}, true, true),
-                Arguments.of("pdf_tagging_list_with_o_labels.json", new int[]{}, true, true),
-                Arguments.of("pdf_tagging_one_elem_list_with_o_label.json", new int[]{}, true, true)
+                Arguments.of("list-with-wrong-order-text-chunks.json", new int[] {}, true, true, new int[][] {{9, 1}}),
+                Arguments.of("7NonTable.json", new int[] {}, true, true, new int[][] {{6, 1}}),
+                Arguments.of("list-with-line-arts-labels.json", new int[] {}, true, true, new int[][] {{7, 1}}),
+                Arguments.of("list_start_with_Figure_pass.json", new int[] {}, true, true, new int[][] {{5, 1}}),
+                Arguments.of("test-document-13.json", new int[] {}, true, true, new int[][] {}),
+                Arguments.of("fake_list_fail.json", new int[] {}, true, true, new int[][] {}),
+                Arguments.of("list_start_from_005_pass.json", new int[] {}, true, true, new int[][] {{8, 1}}),
+                Arguments.of("fake_list_with_i_item_diff_formatting_fail.json", new int[] {}, true, true, new int[][] {{12, 1}}),
+                Arguments.of("list-with-image-label.json", new int[] {}, false, true, new int[][] {{3, 1}}),
+                Arguments.of("NEG-fake-list.json", new int[] {4}, false, true, new int[][] {{4, 1}}),
+                Arguments.of("ordered-list1.json", new int[] {}, true, true, new int[][] {{5, 1}, {5, 1}}),
+                Arguments.of("PDFUA-Ref-2-03_AcademicAbstract.json", new int[] {}, false, false, new int[][] {{1, 1}, {9, 1}}),
+                Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[] {}, true, true, new int[][] {{3, 1}, {7, 1}, {4, 1}, {4, 1}}),
+                Arguments.of("PDFUA-Ref-2-08_BookChapter_fix.json", new int[] {}, false, true, new int[][] {{6, 2}, {4, 1},
+                        {4, 1}, {4, 1}, {4, 1}, {4, 1}, {5, 2}, {4, 1}, {1, 1}, {5, 1}, {4, 1}, {4, 1}, {4, 1}, {4, 1},
+                        {4, 2}, {1, 1}, {1, 1}, {4, 1}, {4, 1}, {3, 1}, {3, 1}, {2, 2}, {5, 2}, {2, 1}, {3, 1}, {3, 1},
+                        {4, 1}, {1, 1}, {2, 1}, {3, 2}, {1, 1}, {8, 2}, {2, 1}, {2, 1}, {4, 1}, {5, 1}, {2, 1}, {6, 1},
+                        {6, 2}, {2, 1}, {1, 1}, {3, 3}, {3, 1}, {3, 1}, {4, 2}, {4, 1}, {4, 1}, {4, 1}, {4, 1}, {7, 2}}),
+                Arguments.of("one_element_list.json", new int[]{}, true, true, new int[][] {{1, 1}}),
+                Arguments.of("one_element_start_with_number.json", new int[]{}, true, true, new int[][] {{1, 1}}),
+                Arguments.of("list_not_caption.json", new int[]{}, true, true, new int[][] {{2, 1}}),
+                Arguments.of("one_elem_list_letter_label.json", new int[]{}, true, true, new int[][] {{1, 1}, {3, 1}}),
+                Arguments.of("pdf_tagging_list_with_o_labels.json", new int[]{}, true, true, new int[][] {{3, 1}, {4, 1}, {5, 1}}),
+                Arguments.of("pdf_tagging_one_elem_list_with_o_label.json", new int[]{}, true, true, new int[][] {{1, 1}, {4, 1}})
                 );
     }
 
     @ParameterizedTest(name = "{index}: ({0}, {1}, {2}, {3}) => {0}")
     @MethodSource("listDetectionTestParams")
     void testListDetection(String filename, int[] checkSizes, boolean semanticIsValid,
-                           boolean initialSemanticIsValid) throws IOException {
+                           boolean initialSemanticIsValid, int[][] itemsAndColumnsOfLists) throws IOException {
         IDocument document = JsonToPdfTree.getDocument("/files/lists/" + filename);
         ITree tree = document.getTree();
 
@@ -90,6 +92,20 @@ public class ListTests {
         if (initialSemanticIsValid) {
             testListInitialTreeStructure(tree);
         }
+
+        int index = 0;
+        for (INode node : tree) {
+            if (node.getSemanticType() == SemanticType.LIST) {
+                INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
+                if (accumulatedNode instanceof SemanticList) {
+                    Assertions.assertTrue(index < itemsAndColumnsOfLists.length);
+                    Assertions.assertEquals(itemsAndColumnsOfLists[index][0], ((SemanticList)accumulatedNode).getNumberOfListItems());
+                    Assertions.assertEquals(itemsAndColumnsOfLists[index][1], ((SemanticList)accumulatedNode).getNumberOfListColumns());
+                    index++;
+                }
+            }
+        }
+        Assertions.assertEquals(itemsAndColumnsOfLists.length, index);
     }
 
     private void testListTreeStructure(ITree tree) {
