@@ -3,6 +3,7 @@ package org.verapdf.wcag.algorithms.entities.tables.tableBorders;
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.entities.tables.TableToken;
 
 import java.util.LinkedList;
@@ -96,5 +97,13 @@ public class TableBorderCell {
 
     public int getColSpan() {
         return colSpan;
+    }
+
+    public BoundingBox getContentBoundingBox() {
+        BoundingBox boundingBox = new MultiBoundingBox();
+        for (TableToken token : content) {
+            boundingBox.union(token.getBoundingBox());
+        }
+        return boundingBox;
     }
 }

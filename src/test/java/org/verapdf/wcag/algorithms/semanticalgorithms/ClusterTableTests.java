@@ -27,7 +27,7 @@ public class ClusterTableTests {
                 Arguments.of("Prevent-Document-Frustration-JAWS-and-PDFs.json", new int[][] {}, false, false),
                 Arguments.of("testdocument10.json", new int[][] {{2,15},{2,12},{2,8},{2,9}}, true, true),
                 Arguments.of("table-word.json", new int[][] {/*{4, 4}*/}, true, true),
-                Arguments.of("NEG-fake-table.json", new int[][] {/*{4, 4}*/}, false, true),
+                Arguments.of("NEG-fake-table.json", new int[][] {{4, 4}}, false, true),
                 Arguments.of("PDFUA-Ref-2-07_FormalDocument.json", new int[][] {}, true, true),
                 Arguments.of("NEG-bad-table.json", new int[][] {{4, 5}}, false, false),
                 Arguments.of("NEG-bad-table2.json", new int[][] {{4, 5}}, false, false),

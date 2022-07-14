@@ -168,9 +168,6 @@ public class TableRecognizer {
     }
 
     private void setupRowAndColNumbers() {
-        for (TableCluster header : headers) {
-            header.setId(generateClusterId());
-        }
         List<TableCluster> cleanClusters = new ArrayList<>();
         for (TableCluster cluster : clusters) {
             if (cluster.getRows().size() > 1) {
