@@ -409,7 +409,7 @@ public class ClusterTableConsumer {
         return true;
     }
 
-    private boolean isNodeInsideTable(INode node, Long id, BoundingBox boundingBox) {
+    public static boolean isNodeInsideTable(INode node, Long id, BoundingBox boundingBox) {
         if (node.getRecognizedStructureId() == id) {
             return true;
         }
