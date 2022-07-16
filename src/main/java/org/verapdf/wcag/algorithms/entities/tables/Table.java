@@ -24,6 +24,7 @@ public class Table extends InfoChunk {
     private Double validationScore = null;
     private TableBorder tableBorder;
     private final List<INode> restNodes;
+    private INode bodyNode;
 
     public Table(List<TableCluster> headers) {
         rows = new ArrayList<>();
@@ -311,4 +312,12 @@ public class Table extends InfoChunk {
         }
         return numberOfCellsWithContent;
     }
+
+    public INode getBodyNode() {
+        return bodyNode;
+    }
+
+     public void setBodyNode(INode bodyNode) {
+        this.bodyNode = bodyNode;
+     }
 }
