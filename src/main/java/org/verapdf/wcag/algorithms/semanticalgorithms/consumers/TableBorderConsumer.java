@@ -77,7 +77,7 @@ public class TableBorderConsumer {
                         }
                         updateTreeWithRecognizedTableRows(table, depth);
                     }
-                    if (ClusterTableConsumer.isNodeInsideTable(tableNode, table.getId(), table.getBoundingBox())) {
+                    if (ClusterTableConsumer.isNodeInsideTable(tableNode, table.getId(), table.getBoundingBox(), SemanticType.TABLE)) {
                         StaticContainers.getAccumulatedNodeMapper().updateNode(tableNode, new SemanticTable(table),
                                 1.0, SemanticType.TABLE);
                         ClusterTableConsumer.detectTableCaptions(table.getBoundingBox(), tableNode);
@@ -170,7 +170,8 @@ public class TableBorderConsumer {
 
     private static void setType(INode node, SemanticType type, Long id, BoundingBox boundingBox) {
         if (node != null) {
-            if (((TableUtils.isTableNode(node)) && node.getRecognizedStructureId() != id) || !ClusterTableConsumer.isNodeInsideTable(node, id, boundingBox)) {
+            if (((TableUtils.isTableNode(node)) && node.getRecognizedStructureId() != id) ||
+                    !ClusterTableConsumer.isNodeInsideTable(node, id, boundingBox, type)) {
                 node.setRecognizedStructureId(null);
             } else {
                 node.setRecognizedStructureId(id);
