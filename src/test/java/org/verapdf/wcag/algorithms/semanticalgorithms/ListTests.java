@@ -48,7 +48,10 @@ public class ListTests {
                 Arguments.of("list_not_caption.json", new int[]{}, true, true, new int[][] {{2, 1}}),
                 Arguments.of("one_elem_list_letter_label.json", new int[]{}, true, true, new int[][] {{1, 1}, {3, 1}}),
                 Arguments.of("pdf_tagging_list_with_o_labels.json", new int[]{}, true, true, new int[][] {{3, 1}, {4, 1}, {5, 1}}),
-                Arguments.of("pdf_tagging_one_elem_list_with_o_label.json", new int[]{}, true, true, new int[][] {{1, 1}, {4, 1}})
+                Arguments.of("pdf_tagging_one_elem_list_with_o_label.json", new int[]{}, true, true, new int[][] {{1, 1}, {4, 1}}),
+                Arguments.of("test-document-16.json", new int[]{}, true, true, new int[][] {{9, 1}, {2, 1}}),
+                Arguments.of("accessible_pdf_webinar_session_ADA.json", new int[]{}, true, true, new int[][] {{3, 1}, {1, 1}}),
+                Arguments.of("accessible_pdf_webinar_session_ADA1.json", new int[]{}, true, true, new int[][] {{1, 1}, {4, 1}, {3, 1}, {1, 1}, {2, 1}})
                 );
     }
 
