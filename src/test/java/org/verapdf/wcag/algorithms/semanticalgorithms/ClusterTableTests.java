@@ -46,7 +46,7 @@ public class ClusterTableTests {
                 Arguments.of("tableBorder.json", new int[][] {/*{3, 4}*/}, true, true),
                 Arguments.of("Make-your-Acrobat-PDF-learning-resources-accessible-page-13.json", new int[][] {}, true, true),
                 Arguments.of("Make-your-Acrobat-PDF-learning-resources-accessible-page-23.json", new int[][] {}, true, true),
-                Arguments.of("PDFUA-Reference-08_(English-2013-EU-Conference).json", new int[][] {{2,4}}, false, false), // to fix
+                Arguments.of("PDFUA-Reference-08_(English-2013-EU-Conference).json", new int[][] {{2,16},{3,10}}, false, false), // to fix
                 Arguments.of("PDFUA-Ref-2-02_Invoice.json", new int[][] {{4, 9}}, false, false),
                 Arguments.of("../lists/PDFUA-Ref-2-03_AcademicAbstract.json", new int[][] {{2,4}}, false, true),//to fix
                 Arguments.of("PDFUA-Ref-2-05_BookChapter-german.json", new int[][] {}, false, true), // contents page is recognized as table, table on 6th page is not recognized
