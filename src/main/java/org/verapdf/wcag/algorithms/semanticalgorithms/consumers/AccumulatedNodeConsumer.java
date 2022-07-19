@@ -399,7 +399,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		List<INode> lineArtChildren = new ArrayList<>(node.getChildren().size());
 		List<LineArtChunk> childrenLineArts = new ArrayList<>(node.getChildren().size());
 		for (INode child : node.getChildren()) {
-			if (child != null) {
+			if (child != null && !SemanticType.LIST.equals(child.getSemanticType())) {
 				INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
 				if (!(accumulatedChild instanceof SemanticTextNode)) {
 					continue;
