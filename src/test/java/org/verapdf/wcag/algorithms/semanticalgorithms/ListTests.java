@@ -52,7 +52,8 @@ public class ListTests {
                 Arguments.of("test-document-16.json", new int[]{}, true, true, new int[][] {{9, 1}, {2, 1}}),
                 Arguments.of("accessible_pdf_webinar_session_ADA.json", new int[]{}, true, true, new int[][] {{3, 1}, {1, 1}}),
                 Arguments.of("accessible_pdf_webinar_session_ADA1.json", new int[]{}, true, true, new int[][] {{1, 1}, {4, 1}, {3, 1}, {1, 1}, {2, 1}}),
-                Arguments.of("list-inside-list-creating-accessible.json", new int[]{}, true, true, new int[][] {{1, 1}, {8, 1}})
+                Arguments.of("list-inside-list-creating-accessible.json", new int[]{}, true, true, new int[][] {{1, 1}, {8, 1}}),
+                Arguments.of("span-roman-letters-creating-accessible.json", new int[]{}, true, true, new int[][] {})
                 );
     }
 

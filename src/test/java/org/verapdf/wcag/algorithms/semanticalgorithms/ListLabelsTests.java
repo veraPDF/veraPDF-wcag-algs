@@ -151,6 +151,8 @@ public class ListLabelsTests {
                 Arguments.of(new String[]{"iv", "v"}, new ListInterval[]{new ListInterval(0, 1)}),
                 Arguments.of(new String[]{"-XXI-", "-XXII-"}, new ListInterval[]{new ListInterval(0, 1)}),
                 Arguments.of(new String[]{"XIV", "XV"}, new ListInterval[]{new ListInterval(0, 1)}),
+                Arguments.of(new String[]{"alo", "ali"}, new ListInterval[]{}),
+                Arguments.of(new String[]{"vo", "vi"}, new ListInterval[]{}),
                 Arguments.of(new String[]{"10", "20", "30"}, new ListInterval[]{}),
                 Arguments.of(new String[]{"19", "110"}, new ListInterval[]{}),
                 Arguments.of(new String[]{"CA", "CB", "CC"}, new ListInterval[]{new ListInterval(0, 2)})
