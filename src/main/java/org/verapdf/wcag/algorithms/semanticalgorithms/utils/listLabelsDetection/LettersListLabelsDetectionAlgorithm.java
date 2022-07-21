@@ -72,7 +72,12 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
                 start = getNotRegexStartLength(items.get(i), commonLength);
                 prefix = items.get(i).substring(0, start);
                 String substring = items.get(i).substring(start);
-                substring = substring.substring(0, getRegexStartLength(substring));
+                int regexStartLength = getRegexStartLength(substring);
+                String suffix = substring.substring(regexStartLength);
+                if (!checkPrefixAndSuffix(prefix, suffix)) {
+                    continue;
+                }
+                substring = substring.substring(0, regexStartLength);
                 if (substring.matches(getLowerCaseRegex())) {
                     isUpperCase = false;
                 } else if (substring.matches(getUpperCaseRegex())) {

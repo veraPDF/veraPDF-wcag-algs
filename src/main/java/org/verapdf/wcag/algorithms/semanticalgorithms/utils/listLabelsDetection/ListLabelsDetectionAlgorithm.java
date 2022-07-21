@@ -74,4 +74,8 @@ public abstract class ListLabelsDetectionAlgorithm {
         }
         return 0;
     }
+
+    protected Boolean checkPrefixAndSuffix(String prefix, String suffix) {
+        return true;
+    }
 }
