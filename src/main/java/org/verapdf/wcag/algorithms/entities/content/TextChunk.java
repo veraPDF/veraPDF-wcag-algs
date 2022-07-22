@@ -21,6 +21,10 @@ public class TextChunk extends TextInfoChunk {
     public TextChunk() {
     }
 
+    public TextChunk(String value) {
+        this.value = value;
+    }
+
     public TextChunk(BoundingBox bbox, String value, double fontSize, double baseLine) {
         super(bbox, fontSize, baseLine);
         this.value = value;

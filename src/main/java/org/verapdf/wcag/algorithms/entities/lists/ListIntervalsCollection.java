@@ -1,9 +1,6 @@
 package org.verapdf.wcag.algorithms.entities.lists;
 
-import java.util.Comparator;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 public class ListIntervalsCollection {
 
@@ -19,12 +16,16 @@ public class ListIntervalsCollection {
 	}
 
 	public void put(ListInterval listInterval) {
+		Set<ListInterval> intervalsToRemove = new HashSet<>();
 		for (ListInterval interval : set) {
 			if (interval.contains(listInterval)) {
 				return;
 			} else if (listInterval.contains(interval)) {
-				set.remove(interval);
+				intervalsToRemove.add(interval);
 			}
+		}
+		for (ListInterval interval : intervalsToRemove) {
+			set.remove(interval);
 		}
 		set.add(listInterval);
 	}

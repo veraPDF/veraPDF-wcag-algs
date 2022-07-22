@@ -1,10 +1,10 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection;
 
+import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
+import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetectionAlgorithm {
 
@@ -46,25 +46,39 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
     }
 
     @Override
-    public Set<ListInterval> getItemsIntervals(List<String> items) {
+    public Set<ListInterval> getItemsIntervals(List<ListItemTextInfo> itemsInfo) {
         Set<ListInterval> listIntervals = new HashSet<>();
+        List<Integer> listItemsIndexes = new ArrayList<>();
+        List<Integer> listsIndexes = new ArrayList<>();
         ArabicNumberInformation arabicNumberInformation = new ArabicNumberInformation();
-        for (int i = 0; i < items.size(); i++) {
+        for (int i = 0; i < itemsInfo.size(); i++) {
+            int originalIndex = itemsInfo.get(i).getIndex();
             if (arabicNumberInformation.number != null) {
                 arabicNumberInformation.number++;
-                if (!arabicNumberInformation.checkItem(items.get(i))) {
-                    if (i > arabicNumberInformation.index + 1) {
-                        listIntervals.add(new ListInterval(arabicNumberInformation.index, --i));
+                if (!arabicNumberInformation.checkItem(itemsInfo.get(i).getListItem())) {
+                    if (SemanticType.LIST.equals(itemsInfo.get(i).getSemanticType())) {
+                        arabicNumberInformation.number--;
+                        listsIndexes.add(originalIndex);
+                        continue;
                     }
-                    i--;
+                    if (listItemsIndexes.size() > 1) {
+                        --i;
+                        listIntervals.add(new ListInterval(listItemsIndexes, listsIndexes));
+                    }
+                    --i;
                     arabicNumberInformation.number = null;
+                } else {
+                    listItemsIndexes.add(originalIndex);
                 }
-            } else if (i != items.size() - 1) {
-                arabicNumberInformation = new ArabicNumberInformation(items.get(i), items.get(i + 1), i);
+            } else if (i != itemsInfo.size() - 1) {
+                arabicNumberInformation = new ArabicNumberInformation(itemsInfo.get(i).getListItem(),
+                                                                      itemsInfo.get(i + 1).getListItem(), i);
+                listItemsIndexes = new ArrayList<>(Arrays.asList(originalIndex));
+                listsIndexes = new ArrayList<>();
             }
         }
-        if (arabicNumberInformation.number != null && items.size() > arabicNumberInformation.index + 1) {
-            listIntervals.add(new ListInterval(arabicNumberInformation.index, items.size() - 1));
+        if (arabicNumberInformation.number != null && listItemsIndexes.size() > 1) {
+            listIntervals.add(new ListInterval(listItemsIndexes, listsIndexes));
         }
         return listIntervals;
     }

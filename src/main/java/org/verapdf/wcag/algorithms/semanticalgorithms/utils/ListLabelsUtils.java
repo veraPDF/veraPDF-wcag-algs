@@ -1,18 +1,18 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
-
 import org.verapdf.wcag.algorithms.entities.content.InfoChunk;
+import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
 import org.verapdf.wcag.algorithms.entities.lists.ListIntervalsCollection;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ArabicNumbersListLabelsDetectionAlgorithm;
+import org.verapdf.wcag.algorithms.entities.lists.info.ListItemInfo;
+import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.AlfaLettersListLabelsDetectionAlgorithm1;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.AlfaLettersListLabelsDetectionAlgorithm2;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ArabicNumbersListLabelsDetectionAlgorithm;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.RomanNumbersListLabelsDetectionAlgorithm;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ListLabelsUtils {
 
@@ -110,57 +110,78 @@ public class ListLabelsUtils {
 		return length;
 	}
 
-	public static Set<ListInterval> getImageListItemsIntervals(List<? extends InfoChunk> listItems) {
+	public static Set<ListInterval> getImageListItemsIntervals(List<ListItemInfo> itemsInfo) {
+		List<ListItemInfo> itemsNonNullInfo = itemsInfo.stream().filter(Objects::nonNull).collect(Collectors.toList());
 		Set<ListInterval> listIntervals = new HashSet<>();
-		int index = 0;
-		InfoChunk image = listItems.get(index);
-		for (int i = 1; i < listItems.size(); i++) {
-			InfoChunk currentImage = listItems.get(i);
+		List<Integer> listItemsIndexes = new ArrayList<>(Arrays.asList(0));
+		List<Integer> listsIndexes = new ArrayList<>();
+		InfoChunk image = itemsNonNullInfo.get(0).getListItemValue();
+		for (int i = 1; i < itemsNonNullInfo.size(); i++) {
+			InfoChunk currentImage = itemsNonNullInfo.get(i).getListItemValue();
+			int originalIndex = itemsNonNullInfo.get(i).getIndex();
 			if (!NodeUtils.areCloseNumbers(image.getBoundingBox().getWidth(), currentImage.getBoundingBox().getWidth()) ||
-					!NodeUtils.areCloseNumbers(image.getBoundingBox().getHeight(), currentImage.getBoundingBox().getHeight())) {
-				if (index < i - 1) {
-					listIntervals.add(new ListInterval(index, i - 1));
+			    !NodeUtils.areCloseNumbers(image.getBoundingBox().getHeight(), currentImage.getBoundingBox().getHeight())) {
+				if (SemanticType.LIST.equals(itemsNonNullInfo.get(i).getSemanticType())) {
+					listsIndexes.add(originalIndex);
+					continue;
 				}
-				index = i;
-				image = listItems.get(i);
+				if (listItemsIndexes.size() > 1) {
+					listIntervals.add(new ListInterval(listItemsIndexes, listsIndexes));
+				}
+				image = itemsNonNullInfo.get(i).getListItemValue();
+				listItemsIndexes = new ArrayList<>(Arrays.asList(originalIndex));
+				listsIndexes = new ArrayList<>();
+			} else {
+				listItemsIndexes.add(originalIndex);
 			}
 		}
-		if (index < listItems.size() - 1) {
-			listIntervals.add(new ListInterval(index, listItems.size() - 1));
+		if (listItemsIndexes.size() > 1) {
+			listIntervals.add(new ListInterval(listItemsIndexes, listsIndexes));
 		}
 		return listIntervals;
 	}
 
-	public static Set<ListInterval> getListItemsIntervals(List<String> listItems) {
-		ListIntervalsCollection listIntervals = new ListIntervalsCollection(getItemsWithEqualsLabels(listItems));
-		listIntervals.putAll(new AlfaLettersListLabelsDetectionAlgorithm1().getItemsIntervals(listItems));
-		listIntervals.putAll(new AlfaLettersListLabelsDetectionAlgorithm2().getItemsIntervals(listItems));
-		listIntervals.putAll(new RomanNumbersListLabelsDetectionAlgorithm().getItemsIntervals(listItems));
-		listIntervals.putAll(new ArabicNumbersListLabelsDetectionAlgorithm().getItemsIntervals(listItems));
+	public static Set<ListInterval> getListItemsIntervals(List<ListItemTextInfo> itemsInfo) {
+		ListIntervalsCollection listIntervals = new ListIntervalsCollection(getItemsWithEqualsLabels(itemsInfo));
+		listIntervals.putAll(new AlfaLettersListLabelsDetectionAlgorithm1().getItemsIntervals(itemsInfo));
+		listIntervals.putAll(new AlfaLettersListLabelsDetectionAlgorithm2().getItemsIntervals(itemsInfo));
+		listIntervals.putAll(new RomanNumbersListLabelsDetectionAlgorithm().getItemsIntervals(itemsInfo));
+		listIntervals.putAll(new ArabicNumbersListLabelsDetectionAlgorithm().getItemsIntervals(itemsInfo));
 		return listIntervals.getSet();
 	}
 
-	public static Set<ListInterval> getItemsWithEqualsLabels(List<String> items) {
+	public static Set<ListInterval> getItemsWithEqualsLabels(List<ListItemTextInfo> itemsInfo) {
 		Set<ListInterval> listIntervals = new HashSet<>();
-		char firstChar = items.get(0).charAt(0);
-		char secondChar = items.get(0).length() > 1 ? items.get(0).charAt(1) : ' ';
-		int index = 0;
-		for (int i = 1; i < items.size(); i++) {
-			if (items.get(i).charAt(0) != firstChar) {
-				if (index < i - 1 && (labels.contains(firstChar) ||
-				                      o.equals(firstChar) && !Character.isLetter(secondChar))) {
-					listIntervals.add(new ListInterval(index, i - 1));
+		char firstChar = itemsInfo.get(0).getListItem().charAt(0);
+		char secondChar = itemsInfo.get(0).getListItem().length() > 1 ? itemsInfo.get(0).getListItem().charAt(1) : ' ';
+		List<Integer> listItemsIndexes = new ArrayList<>(Arrays.asList(itemsInfo.get(0).getIndex()));
+		List<Integer> listsIndexes = new ArrayList<>();
+		for (int i = 1; i < itemsInfo.size(); i++) {
+			int originalIndex = itemsInfo.get(i).getIndex();
+			if (itemsInfo.get(i).getListItem().charAt(0) != firstChar) {
+				if (SemanticType.LIST.equals(itemsInfo.get(i).getSemanticType())) {
+					listsIndexes.add(originalIndex);
+					continue;
 				}
-				firstChar = items.get(i).charAt(0);
-				secondChar = items.get(i).length() > 1 ? items.get(i).charAt(1) : ' ';
-				index = i;
+				if (listItemsIndexes.size() > 1 && checkForSuitableLabel(firstChar, secondChar)) {
+					listIntervals.add(new ListInterval(listItemsIndexes, listsIndexes));
+				}
+				firstChar = itemsInfo.get(i).getListItem().charAt(0);
+				secondChar = itemsInfo.get(i).getListItem().length() > 1 ? itemsInfo.get(i).getListItem().charAt(1) : ' ';
+				listItemsIndexes = new ArrayList<>(Arrays.asList(originalIndex));
+				listsIndexes = new ArrayList<>();
+			} else {
+				listItemsIndexes.add(originalIndex);
 			}
 		}
-		if (index < items.size() - 1 && (labels.contains(firstChar) ||
-		                                 o.equals(firstChar) && !Character.isLetter(secondChar))) {
-			listIntervals.add(new ListInterval(index, items.size() - 1));
+		if (listItemsIndexes.size() > 1 && checkForSuitableLabel(firstChar, secondChar)) {
+			listIntervals.add(new ListInterval(listItemsIndexes, listsIndexes));
 		}
 		return listIntervals;
+	}
+
+	private static boolean checkForSuitableLabel(Character firstChar, Character secondChar) {
+		return labels.contains(firstChar) || o.equals(firstChar) && !Character.isLetter(secondChar);
 	}
 
 }

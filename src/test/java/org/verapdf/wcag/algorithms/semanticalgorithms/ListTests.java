@@ -25,35 +25,39 @@ public class ListTests {
 
     static Stream<Arguments> listDetectionTestParams() {
         return Stream.of(
-                Arguments.of("list-with-wrong-order-text-chunks.json", new int[] {}, true, true, new int[][] {{9, 1}}),
-                Arguments.of("7NonTable.json", new int[] {}, true, true, new int[][] {{6, 1}}),
-                Arguments.of("list-with-line-arts-labels.json", new int[] {}, true, true, new int[][] {{7, 1}}),
-                Arguments.of("list_start_with_Figure_pass.json", new int[] {}, true, true, new int[][] {{5, 1}}),
+                Arguments.of("list-with-wrong-order-text-chunks.json", new int[] {}, true, true, new int[][] {{9, 0, 1}}),
+                Arguments.of("7NonTable.json", new int[] {}, true, true, new int[][] {{6, 0, 1}}),
+                Arguments.of("list-with-line-arts-labels.json", new int[] {}, true, true, new int[][] {{7, 0, 1}}),
+                Arguments.of("list_start_with_Figure_pass.json", new int[] {}, true, true, new int[][] {{5, 0, 1}}),
                 Arguments.of("test-document-13.json", new int[] {}, true, true, new int[][] {}),
                 Arguments.of("fake_list_fail.json", new int[] {}, true, true, new int[][] {}),
-                Arguments.of("list_start_from_005_pass.json", new int[] {}, true, true, new int[][] {{8, 1}}),
-                Arguments.of("fake_list_with_i_item_diff_formatting_fail.json", new int[] {}, true, true, new int[][] {{12, 1}}),
-                Arguments.of("list-with-image-label.json", new int[] {}, false, true, new int[][] {{3, 1}}),
-                Arguments.of("NEG-fake-list.json", new int[] {4}, false, true, new int[][] {{4, 1}}),
-                Arguments.of("ordered-list1.json", new int[] {}, true, true, new int[][] {{5, 1}, {5, 1}}),
-                Arguments.of("PDFUA-Ref-2-03_AcademicAbstract.json", new int[] {}, false, false, new int[][] {{1, 1}, {9, 1}}),
-                Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[] {}, true, true, new int[][] {{3, 1}, {7, 1}, {4, 1}, {4, 1}}),
-                Arguments.of("PDFUA-Ref-2-08_BookChapter_fix.json", new int[] {}, false, true, new int[][] {{6, 2}, {4, 1},
-                        {4, 1}, {4, 1}, {4, 1}, {4, 1}, {5, 2}, {4, 1}, {1, 1}, {5, 1}, {4, 1}, {4, 1}, {4, 1}, {4, 1},
-                        {4, 2}, {1, 1}, {1, 1}, {4, 1}, {4, 1}, {3, 1}, {3, 1}, {2, 2}, {5, 2}, {2, 1}, {3, 1}, {3, 1},
-                        {4, 1}, {1, 1}, {2, 1}, {3, 2}, {1, 1}, {8, 2}, {2, 1}, {2, 1}, {4, 1}, {5, 1}, {2, 1}, {6, 1},
-                        {6, 2}, {2, 1}, {1, 1}, {3, 3}, {3, 1}, {3, 1}, {4, 2}, {4, 1}, {4, 1}, {4, 1}, {4, 1}, {7, 2}}),
-                Arguments.of("one_element_list.json", new int[]{}, true, true, new int[][] {{1, 1}}),
-                Arguments.of("one_element_start_with_number.json", new int[]{}, true, true, new int[][] {{1, 1}}),
-                Arguments.of("list_not_caption.json", new int[]{}, true, true, new int[][] {{2, 1}}),
-                Arguments.of("one_elem_list_letter_label.json", new int[]{}, true, true, new int[][] {{1, 1}, {3, 1}}),
-                Arguments.of("pdf_tagging_list_with_o_labels.json", new int[]{}, true, true, new int[][] {{3, 1}, {4, 1}, {5, 1}}),
-                Arguments.of("pdf_tagging_one_elem_list_with_o_label.json", new int[]{}, true, true, new int[][] {{1, 1}, {4, 1}}),
-                Arguments.of("test-document-16.json", new int[]{}, true, true, new int[][] {{9, 1}, {2, 1}}),
-                Arguments.of("accessible_pdf_webinar_session_ADA.json", new int[]{}, true, true, new int[][] {{3, 1}, {1, 1}}),
-                Arguments.of("accessible_pdf_webinar_session_ADA1.json", new int[]{}, true, true, new int[][] {{1, 1}, {4, 1}, {3, 1}, {1, 1}, {2, 1}}),
-                Arguments.of("list-inside-list-creating-accessible.json", new int[]{}, true, true, new int[][] {{1, 1}, {8, 1}}),
-                Arguments.of("span-roman-letters-creating-accessible.json", new int[]{}, true, true, new int[][] {})
+                Arguments.of("list_start_from_005_pass.json", new int[] {}, true, true, new int[][] {{8, 0, 1}}),
+                Arguments.of("fake_list_with_i_item_diff_formatting_fail.json", new int[] {}, true, true, new int[][] {{12, 0, 1}}),
+                Arguments.of("list-with-image-label.json", new int[] {}, false, true, new int[][] {{3, 0, 1}}),
+                Arguments.of("NEG-fake-list.json", new int[] {4}, false, true, new int[][] {{4, 0, 1}}),
+                Arguments.of("ordered-list1.json", new int[] {}, true, true, new int[][] {{5, 0, 1}, {5, 0, 1}}),
+                Arguments.of("PDFUA-Ref-2-03_AcademicAbstract.json", new int[] {}, false, false, new int[][] {{1, 0, 1}, {9, 0, 1}}),
+                Arguments.of("PDFUA-Ref-2-06_Brochure.json", new int[] {}, true, true, new int[][] {{3, 0, 1}, {7, 0, 1}, {4, 0, 1}, {4, 0, 1}}),
+                Arguments.of("PDFUA-Ref-2-08_BookChapter_fix.json", new int[] {}, false, true, new int[][] {{6, 0, 2}, {4, 0, 1},
+                        {4, 0, 1}, {4, 0, 1}, {4, 0, 1}, {4, 0, 1}, {5, 0, 2}, {4, 0, 1}, {1, 0, 1}, {5, 0, 1}, {4, 0, 1}, {4, 0, 1}, {4, 0, 1}, {4, 0, 1},
+                        {4, 0, 2}, {1, 0, 1}, {1, 0, 1}, {4, 0, 1}, {4, 0, 1}, {3, 0, 1}, {3, 0, 1}, {2, 0, 2}, {5, 0, 2}, {2, 0, 1}, {3, 0, 1}, {3, 0, 1},
+                        {4, 0, 1}, {1, 0, 1}, {2, 0, 1}, {3, 0, 2}, {1, 0, 1}, {8, 0, 2}, {2, 0, 1}, {2, 0, 1}, {4, 0, 1}, {5, 0, 1}, {2, 0, 1}, {6, 0, 1},
+                        {6, 0, 2}, {2, 0, 1}, {1, 0, 1}, {3, 0, 3}, {3, 0, 1}, {3, 0, 1}, {4, 0, 2}, {4, 0, 1}, {4, 0, 1}, {4, 0, 1}, {4, 0, 1}, {7, 0, 2}}),
+                Arguments.of("one_element_list.json", new int[]{}, true, true, new int[][] {{1, 0, 1}}),
+                Arguments.of("one_element_start_with_number.json", new int[]{}, true, true, new int[][] {{1, 0, 1}}),
+                Arguments.of("list_not_caption.json", new int[]{}, true, true, new int[][] {{2, 0, 1}}),
+                Arguments.of("one_elem_list_letter_label.json", new int[]{}, true, true, new int[][] {{1, 0, 1}, {3, 0, 1}}),
+                Arguments.of("pdf_tagging_list_with_o_labels.json", new int[]{}, true, true, new int[][] {{3, 0, 1}, {4, 0, 1}, {5, 0, 1}}),
+                Arguments.of("pdf_tagging_one_elem_list_with_o_label.json", new int[]{}, true, true, new int[][] {{1, 0, 1}, {4, 0, 1}}),
+                Arguments.of("test-document-16.json", new int[]{}, true, true, new int[][] {{9, 0, 1}, {2, 0, 1}}),
+                Arguments.of("accessible_pdf_webinar_session_ADA.json", new int[]{}, true, true, new int[][] {{3, 0, 1}, {1, 0, 1}}),
+                Arguments.of("accessible_pdf_webinar_session_ADA1.json", new int[]{}, true, true, new int[][] {{1, 0, 1}, {4, 0, 1}, {3, 0, 1}, {1, 0, 1}, {2, 0, 1}}),
+                Arguments.of("list-inside-list-creating-accessible.json", new int[]{}, true, true, new int[][] {{1, 0, 1}, {8, 1, 1}}),
+                Arguments.of("list-inside-list-char-label-creating-accessible.json", new int[]{}, true, true, new int[][] {{1, 0, 1}, {8, 1, 1}}),
+                Arguments.of("list-inside-list-roman-creating-accessible.json", new int[]{}, true, true, new int[][] {{1, 0, 1}, {8, 1, 1}}),
+                Arguments.of("list-inside-list-creating-accessible2.json", new int[]{}, true, true, new int[][] {{1, 0, 1}, {1, 0, 1}, {6, 2, 1}}),
+                Arguments.of("span-roman-letters-creating-accessible.json", new int[]{}, true, true, new int[][] {}),
+                Arguments.of("three-lists-last-creating-accessible.json", new int[]{}, true, true,  new int[][] {{1, 0, 1}, {2, 1, 1}})
                 );
     }
 
@@ -105,7 +109,8 @@ public class ListTests {
                 if (accumulatedNode instanceof SemanticList) {
                     Assertions.assertTrue(index < itemsAndColumnsOfLists.length);
                     Assertions.assertEquals(itemsAndColumnsOfLists[index][0], ((SemanticList)accumulatedNode).getNumberOfListItems());
-                    Assertions.assertEquals(itemsAndColumnsOfLists[index][1], ((SemanticList)accumulatedNode).getNumberOfListColumns());
+                    Assertions.assertEquals(itemsAndColumnsOfLists[index][1], ((SemanticList)accumulatedNode).getNumberOfLists());
+                    Assertions.assertEquals(itemsAndColumnsOfLists[index][2], ((SemanticList)accumulatedNode).getNumberOfListColumns());
                     index++;
                 }
             }

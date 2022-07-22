@@ -8,6 +8,7 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
 import org.verapdf.wcag.algorithms.entities.lists.ListIntervalsCollection;
+import org.verapdf.wcag.algorithms.entities.lists.info.ListItemInfo;
 import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.tables.TableCell;
 import org.verapdf.wcag.algorithms.entities.tables.TableRow;
@@ -73,19 +74,20 @@ public class ListUtils {
 		return true;
 	}
 
-	public static void updateTreeWithRecognizedLists(INode node, List<INode> children, Set<ListInterval> listIntervals) {
+	public static void updateTreeWithRecognizedLists(INode node, Set<ListInterval> listIntervals) {
 		for (ListInterval listInterval : listIntervals) {
-			updateTreeWithRecognizedList(node, children, listInterval);
+			updateTreeWithRecognizedList(node, listInterval);
 		}
 	}
 
-	public static void updateTreeWithRecognizedList(INode node, List<INode> children, ListInterval listInterval) {
+	public static void updateTreeWithRecognizedList(INode node, ListInterval listInterval) {
 		Long listId = Table.getNextTableListId();
-		for (int i = listInterval.getStart(); i <= listInterval.getEnd(); i++) {
-			updateTreeWithRecognizedListItem(children.get(i), listId);
+		List<INode> children = node.getChildren();
+		for (Integer index : listInterval.getListItemsIndexes()) {
+			updateTreeWithRecognizedListItem(children.get(index), listId);
 		}
 		if (node.getRecognizedStructureId() == null) {
-			double probability = ((double) (listInterval.getNumberOfListItems())) / node.getChildren().size();
+			double probability = ((double) (listInterval.getNumberOfListItemsAndLists())) / node.getChildren().size();
 			if (probability >= TABLE_PROBABILITY_THRESHOLD) {
 				INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
 				StaticContainers.getAccumulatedNodeMapper().updateNode(node,
@@ -119,15 +121,17 @@ public class ListUtils {
 	}
 
 	public static Set<ListInterval> getChildrenListIntervals(Set<ListInterval> listIntervals, List<INode> children,
-															  List<? extends InfoChunk> childrenFirstLines) {
+	                                                         List<? extends ListItemInfo> itemsInfo) {
 		ListIntervalsCollection listIntervalsCollection = new ListIntervalsCollection();
 		for (ListInterval listInterval : listIntervals) {
-			INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(listInterval.getStart()));
+			int start = listInterval.getListItemsStart();
+			List<Integer> listItemsIndexes = new ArrayList<>(Arrays.asList(start));
+			INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(start));
 			double right = accumulatedChild.getRightX();
 			int lastChildNumberOFColumns;
-			int start = listInterval.getStart();
 			int numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
-			for (int i = listInterval.getStart() + 1; i <= listInterval.getEnd(); i++) {
+			int previousIndex = start;
+			for (int i : listInterval.getListItemsIndexes().subList(1, listInterval.getListItemsIndexes().size())) {
 				lastChildNumberOFColumns = 0;
 				if (accumulatedChild instanceof SemanticTextNode) {
 					SemanticTextNode textNode = (SemanticTextNode)accumulatedChild;
@@ -136,26 +140,27 @@ public class ListUtils {
 					}
 					lastChildNumberOFColumns = Math.max(textNode.getColumnsNumber() - 2, 0);
 				}
-				InfoChunk line1 = childrenFirstLines.get(i - 1);
-				InfoChunk line2 = childrenFirstLines.get(i);
+				InfoChunk line1 = itemsInfo.get(previousIndex).getListItemValue();
+				InfoChunk line2 = itemsInfo.get(i).getListItemValue();
 				accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(i));
 				if (line1.getPageNumber() + 1 < line2.getPageNumber()) {
-					if (start < i - 1) {
-						listIntervalsCollection.put(new ListInterval(start, i - 1, numberOfColumns));
-					}
-					start = i;
+					updateListIntervalCollection(listIntervalsCollection, listInterval, listItemsIndexes, numberOfColumns);
+
 					right = -Double.MAX_VALUE;
 					numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
+					listItemsIndexes = new ArrayList<>(Arrays.asList(i));
+					previousIndex = i;
 					continue;
 				}
 				if (Objects.equals(line1.getPageNumber(), line2.getPageNumber())) {
 					if (!isOneColumn(line1, line2) && right >= accumulatedChild.getLeftX()) {
-						if (start < i - 1) {
-							listIntervalsCollection.put(new ListInterval(start, i - 1, numberOfColumns));
-						}
-						start = i;
+						updateListIntervalCollection(listIntervalsCollection, listInterval, listItemsIndexes, numberOfColumns);
+
 						right = -Double.MAX_VALUE;
 						numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
+						listItemsIndexes = new ArrayList<>(Arrays.asList(i));
+					} else {
+						listItemsIndexes.add(i);
 					}
 					if (!isOneColumn(line1, line2)) {
 						numberOfColumns += lastChildNumberOFColumns + 1;
@@ -164,13 +169,21 @@ public class ListUtils {
 				} else {
 					numberOfColumns++;
 					right = accumulatedChild.getRightX();
+					listItemsIndexes.add(i);
 				}
+				previousIndex = i;
 			}
-			if (start < listInterval.getEnd()) {
-				listIntervalsCollection.put(new ListInterval(start, listInterval.getEnd(), numberOfColumns));
-			}
+			updateListIntervalCollection(listIntervalsCollection, listInterval, listItemsIndexes, numberOfColumns);
 		}
 		return listIntervalsCollection.getSet();
+	}
+
+	private static void updateListIntervalCollection(ListIntervalsCollection listIntervalsCollection, ListInterval listInterval,
+	                                                 List<Integer> listItemsIndexes, int numberOfColumns) {
+		if (listItemsIndexes.size() > 1) {
+			listIntervalsCollection.put(new ListInterval(listItemsIndexes, listInterval
+					.getListsIndexesContainedInListItemsIndexes(listItemsIndexes), numberOfColumns));
+		}
 	}
 
 	private static int getInitialListColumnsNumber(INode node) {
