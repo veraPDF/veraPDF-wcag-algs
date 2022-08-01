@@ -39,5 +39,8 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 
 		SemanticDocumentPostprocessingConsumer documentPostprocessingConsumer = new SemanticDocumentPostprocessingConsumer();
 		documentPostprocessingConsumer.runPostprocessingChecks(tree);
+
+		TOCDetectionConsumer tocDetectionConsumer = new TOCDetectionConsumer(document);
+		tree.forEach(tocDetectionConsumer);
 	}
 }

@@ -75,7 +75,7 @@ public class ClusterTableConsumer {
                 if (paragraph.isEmpty() || paragraph.isSpaceNode()) {
                     return;
                 }
-                if (paragraph.getColumnsNumber() == 1) {
+                if (paragraph.getColumnsNumber() == 1 && paragraph.getLinesNumber() != 1) {
                       TableCluster cluster = new TableCluster(paragraph, node);
                       accept(cluster, node);
                       return;
@@ -594,9 +594,9 @@ public class ClusterTableConsumer {
 
     private static boolean hasOtherChildrenWithContents(INode parent, INode node) {
         for (INode child : parent.getChildren()) {
-            if (child == node) {
+            if (child == node || child instanceof SemanticFigure) {
                 continue;
-            } else if (child instanceof SemanticFigure || child instanceof SemanticImageNode) {
+            } else if (child instanceof SemanticImageNode) {
                 return true;
             } else if (child instanceof SemanticSpan) {
                 SemanticSpan span = (SemanticSpan)child;

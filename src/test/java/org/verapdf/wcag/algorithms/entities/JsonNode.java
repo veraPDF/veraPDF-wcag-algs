@@ -21,12 +21,13 @@ public class JsonNode {
 	private double endY;
 	private double width;
 	private String fontColorSpace;
+	private String annotationType;
+	private Integer destinationPageNumber;
 	private double slantDegree;
 	private double[] boundingBox;
 	private List<Double> symbolEnds;
 	private List<JsonNode> children;
-	private List<JsonNode> pages;
-	private List<JsonNode> artifacts;
+	private List<JsonPage> pages;
 
 	public JsonNode() {
 	}
@@ -93,6 +94,14 @@ public class JsonNode {
 
 	public void setPageNumber(int pageNumber) {
 		this.pageNumber = pageNumber;
+	}
+
+	public Integer getDestinationPageNumber() {
+		return destinationPageNumber;
+	}
+
+	public void setDestinationPageNumber(Integer destinationPageNumber) {
+		this.destinationPageNumber = destinationPageNumber;
 	}
 
 	public double[] getColor() {
@@ -175,20 +184,12 @@ public class JsonNode {
 		this.endY = endY;
 	}
 
-	public List<JsonNode> getPages() {
+	public List<JsonPage> getPages() {
 		return pages;
 	}
 
-	public void setPages(List<JsonNode> pages) {
+	public void setPages(List<JsonPage> pages) {
 		this.pages = pages;
-	}
-
-	public List<JsonNode> getArtifacts() {
-		return artifacts;
-	}
-
-	public void setArtifacts(List<JsonNode> artifacts) {
-		this.artifacts = artifacts;
 	}
 
 	public double getSlantDegree() {
@@ -197,6 +198,14 @@ public class JsonNode {
 
 	public void setSlantDegree(double slantDegree) {
 		this.slantDegree = slantDegree;
+	}
+
+	public String getAnnotationType() {
+		return annotationType;
+	}
+
+	public void setAnnotationType(String annotationType) {
+		this.annotationType = annotationType;
 	}
 
 	@Override
@@ -208,7 +217,7 @@ public class JsonNode {
 			return false;
 		}
 		JsonNode jsonNode = (JsonNode) o;
-		return Double.compare(jsonNode.fontSize, fontSize) == 0 && Objects.equals(artifacts, jsonNode.artifacts) &&
+		return Double.compare(jsonNode.fontSize, fontSize) == 0 &&
 				Double.compare(jsonNode.italicAngle, italicAngle) == 0 && Objects.equals(children, jsonNode.children) &&
 				Double.compare(jsonNode.baseLine, baseLine) == 0 && Objects.equals(value, jsonNode.value) &&
 				Objects.equals(type, jsonNode.type) && jsonNode.pageNumber == pageNumber &&
@@ -217,13 +226,14 @@ public class JsonNode {
 				Objects.equals(fontName, jsonNode.fontName) && Double.compare(jsonNode.fontWeight, fontWeight) == 0 &&
 				Double.compare(jsonNode.startX, startX) == 0 && Double.compare(jsonNode.startY, startY) == 0 &&
 				Double.compare(jsonNode.endX, endX) == 0 && Double.compare(jsonNode.endY, endY) == 0 &&
-				Double.compare(jsonNode.width, width) == 0;
+				Objects.equals(jsonNode.annotationType, annotationType) && Double.compare(jsonNode.width, width) == 0 &&
+				Objects.equals(jsonNode.destinationPageNumber, destinationPageNumber);
 	}
 
 	@Override
 	public int hashCode() {
 		int result = Objects.hash(type, value, fontName, fontSize, fontWeight, italicAngle, baseLine, pageNumber,
-				children, pages, artifacts, startX, startY, endX, endY, width, slantDegree);
+				children, pages, startX, startY, endX, endY, width, slantDegree, annotationType, destinationPageNumber);
 		result = 31 * result + Arrays.hashCode(color);
 		result = 31 * result + Arrays.hashCode(boundingBox);
 		return result;
@@ -232,24 +242,25 @@ public class JsonNode {
 	@Override
 	public String toString() {
 		return "JsonNode{" +
-		       "type='" + type + '\'' +
-		       ", value='" + value + '\'' +
-		       ", fontName='" + fontName + '\'' +
-		       ", fontSize=" + fontSize +
-		       ", fontWeight=" + fontWeight +
-		       ", italicAngle=" + italicAngle +
-		       ", baseLine=" + baseLine +
-		       ", pageNumber=" + pageNumber +
+				"type='" + type + '\'' +
+				", value='" + value + '\'' +
+				", fontName='" + fontName + '\'' +
+				", fontSize=" + fontSize +
+				", fontWeight=" + fontWeight +
+				", italicAngle=" + italicAngle +
+				", baseLine=" + baseLine +
+				", pageNumber=" + pageNumber +
 				", startX=" + startX +
 				", startY=" + startY +
 				", endX=" + endX +
 				", endY=" + endY +
 				", width=" + width +
+				", annotationType=" + annotationType +
+				", destinationPageNumber=" + destinationPageNumber +
 				", slantDegree=" + slantDegree +
 				", color=" + Arrays.toString(color) +
-		       ", boundingBox=" + Arrays.toString(boundingBox) +
-		       ", children=" + children +
-				", artifacts=" + artifacts +
+				", boundingBox=" + Arrays.toString(boundingBox) +
+				", children=" + children +
 				", pages=" + pages +
 				'}';
 	}

@@ -32,7 +32,9 @@ public class SemanticDocumentPostprocessingConsumer {
 		for (INode node : tree) {
 			MultiBoundingBox boundingBox = new MultiBoundingBox();
 			for (INode child : node.getChildren()) {
-				boundingBox.union(child.getBoundingBox());
+				if (!(child instanceof IAnnotation)) {
+					boundingBox.union(child.getBoundingBox());
+				}
 			}
 			if (!node.getChildren().isEmpty()) {
 				node.setBoundingBox(boundingBox);
