@@ -10,4 +10,6 @@ public interface IPage {
 
 	public int getPageNumber();
 
+	public String getPageLabel();
+
 }

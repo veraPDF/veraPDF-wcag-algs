@@ -21,6 +21,8 @@ public class SemanticTypeMapper {
         map.put(SemanticType.LIST_ITEM.getValue(), SemanticType.LIST_ITEM);
         map.put(SemanticType.LIST_BODY.getValue(), SemanticType.LIST_BODY);
         map.put(SemanticType.LIST_LABEL.getValue(), SemanticType.LIST_LABEL);
+        map.put(SemanticType.TABLE_OF_CONTENT.getValue(), SemanticType.TABLE_OF_CONTENT);
+        map.put(SemanticType.TABLE_OF_CONTENT_ITEM.getValue(), SemanticType.TABLE_OF_CONTENT_ITEM);
         map.put(SemanticType.TABLE.getValue(), SemanticType.TABLE);
         map.put(SemanticType.TABLE_HEADERS.getValue(), SemanticType.TABLE_HEADERS);
         map.put(SemanticType.TABLE_BODY.getValue(), SemanticType.TABLE_BODY);

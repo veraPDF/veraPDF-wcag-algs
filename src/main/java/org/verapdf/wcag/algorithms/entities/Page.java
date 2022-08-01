@@ -8,10 +8,12 @@ import java.util.List;
 public class Page implements IPage {
 
 	private final int pageNumber;
+	private final String pageLabel;
 	private final List<IChunk> artifacts;
 
-	public Page(int pageNumber) {
+	public Page(int pageNumber, String pageLabel) {
 		this.pageNumber = pageNumber;
+		this.pageLabel = pageLabel;
 		artifacts = new LinkedList<>();
 	}
 
@@ -21,6 +23,11 @@ public class Page implements IPage {
 
 	public int getPageNumber() {
 		return pageNumber;
+	}
+
+	@Override
+	public String getPageLabel() {
+		return pageLabel;
 	}
 
 }

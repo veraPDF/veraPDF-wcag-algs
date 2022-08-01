@@ -68,7 +68,7 @@ public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
         }
         MultiBoundingBox boundingBox = new MultiBoundingBox(node.getBoundingBox());
         for (INode child : node.getChildren()) {
-            if (!(child instanceof SemanticFigure)) {
+            if (!(child instanceof SemanticFigure) && !(child instanceof IAnnotation)) {
                 boundingBox.union(child.getBoundingBox());
             }
         }

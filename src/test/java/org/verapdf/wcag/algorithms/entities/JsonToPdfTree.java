@@ -25,7 +25,7 @@ public class JsonToPdfTree {
 		JsonNode jsonRoot = objectMapper.readValue(new InputStreamReader(jsonFileInputStream, StandardCharsets.UTF_8), JsonNode.class);
 		IDocument document = new Document(new SemanticTree(getPdfNode(jsonRoot)));
 		if (jsonRoot.getPages() != null) {
-			for (JsonNode page : jsonRoot.getPages()) {
+			for (JsonPage page : jsonRoot.getPages()) {
 				document.getPages().add(getPage(page));
 			}
 		}
@@ -47,15 +47,19 @@ public class JsonToPdfTree {
 		return new LineArtChunk(new BoundingBox(jsonNode.getPageNumber(), jsonNode.getBoundingBox()));
 	}
 
+	private static AnnotationNode getAnnotationNode(JsonNode jsonNode) {
+		return new AnnotationNode(jsonNode.getAnnotationType(), new BoundingBox(jsonNode.getBoundingBox()), jsonNode.getDestinationPageNumber());
+	}
+
 	private static LineChunk getLineChunk(JsonNode jsonNode) {
 		return new LineChunk(jsonNode.getPageNumber(), jsonNode.getStartX(),
 				jsonNode.getStartY(), jsonNode.getEndX(), jsonNode.getEndY(), jsonNode.getWidth());
 	}
 
-	private static IPage getPage(JsonNode jsonNode) {
-		IPage page = new Page(jsonNode.getPageNumber());
-		if (jsonNode.getArtifacts() != null) {
-			for (JsonNode artifact : jsonNode.getArtifacts()) {
+	private static IPage getPage(JsonPage jsonPage) {
+		IPage page = new Page(jsonPage.getPageNumber(),jsonPage.getPageLabel());
+		if (jsonPage.getArtifacts() != null) {
+			for (JsonNode artifact : jsonPage.getArtifacts()) {
 				page.getArtifacts().add(getArtifact(artifact));
 			}
 		}
@@ -92,8 +96,10 @@ public class JsonToPdfTree {
 			node = new SemanticImageNode(getImageChunk(jsonNode));
 		} else if ("LineArtChunk".equals(pdfType)) {
 			node = new SemanticFigure(getLineArtChunk(jsonNode));
+		} else if ("AnnotationNode".equals(pdfType)) {
+			node = getAnnotationNode(jsonNode);
 		} else {
-			node = new UnexpectedSemanticNode(SemanticTypeMapper.getSemanticType(pdfType));
+			node = new SemanticNode(SemanticTypeMapper.getSemanticType(pdfType));
 		}
 
 		if (jsonNode.getChildren() != null) {
