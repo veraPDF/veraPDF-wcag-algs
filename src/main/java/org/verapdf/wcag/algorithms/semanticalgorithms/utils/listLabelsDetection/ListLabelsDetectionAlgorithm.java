@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection;
 
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
+import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
 
 import java.util.List;
 import java.util.Set;
@@ -9,7 +10,7 @@ public abstract class ListLabelsDetectionAlgorithm {
 
     public abstract boolean isListLabels(List<String> labels, int commonStartLength, int commonEndLength);
 
-    public abstract Set<ListInterval> getItemsIntervals(List<String> items);
+    public abstract Set<ListInterval> getItemsIntervals(List<ListItemTextInfo> itemsInfo);
 
     protected static int getCommonStartLength(String s1, String s2) {
         return getCommonStartLength(s1, s2, Math.min(s1.length(), s2.length()));

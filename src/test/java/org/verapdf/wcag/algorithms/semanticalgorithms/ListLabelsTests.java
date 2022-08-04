@@ -5,7 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
+import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListLabelsUtils;
 
 import java.util.ArrayList;
@@ -166,11 +169,18 @@ public class ListLabelsTests {
     }
 
     void testItemsList(List<String> itemsList, ListInterval[] listIntervalsList) {
-        Set<ListInterval> listIntervals = ListLabelsUtils.getListItemsIntervals(itemsList);
-        Assertions.assertEquals(listIntervalsList.length, listIntervals.size());
+        Set<ListInterval> listIntervals = ListLabelsUtils.getListItemsIntervals(createInfoList(itemsList));
         for (ListInterval listInterval : listIntervalsList) {
             Assertions.assertTrue(listIntervals.contains(listInterval));
         }
+    }
+
+    private List<ListItemTextInfo> createInfoList(List<String> itemsList) {
+        List<ListItemTextInfo> list = new ArrayList<>();
+        for (int i = 0; i < itemsList.size(); i++) {
+           list.add(new ListItemTextInfo(i, null, new TextLine(new TextChunk(itemsList.get(i))), itemsList.get(i)));
+        }
+        return list;
     }
 
     @Test

@@ -82,7 +82,7 @@ public class ClusterTableConsumer {
                 }
             } else if (accumulatedNode instanceof SemanticList) {
                 SemanticList list = (SemanticList)accumulatedNode;
-                if (list.getNumberOfListColumns() == 1 && node.getChildren().size() == list.getNumberOfListItems()) {
+                if (list.getNumberOfListColumns() == 1 && node.getChildren().size() == list.getNumberOfListItemsAndLists()) {
                     TableCluster cluster = new TableCluster((SemanticTextNode)accumulatedNode, node);
                     accept(cluster, node);
                     return;

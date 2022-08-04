@@ -1,10 +1,10 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection;
 
+import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
+import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDetectionAlgorithm {
     public boolean isListLabels(List<String> labels, int commonStartLength, int commonEndLength) {
@@ -46,32 +46,42 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
         return true;
     }
 
-    public Set<ListInterval> getItemsIntervals(List<String> items) {
+    public Set<ListInterval> getItemsIntervals(List<ListItemTextInfo> itemsInfo) {
         Set<ListInterval> listIntervals = new HashSet<>();
-        int index = 0;
         Integer number = null;
         int start = 0;
         String prefix = null;
         boolean isUpperCase = false;
-        for (int i = 0; i < items.size(); i++) {
+        List<Integer> listItemsIndexes = new ArrayList<>();
+        List<Integer> listsIndexes = new ArrayList<>();
+        for (int i = 0; i < itemsInfo.size(); i++) {
+            int originalIndex = itemsInfo.get(i).getIndex();
+            String item = itemsInfo.get(i).getListItem();
             if (number != null) {
                 number++;
                 String s = getStringFromNumber(number);
-                if (!items.get(i).toUpperCase().startsWith(s, start) || !items.get(i).startsWith(prefix) ||
-                        isCharMatchRegex(items.get(i), start + s.length()) ||
-                        ((!items.get(i).substring(start, start + s.length()).matches(getLowerCaseRegex()) || isUpperCase) &&
-                                (!items.get(i).substring(start, start + s.length()).matches(getUpperCaseRegex()) || !isUpperCase))) {
-                    if (i > index + 1) {
-                        listIntervals.add(new ListInterval(index, --i));
+                if (!item.toUpperCase().startsWith(s, start) || !item.startsWith(prefix) ||
+                    isCharMatchRegex(item, start + s.length()) ||
+                    ((!item.substring(start, start + s.length()).matches(getLowerCaseRegex()) || isUpperCase) &&
+                     (!item.substring(start, start + s.length()).matches(getUpperCaseRegex()) || !isUpperCase))) {
+                    if (SemanticType.LIST.equals(itemsInfo.get(i).getSemanticType())) {
+                        listsIndexes.add(originalIndex);
+                        number--;
+                        continue;
+                    }
+                    if (listItemsIndexes.size() > 1) {
+                        listIntervals.add(new ListInterval(listItemsIndexes, listsIndexes));
                     }
                     i--;
                     number = null;
+                } else {
+                    listItemsIndexes.add(originalIndex);
                 }
-            } else if (i != items.size() - 1) {
-                int commonLength = getCommonStartLength(items.get(i), items.get(i + 1));
-                start = getNotRegexStartLength(items.get(i), commonLength);
-                prefix = items.get(i).substring(0, start);
-                String substring = items.get(i).substring(start);
+            } else if (i != itemsInfo.size() - 1) {
+                int commonLength = getCommonStartLength(item, itemsInfo.get(i + 1).getListItem());
+                start = getNotRegexStartLength(item, commonLength);
+                prefix = item.substring(0, start);
+                String substring = item.substring(start);
                 int regexStartLength = getRegexStartLength(substring);
                 String suffix = substring.substring(regexStartLength);
                 if (!checkPrefixAndSuffix(prefix, suffix)) {
@@ -94,11 +104,12 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
                     number = null;
                     continue;
                 }
-                index = i;
+                listItemsIndexes = new ArrayList<>(Arrays.asList(originalIndex));
+                listsIndexes = new ArrayList<>();
             }
         }
-        if (number != null && items.size() > index + 1) {
-            listIntervals.add(new ListInterval(index, items.size() - 1));
+        if (number != null && listItemsIndexes.size() > 1) {
+            listIntervals.add(new ListInterval(listItemsIndexes, listsIndexes));
         }
         return listIntervals;
     }
