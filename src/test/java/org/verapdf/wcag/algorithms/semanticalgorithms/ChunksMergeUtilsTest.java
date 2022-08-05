@@ -109,7 +109,7 @@ public class ChunksMergeUtilsTest {
                                                           new double[] {70.8, 82.7, 101.4, 96.0}, 0, 0));
 
         TextLine second = new TextLine(createTextChunk("l of enhancing the visual experience. In such a case, the background is not required for understanding the ",
-                                                           "Calibri", 11.96,
+                                                           "Calibri", 12.96,
                                                            400, 0, 85.79, new double[] {0},
                                                            new double[] {70.8, 102.7, 500.4, 116.0}, 0, 0));
 
