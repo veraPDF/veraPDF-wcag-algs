@@ -4,9 +4,7 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class SemanticNode implements INode {
 
@@ -21,6 +19,7 @@ public class SemanticNode implements INode {
 	private final SemanticType initialSemanticType;
 	private int depth;
 	private boolean hasLowestDepthError = false;
+	private Set<Integer> errorCodes = new HashSet<>();
 
 	public NodeInfo nodeInfo;
 
@@ -220,6 +219,15 @@ public class SemanticNode implements INode {
 	@Override
 	public void setHasLowestDepthError() {
 		this.hasLowestDepthError = true;
+	}
+
+	@Override
+	public Set<Integer> getErrorCodes() {
+		return errorCodes;
+	}
+
+	public void setErrorCodes(Set<Integer> errorCodes) {
+		this.errorCodes = errorCodes;
 	}
 
 	@Override

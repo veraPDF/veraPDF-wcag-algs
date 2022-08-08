@@ -31,10 +31,13 @@ public class TextChunk extends TextInfoChunk {
     }
 
     public TextChunk(BoundingBox bbox, String value, String fontName, double fontSize, double fontWeight,
-                double italicAngle, double baseLine, double[] fontColor, List<Double> symbolEnds, double slantDegree) {
+                     double italicAngle, double baseLine, double[] fontColor, List<Double> symbolEnds, double slantDegree) {
         this(bbox, value, fontName, fontSize, fontWeight, italicAngle, baseLine, fontColor, slantDegree);
-        this.symbolEnds = symbolEnds;
-        adjustSymbolEndsToBoundingBox();
+        if (symbolEnds == null) {
+            adjustSymbolEndsToBoundingBox(null);
+        } else {
+            this.symbolEnds = symbolEnds;
+        }
     }
 
     public TextChunk(BoundingBox bbox, String value, String fontName, double fontSize, double fontWeight,
@@ -146,30 +149,30 @@ public class TextChunk extends TextInfoChunk {
                this.symbolEnds.get(index + 1) - this.symbolEnds.get(index) : null;
     }
 
-    private void adjustSymbolEndsToBoundingBox() {
+    public void adjustSymbolEndsToBoundingBox(List<Double> symbolEnds) {
         if (this.symbolEnds == null) {
-            symbolEnds = new ArrayList<>(value.length() + 1);
+            this.symbolEnds = new ArrayList<>(value.length() + 1);
             double symbolEnd = getTextStart();
-            symbolEnds.add(symbolEnd);
+            this.symbolEnds.add(symbolEnd);
             double averageWidth = getAverageSymbolWidth();
             if (isRightLeftHorizontalText() || isUpBottomVerticalText()) {
                 for (int i = 0; i < value.length(); i++) {
                     symbolEnd -= averageWidth;
-                    symbolEnds.add(symbolEnd);
+                    this.symbolEnds.add(symbolEnd);
                 }
             } else {
                 for (int i = 0; i < value.length(); i++) {
                     symbolEnd += averageWidth;
-                    symbolEnds.add(symbolEnd);
+                    this.symbolEnds.add(symbolEnd);
                 }
             }
             return;
         }
         double textStart = getTextStart();
         if (isRightLeftHorizontalText() || isUpBottomVerticalText()) {
-            this.symbolEnds = this.symbolEnds.stream().map(e -> e - textStart).collect(Collectors.toList());
+            this.symbolEnds = symbolEnds.stream().map(e -> e - textStart).collect(Collectors.toList());
         } else {
-            this.symbolEnds = this.symbolEnds.stream().map(e -> e + textStart).collect(Collectors.toList());
+            this.symbolEnds = symbolEnds.stream().map(e -> e + textStart).collect(Collectors.toList());
         }
     }
 

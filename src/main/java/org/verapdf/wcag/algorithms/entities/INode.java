@@ -4,6 +4,7 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 import java.util.List;
+import java.util.Set;
 
 public interface INode {
 
@@ -72,4 +73,8 @@ public interface INode {
 	public boolean getHasLowestDepthError();
 
 	public void setHasLowestDepthError();
+
+	public Set<Integer> getErrorCodes();
+
+	public void setErrorCodes(Set<Integer> errorCodes);
 }

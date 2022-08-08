@@ -18,16 +18,15 @@ import java.util.stream.Stream;
 
 public class TOCTests {
 
-    static Stream<Arguments> tableBorderDetectionTestParams() {
+    static Stream<Arguments> TOCDetectionTestParams() {
         return Stream.of(
                 Arguments.of("libra_table_of_content.json", true)
         );
     }
 
     @ParameterizedTest(name = "{index}: ({0}, {1}) => {0}")
-    @MethodSource("tableBorderDetectionTestParams")
-    void testTableBorderDetection(String filename,
-                                  boolean initialSemanticIsValid) throws IOException {
+    @MethodSource("TOCDetectionTestParams")
+    void testTOCDetection(String filename, boolean initialSemanticIsValid) throws IOException {
         IDocument document = JsonToPdfTree.getDocument("/files/TOC/" + filename);
         ITree tree = document.getTree();
         StaticContainers.clearAllContainers(document);
@@ -42,11 +41,11 @@ public class TOCTests {
         tree.forEach(tocDetectionConsumer);
 
         if (initialSemanticIsValid) {
-            testTableInitialTreeStructure(tree);
+            testTOCInitialTreeStructure(tree);
         }
     }
 
-    private void testTableInitialTreeStructure(ITree tree) {
+    private void testTOCInitialTreeStructure(ITree tree) {
         for (INode node : tree) {
             if (node.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT_ITEM) {
                 Assertions.assertEquals(node.getInitialSemanticType(), node.getSemanticType());
