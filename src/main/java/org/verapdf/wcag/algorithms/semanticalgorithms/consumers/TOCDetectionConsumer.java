@@ -21,17 +21,19 @@ import java.util.stream.Collectors;
 public class TOCDetectionConsumer implements Consumer<INode> {
 
     private static final String LINK = "Link";
-    private static final String SPACES_REGEX = "\\s+";
-    private static final String SPACES_DOTS_SPACES_REGEX = "\\s*\\.*\\s*";
-    private static final String NON_CONTENT_REGEX = "[\\s-\u2011]";
-    private static final double MAX_RIGHT_ALIGNMENT_GAP = 0.5;
-    private static final double MAX_LEFT_ALIGNMENT_GAP = 0.5;
+    private static final String SPACES = "\\s\u00A0\u2007\u202F";
+    private static final String SPACES_REGEX = "[" + SPACES + "]+";
+    private static final String SPACES_DOTS_SPACES_REGEX = "[" + SPACES + "]*\\.*[" + SPACES + "]*";
+    private static final String NON_CONTENT_REGEX = "[" + SPACES + "\u2011-]";
+    private static final double MAX_RIGHT_ALIGNMENT_GAP = 1.0;
+//    private static final double MAX_LEFT_ALIGNMENT_GAP = 1.0;
 
     private final IDocument document;
-    private Double left = null;
+//    private Double left = null;
     private Double right = null;
     private Double maxRight = -Double.MAX_VALUE;
     private Integer pagesGap = null;
+    private Integer lastPageNumber = null;
 
     public TOCDetectionConsumer(IDocument document) {
         this.document = document;
@@ -44,10 +46,11 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         }
         List<TOCIInfo> infos = getTOCIInfos(node);
         List<Integer> tociIndexes = new ArrayList<>(node.getChildren().size());
-        left = null;
+//        left = null;
         right = null;
         maxRight = -Double.MAX_VALUE;
         pagesGap = null;
+        lastPageNumber = null;
         for (int index = 0; index < node.getChildren().size(); index++) {
             INode child = node.getChildren().get(index);
             if (child.getSemanticType() != SemanticType.TABLE_OF_CONTENT && checkTOCI(child, infos.get(index))) {
@@ -75,9 +78,15 @@ public class TOCDetectionConsumer implements Consumer<INode> {
                 return false;
             }
         }
+        if (lastPageNumber != null && !lastPageNumber.equals(child.getPageNumber())) {
+//            left = null;
+            right = null;
+            maxRight = -Double.MAX_VALUE;
+        }
+        lastPageNumber = child.getPageNumber();
         if (child.getLeftX() > maxRight) {
             //next column
-            left = null;
+//            left = null;
             right = null;
         }
         maxRight = Math.max(maxRight, tociInfo.getRight());
@@ -88,12 +97,11 @@ public class TOCDetectionConsumer implements Consumer<INode> {
                 return false;
             }
         }
-        if (left == null) {
-            left = child.getLeftX();
-        }
-        if (!NodeUtils.areCloseNumbers(left, child.getLeftX(), MAX_LEFT_ALIGNMENT_GAP) && left > child.getLeftX()) {
-            return false;
-        }
+//        if (left == null) {
+//            left = child.getLeftX();
+//        } else if (!NodeUtils.areCloseNumbers(left, child.getLeftX(), MAX_LEFT_ALIGNMENT_GAP) && left > child.getLeftX()) {
+//            return false;
+//        }
         if (!findText(document.getTree().getRoot(),
                 tociInfo.getText().replaceAll(NON_CONTENT_REGEX,"").toUpperCase(), tociInfo.getDestinationPageNumber())) {
             return false;
@@ -207,7 +215,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
 
     private static int getLastRegexIndex(String string, String regex) {
         Pattern pattern = Pattern.compile(regex + "$");
-        Matcher matcher = pattern .matcher(string);
+        Matcher matcher = pattern.matcher(string);
         if (matcher.find()) {
             return matcher.start();
         }
