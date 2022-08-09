@@ -6,6 +6,7 @@ public class TOCIInfo {
     private Integer destinationPageNumber;
     private Integer pageNumberLabel;
     private double right;
+    private double maxTextSize;
 
     public void setText(String text) {
         this.text = text;
@@ -37,5 +38,13 @@ public class TOCIInfo {
 
     public double getRight() {
         return right;
+    }
+
+    public void setMaxTextSize(double maxTextSize) {
+        this.maxTextSize = maxTextSize;
+    }
+
+    public double getMaxTextSize() {
+        return maxTextSize;
     }
 }

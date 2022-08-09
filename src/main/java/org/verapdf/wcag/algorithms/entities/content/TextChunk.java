@@ -52,8 +52,7 @@ public class TextChunk extends TextInfoChunk {
 
     public TextChunk(TextChunk chunk) {
         this(chunk.getBoundingBox(), chunk.value, chunk.fontName, chunk.fontSize, chunk.fontWeight, chunk.italicAngle,
-                chunk.baseLine, chunk.fontColor, chunk.slantDegree);
-        this.symbolEnds = new LinkedList<>(chunk.symbolEnds);
+                chunk.baseLine, chunk.fontColor, chunk.symbolEnds, chunk.slantDegree);
     }
 
     public String getValue() {
