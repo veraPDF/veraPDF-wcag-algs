@@ -20,13 +20,14 @@ public class TOCTests {
 
     static Stream<Arguments> TOCDetectionTestParams() {
         return Stream.of(
-                Arguments.of("libra_table_of_content.json", true)
+                Arguments.of("libra_table_of_content.json", null),
+                Arguments.of("Word_Table_of_Contents.json", new Integer[]{1001,null,null,null,null,null,1000})
         );
     }
 
     @ParameterizedTest(name = "{index}: ({0}, {1}) => {0}")
     @MethodSource("TOCDetectionTestParams")
-    void testTOCDetection(String filename, boolean initialSemanticIsValid) throws IOException {
+    void testTOCDetection(String filename, Integer[] errorCodes) throws IOException {
         IDocument document = JsonToPdfTree.getDocument("/files/TOC/" + filename);
         ITree tree = document.getTree();
         StaticContainers.clearAllContainers(document);
@@ -40,8 +41,22 @@ public class TOCTests {
         TOCDetectionConsumer tocDetectionConsumer = new TOCDetectionConsumer(document);
         tree.forEach(tocDetectionConsumer);
 
-        if (initialSemanticIsValid) {
+        if (errorCodes == null) {
             testTOCInitialTreeStructure(tree);
+        } else {
+            int index = 0;
+            for (INode node : tree) {
+                if (node.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT_ITEM) {
+                    Assertions.assertNotEquals(errorCodes.length, index);
+                    if (errorCodes[index] == null) {
+                        Assertions.assertEquals(node.getInitialSemanticType(), node.getSemanticType());
+                    } else {
+                        Assertions.assertTrue(node.getErrorCodes().contains(errorCodes[index]));
+                    }
+                    index++;
+                }
+            }
+            Assertions.assertEquals(errorCodes.length, index);
         }
     }
 

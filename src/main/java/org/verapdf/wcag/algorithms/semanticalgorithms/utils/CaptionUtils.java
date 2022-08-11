@@ -164,4 +164,29 @@ public class CaptionUtils {
 		return 0.0;
 	}
 
+	private static double sideCaptionHorizontalProbability(SemanticTextNode textNode, BoundingBox imageBoundingBox) {
+		if (textNode.getLeftX() > imageBoundingBox.getRightX() ||
+				textNode.getRightX() < imageBoundingBox.getLeftX()) {
+			return 1.0;
+		}
+		return 0.0;
+	}
+
+	private static double sideCaptionVerticalProbability(SemanticTextNode textNode, BoundingBox imageBoundingBox) {
+		if (textNode.getLastPageNumber() == null || imageBoundingBox.getPageNumber() == null ||
+				textNode.getPageNumber() == null || imageBoundingBox.getLastPageNumber() == null) {
+			return 0.0;
+		}
+		if (!textNode.getPageNumber().equals(textNode.getLastPageNumber()) ||
+				!textNode.getPageNumber().equals(imageBoundingBox.getPageNumber())) {
+			return 0.0;
+		}
+		if (textNode.getTopY() < imageBoundingBox.getTopY() - FLOATING_POINT_OPERATIONS_EPS &&
+				textNode.getBottomY() > imageBoundingBox.getBottomY() + FLOATING_POINT_OPERATIONS_EPS) {
+			//check previous and next node, that they are above and below image?
+			return 1.0;
+		}
+		return 0.0;
+	}
+
 }

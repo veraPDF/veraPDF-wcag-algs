@@ -3,11 +3,13 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 import org.verapdf.wcag.algorithms.entities.*;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextColumn;
+import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tocs.TOCIInfo;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ErrorCodes;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ArabicNumbersListLabelsDetectionAlgorithm;
@@ -25,8 +27,8 @@ public class TOCDetectionConsumer implements Consumer<INode> {
     private static final String SPACES_REGEX = "[" + SPACES + "]+";
     private static final String SPACES_DOTS_SPACES_REGEX = "[" + SPACES + "]*\\.*[" + SPACES + "]*";
     private static final String NON_CONTENT_REGEX = "[" + SPACES + "\u2011-]";
-    private static final double MAX_RIGHT_ALIGNMENT_GAP = 1.0;
-//    private static final double MAX_LEFT_ALIGNMENT_GAP = 1.0;
+    private static final double MAX_RIGHT_ALIGNMENT_GAP = 0.1;
+//    private static final double MAX_LEFT_ALIGNMENT_GAP = 0.1;
 
     private final IDocument document;
 //    private Double left = null;
@@ -66,15 +68,18 @@ public class TOCDetectionConsumer implements Consumer<INode> {
 
     private boolean checkTOCI(INode child, TOCIInfo tociInfo) {
         if (tociInfo.getText() == null) {
+            child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1000);
             return false;
         }
         if (tociInfo.getDestinationPageNumber() == null) {
+            child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1001);
             return false;
         }
         if (tociInfo.getPageNumberLabel() != null) {
             if (pagesGap == null) {
                 pagesGap = tociInfo.getPageNumberLabel() - tociInfo.getDestinationPageNumber();
             } else if (tociInfo.getDestinationPageNumber() + pagesGap != tociInfo.getPageNumberLabel()) {
+                child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1002);
                 return false;
             }
         }
@@ -93,7 +98,9 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         if (tociInfo.getPageNumberLabel() != null) {
             if (right == null) {
                 right = tociInfo.getRight();
-            } else if (!NodeUtils.areCloseNumbers(right, tociInfo.getRight(), MAX_RIGHT_ALIGNMENT_GAP)) {
+            } else if (!NodeUtils.areCloseNumbers(right, tociInfo.getRight(),
+                    MAX_RIGHT_ALIGNMENT_GAP * tociInfo.getMaxTextSize())) {
+                child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1003);
                 return false;
             }
         }
@@ -104,6 +111,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
 //        }
         if (!findText(document.getTree().getRoot(),
                 tociInfo.getText().replaceAll(NON_CONTENT_REGEX,"").toUpperCase(), tociInfo.getDestinationPageNumber())) {
+            child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1005);
             return false;
         }
         return true;
@@ -127,10 +135,11 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         info.setDestinationPageNumber(getDestinationPageNumber(node));
         info.setRight(node.getRightX());
         List<TextChunk> textChunks = getTextChunks(node);
+        info.setMaxTextSize(textChunks.stream().map(TextInfoChunk::getFontSize).max(Double::compare).orElse(0.0));
         if (!textChunks.isEmpty()) {
             TextChunk lastChunk = textChunks.get(textChunks.size() - 1);
             String textValue = lastChunk.getValue();
-            int pageLabelSize = 0;
+            int pageLabelLength = 0;
             int numberOfSpaces = getNumberOfEndSpaces(textValue);
             info.setRight(lastChunk.getSymbolEndCoordinate(textValue.length() - numberOfSpaces - 1));
             textValue = textValue.substring(0, textValue.length() - numberOfSpaces);
@@ -138,15 +147,15 @@ public class TOCDetectionConsumer implements Consumer<INode> {
                 String pageLabel = document.getPage(info.getDestinationPageNumber()).getPageLabel();
                 if (pageLabel != null && textValue.toUpperCase().endsWith(pageLabel.toUpperCase())) {
                     info.setPageNumberLabel(info.getDestinationPageNumber());
-                    pageLabelSize = pageLabel.length();
+                    pageLabelLength = pageLabel.length();
                 }
             }
             if (info.getPageNumberLabel() == null) {
-                pageLabelSize = getNumberOfEndDigits(textValue);
-                info.setPageNumberLabel(getPageNumberLabel(textValue, textValue.length() - pageLabelSize));
+                pageLabelLength = getNumberOfEndDigits(textValue);
+                info.setPageNumberLabel(getPageNumberLabel(textValue, textValue.length() - pageLabelLength));
             }
             textValue = textChunks.stream().map(TextChunk::getValue).collect(Collectors.joining(""));
-            textValue = textValue.substring(0, textValue.length() - numberOfSpaces - pageLabelSize);
+            textValue = textValue.substring(0, textValue.length() - numberOfSpaces - pageLabelLength);
             textValue = textValue.substring(0, getLastRegexIndex(textValue, SPACES_DOTS_SPACES_REGEX));
             info.setText(textValue);
         }
