@@ -81,7 +81,7 @@ public class ListUtils {
 	}
 
 	public static void updateTreeWithRecognizedList(INode node, ListInterval listInterval) {
-		Long listId = Table.getNextTableListId();
+		Long listId = StaticContainers.getNextID();
 		List<INode> children = node.getChildren();
 		for (Integer index : listInterval.getListItemsIndexes()) {
 			updateTreeWithRecognizedListItem(children.get(index), listId);

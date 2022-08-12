@@ -5,8 +5,8 @@ import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.Vertex;
-import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.tables.TableBorderBuilder;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class TableBorder {
         calculateYCoordinates(builder);
         boundingBox = new BoundingBox(builder.getBoundingBox());
         createMatrix(builder);
-        id = Table.getNextTableListId();
+        id = StaticContainers.getNextID();
     }
 
     private void calculateXCoordinates(TableBorderBuilder builder) {

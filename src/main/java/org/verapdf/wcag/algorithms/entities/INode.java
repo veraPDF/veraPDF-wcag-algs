@@ -77,4 +77,8 @@ public interface INode {
 	public Set<Integer> getErrorCodes();
 
 	public void setErrorCodes(Set<Integer> errorCodes);
+
+	public IAttributesDictionary getAttributesDictionary();
+
+	public void setAttributesDictionary(IAttributesDictionary AttributesDictionary);
 }

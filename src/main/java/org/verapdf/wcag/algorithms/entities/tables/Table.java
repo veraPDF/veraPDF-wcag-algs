@@ -6,6 +6,7 @@ import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableCluster;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 
@@ -13,12 +14,11 @@ import java.util.*;
 
 public class Table extends InfoChunk {
 
-    private static Long tableCounter = 0L;
     private static final double ROW_GAP_DIFF_TOLERANCE = 0.35; // Sensitive parameter !!!
     private static final double ROW_WIDTH_FACTOR = 1.2; // Validation parameter
     private static final double INTER_TABLE_GAP_FACTOR = 1.8; // Parameter for table separation
 
-    private Long id = tableCounter++;
+    private Long id = StaticContainers.getNextID();
     private List<TableRow> rows;
 
     private Double validationScore = null;
@@ -284,14 +284,6 @@ public class Table extends InfoChunk {
 
     public List<INode> getRestNodes() {
         return restNodes;
-    }
-
-    public static void updateTableCounter() {
-        tableCounter = 0L;
-    }
-
-    public static Long getNextTableListId() {
-        return tableCounter++;
     }
 
     public TableBorder getTableBorder() {

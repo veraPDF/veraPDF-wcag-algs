@@ -100,6 +100,10 @@ public class JsonToPdfTree {
 			node = getAnnotationNode(jsonNode);
 		} else {
 			node = new SemanticNode(SemanticTypeMapper.getSemanticType(pdfType));
+			JsonAttributes attributes = jsonNode.getAttributes();
+			if (attributes != null) {
+				node.setAttributesDictionary(new AttributesDictionary(attributes.getRowSpan(), attributes.getColSpan()));
+			}
 		}
 
 		if (jsonNode.getChildren() != null) {

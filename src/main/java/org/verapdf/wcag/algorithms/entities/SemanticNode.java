@@ -20,6 +20,7 @@ public class SemanticNode implements INode {
 	private int depth;
 	private boolean hasLowestDepthError = false;
 	private Set<Integer> errorCodes = new HashSet<>();
+	private IAttributesDictionary AttributesDictionary;
 
 	public NodeInfo nodeInfo;
 
@@ -229,6 +230,17 @@ public class SemanticNode implements INode {
 	public void setErrorCodes(Set<Integer> errorCodes) {
 		this.errorCodes = errorCodes;
 	}
+
+	@Override
+	public IAttributesDictionary getAttributesDictionary() {
+		return AttributesDictionary;
+	}
+
+	@Override
+	public void setAttributesDictionary(IAttributesDictionary AttributesDictionary) {
+		this.AttributesDictionary = AttributesDictionary;
+	}
+
 
 	@Override
 	public boolean getHasLowestDepthError() {
