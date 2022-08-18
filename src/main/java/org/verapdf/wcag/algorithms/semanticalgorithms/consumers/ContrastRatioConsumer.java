@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
 import com.github.jaiimageio.jpeg2000.impl.J2KImageReaderSpi;
+import org.apache.pdfbox.jbig2.JBIG2ImageReaderSpi;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -36,6 +37,7 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		this.sourcePdfPath = sourcePdfPath;
 		IIORegistry registry = IIORegistry.getDefaultInstance();
 		registry.registerServiceProvider(new J2KImageReaderSpi());
+		registry.registerServiceProvider(new JBIG2ImageReaderSpi());
 	}
 
 	@Override
