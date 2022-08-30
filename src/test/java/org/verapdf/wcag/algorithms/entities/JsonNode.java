@@ -28,6 +28,7 @@ public class JsonNode {
 	private List<Double> symbolEnds;
 	private List<JsonNode> children;
 	private List<JsonPage> pages;
+	private JsonAttributes attributes;
 
 	public JsonNode() {
 	}
@@ -208,6 +209,14 @@ public class JsonNode {
 		this.annotationType = annotationType;
 	}
 
+	public JsonAttributes getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(JsonAttributes attributes) {
+		this.attributes = attributes;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -227,13 +236,15 @@ public class JsonNode {
 				Double.compare(jsonNode.startX, startX) == 0 && Double.compare(jsonNode.startY, startY) == 0 &&
 				Double.compare(jsonNode.endX, endX) == 0 && Double.compare(jsonNode.endY, endY) == 0 &&
 				Objects.equals(jsonNode.annotationType, annotationType) && Double.compare(jsonNode.width, width) == 0 &&
-				Objects.equals(jsonNode.destinationPageNumber, destinationPageNumber);
+				Objects.equals(jsonNode.destinationPageNumber, destinationPageNumber) &&
+				Objects.equals(jsonNode.attributes, attributes);
 	}
 
 	@Override
 	public int hashCode() {
 		int result = Objects.hash(type, value, fontName, fontSize, fontWeight, italicAngle, baseLine, pageNumber,
-				children, pages, startX, startY, endX, endY, width, slantDegree, annotationType, destinationPageNumber);
+				children, pages, startX, startY, endX, endY, width, slantDegree, annotationType, destinationPageNumber,
+				attributes);
 		result = 31 * result + Arrays.hashCode(color);
 		result = 31 * result + Arrays.hashCode(boundingBox);
 		return result;
@@ -258,6 +269,7 @@ public class JsonNode {
 				", annotationType=" + annotationType +
 				", destinationPageNumber=" + destinationPageNumber +
 				", slantDegree=" + slantDegree +
+				", attributes=" + attributes +
 				", color=" + Arrays.toString(color) +
 				", boundingBox=" + Arrays.toString(boundingBox) +
 				", children=" + children +

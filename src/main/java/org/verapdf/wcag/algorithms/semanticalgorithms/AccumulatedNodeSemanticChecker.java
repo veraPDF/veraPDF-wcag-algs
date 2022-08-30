@@ -24,7 +24,8 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 		Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document);
 		tree.forEach(semanticDocumentValidator);
 
-		Table.updateTableCounter();
+		TOCDetectionConsumer tocDetectionConsumer = new TOCDetectionConsumer(document);
+		tree.forEach(tocDetectionConsumer);
 
 		StaticContainers.setTableBordersCollection(new TableBordersCollection(linesPreprocessingConsumer.getTableBorders()));
 
@@ -39,8 +40,5 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 
 		SemanticDocumentPostprocessingConsumer documentPostprocessingConsumer = new SemanticDocumentPostprocessingConsumer();
 		documentPostprocessingConsumer.runPostprocessingChecks(tree);
-
-		TOCDetectionConsumer tocDetectionConsumer = new TOCDetectionConsumer(document);
-		tree.forEach(tocDetectionConsumer);
 	}
 }

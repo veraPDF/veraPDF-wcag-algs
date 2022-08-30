@@ -27,6 +27,15 @@ public class TableBorderCell {
         content = new LinkedList<>();
     }
 
+    public TableBorderCell(INode node, int rowNumber, int colNumber) {
+        this.node = node;
+        this.rowSpan = (int) node.getAttributesDictionary().getRowSpan();
+        this.colSpan = (int) node.getAttributesDictionary().getColSpan();
+        this.rowNumber = rowNumber;
+        this.colNumber = colNumber;
+        content = new LinkedList<>();
+    }
+
     public void setBoundingBox(BoundingBox boundingBox) {
         this.boundingBox = boundingBox;
     }

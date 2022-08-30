@@ -73,8 +73,6 @@ public class ClusterTableTests {
         Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document);
         tree.forEach(semanticDocumentValidator);
 
-        Table.updateTableCounter();
-
         StaticContainers.setTableBordersCollection(new TableBordersCollection(linesPreprocessingConsumer.getTableBorders()));
 
         AccumulatedNodeConsumer paragraphValidator = new AccumulatedNodeConsumer();

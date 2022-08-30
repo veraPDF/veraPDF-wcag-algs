@@ -42,12 +42,15 @@ public class StaticContainers {
 
 	private static final ThreadLocal<IdMapper> idMapper = new ThreadLocal<>();
 
+	private static final ThreadLocal<Long> groupCounter = new ThreadLocal<>();
+
 	public static void clearAllContainers(IDocument document) {
 		StaticContainers.accumulatedNodeMapper.set(new AccumulatedNodeMapper());
 		StaticContainers.tableBordersCollection.set(new TableBordersCollection());
 		StaticContainers.linesCollection.set(new LinesCollection(document));
 		StaticContainers.repeatedCharacters.set(new ArrayList<>());
 		StaticContainers.idMapper.set(new IdMapper());
+		StaticContainers.groupCounter.set(0L);
 	}
 
 	public static AccumulatedNodeMapper getAccumulatedNodeMapper() {
@@ -88,5 +91,15 @@ public class StaticContainers {
 
 	public static void setIdMapper(IdMapper idMapper) {
 		StaticContainers.idMapper.set(idMapper);
+	}
+
+	public static Long getGroupCounter() {
+		return groupCounter.get();
+	}
+
+	public static Long getNextID() {
+		Long id = groupCounter.get();
+		groupCounter.set(id + 1);
+		return id;
 	}
 }
