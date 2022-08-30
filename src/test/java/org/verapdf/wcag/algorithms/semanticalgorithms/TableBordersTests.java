@@ -8,7 +8,6 @@ import org.verapdf.wcag.algorithms.entities.IDocument;
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.ITree;
 import org.verapdf.wcag.algorithms.entities.JsonToPdfTree;
-import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.entities.tables.TableBorderBuilder;
 import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
@@ -65,10 +64,9 @@ public class TableBordersTests {
     void testTableBorderDetection(String filename, int[][] list, int[][] listN, int[][] listM, boolean semanticIsValid,
                                   boolean initialSemanticIsValid) throws IOException {
         IDocument document = JsonToPdfTree.getDocument("/files/tables/" + filename + ".json");
-        ITree tree = document.getTree();
-        StaticContainers.clearAllContainers(document);
+        StaticContainers.updateContainers(document);
 
-        LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer(document);
+        LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer();
         List<List<TableBorderBuilder>> tableBorderBuilders = linesPreprocessingConsumer.getTableBorders();
         Assertions.assertEquals(list.length, tableBorderBuilders.size());
         for (int pageNumber = 0; pageNumber < tableBorderBuilders.size(); pageNumber++) {
@@ -81,7 +79,8 @@ public class TableBordersTests {
                         border.getVerticalLinesNumber());
             }
         }
-        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document);
+        ITree tree = document.getTree();
+        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer();
         tree.forEach(semanticDocumentValidator);
         StaticContainers.setTableBordersCollection(new TableBordersCollection(linesPreprocessingConsumer.getTableBorders()));
         AccumulatedNodeConsumer paragraphValidator = new AccumulatedNodeConsumer();

@@ -7,7 +7,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.verapdf.wcag.algorithms.entities.*;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.lists.PDFList;
-import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.AccumulatedNodeConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ClusterTableConsumer;
@@ -68,12 +67,12 @@ public class ListTests {
         IDocument document = JsonToPdfTree.getDocument("/files/lists/" + filename);
         ITree tree = document.getTree();
 
-        StaticContainers.clearAllContainers(document);
+        StaticContainers.updateContainers(document);
 
-        LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer(document);
+        LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer();
         linesPreprocessingConsumer.findTableBorders();
 
-        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document);
+        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer();
         tree.forEach(semanticDocumentValidator);
 
         StaticContainers.setTableBordersCollection(new TableBordersCollection(linesPreprocessingConsumer.getTableBorders()));

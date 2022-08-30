@@ -77,7 +77,7 @@ public class BoundingBox {
         return lastPageNumber;
     }
 
-    static public BoundingBox union(BoundingBox first, BoundingBox second) {
+    public static BoundingBox union(BoundingBox first, BoundingBox second) {
         BoundingBox result = new BoundingBox(first);
         return result.union(second);
     }

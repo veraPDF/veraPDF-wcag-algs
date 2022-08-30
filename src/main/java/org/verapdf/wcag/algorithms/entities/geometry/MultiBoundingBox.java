@@ -58,7 +58,7 @@ public class MultiBoundingBox extends BoundingBox {
         init(o);
     }
 
-    static public MultiBoundingBox union(BoundingBox first, BoundingBox second) {
+    public static MultiBoundingBox union(BoundingBox first, BoundingBox second) {
         MultiBoundingBox result = new MultiBoundingBox(first);
         return result.union(second);
     }

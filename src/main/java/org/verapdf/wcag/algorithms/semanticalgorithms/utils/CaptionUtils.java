@@ -24,7 +24,9 @@ public class CaptionUtils {
 		}
 		if (node.getSemanticType() == SemanticType.HEADING ||
 		    node.getSemanticType() == SemanticType.NUMBER_HEADING ||
-		    node.getSemanticType() == SemanticType.LIST) {
+		    node.getSemanticType() == SemanticType.LIST ||
+			node.getSemanticType() == SemanticType.TABLE_OF_CONTENT ||
+			node.getSemanticType() == SemanticType.TABLE_OF_CONTENT_ITEM) {
 			return 0;
 		}
 		INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);

@@ -1,6 +1,6 @@
 package org.verapdf.wcag.algorithms.entities.content;
 
-import org.verapdf.wcag.algorithms.entities.IDocument;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -12,13 +12,10 @@ public class LinesCollection {
 	private final Map<Integer, SortedSet<LineChunk>> verticalLines;
 	private final Map<Integer, SortedSet<LineChunk>> squares;
 
-	private final IDocument document;
-
-	public LinesCollection(IDocument document) {
+	public LinesCollection() {
 		horizontalLines = new HashMap<>();
 		verticalLines = new HashMap<>();
 		squares = new HashMap<>();
-		this.document = document;
 	}
 
 	public SortedSet<LineChunk> getHorizontalLines(Integer pageNumber) {
@@ -34,7 +31,7 @@ public class LinesCollection {
 		SortedSet<LineChunk> horizontalLines = new TreeSet<>(new LineChunk.HorizontalLineComparator());
 		SortedSet<LineChunk> verticalLines = new TreeSet<>(new LineChunk.VerticalLineComparator());
 		SortedSet<LineChunk> squares = new TreeSet<>(new LineChunk.VerticalLineComparator());
-		for (IChunk chunk : document.getArtifacts(pageNumber)) {
+		for (IChunk chunk : StaticContainers.getDocument().getArtifacts(pageNumber)) {
 			if (chunk instanceof LineChunk) {
 				LineChunk lineChunk = (LineChunk) chunk;
 				if (lineChunk.isHorizontalLine()) {

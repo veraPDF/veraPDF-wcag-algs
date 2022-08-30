@@ -59,7 +59,7 @@ class RepeatedCharactersTests {
 		IDocument document = JsonToPdfTree.getDocument("/files/repeatedCharacters/" + filename);
 		ITree tree = document.getTree();
 
-		StaticContainers.clearAllContainers(null);
+		StaticContainers.updateContainers(null);
 
 		SemanticDocumentPostprocessingConsumer documentPostprocessingConsumer =
 				new SemanticDocumentPostprocessingConsumer();

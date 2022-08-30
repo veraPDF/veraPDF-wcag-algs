@@ -35,11 +35,11 @@ public class UnderlinedTextTests {
     void testUnderlinedTextDetection(String filename, boolean isUnderlined) throws IOException {
         IDocument document = JsonToPdfTree.getDocument("/files/underlinedText/" + filename);
         ITree tree = document.getTree();
-        StaticContainers.clearAllContainers(document);
-        LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer(document);
+        StaticContainers.updateContainers(document);
+        LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer();
         linesPreprocessingConsumer.findTableBorders();
 
-        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document);
+        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer();
         tree.forEach(semanticDocumentValidator);
         testUnderlined(tree, isUnderlined);
     }
