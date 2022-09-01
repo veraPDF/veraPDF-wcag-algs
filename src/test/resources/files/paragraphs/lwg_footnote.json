@@ -244,7 +244,7 @@
                      "slantDegree":0.0
                   },
                   {
-                     "type":null,
+                     "type":"NonStandard",
                      "children":[
                         {
                            "type":"Link",
@@ -278,13 +278,13 @@
                      ]
                   },
                   {
-                     "type":null,
+                     "type":"NonStandard",
                      "children":[
                         {
                            "type":"P",
                            "children":[
                               {
-                                 "type":null,
+                                 "type":"NonStandard",
                                  "children":[
                                     {
                                        "type":"TextChunk",
@@ -999,7 +999,7 @@
                      "slantDegree":0.0
                   },
                   {
-                     "type":null,
+                     "type":"NonStandard",
                      "children":[
                         {
                            "type":"Link",
@@ -1033,13 +1033,13 @@
                      ]
                   },
                   {
-                     "type":null,
+                     "type":"NonStandard",
                      "children":[
                         {
                            "type":"P",
                            "children":[
                               {
-                                 "type":null,
+                                 "type":"NonStandard",
                                  "children":[
                                     {
                                        "type":"TextChunk",
@@ -2529,7 +2529,7 @@
                      "slantDegree":0.0
                   },
                   {
-                     "type":null,
+                     "type":"NonStandard",
                      "children":[
                         {
                            "type":"Link",
@@ -2563,13 +2563,13 @@
                      ]
                   },
                   {
-                     "type":null,
+                     "type":"NonStandard",
                      "children":[
                         {
                            "type":"P",
                            "children":[
                               {
-                                 "type":null,
+                                 "type":"NonStandard",
                                  "children":[
                                     {
                                        "type":"TextChunk",

@@ -32,32 +32,33 @@ public class JsonToPdfTree {
 		return document;
 	}
 
-	private static TextChunk getTextChunk(JsonNode jsonNode) {
+	private static TextChunk getTextChunk(JsonTextChunk jsonNode) {
 		return new TextChunk(new BoundingBox(jsonNode.getPageNumber(), jsonNode.getBoundingBox()), jsonNode.getValue(),
-				jsonNode.getFontName(), jsonNode.getFontSize(), jsonNode.getFontWeight(), jsonNode.getItalicAngle(),
-				jsonNode.getBaseLine(), jsonNode.getColor(), jsonNode.getSymbolEnds(),
-				jsonNode.getSlantDegree());
+		                     jsonNode.getFontName(), jsonNode.getFontSize(), jsonNode.getFontWeight(), jsonNode.getItalicAngle(),
+		                     jsonNode.getBaseLine(), jsonNode.getColor(), jsonNode.getSymbolEnds(),
+		                     jsonNode.getSlantDegree());
 	}
 
-	private static ImageChunk getImageChunk(JsonNode jsonNode) {
+	private static ImageChunk getImageChunk(JsonImageChunk jsonNode) {
 		return new ImageChunk(new BoundingBox(jsonNode.getPageNumber(), jsonNode.getBoundingBox()));
 	}
 
-	private static LineArtChunk getLineArtChunk(JsonNode jsonNode) {
+	private static LineArtChunk getLineArtChunk(JsonLineArtChunk jsonNode) {
 		return new LineArtChunk(new BoundingBox(jsonNode.getPageNumber(), jsonNode.getBoundingBox()));
 	}
 
-	private static AnnotationNode getAnnotationNode(JsonNode jsonNode) {
-		return new AnnotationNode(jsonNode.getAnnotationType(), new BoundingBox(jsonNode.getBoundingBox()), jsonNode.getDestinationPageNumber());
+	private static AnnotationNode getAnnotationNode(JsonAnnotationNode jsonNode) {
+		return new AnnotationNode(jsonNode.getAnnotationType(), new BoundingBox(jsonNode.getBoundingBox()),
+		                          jsonNode.getDestinationPageNumber());
 	}
 
-	private static LineChunk getLineChunk(JsonNode jsonNode) {
-		return new LineChunk(jsonNode.getPageNumber(), jsonNode.getStartX(),
-				jsonNode.getStartY(), jsonNode.getEndX(), jsonNode.getEndY(), jsonNode.getWidth());
+	private static LineChunk getLineChunk(JsonLineChunk jsonNode) {
+		return new LineChunk(jsonNode.getPageNumber(), jsonNode.getStartX(), jsonNode.getStartY(),
+		                     jsonNode.getEndX(), jsonNode.getEndY(), jsonNode.getWidth());
 	}
 
 	private static IPage getPage(JsonPage jsonPage) {
-		IPage page = new Page(jsonPage.getPageNumber(),jsonPage.getPageLabel());
+		IPage page = new Page(jsonPage.getPageNumber(), jsonPage.getPageLabel());
 		if (jsonPage.getArtifacts() != null) {
 			for (JsonNode artifact : jsonPage.getArtifacts()) {
 				page.getArtifacts().add(getArtifact(artifact));
@@ -67,17 +68,17 @@ public class JsonToPdfTree {
 	}
 
 	private static IChunk getArtifact(JsonNode jsonNode) {
-		if ("TextChunk".equals(jsonNode.getType())) {
-			return getTextChunk(jsonNode);
+		if (jsonNode instanceof JsonTextChunk) {
+			return getTextChunk((JsonTextChunk) jsonNode);
 		}
-		if ("ImageChunk".equals(jsonNode.getType())) {
-			return getImageChunk(jsonNode);
+		if (jsonNode instanceof JsonImageChunk) {
+			return getImageChunk((JsonImageChunk) jsonNode);
 		}
-		if ("LineArtChunk".equals(jsonNode.getType())) {
-			return getLineArtChunk(jsonNode);
+		if (jsonNode instanceof JsonLineArtChunk) {
+			return getLineArtChunk((JsonLineArtChunk) jsonNode);
 		}
-		if ("LineChunk".equals(jsonNode.getType())) {
-			return getLineChunk(jsonNode);
+		if (jsonNode instanceof JsonLineChunk) {
+			return getLineChunk((JsonLineChunk) jsonNode);
 		}
 		return null;
 	}
@@ -88,22 +89,21 @@ public class JsonToPdfTree {
 		}
 
 		INode node;
-		String pdfType = jsonNode.getType();
-
-		if ("TextChunk".equals(pdfType)) {
-			node = new SemanticSpan(getTextChunk(jsonNode));
-		} else if ("ImageChunk".equals(pdfType)) {
-			node = new SemanticImageNode(getImageChunk(jsonNode));
-		} else if ("LineArtChunk".equals(pdfType)) {
-			node = new SemanticFigure(getLineArtChunk(jsonNode));
-		} else if ("AnnotationNode".equals(pdfType)) {
-			node = getAnnotationNode(jsonNode);
+		if (jsonNode instanceof JsonTextChunk) {
+			node = new SemanticSpan(getTextChunk((JsonTextChunk) jsonNode));
+		} else if (jsonNode instanceof JsonImageChunk) {
+			node = new SemanticImageNode(getImageChunk((JsonImageChunk) jsonNode));
+		} else if (jsonNode instanceof JsonLineArtChunk) {
+			node = new SemanticFigure(getLineArtChunk((JsonLineArtChunk) jsonNode));
+		} else if (jsonNode instanceof JsonAnnotationNode) {
+			node = getAnnotationNode((JsonAnnotationNode) jsonNode);
 		} else {
-			node = new SemanticNode(SemanticTypeMapper.getSemanticType(pdfType));
-			JsonAttributes attributes = jsonNode.getAttributes();
-			if (attributes != null) {
-				node.setAttributesDictionary(new AttributesDictionary(attributes.getRowSpan(), attributes.getColSpan()));
-			}
+			node = new SemanticNode(SemanticTypeMapper.getSemanticType(jsonNode.getType()));
+		}
+
+		JsonAttributes attributes = jsonNode.getAttributes();
+		if (attributes != null) {
+			node.setAttributesDictionary(new AttributesDictionary(attributes.getRowSpan(), attributes.getColSpan()));
 		}
 
 		if (jsonNode.getChildren() != null) {
