@@ -31,11 +31,11 @@ public class TableUtils {
 
     private TableUtils() {}
 
-    static public boolean isTableNode(INode node) {
+    public static boolean isTableNode(INode node) {
         return tableSemanticTypes.contains(node.getSemanticType());
     }
 
-    static public boolean isInitialTableNode(INode node) {
+    public static boolean isInitialTableNode(INode node) {
         return tableSemanticTypes.contains(node.getInitialSemanticType());
     }
 
@@ -93,11 +93,11 @@ public class TableUtils {
         Collections.sort(clusters, Comparator.comparingDouble(TableCluster::getLeftX));
     }
 
-    static public void sortClustersUpToBottom(List<TableCluster> clusters) {
+    public static void sortClustersUpToBottom(List<TableCluster> clusters) {
         Collections.sort(clusters, Comparator.comparingDouble(TableCluster::getFirstBaseLine).reversed());
     }
 
-    static public boolean isWeakCluster(TableCluster cluster, List<TableCluster> headers) {
+    public static boolean isWeakCluster(TableCluster cluster, List<TableCluster> headers) {
         if (cluster.getHeader() != null) {
             return false;
         }
@@ -128,11 +128,11 @@ public class TableUtils {
         return false;
     }
 
-    static public double getRowGapFactor(TextInfoChunk tokenRow, TextInfoChunk nextTokenRow) {
+    public static double getRowGapFactor(TextInfoChunk tokenRow, TextInfoChunk nextTokenRow) {
         return (tokenRow.getBaseLine() - nextTokenRow.getBaseLine()) / nextTokenRow.getFontSize();
     }
 
-    static public double minDeviation(IChunk first, IChunk second) {
+    public static double minDeviation(IChunk first, IChunk second) {
         double width = Math.max(first.getBoundingBox().getWidth(), second.getBoundingBox().getWidth());
         if (width < EPSILON) {
             return 0.0;

@@ -30,16 +30,13 @@ public class TOCTests {
     void testTOCDetection(String filename, Integer[] errorCodes) throws IOException {
         IDocument document = JsonToPdfTree.getDocument("/files/TOC/" + filename);
         ITree tree = document.getTree();
-        StaticContainers.clearAllContainers(document);
+        StaticContainers.updateContainers(document);
 
-        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document);
+        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer();
         tree.forEach(semanticDocumentValidator);
 
         AccumulatedNodeConsumer semanticDetectionValidator = new AccumulatedNodeConsumer();
         tree.forEach(semanticDetectionValidator);
-
-        TOCDetectionConsumer tocDetectionConsumer = new TOCDetectionConsumer(document);
-        tree.forEach(tocDetectionConsumer);
 
         if (errorCodes == null) {
             testTOCInitialTreeStructure(tree);

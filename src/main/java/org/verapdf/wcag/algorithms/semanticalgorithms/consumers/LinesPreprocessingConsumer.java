@@ -1,6 +1,5 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
-import org.verapdf.wcag.algorithms.entities.IDocument;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.geometry.Vertex;
 import org.verapdf.wcag.algorithms.entities.tables.TableBorderBuilder;
@@ -15,13 +14,7 @@ public class LinesPreprocessingConsumer {
 
     private static final double MAX_LINE_WIDTH = 5.0;
 
-    private final IDocument document;
-
     private List<List<TableBorderBuilder>> tableBorders;
-
-    public LinesPreprocessingConsumer(IDocument document) {
-        this.document = document;
-    }
 
     public List<List<TableBorderBuilder>> getTableBorders() {
         if (tableBorders == null) {
@@ -32,7 +25,7 @@ public class LinesPreprocessingConsumer {
 
     public void findTableBorders() {
         tableBorders = new LinkedList<>();
-        for (int pageNumber = 0; pageNumber < document.getPages().size(); pageNumber++) {
+        for (int pageNumber = 0; pageNumber < StaticContainers.getDocument().getPages().size(); pageNumber++) {
             tableBorders.add(findTableBorders(pageNumber));
         }
     }

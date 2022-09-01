@@ -7,6 +7,7 @@ import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TOCUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
@@ -115,6 +116,11 @@ public class SemanticDocumentPostprocessingConsumer {
 			return;
 		}
 		if ((ListUtils.isListNode(node) || ListUtils.isInitialListNode(node)) &&
+				node.getSemanticType() != node.getInitialSemanticType()) {
+			node.setHasLowestDepthError();
+			return;
+		}
+		if ((TOCUtils.isTOCNode(node) || TOCUtils.isInitialTOCNode(node)) &&
 				node.getSemanticType() != node.getInitialSemanticType()) {
 			node.setHasLowestDepthError();
 			return;

@@ -48,6 +48,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 
 		acceptSpanParagraphPart(node, isLeafChild);
 
+		new TOCDetectionConsumer().checkTOC(node);
+
 		acceptSemanticImage(node);
 
 		checkSemanticSpanChildren(node);
@@ -273,6 +275,9 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	}
 
 	private void acceptChildrenSemanticHeading(INode node) {
+		if (node.getSemanticType() == SemanticType.TABLE_OF_CONTENT) {
+			return;
+		}
 		List<INode> children = new ArrayList<>(node.getChildren().size());
 		for (INode child : node.getChildren()) {
 			if (child != null && !SemanticType.BLOCK_QUOTE.equals(child.getInitialSemanticType())) {
@@ -305,7 +310,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	}
 
 	private void acceptSemanticHeading(INode node, INode previousNode, INode nextNode, INode nextNextNode) {
-		if (SemanticType.LIST.equals(node.getSemanticType())) {
+		if (node.getSemanticType() == SemanticType.LIST || node.getSemanticType() == SemanticType.TABLE_OF_CONTENT ||
+				node.getSemanticType() == SemanticType.TABLE_OF_CONTENT_ITEM) {
 			return;
 		}
 		double headingProbability = NodeUtils.headingProbability(StaticContainers.getAccumulatedNodeMapper().get(node),
@@ -389,6 +395,9 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	}
 
 	private void acceptSemanticList(INode node) {
+		if (node.getSemanticType() == SemanticType.TABLE_OF_CONTENT) {
+			return;
+		}
 		INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
 		TableBorder tableBorder = StaticContainers.getTableBordersCollection().getTableBorder(node.getBoundingBox());
 		if (accumulatedNode != null && tableBorder != null &&

@@ -70,9 +70,9 @@ class SubscriptSuperscriptTest {
 		IDocument document = JsonToPdfTree.getDocument("/files/" + filename);
 		ITree tree = document.getTree();
 
-		StaticContainers.clearAllContainers(document);
+		StaticContainers.updateContainers(document);
 
-		Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document);
+		Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer();
 		tree.forEach(semanticDocumentValidator);
 
 		AccumulatedNodeConsumer paragraphValidator = new AccumulatedNodeConsumer();

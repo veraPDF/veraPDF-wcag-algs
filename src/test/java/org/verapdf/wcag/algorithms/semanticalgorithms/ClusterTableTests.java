@@ -63,14 +63,14 @@ public class ClusterTableTests {
     void testClusterTableDetection(String filename, int[][] checkSizes, boolean semanticIsValid,
                                    boolean initialSemanticIsValid) throws IOException {
         IDocument document = JsonToPdfTree.getDocument("/files/tables/" + filename);
-        StaticContainers.clearAllContainers(document);
+        StaticContainers.updateContainers(document);
 
         ITree tree = document.getTree();
 
-        LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer(document);
+        LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer();
         linesPreprocessingConsumer.findTableBorders();
 
-        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document);
+        Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer();
         tree.forEach(semanticDocumentValidator);
 
         StaticContainers.setTableBordersCollection(new TableBordersCollection(linesPreprocessingConsumer.getTableBorders()));

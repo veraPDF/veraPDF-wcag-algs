@@ -30,19 +30,18 @@ public class TOCDetectionConsumer implements Consumer<INode> {
     private static final double MAX_RIGHT_ALIGNMENT_GAP = 0.1;
 //    private static final double MAX_LEFT_ALIGNMENT_GAP = 0.1;
 
-    private final IDocument document;
 //    private Double left = null;
     private Double right = null;
     private Double maxRight = -Double.MAX_VALUE;
     private Integer pagesGap = null;
     private Integer lastPageNumber = null;
 
-    public TOCDetectionConsumer(IDocument document) {
-        this.document = document;
-    }
-
     @Override
     public void accept(INode node) {
+        checkTOC(node);
+    }
+
+    public void checkTOC(INode node) {
         if (node.getInitialSemanticType() != SemanticType.TABLE_OF_CONTENT) {
             return;
         }
@@ -55,14 +54,21 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         lastPageNumber = null;
         for (int index = 0; index < node.getChildren().size(); index++) {
             INode child = node.getChildren().get(index);
-            if (child.getSemanticType() != SemanticType.TABLE_OF_CONTENT && checkTOCI(child, infos.get(index))) {
+            if (child.getInitialSemanticType() != SemanticType.TABLE_OF_CONTENT && checkTOCI(child, infos.get(index))) {
                 tociIndexes.add(index);
             }
         }
+        Long id = StaticContainers.getNextID();
         for (int index : tociIndexes) {
             INode child = node.getChildren().get(index);
+            child.setRecognizedStructureId(id);
             StaticContainers.getAccumulatedNodeMapper().updateNode(child,
                     StaticContainers.getAccumulatedNodeMapper().get(child), 1.0, SemanticType.TABLE_OF_CONTENT_ITEM);
+        }
+        if (tociIndexes.size() > 1) {
+            node.setRecognizedStructureId(id);
+            StaticContainers.getAccumulatedNodeMapper().updateNode(node,
+                    StaticContainers.getAccumulatedNodeMapper().get(node), 1.0, SemanticType.TABLE_OF_CONTENT);
         }
     }
 
@@ -109,7 +115,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
 //        } else if (!NodeUtils.areCloseNumbers(left, child.getLeftX(), MAX_LEFT_ALIGNMENT_GAP) && left > child.getLeftX()) {
 //            return false;
 //        }
-        if (!findText(document.getTree().getRoot(),
+        if (!findText(StaticContainers.getDocument().getTree().getRoot(),
                 tociInfo.getText().replaceAll(NON_CONTENT_REGEX,"").toUpperCase(), tociInfo.getDestinationPageNumber())) {
             child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1005);
             return false;
@@ -143,8 +149,9 @@ public class TOCDetectionConsumer implements Consumer<INode> {
             int numberOfSpaces = getNumberOfEndSpaces(textValue);
             info.setRight(lastChunk.getSymbolEndCoordinate(textValue.length() - numberOfSpaces - 1));
             textValue = textValue.substring(0, textValue.length() - numberOfSpaces);
-            if (info.getDestinationPageNumber() != null && info.getDestinationPageNumber() < document.getPages().size()) {
-                String pageLabel = document.getPage(info.getDestinationPageNumber()).getPageLabel();
+            if (info.getDestinationPageNumber() != null && info.getDestinationPageNumber() <
+                    StaticContainers.getDocument().getPages().size()) {
+                String pageLabel = StaticContainers.getDocument().getPage(info.getDestinationPageNumber()).getPageLabel();
                 if (pageLabel != null && textValue.toUpperCase().endsWith(pageLabel.toUpperCase())) {
                     info.setPageNumberLabel(info.getDestinationPageNumber());
                     pageLabelLength = pageLabel.length();

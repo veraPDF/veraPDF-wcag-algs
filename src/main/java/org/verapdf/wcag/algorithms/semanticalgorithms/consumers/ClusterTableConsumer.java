@@ -7,7 +7,6 @@ import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
-import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.entities.lists.ListElement;
 import org.verapdf.wcag.algorithms.entities.lists.ListItem;
 import org.verapdf.wcag.algorithms.entities.lists.PDFList;
@@ -63,24 +62,29 @@ public class ClusterTableConsumer {
     }
 
     private void acceptChildren(INode node) {
-        if (node.getSemanticType() == SemanticType.TABLE || node.getSemanticType() == SemanticType.PARAGRAPH ||
-                node.getSemanticType() == SemanticType.LIST) {
+        if (node.getSemanticType() == SemanticType.TABLE) {
             INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
             if (accumulatedNode instanceof SemanticTable) {
                 TableToken token = new TableToken(((SemanticTable)accumulatedNode).getTableBorder());
                 accept(token, node);
                 return;
-            } else if (accumulatedNode instanceof SemanticParagraph) {
+            }
+        } else if (node.getSemanticType() == SemanticType.PARAGRAPH) {
+            INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
+            if (accumulatedNode instanceof SemanticParagraph) {
                 SemanticParagraph paragraph = (SemanticParagraph)accumulatedNode;
                 if (paragraph.isEmpty() || paragraph.isSpaceNode()) {
                     return;
                 }
                 if (paragraph.getColumnsNumber() == 1 && paragraph.getLinesNumber() != 1) {
-                      TableCluster cluster = new TableCluster(paragraph, node);
-                      accept(cluster, node);
-                      return;
+                    TableCluster cluster = new TableCluster(paragraph, node);
+                    accept(cluster, node);
+                    return;
                 }
-            } else if (accumulatedNode instanceof SemanticList) {
+            }
+        } else if (node.getSemanticType() == SemanticType.LIST) {
+            INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
+            if (accumulatedNode instanceof SemanticList) {
                 SemanticList list = (SemanticList)accumulatedNode;
                 if (list.getNumberOfListColumns() == 1 && node.getChildren().size() == list.getNumberOfListItemsAndLists()) {
                     TableCluster cluster = new TableCluster((SemanticTextNode)accumulatedNode, node);
@@ -88,6 +92,9 @@ public class ClusterTableConsumer {
                     return;
                 }
             }
+        } else if (node.getSemanticType() == SemanticType.TABLE_OF_CONTENT ||
+                node.getSemanticType() == SemanticType.TABLE_OF_CONTENT_ITEM) {
+            return;
         }
         for (INode child : node.getChildren()) {
             acceptChildren(child);

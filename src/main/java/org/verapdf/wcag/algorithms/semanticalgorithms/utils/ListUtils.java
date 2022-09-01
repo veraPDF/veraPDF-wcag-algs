@@ -27,11 +27,11 @@ public class ListUtils {
 			SemanticType.LIST, SemanticType.LIST_ITEM,
 			SemanticType.LIST_LABEL, SemanticType.LIST_BODY));
 
-	static public boolean isListNode(INode node) {
+	public static boolean isListNode(INode node) {
 		return listSemanticTypes.contains(node.getSemanticType());
 	}
 
-	static public boolean isInitialListNode(INode node) {
+	public static boolean isInitialListNode(INode node) {
 		return listSemanticTypes.contains(node.getInitialSemanticType());
 	}
 
@@ -84,7 +84,10 @@ public class ListUtils {
 		Long listId = StaticContainers.getNextID();
 		List<INode> children = node.getChildren();
 		for (Integer index : listInterval.getListItemsIndexes()) {
-			updateTreeWithRecognizedListItem(children.get(index), listId);
+			INode child = children.get(index);
+			if (child.getSemanticType() != SemanticType.TABLE_OF_CONTENT_ITEM &&
+					child.getSemanticType() != SemanticType.TABLE_OF_CONTENT)
+			updateTreeWithRecognizedListItem(child, listId);
 		}
 		if (node.getRecognizedStructureId() == null) {
 			double probability = ((double) (listInterval.getNumberOfListItemsAndLists())) / node.getChildren().size();

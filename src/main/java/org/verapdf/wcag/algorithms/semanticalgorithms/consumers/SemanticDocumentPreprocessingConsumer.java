@@ -19,16 +19,13 @@ import java.util.logging.Logger;
 public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
     private static final Logger LOGGER = Logger.getLogger(SemanticDocumentPreprocessingConsumer.class.getCanonicalName());
 
-    private final IDocument document;
-
-    public SemanticDocumentPreprocessingConsumer(IDocument document) {
-        this.document = document;
+    public SemanticDocumentPreprocessingConsumer() {
         setNodeParents();
     }
 
     public void setNodeParents() {
         Stack<INode> nodeStack = new Stack<>();
-        INode root = document.getTree().getRoot();
+        INode root = StaticContainers.getDocument().getTree().getRoot();
         nodeStack.push(root);
         root.setDepth(0);
         nodeStack.add(root);
@@ -86,7 +83,7 @@ public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
     }
 
     private void checkUnderlinedText(TextChunk textChunk) {
-        if (textChunk.getPageNumber() != null && document != null) {
+        if (textChunk.getPageNumber() != null && StaticContainers.getDocument() != null) {
             for (LineChunk lineChunk : getHorizontalLines(textChunk)) {
                 if (isUnderlinedText(textChunk, lineChunk)) {
                     textChunk.setIsUnderlinedText();

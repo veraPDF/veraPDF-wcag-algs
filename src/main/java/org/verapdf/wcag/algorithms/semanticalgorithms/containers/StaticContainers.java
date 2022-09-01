@@ -32,6 +32,8 @@ import java.util.List;
 
 public class StaticContainers {
 
+	private static final ThreadLocal<IDocument> document = new ThreadLocal<>();
+
 	private static final ThreadLocal<AccumulatedNodeMapper> accumulatedNodeMapper = new ThreadLocal<>();
 
 	private static final ThreadLocal<TableBordersCollection> tableBordersCollection = new ThreadLocal<>();
@@ -44,13 +46,22 @@ public class StaticContainers {
 
 	private static final ThreadLocal<Long> groupCounter = new ThreadLocal<>();
 
-	public static void clearAllContainers(IDocument document) {
+	public static void updateContainers(IDocument document) {
+		StaticContainers.document.set(document);
 		StaticContainers.accumulatedNodeMapper.set(new AccumulatedNodeMapper());
 		StaticContainers.tableBordersCollection.set(new TableBordersCollection());
-		StaticContainers.linesCollection.set(new LinesCollection(document));
+		StaticContainers.linesCollection.set(new LinesCollection());
 		StaticContainers.repeatedCharacters.set(new ArrayList<>());
 		StaticContainers.idMapper.set(new IdMapper());
 		StaticContainers.groupCounter.set(0L);
+	}
+
+	public static IDocument getDocument() {
+		return document.get();
+	}
+
+	public static void setDocument(IDocument document) {
+		StaticContainers.document.set(document);
 	}
 
 	public static AccumulatedNodeMapper getAccumulatedNodeMapper() {

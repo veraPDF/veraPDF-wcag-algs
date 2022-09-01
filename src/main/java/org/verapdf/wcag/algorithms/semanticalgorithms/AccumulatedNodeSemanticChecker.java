@@ -3,7 +3,6 @@ package org.verapdf.wcag.algorithms.semanticalgorithms;
 import org.verapdf.wcag.algorithms.entities.IDocument;
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.ITree;
-import org.verapdf.wcag.algorithms.entities.tables.Table;
 import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
@@ -14,18 +13,15 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 
 	@Override
 	public void checkSemanticDocument(IDocument document) {
-		StaticContainers.clearAllContainers(document);
+		StaticContainers.updateContainers(document);
 
 		ITree tree = document.getTree();
 
-		LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer(document);
+		LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer();
 		linesPreprocessingConsumer.findTableBorders();
 
-		Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer(document);
+		Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer();
 		tree.forEach(semanticDocumentValidator);
-
-		TOCDetectionConsumer tocDetectionConsumer = new TOCDetectionConsumer(document);
-		tree.forEach(tocDetectionConsumer);
 
 		StaticContainers.setTableBordersCollection(new TableBordersCollection(linesPreprocessingConsumer.getTableBorders()));
 
