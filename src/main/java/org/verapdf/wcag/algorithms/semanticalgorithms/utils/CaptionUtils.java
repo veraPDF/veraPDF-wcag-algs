@@ -23,10 +23,7 @@ public class CaptionUtils {
 			return 0;
 		}
 		if (node.getSemanticType() == SemanticType.HEADING ||
-		    node.getSemanticType() == SemanticType.NUMBER_HEADING ||
-		    node.getSemanticType() == SemanticType.LIST ||
-			node.getSemanticType() == SemanticType.TABLE_OF_CONTENT ||
-			node.getSemanticType() == SemanticType.TABLE_OF_CONTENT_ITEM) {
+		    node.getSemanticType() == SemanticType.NUMBER_HEADING) {
 			return 0;
 		}
 		INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);

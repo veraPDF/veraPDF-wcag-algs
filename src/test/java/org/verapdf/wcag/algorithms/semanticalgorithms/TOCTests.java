@@ -38,6 +38,9 @@ public class TOCTests {
         AccumulatedNodeConsumer semanticDetectionValidator = new AccumulatedNodeConsumer();
         tree.forEach(semanticDetectionValidator);
 
+        TOCDetectionConsumer tocDetectionConsumer = new TOCDetectionConsumer();
+        tree.forEach(tocDetectionConsumer);
+
         if (errorCodes == null) {
             testTOCInitialTreeStructure(tree);
         } else {

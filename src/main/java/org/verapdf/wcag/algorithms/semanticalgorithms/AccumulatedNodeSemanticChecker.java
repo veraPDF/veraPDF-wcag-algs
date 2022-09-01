@@ -28,6 +28,12 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 		AccumulatedNodeConsumer semanticDetectionValidator = new AccumulatedNodeConsumer();
 		tree.forEach(semanticDetectionValidator);
 
+		TOCDetectionConsumer tocDetectionConsumer = new TOCDetectionConsumer();
+		tree.forEach(tocDetectionConsumer);
+
+		ListDetectionConsumer listDetectionConsumer = new ListDetectionConsumer();
+		tree.forEach(listDetectionConsumer);
+
 		TableBorderConsumer tableBorderConsumer = new TableBorderConsumer();
 		tableBorderConsumer.recognizeTables(tree);
 

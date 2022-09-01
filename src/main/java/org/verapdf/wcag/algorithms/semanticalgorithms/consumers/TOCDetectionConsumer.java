@@ -255,26 +255,68 @@ public class TOCDetectionConsumer implements Consumer<INode> {
 
     private boolean findText(INode node, String text, int pageNumber) {
         for (INode child : node.getChildren()) {
+            if (child.getPageNumber() != null && child.getPageNumber() == pageNumber && child.getLastPageNumber() == pageNumber) {
+                INode parent = node;
+                while (parent.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT && parent.getParent() != null) {
+                    parent = parent.getParent();
+                }
+                if (parent.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT) {
+                    return false;
+                }
+                String textValue = getTextChunks(parent).stream()
+                        .filter(textChunk -> pageNumber == textChunk.getPageNumber()).map(TextChunk::getValue)
+                        .collect(Collectors.joining("")).replaceAll(NON_CONTENT_REGEX, "").toUpperCase();
+                boolean isTextFound = textValue.contains(text);
+                if (isTextFound) {
+                    findHeading(parent, text, pageNumber);
+                }
+                return isTextFound;
+            }
+        }
+        for (INode child : node.getChildren()) {
             if (child.getPageNumber() != null && child.getPageNumber() <= pageNumber &&
-                    child.getLastPageNumber() >= pageNumber) {
-                if (child.getPageNumber() == pageNumber && child.getLastPageNumber() == pageNumber) {
-                    INode parent = node;
-                    while (parent.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT && parent.getParent() != null) {
-                        parent = parent.getParent();
-                    }
-                    if (parent.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT) {
-                        return false;
-                    }
-                    String textValue = getTextChunks(parent).stream()
-                            .filter(textChunk -> pageNumber == textChunk.getPageNumber())
-                            .map(TextChunk::getValue).collect(Collectors.joining(""));
-                    return textValue.replaceAll(NON_CONTENT_REGEX, "").toUpperCase().contains(text);
-                }
-                if (findText(child, text, pageNumber)) {
-                    return true;
-                }
+                    child.getLastPageNumber() >= pageNumber && findText(child, text, pageNumber)) {
+                return true;
             }
         }
         return false;
+    }
+
+    private boolean findHeading(INode node, String text, int pageNumber) {
+        String textValue = null;
+        if (node.getInitialSemanticType() == SemanticType.NUMBER_HEADING ||
+                node.getInitialSemanticType() == SemanticType.HEADING) {
+            textValue = getTextChunks(node).stream().filter(textChunk -> pageNumber == textChunk.getPageNumber())
+                    .map(TextChunk::getValue).collect(Collectors.joining(""))
+                    .replaceAll(NON_CONTENT_REGEX, "").toUpperCase();
+            if (!textValue.contains(text)) {
+                return false;
+            }
+        }
+        if (textValue == null || textValue.length() > 2 * text.length()) {
+            for (INode child : node.getChildren()) {
+                if (child.getInitialSemanticType() != SemanticType.TABLE_OF_CONTENT &&
+                        findHeading(child, text, pageNumber)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        if (node.getSemanticType() == SemanticType.HEADING || node.getSemanticType() == SemanticType.NUMBER_HEADING) {
+            return true;
+        }
+        INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
+        if (accumulatedNode instanceof SemanticTextNode) {
+            if (node.getInitialSemanticType() == SemanticType.NUMBER_HEADING) {
+                StaticContainers.getAccumulatedNodeMapper().updateNode(node,
+                        new SemanticNumberHeading((SemanticTextNode)accumulatedNode),
+                        1.0, SemanticType.NUMBER_HEADING);
+            } else if (node.getInitialSemanticType() == SemanticType.HEADING) {
+                StaticContainers.getAccumulatedNodeMapper().updateNode(node,
+                        new SemanticHeading((SemanticTextNode)accumulatedNode),
+                        1.0, SemanticType.HEADING);
+            }
+        }
+        return true;
     }
 }
