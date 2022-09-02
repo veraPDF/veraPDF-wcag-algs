@@ -24,15 +24,16 @@ public class UnderlinedTextTests {
 
     static Stream<Arguments> underlinedTextDetectionTestParams() {
         return Stream.of(
-                Arguments.of("underlinedText1.json", true),
-                Arguments.of("underlinedText2.json", true),
-                Arguments.of("underlinedText3.json", true)
+                Arguments.of("underlinedText1.json", new boolean[]{ true }),
+                Arguments.of("underlinedText2.json", new boolean[]{ true }),
+                Arguments.of("underlinedText3.json", new boolean[]{ true }),
+                Arguments.of("link-with-space.json", new boolean[]{ true, true, false, false })
                 );
     }
 
     @ParameterizedTest(name = "{index}: ({0}, {1}) => {0}")
     @MethodSource("underlinedTextDetectionTestParams")
-    void testUnderlinedTextDetection(String filename, boolean isUnderlined) throws IOException {
+    void testUnderlinedTextDetection(String filename, boolean[] isUnderlined) throws IOException {
         IDocument document = JsonToPdfTree.getDocument("/files/underlinedText/" + filename);
         ITree tree = document.getTree();
         StaticContainers.updateContainers(document);
@@ -44,13 +45,15 @@ public class UnderlinedTextTests {
         testUnderlined(tree, isUnderlined);
     }
 
-    private void testUnderlined(ITree tree, boolean isUnderlined) {
+    private void testUnderlined(ITree tree, boolean[] isUnderlined) {
+        int index = 0;
         for (INode node : tree) {
             if (node instanceof SemanticSpan) {
                 for (TextColumn column : ((SemanticSpan)node).getColumns()) {
                     for (TextLine textLine : column.getLines()) {
                         for (TextChunk textChunk : textLine.getTextChunks()) {
-                            Assertions.assertEquals(isUnderlined, textChunk.getIsUnderlinedText());
+                            Assertions.assertEquals(isUnderlined[index], textChunk.getIsUnderlinedText());
+                            index++;
                         }
                     }
                 }

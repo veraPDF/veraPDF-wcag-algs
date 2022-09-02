@@ -9,6 +9,7 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.SortedSet;
 import java.util.Stack;
@@ -85,7 +86,7 @@ public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
     private void checkUnderlinedText(TextChunk textChunk) {
         if (textChunk.getPageNumber() != null && StaticContainers.getDocument() != null) {
             for (LineChunk lineChunk : getHorizontalLines(textChunk)) {
-                if (isUnderlinedText(textChunk, lineChunk)) {
+                if (!TextChunkUtils.isWhiteSpaceChunk(textChunk) && isUnderlinedText(textChunk, lineChunk)) {
                     textChunk.setIsUnderlinedText();
                     return;
                 }
