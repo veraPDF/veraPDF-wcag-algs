@@ -78,6 +78,9 @@ public class ClusterTableTests {
         AccumulatedNodeConsumer paragraphValidator = new AccumulatedNodeConsumer();
         tree.forEach(paragraphValidator);
 
+        ListDetectionConsumer listDetectionConsumer = new ListDetectionConsumer();
+        tree.forEach(listDetectionConsumer);
+
         TableBorderConsumer tableBorderConsumer = new TableBorderConsumer();
         tableBorderConsumer.recognizeTables(tree);
 

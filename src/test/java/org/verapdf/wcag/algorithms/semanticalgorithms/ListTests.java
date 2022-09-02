@@ -8,10 +8,7 @@ import org.verapdf.wcag.algorithms.entities.*;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.lists.PDFList;
 import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
-import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.AccumulatedNodeConsumer;
-import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ClusterTableConsumer;
-import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.LinesPreprocessingConsumer;
-import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.SemanticDocumentPreprocessingConsumer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListUtils;
 
@@ -79,6 +76,9 @@ public class ListTests {
 
         AccumulatedNodeConsumer paragraphValidator = new AccumulatedNodeConsumer();
         tree.forEach(paragraphValidator);
+
+        ListDetectionConsumer listDetectionConsumer = new ListDetectionConsumer();
+        tree.forEach(listDetectionConsumer);
 
         ClusterTableConsumer tableFinder = new ClusterTableConsumer();
         tableFinder.findTables(tree.getRoot());
