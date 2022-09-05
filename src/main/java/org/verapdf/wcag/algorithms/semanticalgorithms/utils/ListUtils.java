@@ -83,8 +83,8 @@ public class ListUtils {
 	public static void updateTreeWithRecognizedList(INode node, ListInterval listInterval) {
 		Long listId = StaticContainers.getNextID();
 		List<INode> children = node.getChildren();
-		for (Integer index : listInterval.getListItemsIndexes()) {
-			INode child = children.get(index);
+		for (ListItemInfo info : listInterval.getListItemsInfos()) {
+			INode child = children.get(info.getIndex());
 			if (child.getSemanticType() != SemanticType.TABLE_OF_CONTENT_ITEM &&
 					child.getSemanticType() != SemanticType.TABLE_OF_CONTENT)
 			updateTreeWithRecognizedListItem(child, listId);
@@ -123,69 +123,72 @@ public class ListUtils {
 		}
 	}
 
-	public static Set<ListInterval> getChildrenListIntervals(Set<ListInterval> listIntervals, List<INode> children,
-	                                                         List<? extends ListItemInfo> itemsInfo) {
+	public static Set<ListInterval> getChildrenListIntervals(Set<ListInterval> listIntervals, List<INode> children) {
 		ListIntervalsCollection listIntervalsCollection = new ListIntervalsCollection();
 		for (ListInterval listInterval : listIntervals) {
-			int start = listInterval.getListItemsStart();
-			List<Integer> listItemsIndexes = new ArrayList<>(Arrays.asList(start));
-			INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(start));
-			double right = accumulatedChild.getRightX();
-			int lastChildNumberOFColumns;
-			int numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
-			int previousIndex = start;
-			for (int i : listInterval.getListItemsIndexes().subList(1, listInterval.getListItemsIndexes().size())) {
-				lastChildNumberOFColumns = 0;
-				if (accumulatedChild instanceof SemanticTextNode) {
-					SemanticTextNode textNode = (SemanticTextNode)accumulatedChild;
-					if (textNode.getColumnsNumber() > 1) {
-						right = textNode.getPenultColumn().getRightX();
-					}
-					lastChildNumberOFColumns = Math.max(textNode.getColumnsNumber() - 2, 0);
-				}
-				InfoChunk line1 = itemsInfo.get(previousIndex).getListItemValue();
-				InfoChunk line2 = itemsInfo.get(i).getListItemValue();
-				accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(i));
-				if (line1.getPageNumber() + 1 < line2.getPageNumber()) {
-					updateListIntervalCollection(listIntervalsCollection, listInterval, listItemsIndexes, numberOfColumns);
-
-					right = -Double.MAX_VALUE;
-					numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
-					listItemsIndexes = new ArrayList<>(Arrays.asList(i));
-					previousIndex = i;
-					continue;
-				}
-				if (Objects.equals(line1.getPageNumber(), line2.getPageNumber())) {
-					if (!isOneColumn(line1, line2) && right >= accumulatedChild.getLeftX()) {
-						updateListIntervalCollection(listIntervalsCollection, listInterval, listItemsIndexes, numberOfColumns);
-
-						right = -Double.MAX_VALUE;
-						numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
-						listItemsIndexes = new ArrayList<>(Arrays.asList(i));
-					} else {
-						listItemsIndexes.add(i);
-					}
-					if (!isOneColumn(line1, line2)) {
-						numberOfColumns += lastChildNumberOFColumns + 1;
-					}
-					right = Math.max(right, accumulatedChild.getRightX());
-				} else {
-					numberOfColumns++;
-					right = accumulatedChild.getRightX();
-					listItemsIndexes.add(i);
-				}
-				previousIndex = i;
-			}
-			updateListIntervalCollection(listIntervalsCollection, listInterval, listItemsIndexes, numberOfColumns);
+			checkChildrenListInterval(listIntervalsCollection, listInterval, children);
 		}
 		return listIntervalsCollection.getSet();
 	}
 
+	public static void checkChildrenListInterval(ListIntervalsCollection listIntervalsCollection,
+												 ListInterval listInterval, List<INode> children) {
+		List<ListItemInfo> listItemInfos = new ArrayList<>();
+		listItemInfos.add(listInterval.getListItemsInfos().get(0));
+		INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(listInterval.getListItemsStart()));
+		double right = accumulatedChild.getRightX();
+		int lastChildNumberOfColumns;
+		int numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
+		ListItemInfo previousItemInfo = listInterval.getListItemsInfos().get(0);
+		for (ListItemInfo info : listInterval.getListItemsInfos().subList(1, listInterval.getNumberOfListItems())) {
+			lastChildNumberOfColumns = 0;
+			if (accumulatedChild instanceof SemanticTextNode) {
+				SemanticTextNode textNode = (SemanticTextNode)accumulatedChild;
+				if (textNode.getColumnsNumber() > 1) {
+					right = textNode.getPenultColumn().getRightX();
+				}
+				lastChildNumberOfColumns = Math.max(textNode.getColumnsNumber() - 2, 0);
+			}
+			InfoChunk line1 = previousItemInfo.getListItemValue();
+			InfoChunk line2 = info.getListItemValue();
+			accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(info.getIndex()));
+			if (line1.getPageNumber() + 1 < line2.getPageNumber()) {
+				updateListIntervalCollection(listIntervalsCollection, listInterval, listItemInfos, numberOfColumns);
+				right = -Double.MAX_VALUE;
+				numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
+				listItemInfos = new ArrayList<>();
+				listItemInfos.add(info);
+				previousItemInfo = info;
+				continue;
+			}
+			if (Objects.equals(line1.getPageNumber(), line2.getPageNumber())) {
+				if (!isOneColumn(line1, line2) && right >= accumulatedChild.getLeftX()) {
+					updateListIntervalCollection(listIntervalsCollection, listInterval, listItemInfos, numberOfColumns);
+
+					right = -Double.MAX_VALUE;
+					numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
+					listItemInfos = new ArrayList<>();
+				}
+				listItemInfos.add(info);
+				if (!isOneColumn(line1, line2)) {
+					numberOfColumns += lastChildNumberOfColumns + 1;
+				}
+				right = Math.max(right, accumulatedChild.getRightX());
+			} else {
+				numberOfColumns++;
+				right = accumulatedChild.getRightX();
+				listItemInfos.add(info);
+			}
+			previousItemInfo = info;
+		}
+		updateListIntervalCollection(listIntervalsCollection, listInterval, listItemInfos, numberOfColumns);
+	}
+
 	private static void updateListIntervalCollection(ListIntervalsCollection listIntervalsCollection, ListInterval listInterval,
-	                                                 List<Integer> listItemsIndexes, int numberOfColumns) {
-		if (listItemsIndexes.size() > 1) {
-			listIntervalsCollection.put(new ListInterval(listItemsIndexes, listInterval
-					.getListsIndexesContainedInListItemsIndexes(listItemsIndexes), numberOfColumns));
+	                                                 List<ListItemInfo> listItemsInfos, int numberOfColumns) {
+		if (listItemsInfos.size() > 1) {
+			listIntervalsCollection.put(new ListInterval(listItemsInfos, listInterval
+					.getListsIndexesContainedInListItemsIndexes(listItemsInfos), numberOfColumns));
 		}
 	}
 

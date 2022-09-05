@@ -6,19 +6,18 @@ import org.verapdf.wcag.algorithms.entities.content.LineArtChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
+import org.verapdf.wcag.algorithms.entities.lists.ListIntervalsCollection;
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemImageInfo;
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemInfo;
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemLineArtInfo;
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ErrorCodes;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListLabelsUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -37,6 +36,9 @@ public class ListDetectionConsumer implements Consumer<INode> {
             return;
         }
         acceptSemanticList(node);
+        if (node.getSemanticType() != SemanticType.LIST) {
+            checkNeighborLists(node);
+        }
     }
 
     private void acceptSemanticList(INode node) {
@@ -50,14 +52,13 @@ public class ListDetectionConsumer implements Consumer<INode> {
             return;
         }
         int childrenSize = node.getChildren().size();
-        List<ListItemTextInfo> textChildrenInfo = new ArrayList<>(Collections.nCopies(childrenSize, null));
-        List<ListItemInfo> imageChildrenInfo = new ArrayList<>(Collections.nCopies(childrenSize, null));
-        List<ListItemInfo> lineArtChildrenInfo = new ArrayList<>(Collections.nCopies(childrenSize, null));
+        List<ListItemTextInfo> textChildrenInfo = new ArrayList<>(childrenSize);
+        List<ListItemImageInfo> imageChildrenInfo = new ArrayList<>(childrenSize);
+        List<ListItemLineArtInfo> lineArtChildrenInfo = new ArrayList<>(childrenSize);
         for (INode child : node.getChildren()) {
             if (child != null) {
                 if (SemanticType.LIST.equals(child.getSemanticType()) && child.getChildren().stream()
-                        .filter(i -> SemanticType.LIST_ITEM
-                                .equals(i.getSemanticType()))
+                        .filter(i -> SemanticType.LIST_ITEM.equals(i.getSemanticType()))
                         .count() > 1) {
                     continue;
                 }
@@ -70,7 +71,7 @@ public class ListDetectionConsumer implements Consumer<INode> {
                     continue;
                 }
                 TextLine line = textNode.getFirstNonSpaceLine();
-                textChildrenInfo.add(child.getIndex(), new ListItemTextInfo(child.getIndex(), child.getSemanticType(),
+                textChildrenInfo.add(new ListItemTextInfo(child.getIndex(), child.getSemanticType(),
                         line, line.getValue().trim()));
                 INode newChild = child;
                 while (!newChild.getChildren().isEmpty()) {
@@ -80,31 +81,30 @@ public class ListDetectionConsumer implements Consumer<INode> {
                     ImageChunk image = ((SemanticImageNode) newChild).getImage();
                     if (image.getRightX() <= line.getLeftX() && image.getBoundingBox().getHeight() <
                             ListUtils.LIST_LABEL_HEIGHT_EPSILON * line.getBoundingBox().getHeight()) {
-                        imageChildrenInfo.add(child.getIndex(), new ListItemImageInfo(child.getIndex(),
+                        imageChildrenInfo.add(new ListItemImageInfo(child.getIndex(),
                                 child.getSemanticType(), image));
                     }
                 } else if (newChild instanceof SemanticFigure) {
                     LineArtChunk lineArt = ((SemanticFigure) newChild).getLineArt();
                     if (lineArt.getRightX() <= line.getLeftX() && lineArt.getBoundingBox().getHeight() <
                             ListUtils.LIST_LABEL_HEIGHT_EPSILON * line.getBoundingBox().getHeight()) {
-                        lineArtChildrenInfo.add(child.getIndex(), new ListItemLineArtInfo(child.getIndex(),
+                        lineArtChildrenInfo.add(new ListItemLineArtInfo(child.getIndex(),
                                 child.getSemanticType(), lineArt));
                     }
                 }
             }
         }
-        List<ListItemTextInfo> textInfo = textChildrenInfo.stream().filter(Objects::nonNull).collect(Collectors.toList());
-        if (!updateTreeWithOneElementList(node, textInfo) && textInfo.size() > 1) {
+        if (!updateTreeWithOneElementList(node, textChildrenInfo) && textChildrenInfo.size() > 1) {
             ListUtils.updateTreeWithRecognizedLists(node, ListUtils.getChildrenListIntervals(
-                    ListLabelsUtils.getListItemsIntervals(textInfo), node.getChildren(),  textChildrenInfo));
+                    ListLabelsUtils.getListItemsIntervals(textChildrenInfo), node.getChildren()));
         }
-        if (imageChildrenInfo.stream().filter(Objects::nonNull).count() > 1) {
+        if (imageChildrenInfo.size() > 1) {
             ListUtils.updateTreeWithRecognizedLists(node, ListUtils.getChildrenListIntervals(
-                    ListLabelsUtils.getImageListItemsIntervals(imageChildrenInfo), node.getChildren(), imageChildrenInfo));
+                    ListLabelsUtils.getImageListItemsIntervals(imageChildrenInfo), node.getChildren()));
         }
-        if (lineArtChildrenInfo.stream().filter(Objects::nonNull).count() > 1) {
+        if (lineArtChildrenInfo.size() > 1) {
             ListUtils.updateTreeWithRecognizedLists(node, ListUtils.getChildrenListIntervals(
-                    ListLabelsUtils.getImageListItemsIntervals(lineArtChildrenInfo), node.getChildren(), lineArtChildrenInfo));
+                    ListLabelsUtils.getImageListItemsIntervals(lineArtChildrenInfo), node.getChildren()));
         }
     }
 
@@ -118,8 +118,8 @@ public class ListDetectionConsumer implements Consumer<INode> {
                     .findFirst().orElse(0);
             if (ListLabelsUtils.isListLabel(itemsInfo.get(index).getListItem())) {
                 int originalIndex = itemsInfo.get(index).getIndex();
-                List<Integer> listItemsIndexes = new ArrayList<>(Collections.singletonList(originalIndex));
-                ListUtils.updateTreeWithRecognizedList(node, new ListInterval(listItemsIndexes,
+                List<ListItemInfo> listItemsInfos = new ArrayList<>(Collections.singletonList(itemsInfo.get(index)));
+                ListUtils.updateTreeWithRecognizedList(node, new ListInterval(listItemsInfos,
                         itemsInfo.stream()
                                 .map(ListItemTextInfo::getIndex)
                                 .filter(i -> i != originalIndex)
@@ -129,5 +129,124 @@ public class ListDetectionConsumer implements Consumer<INode> {
             return true;
         }
         return false;
+    }
+
+    private void checkNeighborLists(INode node) {
+        INode previousChild = null;
+        for (INode currentChild : node.getChildren()) {
+            if (currentChild.getSemanticType() == SemanticType.LIST) {
+                if (previousChild != null) {
+                    INode accumulatedPreviousNode = StaticContainers.getAccumulatedNodeMapper().get(previousChild);
+                    INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(currentChild);
+                    if (accumulatedNode instanceof SemanticList && accumulatedPreviousNode instanceof SemanticList &&
+                            checkNeighborLists(currentChild, previousChild, (SemanticList) accumulatedNode,
+                                (SemanticList) accumulatedPreviousNode)) {
+                        currentChild.getErrorCodes().add(ErrorCodes.ERROR_CODE_1200);
+                        previousChild.getErrorCodes().add(ErrorCodes.ERROR_CODE_1200);
+                        StaticContainers.getIdMapper().put(previousChild.getRecognizedStructureId(),
+                                currentChild.getRecognizedStructureId());
+                    }
+                }
+                previousChild = currentChild;
+            } else {
+                previousChild = null;
+            }
+        }
+    }
+
+    private boolean checkNeighborLists(INode currentNode, INode previousNode, SemanticList currentList, SemanticList previousList) {
+        ListItemInfo currentInfo = currentList.getListInterval().getFirstListItemInfo();
+        ListItemInfo previousInfo = previousList.getListInterval().getLastListItemInfo();
+        if (!checkInfos(currentNode, previousNode, currentInfo, previousInfo)) {
+            return false;
+        }
+        int targetListItemNumber;
+        Set<ListInterval> listIntervals;
+        if (previousInfo instanceof ListItemTextInfo && currentInfo instanceof ListItemTextInfo) {
+            List<ListItemTextInfo> textChildrenInfo = getTextChildrenInfo(currentList, previousList);
+            targetListItemNumber = textChildrenInfo.size();
+            listIntervals = ListLabelsUtils.getListItemsIntervals(textChildrenInfo);
+        } else if ((previousInfo instanceof ListItemImageInfo && currentInfo instanceof ListItemImageInfo) ||
+                (previousInfo instanceof ListItemLineArtInfo && currentInfo instanceof ListItemLineArtInfo)) {
+            List<ListItemInfo> childrenInfo = getImageChildrenInfo(currentList, previousList);
+            targetListItemNumber = childrenInfo.size();
+            listIntervals = ListLabelsUtils.getImageListItemsIntervals(childrenInfo);
+        } else {
+            return false;
+        }
+        if (listIntervals.size() != 1) {
+            return false;
+        }
+        ListInterval interval = listIntervals.iterator().next();
+        if (interval.getNumberOfListItems() != targetListItemNumber) {
+            return false;
+        }
+        return checkListItemsPositions(currentNode, previousNode, currentList, previousList);
+    }
+
+    private boolean checkInfos(INode currentNode, INode previousNode, ListItemInfo currentInfo, ListItemInfo previousInfo) {
+        for (int i = 0; i < currentInfo.getIndex(); i++) {
+            if (currentNode.getChildren().get(i).getSemanticType() != SemanticType.LIST) {
+                return false;
+            }
+        }
+        for (int i = previousNode.getChildren().size() - 1; i > previousInfo.getIndex(); i--) {
+            if (previousNode.getChildren().get(i).getSemanticType() != SemanticType.LIST) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private List<ListItemTextInfo> getTextChildrenInfo(SemanticList previousList, SemanticList currentList) {
+        List<ListItemTextInfo> textChildrenInfo = new ArrayList<>(4);
+        if (previousList.getNumberOfListItems() != 1) {
+            textChildrenInfo.add((ListItemTextInfo)previousList.getListInterval().getPenultListItemInfo());
+        }
+        textChildrenInfo.add((ListItemTextInfo)previousList.getListInterval().getLastListItemInfo());
+        textChildrenInfo.add((ListItemTextInfo)currentList.getListInterval().getFirstListItemInfo());
+        if (currentList.getNumberOfListItems() != 1) {
+            textChildrenInfo.add((ListItemTextInfo)currentList.getListInterval().getSecondListItemInfo());
+        }
+        return textChildrenInfo;
+    }
+
+    private List<ListItemInfo> getImageChildrenInfo(SemanticList previousList, SemanticList currentList) {
+        List<ListItemInfo> childrenInfo = new ArrayList<>(4);
+        if (previousList.getNumberOfListItems() != 1) {
+            childrenInfo.add(previousList.getListInterval().getPenultListItemInfo());
+        }
+        childrenInfo.add(previousList.getListInterval().getLastListItemInfo());
+        childrenInfo.add(currentList.getListInterval().getFirstListItemInfo());
+        if (currentList.getNumberOfListItems() != 1) {
+            childrenInfo.add(currentList.getListInterval().getSecondListItemInfo());
+        }
+        return childrenInfo;
+    }
+
+    private boolean checkListItemsPositions(INode currentNode, INode previousNode,
+                                            SemanticList currentList, SemanticList previousList) {
+        List<ListItemInfo> listItemInfos = new ArrayList<>();
+        ListItemInfo newInfo = ListItemInfo.createListItemInfo(previousList.getListInterval().getLastListItemInfo());
+        newInfo.setIndex(0);
+        listItemInfos.add(newInfo);
+        newInfo = ListItemInfo.createListItemInfo(currentList.getListInterval().getFirstListItemInfo());
+        newInfo.setIndex(1);
+        listItemInfos.add(newInfo);
+        List<INode> children = new ArrayList<>();
+        children.add(previousNode.getChildren().get(previousNode.getChildren().size() - 1));
+        children.add(currentNode.getChildren().get(0));
+        ListIntervalsCollection listIntervalsCollection = new ListIntervalsCollection();
+        ListUtils.checkChildrenListInterval(listIntervalsCollection, new ListInterval(listItemInfos,
+                Collections.emptyList(), 1), children);
+        Set<ListInterval> listIntervals = listIntervalsCollection.getSet();
+        if (listIntervals.size() != 1) {
+            return false;
+        }
+        ListInterval interval = listIntervals.iterator().next();
+        if (interval.getNumberOfListItems() != listItemInfos.size()) {
+            return false;
+        }
+        return true;
     }
 }

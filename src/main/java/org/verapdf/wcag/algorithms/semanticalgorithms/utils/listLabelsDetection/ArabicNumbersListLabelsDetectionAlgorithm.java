@@ -48,37 +48,35 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
     @Override
     public Set<ListInterval> getItemsIntervals(List<ListItemTextInfo> itemsInfo) {
         Set<ListInterval> listIntervals = new HashSet<>();
-        List<Integer> listItemsIndexes = new ArrayList<>();
-        List<Integer> listsIndexes = new ArrayList<>();
+        ListInterval interval = new ListInterval();
         ArabicNumberInformation arabicNumberInformation = new ArabicNumberInformation();
         for (int i = 0; i < itemsInfo.size(); i++) {
-            int originalIndex = itemsInfo.get(i).getIndex();
             if (arabicNumberInformation.number != null) {
                 arabicNumberInformation.number++;
                 if (!arabicNumberInformation.checkItem(itemsInfo.get(i).getListItem())) {
                     if (SemanticType.LIST.equals(itemsInfo.get(i).getSemanticType())) {
                         arabicNumberInformation.number--;
-                        listsIndexes.add(originalIndex);
+                        interval.getListsIndexes().add(itemsInfo.get(i).getIndex());
                         continue;
                     }
-                    if (listItemsIndexes.size() > 1) {
+                    if (interval.getNumberOfListItems() > 1) {
                         --i;
-                        listIntervals.add(new ListInterval(listItemsIndexes, listsIndexes));
+                        listIntervals.add(interval);
                     }
                     --i;
                     arabicNumberInformation.number = null;
                 } else {
-                    listItemsIndexes.add(originalIndex);
+                    interval.getListItemsInfos().add(itemsInfo.get(i));
                 }
             } else if (i != itemsInfo.size() - 1) {
                 arabicNumberInformation = new ArabicNumberInformation(itemsInfo.get(i).getListItem(),
                                                                       itemsInfo.get(i + 1).getListItem(), i);
-                listItemsIndexes = new ArrayList<>(Arrays.asList(originalIndex));
-                listsIndexes = new ArrayList<>();
+                interval = new ListInterval();
+                interval.getListItemsInfos().add(itemsInfo.get(i));
             }
         }
-        if (arabicNumberInformation.number != null && listItemsIndexes.size() > 1) {
-            listIntervals.add(new ListInterval(listItemsIndexes, listsIndexes));
+        if (arabicNumberInformation.number != null && interval.getNumberOfListItems() > 1) {
+            listIntervals.add(interval);
         }
         return listIntervals;
     }
@@ -113,7 +111,7 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
 
     class ArabicNumberInformation {
         private Integer number;
-        private final int index;
+//        private final int index;
         private final String prefix;
         private final int start;
         private int numberOfStartZeros;
@@ -122,7 +120,7 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
 
         ArabicNumberInformation() {
             this.number = null;
-            this.index = 0;
+//            this.index = 0;
             this.prefix = null;
             this.start = 0;
             this.numberOfStartZeros = 0;
@@ -139,7 +137,7 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
             number = getNumberFromString(substring);
             numberOfStartZeros = getNumberOfStartZeros(substring);
             haveSameStartZeros = false;
-            index = i;
+//            index = i;
             prefix = item.substring(0, this.start);
         }
 

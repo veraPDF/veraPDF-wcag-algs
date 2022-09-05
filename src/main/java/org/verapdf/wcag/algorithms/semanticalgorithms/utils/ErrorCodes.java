@@ -9,4 +9,9 @@ public class ErrorCodes {
 	public static final int ERROR_CODE_1003 = 1003;//TOCI has a bad right alignment
 	public static final int ERROR_CODE_1004 = 1004;//TOCI has a bad left alignment
 	public static final int ERROR_CODE_1005 = 1005;//TOCI text not found on a destination page
+	public static final int ERROR_CODE_1006 = 1006;//This TOC and neighbor TOC(s) should be tagged as one TOC
+
+	//List error codes
+	public static final int ERROR_CODE_1200 = 1200;//This list and neighbor list(s) should be tagged as one list
+
 }

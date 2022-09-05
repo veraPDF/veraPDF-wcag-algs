@@ -52,10 +52,8 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
         int start = 0;
         String prefix = null;
         boolean isUpperCase = false;
-        List<Integer> listItemsIndexes = new ArrayList<>();
-        List<Integer> listsIndexes = new ArrayList<>();
+        ListInterval interval = new ListInterval();
         for (int i = 0; i < itemsInfo.size(); i++) {
-            int originalIndex = itemsInfo.get(i).getIndex();
             String item = itemsInfo.get(i).getListItem();
             if (number != null) {
                 number++;
@@ -65,17 +63,17 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
                     ((!item.substring(start, start + s.length()).matches(getLowerCaseRegex()) || isUpperCase) &&
                      (!item.substring(start, start + s.length()).matches(getUpperCaseRegex()) || !isUpperCase))) {
                     if (SemanticType.LIST.equals(itemsInfo.get(i).getSemanticType())) {
-                        listsIndexes.add(originalIndex);
+                        interval.getListsIndexes().add(itemsInfo.get(i).getIndex());
                         number--;
                         continue;
                     }
-                    if (listItemsIndexes.size() > 1) {
-                        listIntervals.add(new ListInterval(listItemsIndexes, listsIndexes));
+                    if (interval.getNumberOfListItems() > 1) {
+                        listIntervals.add(interval);
                     }
                     i--;
                     number = null;
                 } else {
-                    listItemsIndexes.add(originalIndex);
+                    interval.getListItemsInfos().add(itemsInfo.get(i));
                 }
             } else if (i != itemsInfo.size() - 1) {
                 int commonLength = getCommonStartLength(item, itemsInfo.get(i + 1).getListItem());
@@ -104,12 +102,12 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
                     number = null;
                     continue;
                 }
-                listItemsIndexes = new ArrayList<>(Arrays.asList(originalIndex));
-                listsIndexes = new ArrayList<>();
+                interval = new ListInterval();
+                interval.getListItemsInfos().add(itemsInfo.get(i));
             }
         }
-        if (number != null && listItemsIndexes.size() > 1) {
-            listIntervals.add(new ListInterval(listItemsIndexes, listsIndexes));
+        if (number != null && interval.getNumberOfListItems() > 1) {
+            listIntervals.add(interval);
         }
         return listIntervals;
     }

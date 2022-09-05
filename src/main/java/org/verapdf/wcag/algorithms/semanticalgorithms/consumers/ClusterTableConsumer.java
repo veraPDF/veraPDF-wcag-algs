@@ -86,7 +86,8 @@ public class ClusterTableConsumer {
             INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
             if (accumulatedNode instanceof SemanticList) {
                 SemanticList list = (SemanticList)accumulatedNode;
-                if (list.getNumberOfListColumns() == 1 && node.getChildren().size() == list.getNumberOfListItemsAndLists()) {
+                if (list.getNumberOfListColumns() == 1 && node.getChildren().size() ==
+                        list.getNumberOfListItemsAndLists() && list.getNumberOfListItems() > 1) {
                     TableCluster cluster = new TableCluster((SemanticTextNode)accumulatedNode, node);
                     accept(cluster, node);
                     return;

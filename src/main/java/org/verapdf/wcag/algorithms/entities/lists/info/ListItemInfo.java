@@ -5,12 +5,16 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 
 import java.util.Objects;
 
-public abstract class ListItemInfo {
+public class ListItemInfo {
 	private int index;
 	private SemanticType semanticType;
 
-	protected ListItemInfo() {
+	public ListItemInfo(ListItemInfo info) {
+		this(info.getIndex(), info.getSemanticType());
+	}
 
+	public ListItemInfo(int index) {
+		this.index = index;
 	}
 
 	protected ListItemInfo(int index, SemanticType semanticType) {
@@ -22,11 +26,28 @@ public abstract class ListItemInfo {
 		return index;
 	}
 
+	public static ListItemInfo createListItemInfo(ListItemInfo info) {
+		if (info instanceof ListItemTextInfo) {
+			return new ListItemTextInfo((ListItemTextInfo) info);
+		} else if (info instanceof ListItemLineArtInfo) {
+			return new ListItemLineArtInfo((ListItemLineArtInfo) info);
+		} else if (info instanceof ListItemImageInfo) {
+			return new ListItemImageInfo((ListItemImageInfo) info);
+		}
+		return new ListItemInfo(info);
+	}
+
 	public SemanticType getSemanticType() {
 		return semanticType;
 	}
 
-	public abstract InfoChunk getListItemValue();
+	public void setIndex(int index) {
+		this.index = index;
+	}
+
+	public InfoChunk getListItemValue() {
+		return null;
+	}
 
 	@Override
 	public boolean equals(Object o) {

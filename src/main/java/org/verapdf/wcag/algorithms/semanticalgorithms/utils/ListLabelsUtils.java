@@ -110,33 +110,31 @@ public class ListLabelsUtils {
 		return length;
 	}
 
-	public static Set<ListInterval> getImageListItemsIntervals(List<ListItemInfo> itemsInfo) {
-		List<ListItemInfo> itemsNonNullInfo = itemsInfo.stream().filter(Objects::nonNull).collect(Collectors.toList());
+	public static Set<ListInterval> getImageListItemsIntervals(List<? extends ListItemInfo> itemsInfo) {
 		Set<ListInterval> listIntervals = new HashSet<>();
-		List<Integer> listItemsIndexes = new ArrayList<>(Arrays.asList(0));
-		List<Integer> listsIndexes = new ArrayList<>();
-		InfoChunk image = itemsNonNullInfo.get(0).getListItemValue();
-		for (int i = 1; i < itemsNonNullInfo.size(); i++) {
-			InfoChunk currentImage = itemsNonNullInfo.get(i).getListItemValue();
-			int originalIndex = itemsNonNullInfo.get(i).getIndex();
+		ListInterval interval = new ListInterval();
+		interval.getListItemsInfos().add(itemsInfo.get(0));
+		InfoChunk image = itemsInfo.get(0).getListItemValue();
+		for (int i = 1; i < itemsInfo.size(); i++) {
+			InfoChunk currentImage = itemsInfo.get(i).getListItemValue();
 			if (!NodeUtils.areCloseNumbers(image.getBoundingBox().getWidth(), currentImage.getBoundingBox().getWidth()) ||
 			    !NodeUtils.areCloseNumbers(image.getBoundingBox().getHeight(), currentImage.getBoundingBox().getHeight())) {
-				if (SemanticType.LIST.equals(itemsNonNullInfo.get(i).getSemanticType())) {
-					listsIndexes.add(originalIndex);
+				if (SemanticType.LIST.equals(itemsInfo.get(i).getSemanticType())) {
+					interval.getListsIndexes().add(itemsInfo.get(i).getIndex());
 					continue;
 				}
-				if (listItemsIndexes.size() > 1) {
-					listIntervals.add(new ListInterval(listItemsIndexes, listsIndexes));
+				if (interval.getNumberOfListItems() > 1) {
+					listIntervals.add(interval);
 				}
-				image = itemsNonNullInfo.get(i).getListItemValue();
-				listItemsIndexes = new ArrayList<>(Arrays.asList(originalIndex));
-				listsIndexes = new ArrayList<>();
+				image = itemsInfo.get(i).getListItemValue();
+				interval = new ListInterval();
+				interval.getListItemsInfos().add(itemsInfo.get(i));
 			} else {
-				listItemsIndexes.add(originalIndex);
+				interval.getListItemsInfos().add(itemsInfo.get(i));
 			}
 		}
-		if (listItemsIndexes.size() > 1) {
-			listIntervals.add(new ListInterval(listItemsIndexes, listsIndexes));
+		if (interval.getNumberOfListItems() > 1) {
+			listIntervals.add(interval);
 		}
 		return listIntervals;
 	}
@@ -152,30 +150,26 @@ public class ListLabelsUtils {
 
 	public static Set<ListInterval> getItemsWithEqualsLabels(List<ListItemTextInfo> itemsInfo) {
 		Set<ListInterval> listIntervals = new HashSet<>();
-		char firstChar = itemsInfo.get(0).getListItem().charAt(0);
-		char secondChar = itemsInfo.get(0).getListItem().length() > 1 ? itemsInfo.get(0).getListItem().charAt(1) : ' ';
-		List<Integer> listItemsIndexes = new ArrayList<>(Arrays.asList(itemsInfo.get(0).getIndex()));
-		List<Integer> listsIndexes = new ArrayList<>();
-		for (int i = 1; i < itemsInfo.size(); i++) {
-			int originalIndex = itemsInfo.get(i).getIndex();
-			if (itemsInfo.get(i).getListItem().charAt(0) != firstChar) {
-				if (SemanticType.LIST.equals(itemsInfo.get(i).getSemanticType())) {
-					listsIndexes.add(originalIndex);
+		Character firstChar = null;
+		Character secondChar = null;
+		ListInterval interval = new ListInterval();
+		for (ListItemTextInfo info : itemsInfo) {
+			if (!Objects.equals(info.getListItem().charAt(0), firstChar)) {
+				if (SemanticType.LIST.equals(info.getSemanticType())) {
+					interval.getListsIndexes().add(info.getIndex());
 					continue;
 				}
-				if (listItemsIndexes.size() > 1 && checkForSuitableLabel(firstChar, secondChar)) {
-					listIntervals.add(new ListInterval(listItemsIndexes, listsIndexes));
+				if (interval.getNumberOfListItems() > 1 && checkForSuitableLabel(firstChar, secondChar)) {
+					listIntervals.add(interval);
 				}
-				firstChar = itemsInfo.get(i).getListItem().charAt(0);
-				secondChar = itemsInfo.get(i).getListItem().length() > 1 ? itemsInfo.get(i).getListItem().charAt(1) : ' ';
-				listItemsIndexes = new ArrayList<>(Arrays.asList(originalIndex));
-				listsIndexes = new ArrayList<>();
-			} else {
-				listItemsIndexes.add(originalIndex);
+				firstChar = info.getListItem().charAt(0);
+				secondChar = info.getListItem().length() > 1 ? info.getListItem().charAt(1) : ' ';
+				interval = new ListInterval();
 			}
+			interval.getListItemsInfos().add(info);
 		}
-		if (listItemsIndexes.size() > 1 && checkForSuitableLabel(firstChar, secondChar)) {
-			listIntervals.add(new ListInterval(listItemsIndexes, listsIndexes));
+		if (interval.getNumberOfListItems() > 1 && checkForSuitableLabel(firstChar, secondChar)) {
+			listIntervals.add(interval);
 		}
 		return listIntervals;
 	}
