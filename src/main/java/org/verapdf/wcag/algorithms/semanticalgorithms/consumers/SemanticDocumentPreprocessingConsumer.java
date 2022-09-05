@@ -77,7 +77,9 @@ public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
         for (TextColumn textColumn : span.getColumns()) {
             for (TextLine textLine : textColumn.getLines()) {
                 for (TextChunk textChunk : textLine.getTextChunks()) {
-                    checkUnderlinedText(textChunk);
+                    if (!TextChunkUtils.isWhiteSpaceChunk(textChunk)) {
+                        checkUnderlinedText(textChunk);
+                    }
                 }
             }
         }
@@ -86,7 +88,7 @@ public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
     private void checkUnderlinedText(TextChunk textChunk) {
         if (textChunk.getPageNumber() != null && StaticContainers.getDocument() != null) {
             for (LineChunk lineChunk : getHorizontalLines(textChunk)) {
-                if (!TextChunkUtils.isWhiteSpaceChunk(textChunk) && isUnderlinedText(textChunk, lineChunk)) {
+                if (isUnderlinedText(textChunk, lineChunk)) {
                     textChunk.setIsUnderlinedText();
                     return;
                 }
