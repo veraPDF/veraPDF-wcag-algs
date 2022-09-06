@@ -1,5 +1,7 @@
 package org.verapdf.wcag.algorithms.entities.lists;
 
+import org.verapdf.wcag.algorithms.entities.lists.info.ListItemInfo;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,29 +9,28 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ListInterval {
-	private List<Integer> listItemsIndexes = new ArrayList<>();
 	private List<Integer> listsIndexes = new ArrayList<>();
+	private List<ListItemInfo> listItemsInfos = new ArrayList<>();
 	public Integer numberOfColumns;
 
-	public ListInterval(List<Integer> listItemsIndexes, List<Integer> listsIndexes) {
-		this.listItemsIndexes = listItemsIndexes;
-		this.listsIndexes = listsIndexes;
+	public  ListInterval() {
+
 	}
 
-	public ListInterval(List<Integer> listItemsIndexes, List<Integer> listsIndexes, Integer numberOfColumns) {
-		this.listItemsIndexes = listItemsIndexes;
+	public ListInterval(List<ListItemInfo> listItemsInfos, List<Integer> listsIndexes, Integer numberOfColumns) {
+		this.listItemsInfos = listItemsInfos;
 		this.listsIndexes = listsIndexes;
 		this.numberOfColumns = numberOfColumns;
 	}
 
 	public ListInterval(int start, int end) {
 		for (int i = start; i <= end; i++) {
-			listItemsIndexes.add(i);
+			listItemsInfos.add(new ListItemInfo(i));
 		}
 	}
 
 	public int getStart() {
-		if (!listItemsIndexes.isEmpty() && !listsIndexes.isEmpty()) {
+		if (!listItemsInfos.isEmpty() && !listsIndexes.isEmpty()) {
 			return Math.min(getListItemsStart(), getListsStart());
 		}
 		if (listsIndexes.isEmpty()) {
@@ -39,7 +40,7 @@ public class ListInterval {
 	}
 
 	public Integer getListItemsStart() {
-		return listItemsIndexes.isEmpty() ? null : listItemsIndexes.get(0);
+		return listItemsInfos.isEmpty() ? null : listItemsInfos.get(0).getIndex();
 	}
 
 	public Integer getListsStart() {
@@ -47,7 +48,7 @@ public class ListInterval {
 	}
 
 	public int getEnd() {
-		if (!listItemsIndexes.isEmpty() && !listsIndexes.isEmpty()) {
+		if (!listItemsInfos.isEmpty() && !listsIndexes.isEmpty()) {
 			return Math.max(getListItemsEnd(), getListsEnd());
 		}
 		if (listsIndexes.isEmpty()) {
@@ -57,15 +58,31 @@ public class ListInterval {
 	}
 
 	public Integer getListItemsEnd() {
-		return listItemsIndexes.isEmpty() ? null : listItemsIndexes.get(listItemsIndexes.size() - 1);
+		return listItemsInfos.isEmpty() ? null : listItemsInfos.get(listItemsInfos.size() - 1).getIndex();
 	}
 
 	public Integer getListsEnd() {
 		return listsIndexes.isEmpty() ? null : listsIndexes.get(listsIndexes.size() - 1);
 	}
 
-	public List<Integer> getListItemsIndexes() {
-		return listItemsIndexes;
+	public List<ListItemInfo> getListItemsInfos() {
+		return listItemsInfos;
+	}
+
+	public ListItemInfo getLastListItemInfo() {
+		return listItemsInfos.get(listItemsInfos.size() - 1);
+	}
+
+	public ListItemInfo getPenultListItemInfo() {
+		return listItemsInfos.get(listItemsInfos.size() - 2);
+	}
+
+	public ListItemInfo getFirstListItemInfo() {
+		return listItemsInfos.get(0);
+	}
+
+	public ListItemInfo getSecondListItemInfo() {
+		return listItemsInfos.get(1);
 	}
 
 	public List<Integer> getListsIndexes() {
@@ -77,24 +94,24 @@ public class ListInterval {
 	}
 
 	public int getNumberOfListItemsAndLists() {
-		return listItemsIndexes.size() + listsIndexes.size();
+		return getNumberOfListItems() + getNumberOfLists();
 	}
 
 	public int getNumberOfListItems() {
-		return listItemsIndexes.size();
+		return listItemsInfos.size();
 	}
 
 	public int getNumberOfLists() {
 		return listsIndexes.size();
 	}
 
-	public List<Integer> getListsIndexesContainedInListItemsIndexes(List<Integer> listItemsIndexes) {
+	public List<Integer> getListsIndexesContainedInListItemsIndexes(List<ListItemInfo> listItemsInfos) {
 		if (listsIndexes.isEmpty()) {
 			return new ArrayList<>();
 		}
-		int firstIndex = listItemsIndexes.get(0);
-		int lastIndex = listItemsIndexes.get(listItemsIndexes.size() - 1);
-		List<Integer> newListIndexes =  listsIndexes.stream().filter(i -> i > firstIndex && i < lastIndex)
+		int firstIndex = listItemsInfos.get(0).getIndex();
+		int lastIndex = listItemsInfos.get(listItemsInfos.size() - 1).getIndex();
+		List<Integer> newListIndexes = listsIndexes.stream().filter(i -> i > firstIndex && i < lastIndex)
 		                                            .collect(Collectors.toList());
 		for (int i = firstIndex - 1; i >= getListsStart(); i--) {
 			if (!listsIndexes.contains(i)) {
@@ -121,12 +138,12 @@ public class ListInterval {
 			return false;
 		}
 		ListInterval interval = (ListInterval) o;
-		return listItemsIndexes.equals(interval.listItemsIndexes) && listsIndexes.equals(interval.listsIndexes);
+		return listItemsInfos.equals(interval.listItemsInfos) && listsIndexes.equals(interval.listsIndexes);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(listItemsIndexes, listsIndexes);
+		return Objects.hash(listItemsInfos, listsIndexes);
 	}
 
 	public boolean contains(ListInterval second) {

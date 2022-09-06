@@ -4,7 +4,12 @@ import org.verapdf.wcag.algorithms.entities.content.LineArtChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 
 public class ListItemLineArtInfo extends ListItemInfo {
-	private LineArtChunk lineArt;
+	private final LineArtChunk lineArt;
+
+	public ListItemLineArtInfo(ListItemLineArtInfo info) {
+		super(info);
+		this.lineArt = info.lineArt;
+	}
 
 	public ListItemLineArtInfo(int index, SemanticType semanticType, LineArtChunk lineArt) {
 		super(index, semanticType);

@@ -39,6 +39,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
     @Override
     public void accept(INode node) {
         checkTOC(node);
+        checkNeighborTOCs(node);
     }
 
     public void checkTOC(INode node) {
@@ -65,7 +66,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
             StaticContainers.getAccumulatedNodeMapper().updateNode(child,
                     StaticContainers.getAccumulatedNodeMapper().get(child), 1.0, SemanticType.TABLE_OF_CONTENT_ITEM);
         }
-        if (tociIndexes.size() > 1) {
+        if (tociIndexes.size() > 1 || tociIndexes.size() == 1 && node.getChildren().size() == 1) {
             node.setRecognizedStructureId(id);
             StaticContainers.getAccumulatedNodeMapper().updateNode(node,
                     StaticContainers.getAccumulatedNodeMapper().get(node), 1.0, SemanticType.TABLE_OF_CONTENT);
@@ -319,4 +320,45 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         }
         return true;
     }
+
+    private void checkNeighborTOCs(INode node) {
+        if (node.getSemanticType() == SemanticType.TABLE_OF_CONTENT) {
+            return;
+        }
+        INode previousChild = null;
+        for (INode child : node.getChildren()) {
+            if (child.getSemanticType() == SemanticType.TABLE_OF_CONTENT) {
+                if (previousChild != null && checkNeighborTOCs(child, previousChild)) {
+                    child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1006);
+                    previousChild.getErrorCodes().add(ErrorCodes.ERROR_CODE_1006);
+                    StaticContainers.getIdMapper().put(previousChild.getRecognizedStructureId(),
+                            child.getRecognizedStructureId());
+                }
+                previousChild = child;
+            } else {
+                previousChild = null;
+            }
+        }
+    }
+
+    private boolean checkNeighborTOCs(INode currentTOC, INode previousTOC) {
+        INode previousTOCI = previousTOC.getChildren().get(previousTOC.getChildren().size() - 1);
+        if (previousTOCI.getSemanticType() != SemanticType.TABLE_OF_CONTENT_ITEM) {
+            return false;
+        }
+        INode currentTOCI = currentTOC.getChildren().get(0);
+        if (currentTOCI.getSemanticType() != SemanticType.TABLE_OF_CONTENT_ITEM) {
+            return false;
+        }
+//        left = null;
+        right = null;
+        maxRight = -Double.MAX_VALUE;
+        pagesGap = null;
+        lastPageNumber = null;
+        if (checkTOCI(previousTOCI, getTOCIInfo(previousTOCI)) && checkTOCI(currentTOCI, getTOCIInfo(currentTOCI))) {
+            return true;
+        }
+        return false;
+    }
+
 }
