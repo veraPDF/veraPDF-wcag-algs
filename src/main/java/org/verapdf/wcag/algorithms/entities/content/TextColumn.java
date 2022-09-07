@@ -12,6 +12,7 @@ public class TextColumn extends TextInfoChunk {
     }
 
     public TextColumn(TextLine line) {
+	    super(line.getBoundingBox(), line.getFontSize(), line.getBaseLine());
         textBlocks.add(new TextBlock(line));
     }
 
