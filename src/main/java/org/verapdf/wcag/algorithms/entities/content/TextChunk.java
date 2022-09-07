@@ -14,6 +14,8 @@ public class TextChunk extends TextInfoChunk {
     private double[] fontColor;
     private double contrastRatio;
     private boolean hasSpecialStyle = false;
+    private boolean hasSpecialBackground = false;
+    private double[] backgroundColor;
     private boolean isUnderlinedText = false;
     private TextFormat textFormat = TextFormat.NORMAL;
     private List<Double> symbolEnds;
@@ -109,6 +111,22 @@ public class TextChunk extends TextInfoChunk {
 
     public void setHasSpecialStyle() {
         this.hasSpecialStyle = true;
+    }
+
+    public boolean getHasSpecialBackground() {
+        return hasSpecialBackground;
+    }
+
+    public void setHasSpecialBackground() {
+        this.hasSpecialBackground = true;
+    }
+
+    public double[] getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(double[] backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 
     public boolean getIsUnderlinedText() {

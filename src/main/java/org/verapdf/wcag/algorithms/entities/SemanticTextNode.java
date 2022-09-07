@@ -22,6 +22,7 @@ public class SemanticTextNode extends SemanticNode {
     private String fontName;
     private TextFormat textFormat = TextFormat.NORMAL;
     private Double maxFontSize;
+    private double[] backgroundColor;
 
     public SemanticTextNode(SemanticTextNode textNode) {
         super(textNode.getBoundingBox(), textNode.getInitialSemanticType(), textNode.getSemanticType());
@@ -33,6 +34,7 @@ public class SemanticTextNode extends SemanticNode {
         this.fontName = textNode.fontName;
         this.textFormat = textNode.textFormat;
         this.maxFontSize = textNode.maxFontSize;
+        this.backgroundColor = textNode.backgroundColor;
     }
 
     public SemanticTextNode() {
@@ -91,6 +93,7 @@ public class SemanticTextNode extends SemanticNode {
         italicAngle = null;
         fontName = null;
         maxFontSize = null;
+        backgroundColor = null;
     }
 
     public List<TextColumn> getColumns() {
@@ -390,6 +393,40 @@ public class SemanticTextNode extends SemanticNode {
             calculateFontSize();
         }
         return maxFontSize;
+    }
+
+    public double[] getBackgroundColor() {
+        if (backgroundColor == null) {
+            backgroundColor = calculateBackgroundColor();
+        }
+        return backgroundColor;
+    }
+
+    private double[] calculateBackgroundColor() {
+        Map<double[], Double> backgroundColorMap = new HashMap<>();
+        for (TextColumn column : getColumns()) {
+            for (TextLine line : column.getLines()) {
+                for (TextChunk chunk : line.getTextChunks()) {
+                    if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
+                        double[] currentBackgroundColor = chunk.getBackgroundColor();
+                        if (currentBackgroundColor == null) {
+                            continue;
+                        }
+                        Double backgroundColorLength = backgroundColorMap.get(currentBackgroundColor);
+                        backgroundColorMap.put(currentBackgroundColor,
+                                               (backgroundColorLength == null ? 0 : backgroundColorLength)
+                                                                       + chunk.getTextLength());
+                    }
+                }
+            }
+        }
+        if (!backgroundColorMap.isEmpty()) {
+            return backgroundColorMap.entrySet()
+                               .stream()
+                               .max(Comparator.comparingDouble(Map.Entry::getValue))
+                               .get().getKey();
+        }
+        return new double[]{0.0};
     }
 
     public boolean isSpaceNode() {
