@@ -1,24 +1,25 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
 import org.verapdf.wcag.algorithms.entities.*;
-import org.verapdf.wcag.algorithms.entities.content.*;
+import org.verapdf.wcag.algorithms.entities.content.TextBlock;
+import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextColumn;
+import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
-import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
-import org.verapdf.wcag.algorithms.entities.lists.info.ListItemImageInfo;
-import org.verapdf.wcag.algorithms.entities.lists.info.ListItemInfo;
-import org.verapdf.wcag.algorithms.entities.lists.info.ListItemLineArtInfo;
-import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
-import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.*;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.CaptionUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class AccumulatedNodeConsumer implements Consumer<INode> {
 
@@ -85,6 +86,9 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 								!Arrays.equals(textNode.getTextColor(), textChunk.getFontColor()) ||
 								!Objects.equals(textNode.getFontWeight(), textChunk.getFontWeight())) {
 							textChunk.setHasSpecialStyle();
+						}
+						if (!Arrays.equals(textNode.getBackgroundColor(), textChunk.getBackgroundColor())) {
+							textChunk.setHasSpecialBackground();
 						}
 					}
 				}

@@ -23,6 +23,8 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class ContrastRatioConsumer implements Consumer<INode> {
 
@@ -93,9 +95,6 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 			return;
 		}
 
-		double [] textChunkOriginalColor = textChunk.getFontColor();
-		Color textColorForProcessing = getTextColorFromComponentArray(textChunkOriginalColor);
-
 		BoundingBox bBox = textChunk.getBoundingBox();
 		double dpiScaling = ((double) RENDER_DPI) / ((double) PDF_DPI);
 		int renderedPageWidth = renderedPage.getRaster().getWidth();
@@ -123,7 +122,7 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		}
 		try {
 			BufferedImage targetBim = renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
-			double contrastRatio = getContrastRatio(targetBim, textColorForProcessing);
+			double contrastRatio = getContrastRatio(targetBim, textChunk);
 			textChunk.setContrastRatio(contrastRatio);
 		} catch (Exception e) {
 			logger.log(Level.WARNING, e.getMessage());
@@ -193,14 +192,18 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		return pdfRenderer.renderImageWithDPI(pageNumber, RENDER_DPI, ImageType.RGB);
 	}
 
-	private double getContrastRatio(BufferedImage image, Color textColor) {
+	private double getContrastRatio(BufferedImage image, TextChunk textChunk) {
+		double [] textChunkOriginalColor = textChunk.getFontColor();
+		Color textColor = getTextColorFromComponentArray(textChunkOriginalColor);
 		double textLuminosity = 0;
 		double approximatedTextLuminosity = 0;
 		if (textColor != null) {
 			textLuminosity = relativeLuminosity(textColor);
 			approximatedTextLuminosity = textLuminosity;
 			double diff = 1.0;
-			List<DataPoint> dpFullArray = getLuminosityPresenceList(image);
+			Map<Color, DataPoint> imageColorMap = getImageColorMap(image);
+			textChunk.setBackgroundColor(checkForBackgroundColor(imageColorMap, textColor));
+			List<DataPoint> dpFullArray = new ArrayList<>(new TreeSet<>(imageColorMap.values()));
 			for (DataPoint dp : dpFullArray) {
 				double luminosity = dp.getValue();
 				double currentDifference = Math.abs(luminosity - textLuminosity);
@@ -228,6 +231,15 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		}
 	}
 
+	private double[] checkForBackgroundColor(Map<Color, DataPoint> imageColorMap, Color textColor) {
+		Color backgroundColor = getBackgroundColor(imageColorMap, textColor);
+		if (backgroundColor != null) {
+			float[] components = backgroundColor.getColorComponents(null);
+			return IntStream.range(0, components.length).mapToDouble(i -> components[i]).toArray();
+		}
+		return null;
+	}
+
 	private double getContrastRatio(BufferedImage image) {
 		double[] contrastColors = get2MostPresentElements(getLuminosityPresenceList(image));
 		return getContrastRatio(contrastColors[0], contrastColors[1]);
@@ -246,7 +258,7 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 		       Math.pow(((doubleColorComponent + 0.055) / 1.055), 2.4);
 	}
 
-	private List<DataPoint> getLuminosityPresenceList(BufferedImage bim) {
+	private Map<Color, DataPoint> getImageColorMap(BufferedImage bim) {
 		int width = bim.getWidth();
 		int height = bim.getHeight();
 		Map<Color, DataPoint> colorMap = new HashMap<>();
@@ -269,9 +281,43 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 			}
 		}
 
-		return new ArrayList<>(new TreeSet<>(colorMap.values()));
+		return colorMap;
 	}
 
+	private List<DataPoint> getLuminosityPresenceList(BufferedImage bim) {
+		return new ArrayList<>(new TreeSet<>(getImageColorMap(bim).values()));
+	}
+
+	private Color getBackgroundColor(Map<Color, DataPoint> colorMap, Color textColor) {
+		if (colorMap.size() == 1) {
+			Map.Entry<Color, DataPoint> entry = colorMap.entrySet().iterator().next();
+			if (!textColor.equals(entry.getKey())) {
+				return entry.getKey();
+			}
+			return null;
+		}
+		List<Integer> sortedOccurrences = colorMap.values()
+		                                         .stream().map(DataPoint::getTotalOccurrence)
+		                                         .sorted().collect(Collectors.toList());
+		int firstFrequency = sortedOccurrences.get(sortedOccurrences.size() - 1);
+		int secondFrequency = sortedOccurrences.get(sortedOccurrences.size() - 2);
+		Color firstColor = null;
+		Color secondColor = null;
+		for (Map.Entry<Color, DataPoint> entry : colorMap.entrySet()) {
+			if (firstColor == null && entry.getValue().getTotalOccurrence() == firstFrequency) {
+				firstColor = entry.getKey();
+			}
+			if (secondColor == null && entry.getValue().getTotalOccurrence() == secondFrequency) {
+				secondColor = entry.getKey();
+			}
+		}
+		if (!textColor.equals(firstColor)) {
+			return firstColor;
+		} else if (!textColor.equals(secondColor)) {
+			return secondColor;
+		}
+		return null;
+	}
 	private List<DataPoint> findLocalMaximums(List<DataPoint> source) {
 		List<DataPoint> localMaximums = new ArrayList<>();
 		boolean isPreviousLessThanCurrent = true;
