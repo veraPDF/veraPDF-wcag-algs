@@ -2,7 +2,9 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorderCell;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ErrorCodes;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +32,7 @@ public class TableChecker implements Consumer<INode> {
             return;
         }
         checkTableCells(cells);
+        checkTableCellsPosition(table, cells, numberOfRows, numberOfColumns);
     }
 
     private static List<INode> getTableRows(INode table) {
@@ -144,5 +147,213 @@ public class TableChecker implements Consumer<INode> {
             }
         }
         return false;
+    }
+
+    private static void checkTableCellsPosition(INode table, TableBorderCell[][] cells, int numberOfRows, int numberOfColumns) {
+        if (table.getPageNumber() == null) {
+            return;
+        }
+        checkTableCellsBottom(cells, numberOfRows);
+        checkTableCellsTop(cells, numberOfRows);
+        checkTableCellsRight(table, cells, numberOfColumns);
+        checkTableCellsLeft(table, cells, numberOfColumns);
+    }
+
+    private static void checkTableCellsBottom(TableBorderCell[][] cells, int numberOfRows) {
+        for (int rowNumber = 0; rowNumber < numberOfRows - 1; rowNumber++) {
+            TableBorderCell maxBottomCell = getMaxBottomCell(cells, rowNumber + 1);
+            TableBorderCell minBottomCell = getMinBottomCell(cells, rowNumber);
+            if (maxBottomCell != null && minBottomCell != null &&
+                    isFirstBottomMax(maxBottomCell.getBoundingBox(), minBottomCell.getBoundingBox())) {
+                minBottomCell.getNode().getErrorCodes().add(ErrorCodes.ERROR_CODE_1100);
+            }
+        }
+    }
+
+    private static void checkTableCellsTop(TableBorderCell[][] cells, int numberOfRows) {
+        for (int rowNumber = 0; rowNumber < numberOfRows - 1; rowNumber++) {
+            TableBorderCell maxTopCell = getMaxTopCell(cells, rowNumber + 1);
+            TableBorderCell minTopCell = getMinTopCell(cells, rowNumber);
+            if (maxTopCell != null && minTopCell != null &&
+                    isFirstTopMax(maxTopCell.getBoundingBox(), minTopCell.getBoundingBox())) {
+                maxTopCell.getNode().getErrorCodes().add(ErrorCodes.ERROR_CODE_1101);
+            }
+        }
+    }
+
+    private static void checkTableCellsRight(INode table, TableBorderCell[][] cells, int numberOfColumns) {
+        for (int pageNumber = table.getPageNumber(); pageNumber <= table.getLastPageNumber(); pageNumber++) {
+            for (int columnNumber = 0; columnNumber < numberOfColumns - 1; columnNumber++) {
+                TableBorderCell maxRightCell = getMaxRightCell(cells, columnNumber, pageNumber);
+                TableBorderCell minRightCell = getMinRightCell(cells, columnNumber + 1, pageNumber);
+                if (maxRightCell != null && minRightCell != null &&
+                        isFirstRightMax(maxRightCell.getBoundingBox(), minRightCell.getBoundingBox(), pageNumber)) {
+                    maxRightCell.getNode().getErrorCodes().add(ErrorCodes.ERROR_CODE_1102);
+                }
+            }
+        }
+    }
+
+    private static void checkTableCellsLeft(INode table, TableBorderCell[][] cells, int numberOfColumns) {
+        for (int pageNumber = table.getPageNumber(); pageNumber <= table.getLastPageNumber(); pageNumber++) {
+            for (int columnNumber = 0; columnNumber < numberOfColumns - 1; columnNumber++) {
+                TableBorderCell maxLeftCell = getMaxLeftCell(cells, columnNumber, pageNumber);
+                TableBorderCell minLeftCell = getMinLeftCell(cells, columnNumber + 1, pageNumber);
+                if (maxLeftCell != null && minLeftCell != null &&
+                        isFirstLeftMax(maxLeftCell.getBoundingBox(), minLeftCell.getBoundingBox(), pageNumber)) {
+                    minLeftCell.getNode().getErrorCodes().add(ErrorCodes.ERROR_CODE_1103);
+                }
+            }
+        }
+    }
+
+    private static TableBorderCell getMaxTopCell(TableBorderCell[][] cells, int rowNumber) {
+        TableBorderCell cell = null;
+        for (int columnNumber = 0; columnNumber < cells[rowNumber].length; columnNumber++) {
+            TableBorderCell currentCell = cells[rowNumber][columnNumber];
+            if (currentCell.getRowNumber() != rowNumber || currentCell.getColNumber() != columnNumber ||
+                    currentCell.getBoundingBox().getPageNumber() == null) {
+                continue;
+            }
+            if (cell == null || isFirstTopMax(currentCell.getBoundingBox(), cell.getBoundingBox())) {
+                cell = currentCell;
+            }
+        }
+        return cell;
+    }
+
+    private static TableBorderCell getMinTopCell(TableBorderCell[][] cells, int rowNumber) {
+        TableBorderCell cell = null;
+        for (int columnNumber = 0; columnNumber < cells[rowNumber].length; columnNumber++) {
+            TableBorderCell currentCell = cells[rowNumber][columnNumber];
+            if (currentCell.getRowNumber()  + currentCell.getRowSpan() != rowNumber + 1 ||
+                    currentCell.getColNumber() != columnNumber ||
+                    currentCell.getBoundingBox().getPageNumber() == null) {
+                continue;
+            }
+            if (cell == null || isFirstTopMax(cell.getBoundingBox(), currentCell.getBoundingBox())) {
+                cell = currentCell;
+            }
+        }
+        return cell;
+    }
+
+    private static TableBorderCell getMaxBottomCell(TableBorderCell[][] cells, int rowNumber) {
+        TableBorderCell cell = null;
+        for (int columnNumber = 0; columnNumber < cells[rowNumber].length; columnNumber++) {
+            TableBorderCell currentCell = cells[rowNumber][columnNumber];
+            if (currentCell.getRowNumber() != rowNumber || currentCell.getColNumber() != columnNumber ||
+                    currentCell.getBoundingBox().getPageNumber() == null) {
+                continue;
+            }
+            if (cell == null || isFirstBottomMax(currentCell.getBoundingBox(), cell.getBoundingBox())) {
+                cell = currentCell;
+            }
+        }
+        return cell;
+    }
+
+    private static TableBorderCell getMinBottomCell(TableBorderCell[][] cells, int rowNumber) {
+        TableBorderCell cell = null;
+        for (int columnNumber = 0; columnNumber < cells[rowNumber].length; columnNumber++) {
+            TableBorderCell currentCell = cells[rowNumber][columnNumber];
+            if (currentCell.getRowNumber() + currentCell.getRowSpan() != rowNumber + 1 || currentCell.getColNumber() !=
+                    columnNumber || currentCell.getBoundingBox().getPageNumber() == null) {
+                continue;
+            }
+            if (cell == null || isFirstBottomMax(cell.getBoundingBox(), currentCell.getBoundingBox())) {
+                cell = currentCell;
+            }
+        }
+        return cell;
+    }
+
+    private static Boolean isFirstTopMax(BoundingBox boundingBox1, BoundingBox boundingBox2) {
+        return boundingBox1.getPageNumber() < boundingBox2.getPageNumber() ||
+                (boundingBox1.getPageNumber().equals(boundingBox2.getPageNumber()) &&
+                        boundingBox1.getTopY() > boundingBox2.getTopY());
+    }
+
+    private static Boolean isFirstBottomMax(BoundingBox boundingBox1, BoundingBox boundingBox2) {
+        return boundingBox1.getLastPageNumber() < boundingBox2.getLastPageNumber() ||
+                (boundingBox1.getLastPageNumber().equals(boundingBox2.getLastPageNumber()) &&
+                        boundingBox1.getBottomY() > boundingBox2.getBottomY());
+    }
+
+    private static TableBorderCell getMaxRightCell(TableBorderCell[][] cells, int columnNumber, int pageNumber) {
+        TableBorderCell cell = null;
+        for (int rowNumber = 0; rowNumber < cells.length; rowNumber++) {
+            TableBorderCell currentCell = cells[rowNumber][columnNumber];
+            if (currentCell.getRowNumber() != rowNumber || currentCell.getColNumber() + currentCell.getColSpan() !=
+                    columnNumber + 1 || currentCell.getBoundingBox().getPageNumber() == null ||
+                    currentCell.getBoundingBox().getPageNumber() > pageNumber ||
+                    currentCell.getBoundingBox().getLastPageNumber() < pageNumber) {
+                continue;
+            }
+            if (cell == null || isFirstRightMax(currentCell.getBoundingBox(), cell.getBoundingBox(), pageNumber)) {
+                cell = currentCell;
+            }
+        }
+        return cell;
+    }
+
+    private static TableBorderCell getMinRightCell(TableBorderCell[][] cells, int columnNumber, int pageNumber) {
+        TableBorderCell cell = null;
+        for (int rowNumber = 0; rowNumber < cells.length; rowNumber++) {
+            TableBorderCell currentCell = cells[rowNumber][columnNumber];
+            if (currentCell.getRowNumber() != rowNumber || currentCell.getColNumber() != columnNumber ||
+                    currentCell.getBoundingBox().getPageNumber() == null ||
+                    currentCell.getBoundingBox().getPageNumber() > pageNumber ||
+                    currentCell.getBoundingBox().getLastPageNumber() < pageNumber) {
+                continue;
+            }
+            if (cell == null || isFirstRightMax(cell.getBoundingBox(), currentCell.getBoundingBox(), pageNumber)) {
+                cell = currentCell;
+            }
+        }
+        return cell;
+    }
+
+    private static TableBorderCell getMaxLeftCell(TableBorderCell[][] cells, int columnNumber, int pageNumber) {
+        TableBorderCell cell = null;
+        for (int rowNumber = 0; rowNumber < cells.length; rowNumber++) {
+            TableBorderCell currentCell = cells[rowNumber][columnNumber];
+            if (currentCell.getRowNumber() != rowNumber ||
+                    currentCell.getColNumber() + currentCell.getColSpan() != columnNumber + 1 ||
+                    currentCell.getBoundingBox().getPageNumber() == null ||
+                    currentCell.getBoundingBox().getPageNumber() > pageNumber ||
+                    currentCell.getBoundingBox().getLastPageNumber() < pageNumber) {
+                continue;
+            }
+            if (cell == null || isFirstLeftMax(currentCell.getBoundingBox(), cell.getBoundingBox(), pageNumber)) {
+                cell = currentCell;
+            }
+        }
+        return cell;
+    }
+
+    private static TableBorderCell getMinLeftCell(TableBorderCell[][] cells, int columnNumber, int pageNumber) {
+        TableBorderCell cell = null;
+        for (int rowNumber = 0; rowNumber < cells.length; rowNumber++) {
+            TableBorderCell currentCell = cells[rowNumber][columnNumber];
+            if (currentCell.getRowNumber() != rowNumber || currentCell.getColNumber() != columnNumber ||
+                    currentCell.getBoundingBox().getPageNumber() == null ||
+                    currentCell.getBoundingBox().getPageNumber() > pageNumber ||
+                    currentCell.getBoundingBox().getLastPageNumber() < pageNumber) {
+                continue;
+            }
+            if (cell == null || isFirstLeftMax(cell.getBoundingBox(), currentCell.getBoundingBox(), pageNumber)) {
+                cell = currentCell;
+            }
+        }
+        return cell;
+    }
+
+    private static Boolean isFirstRightMax(BoundingBox boundingBox1, BoundingBox boundingBox2, int pageNumber) {
+        return boundingBox1.getRightX(pageNumber) > boundingBox2.getRightX(pageNumber);
+    }
+
+    private static Boolean isFirstLeftMax(BoundingBox boundingBox1, BoundingBox boundingBox2, int pageNumber) {
+        return boundingBox1.getLeftX(pageNumber) > boundingBox2.getLeftX(pageNumber);
     }
 }

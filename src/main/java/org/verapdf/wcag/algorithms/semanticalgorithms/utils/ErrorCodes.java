@@ -11,6 +11,12 @@ public class ErrorCodes {
 	public static final int ERROR_CODE_1005 = 1005;//TOCI text not found on a destination page
 	public static final int ERROR_CODE_1006 = 1006;//This TOC and neighbor TOC(s) should be tagged as one TOC
 
+	//Table error codes
+	public static final int ERROR_CODE_1100 = 1100;//This cell is below than some cells in the next row
+	public static final int ERROR_CODE_1101 = 1101;//This cell is above than some cells in the previous row
+	public static final int ERROR_CODE_1102 = 1102;//This cell is to the right of some cells in the next column
+	public static final int ERROR_CODE_1103 = 1103;//This cell is to the left of some cells in the previous column
+
 	//List error codes
 	public static final int ERROR_CODE_1200 = 1200;//This list and neighbor list(s) should be tagged as one list
 

@@ -142,4 +142,38 @@ public class MultiBoundingBox extends BoundingBox {
     public List<BoundingBox> getBoundingBoxes() {
         return boundingBoxes;
     }
+
+    public Double getRightX(int pageNumber) {
+        if (this.pageNumber > pageNumber || this.lastPageNumber < pageNumber) {
+            return null;
+        }
+        if (this.pageNumber == pageNumber && this.lastPageNumber == pageNumber) {
+            return getRightX();
+        }
+        Double maxRight = null;
+        for (BoundingBox box : boundingBoxes) {
+            Double right = box.getRightX(pageNumber);
+            if (maxRight == null || (right != null && maxRight < right)) {
+                maxRight = right;
+            }
+        }
+        return maxRight;
+    }
+
+    public Double getLeftX(int pageNumber) {
+        if (this.pageNumber > pageNumber || this.lastPageNumber < pageNumber) {
+            return null;
+        }
+        if (this.pageNumber == pageNumber && this.lastPageNumber == pageNumber) {
+            return getLeftX();
+        }
+        Double minLeft = null;
+        for (BoundingBox box : boundingBoxes) {
+            Double left = box.getLeftX(pageNumber);
+            if (minLeft == null || (left != null && minLeft > left)) {
+                minLeft = left;
+            }
+        }
+        return minLeft;
+    }
 }

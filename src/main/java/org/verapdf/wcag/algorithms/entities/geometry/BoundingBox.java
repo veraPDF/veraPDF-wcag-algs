@@ -317,6 +317,20 @@ public class BoundingBox {
         return 0.5 * (topY + bottomY);
     }
 
+    public Double getRightX(int pageNumber) {
+        if (this.pageNumber <= pageNumber && this.lastPageNumber >= pageNumber) {
+            return getRightX();
+        }
+        return null;
+    }
+
+    public Double getLeftX(int pageNumber) {
+        if (this.pageNumber <= pageNumber && this.lastPageNumber >= pageNumber) {
+            return getLeftX();
+        }
+        return null;
+    }
+
     public boolean isEmpty() {
         return pageNumber == null
                 ||leftX > (rightX + EPSILON) || lastPageNumber < pageNumber
