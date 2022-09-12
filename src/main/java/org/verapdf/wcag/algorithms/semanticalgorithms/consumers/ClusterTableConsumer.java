@@ -69,6 +69,7 @@ public class ClusterTableConsumer {
                 accept(token, node);
                 return;
             }
+            return;
         } else if (node.getSemanticType() == SemanticType.PARAGRAPH) {
             INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
             if (accumulatedNode instanceof SemanticParagraph) {

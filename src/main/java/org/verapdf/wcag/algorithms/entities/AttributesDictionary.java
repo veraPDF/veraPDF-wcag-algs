@@ -5,6 +5,11 @@ public class AttributesDictionary implements IAttributesDictionary {
 	private long rowSpan;
 	private long colSpan;
 
+	public AttributesDictionary() {
+		this.rowSpan = 1;
+		this.colSpan = 1;
+	}
+
 	public AttributesDictionary(long rowSpan, long colSpan) {
 		this.rowSpan = rowSpan;
 		this.colSpan = colSpan;
