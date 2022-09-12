@@ -29,6 +29,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
     private static final String NON_CONTENT_REGEX = "[" + SPACES + "\u2011-]";
     private static final double MAX_RIGHT_ALIGNMENT_GAP = 0.1;
 //    private static final double MAX_LEFT_ALIGNMENT_GAP = 0.1;
+    private static final double LENGTH_HEADING_DIFFERENCE = 1.5;
 
 //    private Double left = null;
     private Double right = null;
@@ -294,7 +295,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
                 return false;
             }
         }
-        if (textValue == null || textValue.length() > 2 * text.length()) {
+        if (textValue == null || textValue.length() > LENGTH_HEADING_DIFFERENCE * text.length()) {
             for (INode child : node.getChildren()) {
                 if (child.getInitialSemanticType() != SemanticType.TABLE_OF_CONTENT &&
                         findHeading(child, text, pageNumber)) {

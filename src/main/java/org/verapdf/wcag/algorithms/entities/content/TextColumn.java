@@ -29,7 +29,6 @@ public class TextColumn extends TextInfoChunk {
 		return textBlocks.size();
 	}
 
-
 	public TextBlock getFirstTextBlock() {
     	if (!textBlocks.isEmpty()) {
     		return textBlocks.get(0);

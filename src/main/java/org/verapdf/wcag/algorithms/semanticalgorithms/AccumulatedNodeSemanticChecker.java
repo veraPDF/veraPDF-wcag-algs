@@ -37,6 +37,9 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 		TableBorderConsumer tableBorderConsumer = new TableBorderConsumer();
 		tableBorderConsumer.recognizeTables(tree);
 
+		TableChecker tableChecker = new TableChecker();
+		tree.forEach(tableChecker);
+
 		ClusterTableConsumer tableFinder = new ClusterTableConsumer();
 		tableFinder.findTables(tree.getRoot());
 

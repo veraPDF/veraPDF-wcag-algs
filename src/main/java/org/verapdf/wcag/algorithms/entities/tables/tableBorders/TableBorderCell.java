@@ -33,6 +33,7 @@ public class TableBorderCell {
         this.colSpan = (int) node.getAttributesDictionary().getColSpan();
         this.rowNumber = rowNumber;
         this.colNumber = colNumber;
+        this.boundingBox = node.getBoundingBox();
         content = new LinkedList<>();
     }
 
