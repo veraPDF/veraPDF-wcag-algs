@@ -87,7 +87,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 								!Objects.equals(textNode.getFontWeight(), textChunk.getFontWeight())) {
 							textChunk.setHasSpecialStyle();
 						}
-						if (!Arrays.equals(textNode.getBackgroundColor(), textChunk.getBackgroundColor())) {
+						if (textChunk.getBackgroundColor() != null &&
+						    !Arrays.equals(textNode.getBackgroundColor(), textChunk.getBackgroundColor())) {
 							textChunk.setHasSpecialBackground();
 						}
 					}
