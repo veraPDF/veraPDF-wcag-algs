@@ -11,6 +11,7 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ListLabelsDetectionAlgorithm;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SemanticTextNode extends SemanticNode {
     private final List<TextColumn> columns;
@@ -333,14 +334,15 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     private double[] calculateTextColor() {
-        Map<double[], Double> textColorMap = new HashMap<>();
+        Map<List<Double>, Double> textColorMap = new HashMap<>();
         for (TextColumn column : getColumns()) {
             for (TextLine line : column.getLines()) {
                 for (TextChunk chunk : line.getTextChunks()) {
                     if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
-                        Double fontNameLength = textColorMap.get(chunk.getFontColor());
-                        textColorMap.put(chunk.getFontColor(),
-                                ((fontNameLength == null) ? 0 : fontNameLength) + chunk.getTextLength());
+                        List<Double> currentFontColor = Arrays.stream(chunk.getFontColor()).boxed().collect(Collectors.toList());
+                        Double fontNameLength = textColorMap.get(currentFontColor);
+                        textColorMap.put(currentFontColor,
+                                         (fontNameLength == null ? 0 : fontNameLength) + chunk.getTextLength());
                     }
                 }
             }
@@ -349,7 +351,9 @@ public class SemanticTextNode extends SemanticNode {
             return textColorMap.entrySet()
                                .stream()
                                .max(Comparator.comparingDouble(Map.Entry::getValue))
-                               .get().getKey();
+                               .get().getKey()
+                               .stream()
+                               .mapToDouble(i -> i).toArray();
         }
         return new double[]{0.0};
     }
@@ -403,28 +407,28 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     private double[] calculateBackgroundColor() {
-        Map<double[], Double> backgroundColorMap = new HashMap<>();
+        Map<List<Double>, Double> backgroundColorMap = new HashMap<>();
         for (TextColumn column : getColumns()) {
             for (TextLine line : column.getLines()) {
                 for (TextChunk chunk : line.getTextChunks()) {
-                    if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
-                        double[] currentBackgroundColor = chunk.getBackgroundColor();
-                        if (currentBackgroundColor == null) {
-                            continue;
-                        }
+                    if (!TextChunkUtils.isWhiteSpaceChunk(chunk) && chunk.getBackgroundColor() != null) {
+                        List<Double> currentBackgroundColor = Arrays.stream(chunk.getBackgroundColor()).boxed()
+                                                                    .collect(Collectors.toList());
                         Double backgroundColorLength = backgroundColorMap.get(currentBackgroundColor);
                         backgroundColorMap.put(currentBackgroundColor,
                                                (backgroundColorLength == null ? 0 : backgroundColorLength)
-                                                                       + chunk.getTextLength());
+                                               + chunk.getTextLength());
                     }
                 }
             }
         }
         if (!backgroundColorMap.isEmpty()) {
             return backgroundColorMap.entrySet()
-                               .stream()
-                               .max(Comparator.comparingDouble(Map.Entry::getValue))
-                               .get().getKey();
+                                     .stream()
+                                     .max(Comparator.comparingDouble(Map.Entry::getValue))
+                                     .get().getKey()
+                                     .stream()
+                                     .mapToDouble(i -> i).toArray();
         }
         return new double[]{0.0};
     }
