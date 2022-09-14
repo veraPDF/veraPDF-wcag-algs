@@ -19,6 +19,8 @@ public class NodeUtils {
 	private static final double[] HEADING_PROBABILITY_PARAMS_DIFF_FONT = {0.44, 0.1, 0.4, 0.23, 0.35, 0.1};
 	private static final double[] HEADING_EPSILONS = {0.05, 0.08};
 
+	public static final double BACKGROUND_COLOR_EPSILON = 0.03;
+
 	public static double headingProbability(INode node, INode previousNode, INode nextNode, INode nextNextNode,
 	                                        INode initialNode) {
 		if (node == null) {
@@ -155,5 +157,14 @@ public class NodeUtils {
 
 	public static boolean areCloseNumbers(double d1, double d2) {
 		return areCloseNumbers(d1, d2, EPSILON);
+	}
+
+	public static boolean hasSimilarBackgroundColor(double[] firstColor, double[] secondColor) {
+		for (int i = 0; i < firstColor.length; i++) {
+			if (Math.abs(firstColor[i] - secondColor[i]) > BACKGROUND_COLOR_EPSILON) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
