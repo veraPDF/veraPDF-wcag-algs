@@ -355,7 +355,7 @@ public class SemanticTextNode extends SemanticNode {
                                .stream()
                                .mapToDouble(i -> i).toArray();
         }
-        return new double[]{0.0};
+        return null;
     }
 
     public String getFontName() {
@@ -430,7 +430,7 @@ public class SemanticTextNode extends SemanticNode {
                                      .stream()
                                      .mapToDouble(i -> i).toArray();
         }
-        return new double[]{0.0};
+        return null;
     }
 
     public boolean isSpaceNode() {
