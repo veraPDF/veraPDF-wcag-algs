@@ -338,7 +338,7 @@ public class TableRecognizer {
         List<TableCluster> list = new ArrayList<>(columns.values());
         list.sort(Comparator.comparingInt(TableCluster::getColNumber));
         for (int i = 1; i < numRows; ++i) {
-            TableRow tableRow = new TableRow(SemanticType.TABLE_BODY);
+            TableRow tableRow = new TableRow(SemanticType.TABLE_BODY, table.getId());
             for (TableCluster column : list) {
                 if (column == null || rowIds.get(column.getColNumber()) >= column.getRows().size()) {
                     tableRow.add(new TableCell(SemanticType.TABLE_CELL));

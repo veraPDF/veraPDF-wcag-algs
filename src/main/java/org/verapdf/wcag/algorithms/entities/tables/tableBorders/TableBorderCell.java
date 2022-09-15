@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class TableBorderCell {
+    private Long id;
     protected int rowNumber;
     protected int colNumber;
     protected int rowSpan;
@@ -19,12 +20,13 @@ public class TableBorderCell {
     private SemanticType semanticType;
     private INode node;
 
-    public TableBorderCell(int rowNumber, int colNumber, int rowSpan, int colSpan) {
+    public TableBorderCell(int rowNumber, int colNumber, int rowSpan, int colSpan, Long id) {
         this.rowNumber = rowNumber;
         this.colNumber = colNumber;
         this.rowSpan = rowSpan;
         this.colSpan = colSpan;
         content = new LinkedList<>();
+        this.id = id;
     }
 
     public TableBorderCell(INode node, int rowNumber, int colNumber) {
@@ -115,5 +117,9 @@ public class TableBorderCell {
             boundingBox.union(token.getBoundingBox());
         }
         return boundingBox;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

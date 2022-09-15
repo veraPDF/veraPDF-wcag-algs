@@ -28,7 +28,7 @@ public class Table extends InfoChunk {
 
     public Table(List<TableCluster> headers) {
         rows = new ArrayList<>();
-        TableRow headersRow = new TableRow(SemanticType.TABLE_HEADERS);
+        TableRow headersRow = new TableRow(SemanticType.TABLE_HEADERS, id);
         for (TableCluster header : headers) {
             headersRow.add(new TableCell(header, SemanticType.TABLE_HEADER));
             getBoundingBox().union(header.getBoundingBox());
@@ -37,11 +37,11 @@ public class Table extends InfoChunk {
         restNodes = new ArrayList<>();
     }
 
-    public int numberOfRows() {
+    public int getNumberOfRows() {
         return rows.size();
     }
 
-    public int numberOfColumns() {
+    public int getNumberOfColumns() {
         if (rows.isEmpty()) {
             return 0;
         }
@@ -75,7 +75,7 @@ public class Table extends InfoChunk {
 
         rows = pickCompactRows(rows);
 
-        int numColumns = numberOfColumns();
+        int numColumns = getNumberOfColumns();
         List<Double> maxRowGaps = new ArrayList<>(numColumns);
         for (int col = 0; col < numColumns; ++col) {
             double maxGap = 0.0;
@@ -256,8 +256,8 @@ public class Table extends InfoChunk {
     }
 
     public void validate() {
-        if (rows.size() < 2 || numberOfColumns() < 2 ||
-                (rows.size() == 2 && numberOfColumns() == 2 && getNumberOfCellsWithContent() < 4)) {
+        if (rows.size() < 2 || getNumberOfColumns() < 2 ||
+                (rows.size() == 2 && getNumberOfColumns() == 2 && getNumberOfCellsWithContent() < 4)) {
             validationScore = 0.0;
             return;
         }
