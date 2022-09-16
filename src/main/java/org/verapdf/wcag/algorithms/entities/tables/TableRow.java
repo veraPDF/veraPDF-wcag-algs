@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TableRow extends TextInfoChunk {
+    private Long id;
     private List<TableCell> cells;
     private SemanticType semanticType = null;
 
@@ -16,9 +17,10 @@ public class TableRow extends TextInfoChunk {
         cells = new ArrayList<>();
     }
 
-    public TableRow(SemanticType semanticType) {
+    public TableRow(SemanticType semanticType, Long id) {
         this();
         this.semanticType = semanticType;
+        this.id = id;
     }
 
     public void setSemanticType(SemanticType semanticType) {
@@ -58,5 +60,9 @@ public class TableRow extends TextInfoChunk {
             }
         }
         super.add(other);
+    }
+
+    public Long getId() {
+        return id;
     }
 }

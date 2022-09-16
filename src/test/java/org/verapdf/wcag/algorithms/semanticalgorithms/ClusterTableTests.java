@@ -95,8 +95,8 @@ public class ClusterTableTests {
         Assertions.assertEquals(checkSizes.length, resultTables.size());
 
         for (int i = 0; i < checkSizes.length; ++i) {
-            Assertions.assertEquals(checkSizes[i][0], resultTables.get(i).numberOfColumns());
-            Assertions.assertEquals(checkSizes[i][1], resultTables.get(i).numberOfRows());
+            Assertions.assertEquals(checkSizes[i][0], resultTables.get(i).getNumberOfColumns());
+            Assertions.assertEquals(checkSizes[i][1], resultTables.get(i).getNumberOfRows());
         }
 
         if (semanticIsValid) {

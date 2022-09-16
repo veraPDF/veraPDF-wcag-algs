@@ -67,7 +67,6 @@ public class ClusterTableConsumer {
             if (accumulatedNode instanceof SemanticTable) {
                 TableToken token = new TableToken(((SemanticTable)accumulatedNode).getTableBorder());
                 accept(token, node);
-                return;
             }
             return;
         } else if (node.getSemanticType() == SemanticType.PARAGRAPH) {
@@ -164,7 +163,9 @@ public class ClusterTableConsumer {
 
         if (recognizedTable != null) {
             if (recognizedTable.getTableBorder() == null && ListUtils.isList(recognizedTable)) {
-                lists.add(new PDFList(recognizedTable));
+            	PDFList list = new PDFList(recognizedTable);
+                lists.add(list);
+                StaticContainers.getListsCollection().add(list);
             } else {
                 tables.add(recognizedTable);
             }

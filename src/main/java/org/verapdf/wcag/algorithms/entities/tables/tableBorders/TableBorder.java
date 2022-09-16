@@ -108,7 +108,7 @@ public class TableBorder {
             rows[rowNumber] = new TableBorderRow(rowNumber, numberOfColumns);
             for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
                 rows[rowNumber].cells[colNumber] = new TableBorderCell(rowNumber, colNumber,
-                        numberOfRows - rowNumber, numberOfColumns - colNumber);
+                        numberOfRows - rowNumber, numberOfColumns - colNumber, id);
             }
         }
         if (processHorizontalLines(rows, numberOfRows, numberOfColumns, builder) ||
