@@ -16,6 +16,10 @@ public class ErrorCodes {
 	public static final int ERROR_CODE_1101 = 1101;//This cell is above than some cells in the previous row
 	public static final int ERROR_CODE_1102 = 1102;//This cell is to the right of some cells in the next column
 	public static final int ERROR_CODE_1103 = 1103;//This cell is to the left of some cells in the previous column
+	public static final int ERROR_CODE_1104 = 1104;//The number of rows of this table does not match the number of rows of the visual representation of this table
+	public static final int ERROR_CODE_1105 = 1105;//The number of columns of this table does not match the number of columns of the visual representation of this table
+	public static final int ERROR_CODE_1106 = 1106;//The row span of this table cell does not match the row span of the visual representation of this table cell
+	public static final int ERROR_CODE_1107 = 1107;//The column span of this table cell does not match the column span of the visual representation of this table cell
 
 	//List error codes
 	public static final int ERROR_CODE_1200 = 1200;//This list and neighbor list(s) should be tagged as one list

@@ -165,7 +165,6 @@ public class ClusterTableConsumer {
             if (recognizedTable.getTableBorder() == null && ListUtils.isList(recognizedTable)) {
             	PDFList list = new PDFList(recognizedTable);
                 lists.add(list);
-                StaticContainers.getListsCollection().add(list);
             } else {
                 tables.add(recognizedTable);
             }
@@ -400,12 +399,19 @@ public class ClusterTableConsumer {
 
     private INode updateTreeWithRecognizedList(PDFList list) {
         Set<INode> nodes = new HashSet<>();
+        boolean hasTaggedListItems = true;
         for (ListItem item : list.getListItems()) {
             INode itemNode = updateTreeWithRecognizedListItem(item, list);
             if (itemNode != null) {
                 updateNode(itemNode, list.getId(), SemanticType.LIST_ITEM, false, list.getBoundingBox());
                 nodes.add(itemNode);
+                if (itemNode.getInitialSemanticType() != SemanticType.LIST_ITEM) {
+                    hasTaggedListItems = false;
+                }
             }
+        }
+        if (!hasTaggedListItems) {
+            StaticContainers.getListsCollection().add(list);
         }
         if (nodes.size() == 1) {
             return nodes.iterator().next();
