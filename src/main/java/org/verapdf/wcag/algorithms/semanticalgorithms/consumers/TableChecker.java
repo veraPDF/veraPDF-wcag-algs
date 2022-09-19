@@ -1,9 +1,12 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
 import org.verapdf.wcag.algorithms.entities.INode;
+import org.verapdf.wcag.algorithms.entities.SemanticTable;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorderCell;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ErrorCodes;
 
 import java.util.LinkedList;
@@ -33,6 +36,7 @@ public class TableChecker implements Consumer<INode> {
         }
         checkTableCells(cells);
         checkTableCellsPosition(table, cells, numberOfRows, numberOfColumns);
+        checkTableVisualRepresentation(table, cells, numberOfRows, numberOfColumns);
     }
 
     private static List<INode> getTableRows(INode table) {
@@ -355,5 +359,38 @@ public class TableChecker implements Consumer<INode> {
 
     private static Boolean isFirstLeftMax(BoundingBox boundingBox1, BoundingBox boundingBox2, int pageNumber) {
         return boundingBox1.getLeftX(pageNumber) > boundingBox2.getLeftX(pageNumber);
+    }
+
+    private static void checkTableVisualRepresentation(INode table, TableBorderCell[][] cells, int numberOfRows, int numberOfColumns) {
+        INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(table);
+        if (!(accumulatedNode instanceof SemanticTable)) {
+            return;
+        }
+        SemanticTable semanticTable = (SemanticTable) accumulatedNode;
+        TableBorder border = semanticTable.getTableBorder();
+        if (border == null) {
+            return;
+        }
+        if (border.getNumberOfRows() != numberOfRows) {
+            table.getErrorCodes().add(ErrorCodes.ERROR_CODE_1104);
+        }
+        if (border.getNumberOfColumns() != numberOfColumns) {
+            table.getErrorCodes().add(ErrorCodes.ERROR_CODE_1105);
+        }
+        for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+            for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
+                TableBorderCell cell = cells[rowNumber][colNumber];
+                TableBorderCell borderCell = border.getRow(rowNumber).getCell(colNumber);
+                if (cell.getRowNumber() == rowNumber && cell.getColNumber() == colNumber &&
+                        borderCell.getRowNumber() == rowNumber && borderCell.getColNumber() == colNumber) {
+                    if (cell.getRowSpan() != borderCell.getRowSpan()) {
+                        cell.getNode().getErrorCodes().add(ErrorCodes.ERROR_CODE_1106);
+                    }
+                    if (cell.getColSpan() != borderCell.getColSpan()) {
+                        cell.getNode().getErrorCodes().add(ErrorCodes.ERROR_CODE_1107);
+                    }
+                }
+            }
+        }
     }
 }
