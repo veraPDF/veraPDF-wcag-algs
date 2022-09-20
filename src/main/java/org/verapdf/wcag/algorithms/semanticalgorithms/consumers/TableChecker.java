@@ -362,6 +362,9 @@ public class TableChecker implements Consumer<INode> {
     }
 
     private static void checkTableVisualRepresentation(INode table, TableBorderCell[][] cells, int numberOfRows, int numberOfColumns) {
+        if (!table.getLastPageNumber().equals(table.getPageNumber())) {
+            return;
+        }
         INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(table);
         if (!(accumulatedNode instanceof SemanticTable)) {
             return;
@@ -373,9 +376,11 @@ public class TableChecker implements Consumer<INode> {
         }
         if (border.getNumberOfRows() != numberOfRows) {
             table.getErrorCodes().add(ErrorCodes.ERROR_CODE_1104);
+            return;
         }
         if (border.getNumberOfColumns() != numberOfColumns) {
             table.getErrorCodes().add(ErrorCodes.ERROR_CODE_1105);
+            return;
         }
         for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
             for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
