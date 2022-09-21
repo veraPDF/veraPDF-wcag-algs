@@ -11,6 +11,7 @@ import org.verapdf.wcag.algorithms.entities.JsonToPdfTree;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ErrorCodes;
 
 import java.io.IOException;
 import java.util.function.Consumer;
@@ -21,7 +22,8 @@ public class TOCTests {
     static Stream<Arguments> TOCDetectionTestParams() {
         return Stream.of(
                 Arguments.of("libra_table_of_content.json", null),
-                Arguments.of("Word_Table_of_Contents.json", new Integer[]{1001,null,null,null,null,null,1000})
+                Arguments.of("Word_Table_of_Contents.json", new Integer[]{ErrorCodes.ERROR_CODE_1001,null,null,null,null,
+                        null,ErrorCodes.ERROR_CODE_1000})
         );
     }
 

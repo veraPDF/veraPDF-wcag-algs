@@ -165,13 +165,22 @@ public class ClusterTableConsumer {
             if (recognizedTable.getTableBorder() == null && ListUtils.isList(recognizedTable)) {
             	PDFList list = new PDFList(recognizedTable);
                 lists.add(list);
-            } else {
+            } else if (checkTable(recognizedTable)) {
                 tables.add(recognizedTable);
             }
             return recognizedTable.getRestNodes();
         }
 
         return new ArrayList<INode>();
+    }
+
+    private boolean checkTable(Table recognizedTable) {
+        for (int rowNumber = 0; rowNumber < recognizedTable.getNumberOfRows(); rowNumber++) {
+            if (recognizedTable.getRows().get(rowNumber).getNumberOfCellsWithContent() < 2) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
