@@ -351,15 +351,17 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         if (currentTOCI.getSemanticType() != SemanticType.TABLE_OF_CONTENT_ITEM) {
             return false;
         }
+        Set<Integer> previousTOCIErrorCodes = new HashSet<>(previousTOCI.getErrorCodes());
+        Set<Integer> currentTOCIErrorCodes = new HashSet<>(currentTOCI.getErrorCodes());
 //        left = null;
         right = null;
         maxRight = -Double.MAX_VALUE;
         pagesGap = null;
         lastPageNumber = null;
-        if (checkTOCI(previousTOCI, getTOCIInfo(previousTOCI)) && checkTOCI(currentTOCI, getTOCIInfo(currentTOCI))) {
-            return true;
-        }
-        return false;
+        boolean result = checkTOCI(previousTOCI, getTOCIInfo(previousTOCI)) && checkTOCI(currentTOCI, getTOCIInfo(currentTOCI));
+        previousTOCI.setErrorCodes(previousTOCIErrorCodes);
+        currentTOCI.setErrorCodes(currentTOCIErrorCodes);
+        return result;
     }
 
 }

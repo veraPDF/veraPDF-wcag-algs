@@ -20,6 +20,7 @@ public class TableChecker implements Consumer<INode> {
         if (node.getInitialSemanticType() != SemanticType.TABLE) {
             return;
         }
+        node.setSemanticType(SemanticType.TABLE);
         checkTable(node);
     }
 
