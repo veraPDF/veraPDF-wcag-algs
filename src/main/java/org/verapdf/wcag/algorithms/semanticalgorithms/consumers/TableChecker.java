@@ -363,7 +363,7 @@ public class TableChecker implements Consumer<INode> {
     }
 
     private static void checkTableVisualRepresentation(INode table, TableBorderCell[][] cells, int numberOfRows, int numberOfColumns) {
-        if (!table.getLastPageNumber().equals(table.getPageNumber())) {
+        if (table.getPageNumber() != null && !table.getPageNumber().equals(table.getLastPageNumber())) {
             return;
         }
         INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(table);
