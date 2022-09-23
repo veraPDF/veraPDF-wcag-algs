@@ -25,7 +25,7 @@ public class LinesPreprocessingConsumer {
 
     public void findTableBorders() {
         tableBorders = new LinkedList<>();
-        for (int pageNumber = 0; pageNumber < StaticContainers.getDocument().getPages().size(); pageNumber++) {
+        for (int pageNumber = 0; pageNumber < StaticContainers.getDocument().getNumberOfPages(); pageNumber++) {
             tableBorders.add(findTableBorders(pageNumber));
         }
     }

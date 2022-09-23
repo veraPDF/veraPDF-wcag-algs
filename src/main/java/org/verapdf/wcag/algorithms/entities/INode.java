@@ -54,6 +54,8 @@ public interface INode {
 
 	INode getNextNode();
 
+	INode getPreviousNode();
+
 	void setIndex(Integer index);
 
 	Integer getIndex();

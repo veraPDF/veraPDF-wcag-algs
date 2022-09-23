@@ -26,10 +26,11 @@ public class TOCDetectionConsumer implements Consumer<INode> {
     private static final String SPACES = "\\s\u00A0\u2007\u202F";
     private static final String SPACES_REGEX = "[" + SPACES + "]+";
     private static final String SPACES_DOTS_SPACES_REGEX = "[" + SPACES + "]*\\.*[" + SPACES + "]*";
-    private static final String NON_CONTENT_REGEX = "[" + SPACES + "\u2011-]";
+    public static final String NON_CONTENT_REGEX = "[" + SPACES + "\u2011-]";
     private static final double MAX_RIGHT_ALIGNMENT_GAP = 0.1;
 //    private static final double MAX_LEFT_ALIGNMENT_GAP = 0.1;
     private static final double LENGTH_HEADING_DIFFERENCE = 1.5;
+    private final Map<Integer, INode> nodes = new HashMap<>();
 
 //    private Double left = null;
     private Double right = null;
@@ -56,8 +57,10 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         lastPageNumber = null;
         for (int index = 0; index < node.getChildren().size(); index++) {
             INode child = node.getChildren().get(index);
-            if (child.getInitialSemanticType() != SemanticType.TABLE_OF_CONTENT && checkTOCI(child, infos.get(index))) {
+            TOCIInfo info = infos.get(index);
+            if (child.getInitialSemanticType() != SemanticType.TABLE_OF_CONTENT && checkTOCI(child, info)) {
                 tociIndexes.add(index);
+                findHeading(getNode(info.getDestinationPageNumber()), info.getTextForSearching(), info.getDestinationPageNumber());
             }
         }
         Long id = StaticContainers.getNextID();
@@ -78,18 +81,6 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         if (tociInfo.getText() == null) {
             child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1000);
             return false;
-        }
-        if (tociInfo.getDestinationPageNumber() == null) {
-            child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1001);
-            return false;
-        }
-        if (tociInfo.getPageNumberLabel() != null) {
-            if (pagesGap == null) {
-                pagesGap = tociInfo.getPageNumberLabel() - tociInfo.getDestinationPageNumber();
-            } else if (tociInfo.getDestinationPageNumber() + pagesGap != tociInfo.getPageNumberLabel()) {
-                child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1002);
-                return false;
-            }
         }
         if (lastPageNumber != null && !lastPageNumber.equals(child.getPageNumber())) {
 //            left = null;
@@ -114,11 +105,24 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         }
 //        if (left == null) {
 //            left = child.getLeftX();
-//        } else if (!NodeUtils.areCloseNumbers(left, child.getLeftX(), MAX_LEFT_ALIGNMENT_GAP) && left > child.getLeftX()) {
+//        } else if (!NodeUtils.areCloseNumbers(left, child.getLeftX(), MAX_LEFT_ALIGNMENT_GAP *
+//                tociInfo.getMaxTextSize()) && left > child.getLeftX()) {
+//            child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1004);
 //            return false;
 //        }
-        if (!findText(StaticContainers.getDocument().getTree().getRoot(),
-                tociInfo.getText().replaceAll(NON_CONTENT_REGEX,"").toUpperCase(), tociInfo.getDestinationPageNumber())) {
+        if (tociInfo.getDestinationPageNumber() == null) {
+            child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1001);
+            return false;
+        }
+        if (tociInfo.getPageNumberLabel() != null) {
+            if (pagesGap == null) {
+                pagesGap = tociInfo.getPageNumberLabel() - tociInfo.getDestinationPageNumber();
+            } else if (tociInfo.getDestinationPageNumber() + pagesGap != tociInfo.getPageNumberLabel()) {
+                child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1002);
+                return false;
+            }
+        }
+        if (!findText(tociInfo.getTextForSearching(), tociInfo.getDestinationPageNumber())) {
             child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1005);
             return false;
         }
@@ -152,7 +156,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
             info.setRight(lastChunk.getSymbolEndCoordinate(textValue.length() - numberOfSpaces - 1));
             textValue = textValue.substring(0, textValue.length() - numberOfSpaces);
             if (info.getDestinationPageNumber() != null && info.getDestinationPageNumber() <
-                    StaticContainers.getDocument().getPages().size()) {
+                    StaticContainers.getDocument().getNumberOfPages()) {
                 String pageLabel = StaticContainers.getDocument().getPage(info.getDestinationPageNumber()).getPageLabel();
                 if (pageLabel != null && textValue.toUpperCase().endsWith(pageLabel.toUpperCase())) {
                     info.setPageNumberLabel(info.getDestinationPageNumber());
@@ -255,33 +259,66 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         return null;
     }
 
-    private boolean findText(INode node, String text, int pageNumber) {
-        for (INode child : node.getChildren()) {
-            if (child.getPageNumber() != null && child.getPageNumber() == pageNumber && child.getLastPageNumber() == pageNumber) {
-                INode parent = node;
-                while (parent.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT && parent.getParent() != null) {
-                    parent = parent.getParent();
+    private boolean findText(String text, int pageNumber) {
+        INode currentNode = getNode(pageNumber);
+        if (currentNode == null) {
+            return false;
+        }
+        String textValue = getTextChunks(currentNode).stream()
+                .filter(textChunk -> pageNumber == textChunk.getPageNumber()).map(TextChunk::getValue)
+                .collect(Collectors.joining("")).replaceAll(NON_CONTENT_REGEX, "").toUpperCase();
+        return textValue.contains(text);
+    }
+
+    private INode getNode(Integer pageNumber) {
+        if (!nodes.containsKey(pageNumber)) {
+            nodes.put(pageNumber, findNode(pageNumber));
+        }
+        return nodes.get(pageNumber);
+    }
+
+    private INode findNode(int pageNumber) {
+        INode currentNode = StaticContainers.getDocument().getTree().getRoot();
+        while (currentNode.getPageNumber() != pageNumber || currentNode.getLastPageNumber() != pageNumber) {
+            if (currentNode.getChildren().isEmpty()) {
+                return null;
+            }
+            for (INode child : currentNode.getChildren()) {
+                if (child.getPageNumber() != null && child.getPageNumber() <= pageNumber &&
+                        child.getLastPageNumber() >= pageNumber) {
+                    currentNode = child;
+                    break;
                 }
-                if (parent.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT) {
-                    return false;
-                }
-                String textValue = getTextChunks(parent).stream()
-                        .filter(textChunk -> pageNumber == textChunk.getPageNumber()).map(TextChunk::getValue)
-                        .collect(Collectors.joining("")).replaceAll(NON_CONTENT_REGEX, "").toUpperCase();
-                boolean isTextFound = textValue.contains(text);
-                if (isTextFound) {
-                    findHeading(parent, text, pageNumber);
-                }
-                return isTextFound;
             }
         }
-        for (INode child : node.getChildren()) {
-            if (child.getPageNumber() != null && child.getPageNumber() <= pageNumber &&
-                    child.getLastPageNumber() >= pageNumber && findText(child, text, pageNumber)) {
-                return true;
+        if (currentNode.getParent() != null) {
+            currentNode = currentNode.getParent();
+        }
+        while (currentNode.getParent() != null) {
+            INode previousNode = currentNode.getPreviousNode();
+            INode nextNode = currentNode.getNextNode();
+            if (currentNode.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT ||
+                    (nextNode != null && Objects.equals(pageNumber, nextNode.getPageNumber())) ||
+                    (previousNode != null && Objects.equals(pageNumber, previousNode.getLastPageNumber()))) {
+                currentNode = currentNode.getParent();
+            } else {
+                break;
             }
         }
-        return false;
+        if (currentNode.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT) {
+            return null;
+        }
+        return currentNode;
+    }
+
+    private List<Integer> getPagesWithText(String text) {
+        List<Integer> pageNumbers = new LinkedList<>();
+        for (int pageNumber = 0; pageNumber < StaticContainers.getDocument().getNumberOfPages(); pageNumber++) {
+            if (findText(text, pageNumber)) {
+                pageNumbers.add(pageNumber);
+            }
+        }
+        return pageNumbers;
     }
 
     private boolean findHeading(INode node, String text, int pageNumber) {

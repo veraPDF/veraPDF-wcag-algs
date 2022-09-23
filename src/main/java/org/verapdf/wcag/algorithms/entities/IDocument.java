@@ -12,6 +12,8 @@ public interface IDocument {
 
 	public List<IPage> getPages();
 
+	public int getNumberOfPages();
+
 	public IPage getPage(Integer pageNumber);
 
 	public List<IChunk> getArtifacts();
