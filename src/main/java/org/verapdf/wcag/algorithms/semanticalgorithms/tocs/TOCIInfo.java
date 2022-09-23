@@ -1,5 +1,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.tocs;
 
+import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.TOCDetectionConsumer;
+
 public class TOCIInfo {
 
     private String text;
@@ -14,6 +16,10 @@ public class TOCIInfo {
 
     public String getText() {
         return text;
+    }
+
+    public String getTextForSearching() {
+        return text.replaceAll(TOCDetectionConsumer.NON_CONTENT_REGEX,"").toUpperCase();
     }
 
     public void setDestinationPageNumber(Integer destinationPageNumber) {

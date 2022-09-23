@@ -14,22 +14,37 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainer
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ErrorCodes;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import static org.verapdf.wcag.algorithms.semanticalgorithms.TableCheckingTests.getErrorMessage;
+
 public class TOCTests {
+
+    private static final Set<Integer> checkedErrorCodes = new HashSet<>();
+
+    static {
+        checkedErrorCodes.add(ErrorCodes.ERROR_CODE_1000);
+        checkedErrorCodes.add(ErrorCodes.ERROR_CODE_1001);
+        checkedErrorCodes.add(ErrorCodes.ERROR_CODE_1002);
+        checkedErrorCodes.add(ErrorCodes.ERROR_CODE_1003);
+        checkedErrorCodes.add(ErrorCodes.ERROR_CODE_1004);
+        checkedErrorCodes.add(ErrorCodes.ERROR_CODE_1005);
+        checkedErrorCodes.add(ErrorCodes.ERROR_CODE_1006);
+    }
 
     static Stream<Arguments> TOCDetectionTestParams() {
         return Stream.of(
                 Arguments.of("libra_table_of_content.json", null),
-                Arguments.of("Word_Table_of_Contents.json", new Integer[]{ErrorCodes.ERROR_CODE_1001,null,null,null,null,
-                        null,ErrorCodes.ERROR_CODE_1000})
+                Arguments.of("Word_Table_of_Contents.json", new Integer[][]{{ErrorCodes.ERROR_CODE_1001},{ErrorCodes.ERROR_CODE_1000}})
         );
     }
 
     @ParameterizedTest(name = "{index}: ({0}, {1}) => {0}")
     @MethodSource("TOCDetectionTestParams")
-    void testTOCDetection(String filename, Integer[] errorCodes) throws IOException {
+    void testTOCDetection(String filename, Integer[][] errorCodes) throws IOException {
         IDocument document = JsonToPdfTree.getDocument("/files/TOC/" + filename);
         ITree tree = document.getTree();
         StaticContainers.updateContainers(document);
@@ -49,16 +64,21 @@ public class TOCTests {
             int index = 0;
             for (INode node : tree) {
                 if (node.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT_ITEM) {
-                    Assertions.assertNotEquals(errorCodes.length, index);
-                    if (errorCodes[index] == null) {
-                        Assertions.assertEquals(node.getInitialSemanticType(), node.getSemanticType());
-                    } else {
-                        Assertions.assertTrue(node.getErrorCodes().contains(errorCodes[index]));
+                    Set<Integer> foundErrorCodes = getFoundErrorCodes(node);
+                    if (!foundErrorCodes.isEmpty()) {
+                        Assertions.assertNotEquals(errorCodes.length, index, getErrorMessage(foundErrorCodes, null));
+                        Assertions.assertEquals(errorCodes[index].length, foundErrorCodes.size(),
+                                getErrorMessage(foundErrorCodes, errorCodes[index]));
+                        for (Integer errorCode : errorCodes[index]) {
+                            Assertions.assertTrue(foundErrorCodes.contains(errorCode),
+                                    getErrorMessage(foundErrorCodes, errorCodes[index]));
+                        }
+                        index++;
                     }
-                    index++;
                 }
             }
-            Assertions.assertEquals(errorCodes.length, index);
+            Assertions.assertEquals(errorCodes.length, index,
+                    getErrorMessage(null, index < errorCodes.length ? errorCodes[index] : null));
         }
     }
 
@@ -68,5 +88,9 @@ public class TOCTests {
                 Assertions.assertEquals(node.getInitialSemanticType(), node.getSemanticType());
             }
         }
+    }
+
+    private static Set<Integer> getFoundErrorCodes(INode node) {
+        return TableCheckingTests.getFoundErrorCodes(node, checkedErrorCodes);
     }
 }

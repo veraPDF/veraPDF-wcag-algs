@@ -203,6 +203,16 @@ public class SemanticNode implements INode {
 	}
 
 	@Override
+	public INode getPreviousNode() {
+		INode previousNeighbor = getPreviousNeighbor();
+		if (previousNeighbor != null) {
+			return previousNeighbor;
+		} else {
+			return parent != null ? parent.getPreviousNode() : null;
+		}
+	}
+
+	@Override
 	public boolean isRoot() {
 		return parent == null;
 	}

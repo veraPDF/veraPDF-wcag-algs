@@ -32,6 +32,10 @@ public class Document implements IDocument {
 		return pages;
 	}
 
+	public int getNumberOfPages() {
+		return pages.size();
+	}
+
 	public IPage getPage(Integer pageNumber) {
 		if (pageNumber < pages.size()) {
 			return pages.get(pageNumber);

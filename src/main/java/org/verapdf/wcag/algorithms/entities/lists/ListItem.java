@@ -40,6 +40,7 @@ public class ListItem extends TextInfoChunk {
         return body;
     }
 
-    public Long getId() { return id; }
-
+    public Long getId() {
+        return id;
+    }
 }
