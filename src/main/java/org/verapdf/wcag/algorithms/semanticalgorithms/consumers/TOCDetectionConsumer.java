@@ -298,8 +298,10 @@ public class TOCDetectionConsumer implements Consumer<INode> {
             INode previousNode = currentNode.getPreviousNode();
             INode nextNode = currentNode.getNextNode();
             if (currentNode.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT ||
-                    (nextNode != null && Objects.equals(pageNumber, nextNode.getPageNumber())) ||
-                    (previousNode != null && Objects.equals(pageNumber, previousNode.getLastPageNumber()))) {
+                    (nextNode != null && nextNode.getPageNumber() != null &&
+                            nextNode.getPageNumber() <= pageNumber) ||
+                    (previousNode != null && previousNode.getLastPageNumber() != null &&
+                            previousNode.getLastPageNumber() >= pageNumber)) {
                 currentNode = currentNode.getParent();
             } else {
                 break;
