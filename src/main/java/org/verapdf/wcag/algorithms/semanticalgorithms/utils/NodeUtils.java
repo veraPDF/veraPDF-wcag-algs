@@ -7,6 +7,7 @@ import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 
+import java.awt.*;
 import java.util.Arrays;
 
 public class NodeUtils {
@@ -19,7 +20,8 @@ public class NodeUtils {
 	private static final double[] HEADING_PROBABILITY_PARAMS_DIFF_FONT = {0.44, 0.1, 0.4, 0.23, 0.35, 0.1};
 	private static final double[] HEADING_EPSILONS = {0.05, 0.08};
 
-	public static final double BACKGROUND_COLOR_EPSILON = 0.03;
+	public static final double BACKGROUND_FIRST_COLOR_EPSILON = 0.03;
+	public static final double BACKGROUND_SECOND_COLOR_EPSILON = BACKGROUND_FIRST_COLOR_EPSILON * 255;
 
 	public static double headingProbability(INode node, INode previousNode, INode nextNode, INode nextNextNode,
 	                                        INode initialNode) {
@@ -161,10 +163,16 @@ public class NodeUtils {
 
 	public static boolean hasSimilarBackgroundColor(double[] firstColor, double[] secondColor) {
 		for (int i = 0; i < firstColor.length; i++) {
-			if (Math.abs(firstColor[i] - secondColor[i]) > BACKGROUND_COLOR_EPSILON) {
+			if (Math.abs(firstColor[i] - secondColor[i]) > BACKGROUND_FIRST_COLOR_EPSILON) {
 				return false;
 			}
 		}
 		return true;
+	}
+
+	public static boolean hasSimilarBackgroundColor(Color firstColor, Color secondColor) {
+		return Math.abs(firstColor.getRed() - secondColor.getRed()) < BACKGROUND_SECOND_COLOR_EPSILON &&
+		       Math.abs(firstColor.getGreen() - secondColor.getGreen()) < BACKGROUND_SECOND_COLOR_EPSILON &&
+		       Math.abs(firstColor.getBlue() - secondColor.getBlue()) < BACKGROUND_SECOND_COLOR_EPSILON;
 	}
 }
