@@ -11,6 +11,7 @@ import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import javax.imageio.spi.IIORegistry;
@@ -311,9 +312,9 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 				secondColor = entry.getKey();
 			}
 		}
-		if (!textColor.equals(firstColor)) {
+		if (firstColor!= null && !NodeUtils.hasSimilarBackgroundColor(textColor, firstColor)) {
 			return firstColor;
-		} else if (!textColor.equals(secondColor)) {
+		} else if (secondColor!= null && !NodeUtils.hasSimilarBackgroundColor(textColor, secondColor)) {
 			return secondColor;
 		}
 		return null;
