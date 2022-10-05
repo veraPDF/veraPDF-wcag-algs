@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.entities.content;
 
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
+import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class TextLine extends TextInfoChunk {
     }
 
     public TextLine(TextChunk chunk) {
-        super(chunk.getBoundingBox(), chunk.getFontSize(), chunk.getBaseLine(), chunk.getSlantDegree());
+        super(new MultiBoundingBox(chunk.getBoundingBox()), chunk.getFontSize(), chunk.getBaseLine(), chunk.getSlantDegree());
         textChunks.add(chunk);
     }
 
