@@ -152,7 +152,8 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 			} else {
 				probability = Math.min(probability, toPartMergeProbability(part, accumulatedChild));
 			}
-			if (accumulatedChild.getSemanticType() != SemanticType.NOTE) {
+			if (child.getInitialSemanticType() != SemanticType.NOTE &&
+					accumulatedChild.getSemanticType() != SemanticType.NOTE) {
 				boundingBox.union(child.getBoundingBox());
 			}
 		}
