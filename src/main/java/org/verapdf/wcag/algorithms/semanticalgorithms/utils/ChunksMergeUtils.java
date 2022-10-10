@@ -2,11 +2,14 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
 import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ChunksMergeUtils {
 
@@ -213,21 +216,30 @@ public class ChunksMergeUtils {
 			return 0.0;
 		}
 		double footnoteProbability = 0.0;
-		TextChunk x = lastLine.getLastTextChunk();
 		TextChunk y = nextLine.getFirstTextChunk();
+		List<TextChunk> superscriptTextChunks = new LinkedList<>();
+		for (TextColumn column : firstNode.getColumns()) {
+			for (TextLine line : column.getLines()) {
+				for (TextChunk chunk : line.getTextChunks()) {
+					if (chunk.getTextFormat() == TextFormat.SUPERSCRIPT) {
+						superscriptTextChunks.add(chunk);
+					}
+				}
+			}
+		}
 
-		if (TextFormat.SUPERSCRIPT.equals(x.getTextFormat())) {
+		if (!superscriptTextChunks.isEmpty()) {
 			footnoteProbability += FOOTNOTE_PROBABILITY_PARAMS[0];
 		} else {
 			footnoteProbability -= FOOTNOTE_PROBABILITY_PARAMS[3];
 		}
 
-		String xValue = x.getValue();
 		String yValue = y.getValue();
-		if (xValue.equals(yValue.substring(0, Math.min(xValue.length(), yValue.length())))) {
-			footnoteProbability += FOOTNOTE_PROBABILITY_PARAMS[1];
-		} else {
-			footnoteProbability -= FOOTNOTE_PROBABILITY_PARAMS[4];
+		for (TextChunk chunk : superscriptTextChunks) {
+			if (chunk.getValue().equals(yValue.substring(0, Math.min(chunk.getValue().length(), yValue.length())))) {
+				footnoteProbability += FOOTNOTE_PROBABILITY_PARAMS[1];
+				break;
+			}
 		}
 		if (firstNode.getFontSize() > secondNode.getFontSize() + FOOTNOTE_PROBABILITY_PARAMS[6]) {
 			footnoteProbability += FOOTNOTE_PROBABILITY_PARAMS[2];

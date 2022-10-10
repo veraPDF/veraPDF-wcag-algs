@@ -7,6 +7,7 @@ import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
+import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.CaptionUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
@@ -27,7 +28,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 
 	public static final double MERGE_PROBABILITY_THRESHOLD = 0.75;
 	public static final double ONE_LINE_MIN_PROBABILITY_THRESHOLD = 0.1;
-	public static final double FOOTNOTE_MIN_PROBABILITY_THRESHOLD = 0.1;
+	public static final double FOOTNOTE_MIN_PROBABILITY_THRESHOLD = 0.75;
 
 	public AccumulatedNodeConsumer() {
 	}
@@ -131,20 +132,35 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 	private void acceptSpanParagraphPart(INode node, boolean isLeafChild) {
 		double probability = 1;
 		SemanticPart part = null;
+		MultiBoundingBox boundingBox = new MultiBoundingBox();
 		for (INode child : node.getChildren()) {
 			if (child.getSemanticType() == null || SemanticType.isIgnoredStandardType(child.getInitialSemanticType()) ||
-					child.getSemanticType().equals(SemanticType.FIGURE)) {
+					 (child instanceof IAnnotation)) {
 				continue;
 			}
 			INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
+			if (accumulatedChild instanceof SemanticImageNode) {
+				boundingBox.union(child.getBoundingBox());
+				continue;
+			}
+			if (child.getSemanticType().equals(SemanticType.FIGURE)) {
+				continue;
+			}
 			if (part == null) {
 				part = buildPartFromNode(accumulatedChild);
 				probability = accumulatedChild.getCorrectSemanticScore();
 			} else {
 				probability = Math.min(probability, toPartMergeProbability(part, accumulatedChild));
 			}
+			if (child.getInitialSemanticType() != SemanticType.NOTE &&
+					accumulatedChild.getSemanticType() != SemanticType.NOTE) {
+				boundingBox.union(child.getBoundingBox());
+			}
 		}
-
+		if (part != null) {
+			part.setBoundingBox(boundingBox);
+			node.setBoundingBox(boundingBox);
+		}
 		SemanticType semanticType = SemanticType.PART;
 		INode accumulatedNode = part;
 		if (part != null && part.getColumns().stream().allMatch(TextColumn::hasOnlyOneBlock)) {
@@ -217,6 +233,7 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 		                                                                       differentLinesProbability)) &&
 		    footnoteProbability > FOOTNOTE_MIN_PROBABILITY_THRESHOLD) {
 			mergeProbability = footnoteProbability;
+			nextTextNode.setSemanticType(SemanticType.NOTE);
 		} else if (oneLineProbability < Math.max(Math.max(differentLinesProbability, toColumnsMergeProbability),
 		                                         ONE_LINE_MIN_PROBABILITY_THRESHOLD)) {
 			if (Math.max(differentLinesProbability, toColumnsMergeProbability) < MERGE_PROBABILITY_THRESHOLD) {
@@ -392,11 +409,12 @@ public class AccumulatedNodeConsumer implements Consumer<INode> {
 
 	private void updateTextChunksFormat(SemanticTextNode textNode) {
 		TextFormat format = textNode.getTextFormat();
-		for (TextColumn column : textNode.getColumns()) {
-			for (TextLine line : column.getLines()) {
-				for (TextChunk chunk : line.getTextChunks()) {
-					chunk.setTextFormat(format);
-				}
+		TextLine line = textNode.getFirstLine();
+		for (TextChunk chunk : line.getTextChunks()) {
+			if (chunk.getTextFormat() != format) {
+				chunk.setTextFormat(format);
+			} else {
+				break;
 			}
 		}
 	}
