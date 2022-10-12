@@ -35,9 +35,33 @@ public class TableChecker implements Consumer<INode> {
         if (!checkRegular(tableRows, cells, numberOfRows, numberOfColumns)) {
             return;
         }
+        setTableElementsID(table, tableRows, cells);
         checkTableCells(cells);
         checkTableCellsPosition(table, cells, numberOfRows, numberOfColumns);
         checkTableVisualRepresentation(table, cells, numberOfRows, numberOfColumns);
+    }
+
+    private static void setTableElementsID(INode table, List<INode> tableRows, TableBorderCell[][] cells) {
+        Long id = StaticContainers.getNextID();
+        table.setRecognizedStructureId(id);
+        for (INode elem : table.getChildren()) {
+            if (SemanticType.TABLE_FOOTER == elem.getInitialSemanticType() ||
+                    SemanticType.TABLE_BODY == elem.getInitialSemanticType() ||
+                    SemanticType.TABLE_HEADERS == elem.getInitialSemanticType()) {
+                elem.setRecognizedStructureId(id);
+            }
+        }
+        for (INode row : tableRows) {
+            row.setRecognizedStructureId(id);
+        }
+        for (int rowNumber = 0; rowNumber < cells.length; rowNumber++) {
+            for (int colNumber = 0; colNumber < cells[rowNumber].length; colNumber++) {
+                TableBorderCell cell = cells[rowNumber][colNumber];
+                if (cell.getRowNumber() == rowNumber && cell.getColNumber() == colNumber) {
+                    cell.getNode().setRecognizedStructureId(id);
+                }
+            }
+        }
     }
 
     private static List<INode> getTableRows(INode table) {
@@ -375,6 +399,7 @@ public class TableChecker implements Consumer<INode> {
         if (border == null) {
             return;
         }
+        StaticContainers.getIdMapper().put(border.getId(), table.getRecognizedStructureId());
         if (border.getNumberOfRows() != numberOfRows) {
             table.getErrorCodes().add(ErrorCodes.ERROR_CODE_1104);
             return;
