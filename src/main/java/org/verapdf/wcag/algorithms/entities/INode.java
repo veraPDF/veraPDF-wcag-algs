@@ -76,9 +76,9 @@ public interface INode {
 
 	public void setHasLowestDepthError();
 
-	public Set<Integer> getErrorCodes();
+	public List<Integer> getErrorCodes();
 
-	public void setErrorCodes(Set<Integer> errorCodes);
+	public List<List<Object>> getErrorArguments();
 
 	public IAttributesDictionary getAttributesDictionary();
 

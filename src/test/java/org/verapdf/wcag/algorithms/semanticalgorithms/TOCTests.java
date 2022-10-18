@@ -33,13 +33,17 @@ public class TOCTests {
         checkedErrorCodes.add(ErrorCodes.ERROR_CODE_1004);
         checkedErrorCodes.add(ErrorCodes.ERROR_CODE_1005);
         checkedErrorCodes.add(ErrorCodes.ERROR_CODE_1006);
+        checkedErrorCodes.add(ErrorCodes.ERROR_CODE_1007);
+        checkedErrorCodes.add(ErrorCodes.ERROR_CODE_1008);
+        checkedErrorCodes.add(ErrorCodes.ERROR_CODE_1009);
+        checkedErrorCodes.add(ErrorCodes.ERROR_CODE_1010);
     }
 
     static Stream<Arguments> TOCDetectionTestParams() {
         return Stream.of(
                 Arguments.of("libra_table_of_content.json", null),
-                Arguments.of("Word_Table_of_Contents.json", new Integer[][]{{ErrorCodes.ERROR_CODE_1001},{ErrorCodes.ERROR_CODE_1000}})
-        );
+                Arguments.of("Word_Table_of_Contents.json", new Integer[][]{{ErrorCodes.ERROR_CODE_1007}, {ErrorCodes.ERROR_CODE_1000}})
+                );
     }
 
     @ParameterizedTest(name = "{index}: ({0}, {1}) => {0}")

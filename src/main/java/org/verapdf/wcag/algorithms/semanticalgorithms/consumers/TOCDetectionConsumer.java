@@ -49,24 +49,32 @@ public class TOCDetectionConsumer implements Consumer<INode> {
             return;
         }
         List<TOCIInfo> infos = getTOCIInfos(node);
-        List<Integer> tociIndexes = new ArrayList<>(node.getChildren().size());
+//        List<Integer> tociIndexes = new ArrayList<>(node.getChildren().size());
 //        left = null;
         right = null;
         maxRight = -Double.MAX_VALUE;
         pagesGap = null;
         lastPageNumber = null;
-        for (int index = 0; index < node.getChildren().size(); index++) {
-            INode child = node.getChildren().get(index);
-            TOCIInfo info = infos.get(index);
-            if (child.getInitialSemanticType() != SemanticType.TABLE_OF_CONTENT && checkTOCI(child, info)) {
-                tociIndexes.add(index);
-                findHeading(getNode(info.getDestinationPageNumber()), info.getTextForSearching(), info.getDestinationPageNumber());
+//        for (int index = 0; index < node.getChildren().size(); index++) {
+//            INode child = node.getChildren().get(index);
+//            TOCIInfo info = infos.get(index);
+//            if (child.getInitialSemanticType() != SemanticType.TABLE_OF_CONTENT && checkTOCI(child, info)) {
+//                tociIndexes.add(index);
+//                findHeading(getNode(info.getDestinationPageNumber()), info.getTextForSearching(), info.getDestinationPageNumber());
+//            }
+//        }
+        List<Integer> tociIndexes = checkTOCIs(infos, node.getChildren());
+        Long id = StaticContainers.getNextID();
+        for (INode child : node.getChildren()) {
+            if (child.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT_ITEM) {
+                child.setRecognizedStructureId(id);
             }
         }
-        Long id = StaticContainers.getNextID();
         for (int index : tociIndexes) {
             INode child = node.getChildren().get(index);
-            child.setRecognizedStructureId(id);
+            if (child.getInitialSemanticType() != SemanticType.TABLE_OF_CONTENT_ITEM) {
+                child.setRecognizedStructureId(id);
+            }
             StaticContainers.getAccumulatedNodeMapper().updateNode(child,
                     StaticContainers.getAccumulatedNodeMapper().get(child), 1.0, SemanticType.TABLE_OF_CONTENT_ITEM);
         }
@@ -79,7 +87,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
 
     private boolean checkTOCI(INode child, TOCIInfo tociInfo) {
         if (tociInfo.getText() == null) {
-            child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1000);
+            ErrorCodes.addErrorCodeWithArguments(child, ErrorCodes.ERROR_CODE_1000);
             return false;
         }
         if (lastPageNumber != null && !lastPageNumber.equals(child.getPageNumber())) {
@@ -99,7 +107,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
                 right = tociInfo.getRight();
             } else if (!NodeUtils.areCloseNumbers(right, tociInfo.getRight(),
                     MAX_RIGHT_ALIGNMENT_GAP * tociInfo.getMaxTextSize())) {
-                child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1003);
+                ErrorCodes.addErrorCodeWithArguments(child, ErrorCodes.ERROR_CODE_1003);
                 return false;
             }
         }
@@ -111,19 +119,19 @@ public class TOCDetectionConsumer implements Consumer<INode> {
 //            return false;
 //        }
         if (tociInfo.getDestinationPageNumber() == null) {
-            child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1001);
+            ErrorCodes.addErrorCodeWithArguments(child, ErrorCodes.ERROR_CODE_1001);
             return false;
         }
         if (tociInfo.getPageNumberLabel() != null) {
             if (pagesGap == null) {
                 pagesGap = tociInfo.getPageNumberLabel() - tociInfo.getDestinationPageNumber();
             } else if (tociInfo.getDestinationPageNumber() + pagesGap != tociInfo.getPageNumberLabel()) {
-                child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1002);
+                ErrorCodes.addErrorCodeWithArguments(child, ErrorCodes.ERROR_CODE_1002);
                 return false;
             }
         }
         if (!findText(tociInfo.getTextForSearching(), tociInfo.getDestinationPageNumber())) {
-            child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1005);
+            ErrorCodes.addErrorCodeWithArguments(child, ErrorCodes.ERROR_CODE_1005);
             return false;
         }
         return true;
@@ -140,6 +148,154 @@ public class TOCDetectionConsumer implements Consumer<INode> {
             }
         }
         return infos;
+    }
+
+    public List<Integer> checkTOCIs(List<TOCIInfo> infos, List<INode> children) {
+        List<Integer> indexes = new ArrayList<>(infos.size());
+        for (int index = 0; index < infos.size(); index++) {
+            TOCIInfo tociInfo = infos.get(index);
+            INode child = children.get(index);
+            if (tociInfo == null || child.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT) {
+                continue;
+            }
+            if (tociInfo.getText() == null) {
+                ErrorCodes.addErrorCodeWithArguments(child, ErrorCodes.ERROR_CODE_1000);
+                continue;
+            }
+            indexes.add(index);
+        }
+        List<Integer> tociIndexes = new ArrayList<>(indexes);
+        checkLeftAndRightAlignments(indexes, infos, children);
+        Integer gap = checkTOCIsWithDestinationPage(indexes, infos, children);
+        checkTOCIsWithWrongDestination(indexes, tociIndexes, infos, children, gap);
+        return tociIndexes;
+    }
+
+    private void checkLeftAndRightAlignments(List<Integer> indexes, List<TOCIInfo> infos, List<INode> children) {
+        for (int index : indexes) {
+            TOCIInfo tociInfo = infos.get(index);
+            INode child = children.get(index);
+            if (lastPageNumber != null && !lastPageNumber.equals(child.getPageNumber())) {
+//            left = null;
+                right = null;
+                maxRight = -Double.MAX_VALUE;
+            }
+            lastPageNumber = child.getPageNumber();
+            if (child.getLeftX() > maxRight) {
+                //next column
+//            left = null;
+                right = null;
+            }
+            maxRight = Math.max(maxRight, tociInfo.getRight());
+            if (tociInfo.getPageNumberLabel() != null) {
+                if (right == null) {
+                    right = tociInfo.getRight();
+                } else if (!NodeUtils.areCloseNumbers(right, tociInfo.getRight(),
+                        MAX_RIGHT_ALIGNMENT_GAP * tociInfo.getMaxTextSize())) {
+                    ErrorCodes.addErrorCodeWithArguments(child, ErrorCodes.ERROR_CODE_1003);
+                }
+            }
+//        if (left == null) {
+//            left = child.getLeftX();
+//        } else if (!NodeUtils.areCloseNumbers(left, child.getLeftX(), MAX_LEFT_ALIGNMENT_GAP *
+//                tociInfo.getMaxTextSize()) && left > child.getLeftX()) {
+//            child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1004);
+//        }
+        }
+    }
+
+    private Integer checkTOCIsWithDestinationPage(List<Integer> indexes, List<TOCIInfo> infos, List<INode> children) {
+        List<Integer> newIndexes = new ArrayList<>(indexes.size());
+        for (int index : indexes) {
+            TOCIInfo info = infos.get(index);
+            if (info.getDestinationPageNumber() != null && findText(info.getTextForSearching(), info.getDestinationPageNumber())) {
+                newIndexes.add(index);
+                findHeading(getNode(info.getDestinationPageNumber()), info.getTextForSearching(), info.getDestinationPageNumber());
+            }
+        }
+        if (newIndexes.isEmpty()) {
+            return null;
+        }
+        List<List<Integer>> possiblePages = new LinkedList<>();
+        List<Integer> pageLabels = new LinkedList<>();
+        for (int index : newIndexes) {
+            TOCIInfo info = infos.get(index);
+            if (info.getPageNumberLabel() != null) {
+                List<Integer> destinationPage = new LinkedList<>();
+                destinationPage.add(info.getDestinationPageNumber());
+                possiblePages.add(destinationPage);
+                pageLabels.add(info.getPageNumberLabel());
+            }
+        }
+        Integer gap = getMostCommonGap(possiblePages, pageLabels);
+        if (gap != null) {
+            for (Integer index : newIndexes) {
+                TOCIInfo info = infos.get(index);
+                if (info.getPageNumberLabel() != null && info.getPageNumberLabel() - info.getDestinationPageNumber() != gap) {
+                    ErrorCodes.addErrorCodeWithArguments(children.get(index), ErrorCodes.ERROR_CODE_1002,
+                            info.getDestinationPageNumber() + gap);
+                }
+            }
+        }
+        indexes.removeAll(newIndexes);
+        return gap;
+    }
+
+    private void checkTOCIsWithWrongDestination(List<Integer> indexes, List<Integer> tociIndexes, List<TOCIInfo> infos,
+                                                List<INode> children, Integer gap) {
+        List<List<Integer>> possiblePages = new ArrayList<>(Collections.nCopies(children.size(), null));
+        List<Integer> pageLabels = new ArrayList<>(Collections.nCopies(children.size(), null));
+        List<Integer> notTOCIIndexes = new LinkedList<>();
+        for (Integer index : indexes) {
+            TOCIInfo info = infos.get(index);
+            List<Integer> pages = getPagesWithText(info.getTextForSearching());
+            if (pages.isEmpty()) {
+                ErrorCodes.addErrorCodeWithArguments(children.get(index), ErrorCodes.ERROR_CODE_1007);
+                tociIndexes.remove(index);
+                notTOCIIndexes.add(index);
+            } else {
+                if (info.getDestinationPageNumber() != null) {
+                    ErrorCodes.addErrorCodeWithArguments(children.get(index), ErrorCodes.ERROR_CODE_1008,
+                            pages.stream().map(x -> x + 1).map(Object::toString).collect(Collectors.joining(",")));
+
+                } else {
+                    ErrorCodes.addErrorCodeWithArguments(children.get(index), ErrorCodes.ERROR_CODE_1009,
+                            pages.stream().map(x -> x + 1).map(Object::toString).collect(Collectors.joining(",")));
+                }
+                if (info.getPageNumberLabel() != null) {
+                    possiblePages.set(index, pages);
+                    pageLabels.set(index, info.getPageNumberLabel());
+                }
+            }
+        }
+        indexes.removeAll(notTOCIIndexes);
+        if (!indexes.isEmpty() && gap == null) {
+            gap = getMostCommonGap(possiblePages, pageLabels);
+        }
+        if (gap != null) {
+            checkTOCIPageLabels(indexes, infos, possiblePages, children, gap);
+        }
+    }
+
+    private void checkTOCIPageLabels(List<Integer> indexes, List<TOCIInfo> infos, List<List<Integer>> possiblePages,
+                                     List<INode> children, Integer gap) {
+        for (int index : indexes) {
+            TOCIInfo info = infos.get(index);
+            if (info.getPageNumberLabel() != null) {
+                boolean wrongPageNumberLabel = true;
+                for (Integer textPageNumber : possiblePages.get(index)) {
+                    if (info.getPageNumberLabel() - textPageNumber == gap) {
+                        wrongPageNumberLabel = false;
+                        break;
+                    }
+                }
+                if (wrongPageNumberLabel) {
+                    ErrorCodes.addErrorCodeWithArguments(children.get(index), ErrorCodes.ERROR_CODE_1010,
+                            possiblePages.get(index).stream().map(x -> x + 1).
+                                    map(Object::toString).collect(Collectors.joining(",")));
+                }
+            }
+        }
     }
 
     private TOCIInfo getTOCIInfo(INode node) {
@@ -361,6 +517,33 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         return true;
     }
 
+    private Integer getMostCommonGap(List<List<Integer>> possiblePages, List<Integer> pageLabels) {
+        Map<Integer, Integer> gaps = new HashMap<>();
+        for (int index = 0; index < possiblePages.size(); index++) {
+            Integer pageLabel = pageLabels.get(index);
+            if (pageLabel == null || possiblePages.get(index) == null) {
+                continue;
+            }
+            for (Integer textPageNumber : possiblePages.get(index)) {
+                int gap = pageLabel - textPageNumber;
+                if (gaps.containsKey(gap)) {
+                    gaps.replace(gap, gaps.get(gap) + 1);
+                } else {
+                    gaps.put(gap, 1);
+                }
+            }
+        }
+        Integer mostCommonGap = null;
+        int number = 0;
+        for (Map.Entry<Integer, Integer> entry : gaps.entrySet()) {
+            if (entry.getValue() > number) {
+                mostCommonGap = entry.getKey();
+                number = entry.getValue();
+            }
+        }
+        return mostCommonGap;
+    }
+
     private void checkNeighborTOCs(INode node) {
         if (node.getSemanticType() == SemanticType.TABLE_OF_CONTENT) {
             return;
@@ -369,8 +552,8 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         for (INode child : node.getChildren()) {
             if (child.getSemanticType() == SemanticType.TABLE_OF_CONTENT) {
                 if (previousChild != null && checkNeighborTOCs(child, previousChild)) {
-                    child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1006);
-                    previousChild.getErrorCodes().add(ErrorCodes.ERROR_CODE_1006);
+                    ErrorCodes.addErrorCodeWithArguments(child, ErrorCodes.ERROR_CODE_1006);
+                    ErrorCodes.addErrorCodeWithArguments(previousChild, ErrorCodes.ERROR_CODE_1006);
                     StaticContainers.getIdMapper().put(previousChild.getRecognizedStructureId(),
                             child.getRecognizedStructureId());
                 }
@@ -390,17 +573,23 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         if (currentTOCI.getSemanticType() != SemanticType.TABLE_OF_CONTENT_ITEM) {
             return false;
         }
-        Set<Integer> previousTOCIErrorCodes = new HashSet<>(previousTOCI.getErrorCodes());
-        Set<Integer> currentTOCIErrorCodes = new HashSet<>(currentTOCI.getErrorCodes());
+        int numberOfPreviousTOCIErrors = previousTOCI.getErrorCodes().size();
+        int numberOfCurrentTOCIErrors = previousTOCI.getErrorCodes().size();
 //        left = null;
         right = null;
         maxRight = -Double.MAX_VALUE;
         pagesGap = null;
         lastPageNumber = null;
-        boolean result = checkTOCI(previousTOCI, getTOCIInfo(previousTOCI)) && checkTOCI(currentTOCI, getTOCIInfo(currentTOCI));
-        previousTOCI.setErrorCodes(previousTOCIErrorCodes);
-        currentTOCI.setErrorCodes(currentTOCIErrorCodes);
-        return result;
+        List<TOCIInfo> tociInfos = new ArrayList<>(2);
+        tociInfos.add(getTOCIInfo(previousTOCI));
+        tociInfos.add(getTOCIInfo(currentTOCI));
+        List<INode> tocis = new ArrayList<>(2);
+        tocis.add(previousTOCI);
+        tocis.add(currentTOCI);
+        List<Integer> indexes = checkTOCIs(tociInfos, tocis);
+        ErrorCodes.removeErrorCodeWithArgumentsAfterIndex(previousTOCI, numberOfPreviousTOCIErrors);
+        ErrorCodes.removeErrorCodeWithArgumentsAfterIndex(currentTOCI, numberOfCurrentTOCIErrors);
+        return indexes.size() == 2;
     }
 
 }

@@ -19,23 +19,27 @@ public class SemanticNode implements INode {
 	private final SemanticType initialSemanticType;
 	private int depth;
 	private boolean hasLowestDepthError = false;
-	private Set<Integer> errorCodes = new HashSet<>();
+	private final List<Integer> errorCodes;
+	private final List<List<Object>> errorArguments;
 	private IAttributesDictionary attributesDictionary;
 
 	public NodeInfo nodeInfo;
 
 	public SemanticNode() {
-		nodeInfo = new NodeInfo();
-		boundingBox = new BoundingBox();
-		this.children = new ArrayList<>();
-		this.initialSemanticType = null;
+		this((SemanticType)null);
 	}
 
 	public SemanticNode(SemanticType initialSemanticType) {
+		this(initialSemanticType, new LinkedList<>(), new LinkedList<>());
+	}
+
+	public SemanticNode(SemanticType initialSemanticType, List<Integer> errorCodes, List<List<Object>> errorArguments) {
 		nodeInfo = new NodeInfo();
 		boundingBox = new BoundingBox();
 		this.children = new ArrayList<>();
 		this.initialSemanticType = initialSemanticType;
+		this.errorCodes = errorCodes;
+		this.errorArguments = errorArguments;
 	}
 
 	public SemanticNode(BoundingBox bbox, SemanticType initialSemanticType, SemanticType semanticType) {
@@ -48,13 +52,12 @@ public class SemanticNode implements INode {
 		this.children = new ArrayList<>();
 		this.boundingBox = new MultiBoundingBox(bbox);
 		this.initialSemanticType = initialSemanticType;
+		this.errorCodes = new LinkedList<>();
+		this.errorArguments = new LinkedList<>();
 	}
 
 	public SemanticNode(BoundingBox bbox) {
-		this.nodeInfo = new NodeInfo();
-		this.children = new ArrayList<>();
-		this.boundingBox = new MultiBoundingBox(bbox);
-		this.initialSemanticType = null;
+		this(bbox, null);
 	}
 
 	@Override
@@ -233,12 +236,13 @@ public class SemanticNode implements INode {
 	}
 
 	@Override
-	public Set<Integer> getErrorCodes() {
+	public List<Integer> getErrorCodes() {
 		return errorCodes;
 	}
 
-	public void setErrorCodes(Set<Integer> errorCodes) {
-		this.errorCodes = errorCodes;
+	@Override
+	public List<List<Object>> getErrorArguments() {
+		return errorArguments;
 	}
 
 	@Override
@@ -250,7 +254,6 @@ public class SemanticNode implements INode {
 	public void setAttributesDictionary(IAttributesDictionary AttributesDictionary) {
 		this.attributesDictionary = AttributesDictionary;
 	}
-
 
 	@Override
 	public boolean getHasLowestDepthError() {
