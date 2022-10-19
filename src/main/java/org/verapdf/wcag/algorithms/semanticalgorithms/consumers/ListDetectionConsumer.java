@@ -141,8 +141,8 @@ public class ListDetectionConsumer implements Consumer<INode> {
                     if (accumulatedNode instanceof SemanticList && accumulatedPreviousNode instanceof SemanticList &&
                             checkNeighborLists(currentChild, previousChild, (SemanticList) accumulatedNode,
                                 (SemanticList) accumulatedPreviousNode)) {
-                        currentChild.getErrorCodes().add(ErrorCodes.ERROR_CODE_1200);
-                        previousChild.getErrorCodes().add(ErrorCodes.ERROR_CODE_1200);
+                        ErrorCodes.addErrorCodeWithArguments(currentChild, ErrorCodes.ERROR_CODE_1200);
+                        ErrorCodes.addErrorCodeWithArguments(previousChild, ErrorCodes.ERROR_CODE_1200);
                         StaticContainers.getIdMapper().put(previousChild.getRecognizedStructureId(),
                                 currentChild.getRecognizedStructureId());
                     }

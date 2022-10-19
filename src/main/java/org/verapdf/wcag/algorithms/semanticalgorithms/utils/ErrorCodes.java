@@ -1,5 +1,9 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
+import org.verapdf.wcag.algorithms.entities.INode;
+
+import java.util.Arrays;
+
 public class ErrorCodes {
 
 	//TOC/TOCI error codes
@@ -10,6 +14,10 @@ public class ErrorCodes {
 	public static final int ERROR_CODE_1004 = 1004;//TOCI has a bad left alignment
 	public static final int ERROR_CODE_1005 = 1005;//TOCI text not found on a destination page
 	public static final int ERROR_CODE_1006 = 1006;//This TOC and neighbor TOC(s) should be tagged as one TOC
+	public static final int ERROR_CODE_1007 = 1007;//TOCI text not found on the document
+	public static final int ERROR_CODE_1008 = 1008;//TOCI text not found on a destination page.
+	public static final int ERROR_CODE_1009 = 1009;//TOCI doesn't have a destination.
+	public static final int ERROR_CODE_1010 = 1010;//TOCI has a wrong page label.
 
 	//Table error codes
 	public static final int ERROR_CODE_1100 = 1100;//This cell is below than some cells in the next row
@@ -23,5 +31,19 @@ public class ErrorCodes {
 
 	//List error codes
 	public static final int ERROR_CODE_1200 = 1200;//This list and neighbor list(s) should be tagged as one list
+
+	public static void addErrorCodeWithArguments(INode node, int errorCode, Object ... arguments) {
+		if (!node.getErrorCodes().contains(errorCode)) {
+			node.getErrorCodes().add(errorCode);
+			node.getErrorArguments().add(Arrays.asList(arguments.clone()));
+		}
+	}
+
+	public static void removeErrorCodeWithArgumentsAfterIndex(INode node, int index) {
+		for (int i = node.getErrorCodes().size(); i >= index; i--) {
+			node.getErrorCodes().remove(i);
+			node.getErrorArguments().remove(i);
+		}
+	}
 
 }

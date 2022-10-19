@@ -194,7 +194,7 @@ public class TableChecker implements Consumer<INode> {
             TableBorderCell minBottomCell = getMinBottomCell(cells, rowNumber);
             if (maxBottomCell != null && minBottomCell != null &&
                     isFirstBottomMax(maxBottomCell.getBoundingBox(), minBottomCell.getBoundingBox())) {
-                minBottomCell.getNode().getErrorCodes().add(ErrorCodes.ERROR_CODE_1100);
+                ErrorCodes.addErrorCodeWithArguments(minBottomCell.getNode(), ErrorCodes.ERROR_CODE_1100);
             }
         }
     }
@@ -205,7 +205,7 @@ public class TableChecker implements Consumer<INode> {
             TableBorderCell minTopCell = getMinTopCell(cells, rowNumber);
             if (maxTopCell != null && minTopCell != null &&
                     isFirstTopMax(maxTopCell.getBoundingBox(), minTopCell.getBoundingBox())) {
-                maxTopCell.getNode().getErrorCodes().add(ErrorCodes.ERROR_CODE_1101);
+                ErrorCodes.addErrorCodeWithArguments(maxTopCell.getNode(), ErrorCodes.ERROR_CODE_1101);
             }
         }
     }
@@ -217,7 +217,7 @@ public class TableChecker implements Consumer<INode> {
                 TableBorderCell minRightCell = getMinRightCell(cells, columnNumber + 1, pageNumber);
                 if (maxRightCell != null && minRightCell != null &&
                         isFirstRightMax(maxRightCell.getBoundingBox(), minRightCell.getBoundingBox(), pageNumber)) {
-                    maxRightCell.getNode().getErrorCodes().add(ErrorCodes.ERROR_CODE_1102);
+                    ErrorCodes.addErrorCodeWithArguments(maxRightCell.getNode(), ErrorCodes.ERROR_CODE_1102);
                 }
             }
         }
@@ -230,7 +230,7 @@ public class TableChecker implements Consumer<INode> {
                 TableBorderCell minLeftCell = getMinLeftCell(cells, columnNumber + 1, pageNumber);
                 if (maxLeftCell != null && minLeftCell != null &&
                         isFirstLeftMax(maxLeftCell.getBoundingBox(), minLeftCell.getBoundingBox(), pageNumber)) {
-                    minLeftCell.getNode().getErrorCodes().add(ErrorCodes.ERROR_CODE_1103);
+                    ErrorCodes.addErrorCodeWithArguments(minLeftCell.getNode(), ErrorCodes.ERROR_CODE_1103);
                 }
             }
         }
@@ -401,11 +401,13 @@ public class TableChecker implements Consumer<INode> {
         }
         StaticContainers.getIdMapper().put(border.getId(), table.getRecognizedStructureId());
         if (border.getNumberOfRows() != numberOfRows) {
-            table.getErrorCodes().add(ErrorCodes.ERROR_CODE_1104);
+            ErrorCodes.addErrorCodeWithArguments(table, ErrorCodes.ERROR_CODE_1104,
+                    numberOfRows, border.getNumberOfRows());
             return;
         }
         if (border.getNumberOfColumns() != numberOfColumns) {
-            table.getErrorCodes().add(ErrorCodes.ERROR_CODE_1105);
+            ErrorCodes.addErrorCodeWithArguments(table, ErrorCodes.ERROR_CODE_1105,
+                    numberOfColumns, border.getNumberOfColumns());
             return;
         }
         for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
@@ -415,10 +417,12 @@ public class TableChecker implements Consumer<INode> {
                 if (cell.getRowNumber() == rowNumber && cell.getColNumber() == colNumber &&
                         borderCell.getRowNumber() == rowNumber && borderCell.getColNumber() == colNumber) {
                     if (cell.getRowSpan() != borderCell.getRowSpan()) {
-                        cell.getNode().getErrorCodes().add(ErrorCodes.ERROR_CODE_1106);
+                        ErrorCodes.addErrorCodeWithArguments(cell.getNode(), ErrorCodes.ERROR_CODE_1106,
+                                cell.getRowSpan(), borderCell.getRowSpan());
                     }
                     if (cell.getColSpan() != borderCell.getColSpan()) {
-                        cell.getNode().getErrorCodes().add(ErrorCodes.ERROR_CODE_1107);
+                        ErrorCodes.addErrorCodeWithArguments(cell.getNode(), ErrorCodes.ERROR_CODE_1107,
+                                cell.getColSpan(), borderCell.getColSpan());
                     }
                 }
             }
