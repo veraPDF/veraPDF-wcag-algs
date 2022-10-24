@@ -26,7 +26,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
     private static final String SPACES = "\\s\u00A0\u2007\u202F";
     private static final String SPACES_REGEX = "[" + SPACES + "]+";
     private static final String SPACES_DOTS_SPACES_REGEX = "[" + SPACES + "]*\\.*[" + SPACES + "]*";
-    public static final String NON_CONTENT_REGEX = "[" + SPACES + "\u2011-]";
+    public static final String NON_CONTENT_REGEX = "[" + SPACES + "\u2011\u2010:]";
     private static final double MAX_RIGHT_ALIGNMENT_GAP = 0.1;
 //    private static final double MAX_LEFT_ALIGNMENT_GAP = 0.1;
     private static final double LENGTH_HEADING_DIFFERENCE = 1.5;
@@ -254,14 +254,9 @@ public class TOCDetectionConsumer implements Consumer<INode> {
                 tociIndexes.remove(index);
                 notTOCIIndexes.add(index);
             } else {
-                if (info.getDestinationPageNumber() != null) {
-                    ErrorCodes.addErrorCodeWithArguments(children.get(index), ErrorCodes.ERROR_CODE_1008,
-                            pages.stream().map(x -> x + 1).map(Object::toString).collect(Collectors.joining(",")));
-
-                } else {
-                    ErrorCodes.addErrorCodeWithArguments(children.get(index), ErrorCodes.ERROR_CODE_1009,
-                            pages.stream().map(x -> x + 1).map(Object::toString).collect(Collectors.joining(",")));
-                }
+                ErrorCodes.addErrorCodeWithArguments(children.get(index), info.getDestinationPageNumber() != null ?
+                        ErrorCodes.ERROR_CODE_1008 : ErrorCodes.ERROR_CODE_1009, pages.stream().map(x -> x + 1)
+                        .map(Object::toString).collect(Collectors.joining(",")));
                 if (info.getPageNumberLabel() != null) {
                     possiblePages.set(index, pages);
                     pageLabels.set(index, info.getPageNumberLabel());
@@ -350,23 +345,32 @@ public class TOCDetectionConsumer implements Consumer<INode> {
     }
 
     private static List<TextChunk> getTextChunks(INode node) {
+        return getTextChunks(node, null);
+    }
+
+    private static List<TextChunk> getTextChunks(INode node, Integer pageNumber) {
         List<TextChunk> textChunks = new LinkedList<>();
         for (INode child : node.getChildren()) {
             if (child.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT) {
+                continue;
+            }
+            if (child.getPageNumber() == null || (pageNumber != null && (pageNumber < child.getPageNumber() ||
+                    pageNumber > child.getLastPageNumber()))) {
                 continue;
             }
             if (child instanceof SemanticSpan) {
                 for (TextColumn column : ((SemanticSpan)child).getColumns()) {
                     for (TextLine line : column.getLines()) {
                         for (TextChunk chunk : line.getTextChunks()) {
-                            if (!chunk.isEmpty() && !TextChunkUtils.isWhiteSpaceChunk(chunk)) {
+                            if (!chunk.isEmpty() && !TextChunkUtils.isWhiteSpaceChunk(chunk) &&
+                                    (pageNumber == null || pageNumber.equals(chunk.getPageNumber()))) {
                                 textChunks.add(chunk);
                             }
                         }
                     }
                 }
             } else {
-                textChunks.addAll(getTextChunks(child));
+                textChunks.addAll(getTextChunks(child, pageNumber));
             }
         }
         return textChunks;
@@ -420,8 +424,8 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         if (currentNode == null) {
             return false;
         }
-        String textValue = getTextChunks(currentNode).stream()
-                .filter(textChunk -> pageNumber == textChunk.getPageNumber()).map(TextChunk::getValue)
+        String textValue = getTextChunks(currentNode, pageNumber).stream()
+                .map(TextChunk::getValue)
                 .collect(Collectors.joining("")).replaceAll(NON_CONTENT_REGEX, "").toUpperCase();
         return textValue.contains(text);
     }
@@ -439,12 +443,16 @@ public class TOCDetectionConsumer implements Consumer<INode> {
             if (currentNode.getChildren().isEmpty()) {
                 return null;
             }
+            int depth = currentNode.getDepth();
             for (INode child : currentNode.getChildren()) {
                 if (child.getPageNumber() != null && child.getPageNumber() <= pageNumber &&
                         child.getLastPageNumber() >= pageNumber) {
                     currentNode = child;
                     break;
                 }
+            }
+            if (currentNode.getDepth() == depth) {
+                return null;
             }
         }
         if (currentNode.getParent() != null) {
@@ -481,9 +489,12 @@ public class TOCDetectionConsumer implements Consumer<INode> {
 
     private boolean findHeading(INode node, String text, int pageNumber) {
         String textValue = null;
+        if (node == null) {
+            return false;
+        }
         if (node.getInitialSemanticType() == SemanticType.NUMBER_HEADING ||
                 node.getInitialSemanticType() == SemanticType.HEADING) {
-            textValue = getTextChunks(node).stream().filter(textChunk -> pageNumber == textChunk.getPageNumber())
+            textValue = getTextChunks(node, pageNumber).stream()
                     .map(TextChunk::getValue).collect(Collectors.joining(""))
                     .replaceAll(NON_CONTENT_REGEX, "").toUpperCase();
             if (!textValue.contains(text)) {
