@@ -40,7 +40,7 @@ public class ErrorCodes {
 	}
 
 	public static void removeErrorCodeWithArgumentsAfterIndex(INode node, int index) {
-		for (int i = node.getErrorCodes().size(); i >= index; i--) {
+		for (int i = node.getErrorCodes().size() - 1; i >= index; i--) {
 			node.getErrorCodes().remove(i);
 			node.getErrorArguments().remove(i);
 		}
