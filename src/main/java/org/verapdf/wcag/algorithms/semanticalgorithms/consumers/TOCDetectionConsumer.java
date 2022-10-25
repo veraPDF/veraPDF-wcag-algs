@@ -26,7 +26,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
     private static final String SPACES = "\\s\u00A0\u2007\u202F";
     private static final String SPACES_REGEX = "[" + SPACES + "]+";
     private static final String SPACES_DOTS_SPACES_REGEX = "[" + SPACES + "]*\\.*[" + SPACES + "]*";
-    public static final String NON_CONTENT_REGEX = "[" + SPACES + "\u2011\u2010:]";
+    public static final String NON_CONTENT_REGEX = "[" + SPACES + "\u2011\u2010:\\-]";
     private static final double MAX_RIGHT_ALIGNMENT_GAP = 0.1;
 //    private static final double MAX_LEFT_ALIGNMENT_GAP = 0.1;
     private static final double LENGTH_HEADING_DIFFERENCE = 1.5;
