@@ -39,6 +39,15 @@ public class ListDetectionConsumer implements Consumer<INode> {
         if (node.getSemanticType() != SemanticType.LIST) {
             checkNeighborLists(node);
         }
+        checkListInsideList(node);
+    }
+
+    private void checkListInsideList(INode node) {
+        if (node.getInitialSemanticType() == SemanticType.LIST && node.getChildren().size() == 1 &&
+                node.getChildren().get(0).getSemanticType() == SemanticType.LIST) {
+            ErrorCodes.addErrorCodeWithArguments(node, ErrorCodes.ERROR_CODE_1201);
+            node.setSemanticType(SemanticType.LIST);
+        }
     }
 
     private void acceptSemanticList(INode node) {
@@ -56,41 +65,42 @@ public class ListDetectionConsumer implements Consumer<INode> {
         List<ListItemImageInfo> imageChildrenInfo = new ArrayList<>(childrenSize);
         List<ListItemLineArtInfo> lineArtChildrenInfo = new ArrayList<>(childrenSize);
         for (INode child : node.getChildren()) {
-            if (child != null) {
-                if (SemanticType.LIST.equals(child.getSemanticType()) && child.getChildren().stream()
-                        .filter(i -> SemanticType.LIST_ITEM.equals(i.getSemanticType()))
-                        .count() > 1) {
-                    continue;
+            if (child == null) {
+                continue;
+            }
+            if (SemanticType.LIST.equals(child.getSemanticType()) && child.getChildren().stream()
+                    .filter(i -> SemanticType.LIST_ITEM.equals(i.getSemanticType()))
+                    .count() > 1) {
+                continue;
+            }
+            INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
+            if (!(accumulatedChild instanceof SemanticTextNode)) {
+                continue;
+            }
+            SemanticTextNode textNode = (SemanticTextNode)accumulatedChild;
+            if (textNode.isSpaceNode() || textNode.isEmpty()) {
+                continue;
+            }
+            TextLine line = textNode.getFirstNonSpaceLine();
+            textChildrenInfo.add(new ListItemTextInfo(child.getIndex(), child.getSemanticType(),
+                    line, line.getValue().trim()));
+            INode newChild = child;
+            while (!newChild.getChildren().isEmpty()) {
+                newChild = newChild.getChildren().get(0);
+            }
+            if (newChild instanceof SemanticImageNode) {
+                ImageChunk image = ((SemanticImageNode) newChild).getImage();
+                if (image.getRightX() <= line.getLeftX() && image.getBoundingBox().getHeight() <
+                        ListUtils.LIST_LABEL_HEIGHT_EPSILON * line.getBoundingBox().getHeight()) {
+                    imageChildrenInfo.add(new ListItemImageInfo(child.getIndex(),
+                            child.getSemanticType(), image));
                 }
-                INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
-                if (!(accumulatedChild instanceof SemanticTextNode)) {
-                    continue;
-                }
-                SemanticTextNode textNode = (SemanticTextNode)accumulatedChild;
-                if (textNode.isSpaceNode() || textNode.isEmpty()) {
-                    continue;
-                }
-                TextLine line = textNode.getFirstNonSpaceLine();
-                textChildrenInfo.add(new ListItemTextInfo(child.getIndex(), child.getSemanticType(),
-                        line, line.getValue().trim()));
-                INode newChild = child;
-                while (!newChild.getChildren().isEmpty()) {
-                    newChild = newChild.getChildren().get(0);
-                }
-                if (newChild instanceof SemanticImageNode) {
-                    ImageChunk image = ((SemanticImageNode) newChild).getImage();
-                    if (image.getRightX() <= line.getLeftX() && image.getBoundingBox().getHeight() <
-                            ListUtils.LIST_LABEL_HEIGHT_EPSILON * line.getBoundingBox().getHeight()) {
-                        imageChildrenInfo.add(new ListItemImageInfo(child.getIndex(),
-                                child.getSemanticType(), image));
-                    }
-                } else if (newChild instanceof SemanticFigure) {
-                    LineArtChunk lineArt = ((SemanticFigure) newChild).getLineArt();
-                    if (lineArt.getRightX() <= line.getLeftX() && lineArt.getBoundingBox().getHeight() <
-                            ListUtils.LIST_LABEL_HEIGHT_EPSILON * line.getBoundingBox().getHeight()) {
-                        lineArtChildrenInfo.add(new ListItemLineArtInfo(child.getIndex(),
-                                child.getSemanticType(), lineArt));
-                    }
+            } else if (newChild instanceof SemanticFigure) {
+                LineArtChunk lineArt = ((SemanticFigure) newChild).getLineArt();
+                if (lineArt.getRightX() <= line.getLeftX() && lineArt.getBoundingBox().getHeight() <
+                        ListUtils.LIST_LABEL_HEIGHT_EPSILON * line.getBoundingBox().getHeight()) {
+                    lineArtChildrenInfo.add(new ListItemLineArtInfo(child.getIndex(),
+                            child.getSemanticType(), lineArt));
                 }
             }
         }

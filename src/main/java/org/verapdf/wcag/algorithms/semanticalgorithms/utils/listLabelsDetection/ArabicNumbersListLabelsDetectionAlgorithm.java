@@ -93,6 +93,10 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
 
     @Override
     protected Integer getNumberFromString(String string) {
+        return getIntegerFromString(string);
+    }
+
+    public static Integer getIntegerFromString(String string) {
         try {
             return Integer.parseUnsignedInt(string);
         } catch (NumberFormatException ignored) {
