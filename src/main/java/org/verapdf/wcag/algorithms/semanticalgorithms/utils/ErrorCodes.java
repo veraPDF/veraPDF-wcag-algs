@@ -18,6 +18,7 @@ public class ErrorCodes {
 	public static final int ERROR_CODE_1008 = 1008;//TOCI text not found on a destination page.
 	public static final int ERROR_CODE_1009 = 1009;//TOCI doesn't have a destination.
 	public static final int ERROR_CODE_1010 = 1010;//TOCI has a wrong page label.
+	public static final int ERROR_CODE_1011 = 1011;//TOCI has a wrong numbering.
 
 	//Table error codes
 	public static final int ERROR_CODE_1100 = 1100;//This cell is below than some cells in the next row
@@ -31,6 +32,7 @@ public class ErrorCodes {
 
 	//List error codes
 	public static final int ERROR_CODE_1200 = 1200;//This list and neighbor list(s) should be tagged as one list
+	public static final int ERROR_CODE_1201 = 1201;//Only one List inside list
 
 	public static void addErrorCodeWithArguments(INode node, int errorCode, Object ... arguments) {
 		if (!node.getErrorCodes().contains(errorCode)) {

@@ -10,9 +10,11 @@ import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tocs.TOCIInfo;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ErrorCodes;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListLabelsUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ArabicNumbersListLabelsDetectionAlgorithm;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ListLabelsDetectionAlgorithm;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -49,6 +51,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
             return;
         }
         List<TOCIInfo> infos = getTOCIInfos(node);
+        checkTOCIsNumbering(node.getChildren(), infos);
 //        List<Integer> tociIndexes = new ArrayList<>(node.getChildren().size());
 //        left = null;
         right = null;
@@ -254,9 +257,15 @@ public class TOCDetectionConsumer implements Consumer<INode> {
                 tociIndexes.remove(index);
                 notTOCIIndexes.add(index);
             } else {
-                ErrorCodes.addErrorCodeWithArguments(children.get(index), info.getDestinationPageNumber() != null ?
-                        ErrorCodes.ERROR_CODE_1008 : ErrorCodes.ERROR_CODE_1009, pages.stream().map(x -> x + 1)
-                        .map(Object::toString).collect(Collectors.joining(",")));
+                String possiblePagesArgument = pages.stream().map(x -> x + 1)
+                        .map(Object::toString).collect(Collectors.joining(","));
+                if (info.getDestinationPageNumber() != null) {
+                    ErrorCodes.addErrorCodeWithArguments(children.get(index), ErrorCodes.ERROR_CODE_1008,
+                            possiblePagesArgument, info.getDestinationPageNumber() + 1);
+                } else {
+                    ErrorCodes.addErrorCodeWithArguments(children.get(index), ErrorCodes.ERROR_CODE_1009,
+                            possiblePagesArgument);
+                }
                 if (info.getPageNumberLabel() != null) {
                     possiblePages.set(index, pages);
                     pageLabels.set(index, info.getPageNumberLabel());
@@ -601,6 +610,47 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         ErrorCodes.removeErrorCodeWithArgumentsAfterIndex(previousTOCI, numberOfPreviousTOCIErrors);
         ErrorCodes.removeErrorCodeWithArgumentsAfterIndex(currentTOCI, numberOfCurrentTOCIErrors);
         return indexes.size() == 2;
+    }
+
+    private static void checkTOCIsNumbering(List<INode> children, List<TOCIInfo> infos) {
+        for (int i = 0; i < children.size() - 1; i++) {
+            if (infos.get(i) == null || infos.get(i + 1) == null) {
+                continue;
+            }
+            String firstTOCI = infos.get(i).getText();
+            String secondTOCI = infos.get(i + 1).getText();
+            if (firstTOCI == null || secondTOCI == null) {
+                continue;
+            }
+            int commonStartLength = ListLabelsUtils.getCommonStartLength(firstTOCI, secondTOCI);
+            String prefix = firstTOCI.substring(0, commonStartLength);
+            if (commonStartLength != 0) {
+                firstTOCI = firstTOCI.substring(commonStartLength);
+                secondTOCI = secondTOCI.substring(commonStartLength);
+            }
+            checkArabicNumbering(children.get(i + 1), firstTOCI, secondTOCI, prefix);
+        }
+    }
+
+    private static boolean checkArabicNumbering(INode child, String firstTOCI, String secondTOCI, String prefix) {
+        String firstSubstring = firstTOCI.substring(0, ListLabelsDetectionAlgorithm.getRegexStartLength(firstTOCI,
+                ArabicNumbersListLabelsDetectionAlgorithm.ARABIC_NUMBER_REGEX));
+        String secondSubstring = secondTOCI.substring(0, ListLabelsDetectionAlgorithm.getRegexStartLength(secondTOCI,
+                ArabicNumbersListLabelsDetectionAlgorithm.ARABIC_NUMBER_REGEX));
+        if (firstSubstring.isEmpty() || secondSubstring.isEmpty()) {
+            return false;
+        }
+        Integer firstNumber = ArabicNumbersListLabelsDetectionAlgorithm.getIntegerFromString(firstSubstring);
+        Integer secondNumber = ArabicNumbersListLabelsDetectionAlgorithm.getIntegerFromString(secondSubstring);
+        if (firstNumber == null || secondNumber == null) {
+            return false;
+        }
+        if (firstNumber + 1 != secondNumber) {
+            ErrorCodes.addErrorCodeWithArguments(child, ErrorCodes.ERROR_CODE_1011,
+                    prefix + secondTOCI, prefix + (firstNumber + 1));
+            return false;
+        }
+        return true;
     }
 
 }
