@@ -399,7 +399,7 @@ public class TableChecker implements Consumer<INode> {
         if (border == null) {
             return;
         }
-        StaticContainers.getIdMapper().put(border.getId(), table.getRecognizedStructureId());
+        StaticContainers.getIdMapper().put(border.getRecognizedStructureId(), table.getRecognizedStructureId());
         if (border.getNumberOfRows() != numberOfRows) {
             ErrorCodes.addErrorCodeWithArguments(table, ErrorCodes.ERROR_CODE_1104,
                     numberOfRows, border.getNumberOfRows());

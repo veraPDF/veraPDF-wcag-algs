@@ -6,12 +6,10 @@ import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 
 import java.util.*;
 
-public class SemanticNode implements INode {
+public class SemanticNode extends BaseObject implements INode {
 
 	private Double correctSemanticScore;
-	private BoundingBox boundingBox;
 	private SemanticType semanticType;
-	private Long recognizedStructureId = null;
 
 	private Integer index = null;
 	private INode parent = null;
@@ -19,8 +17,6 @@ public class SemanticNode implements INode {
 	private final SemanticType initialSemanticType;
 	private int depth;
 	private boolean hasLowestDepthError = false;
-	private final List<Integer> errorCodes;
-	private final List<List<Object>> errorArguments;
 	private IAttributesDictionary attributesDictionary;
 
 	public NodeInfo nodeInfo;
@@ -34,12 +30,10 @@ public class SemanticNode implements INode {
 	}
 
 	public SemanticNode(SemanticType initialSemanticType, List<Integer> errorCodes, List<List<Object>> errorArguments) {
+		super(new BoundingBox(), errorCodes, errorArguments);
 		nodeInfo = new NodeInfo();
-		boundingBox = new BoundingBox();
 		this.children = new ArrayList<>();
 		this.initialSemanticType = initialSemanticType;
-		this.errorCodes = errorCodes;
-		this.errorArguments = errorArguments;
 	}
 
 	public SemanticNode(BoundingBox bbox, SemanticType initialSemanticType, SemanticType semanticType) {
@@ -48,12 +42,10 @@ public class SemanticNode implements INode {
 	}
 
 	public SemanticNode(BoundingBox bbox, SemanticType initialSemanticType) {
+		super(new MultiBoundingBox(bbox));
 		this.nodeInfo = new NodeInfo();
 		this.children = new ArrayList<>();
-		this.boundingBox = new MultiBoundingBox(bbox);
 		this.initialSemanticType = initialSemanticType;
-		this.errorCodes = new LinkedList<>();
-		this.errorArguments = new LinkedList<>();
 	}
 
 	public SemanticNode(BoundingBox bbox) {
@@ -68,70 +60,6 @@ public class SemanticNode implements INode {
 	@Override
 	public void setCorrectSemanticScore(Double correctSemanticScore) {
 		this.correctSemanticScore = correctSemanticScore;
-	}
-
-	@Override
-	public Long getRecognizedStructureId() {
-		return recognizedStructureId;
-	}
-
-	@Override
-	public void setRecognizedStructureId(Long id) {
-		recognizedStructureId = id;
-	}
-
-	@Override
-	public Integer getPageNumber() {
-		return boundingBox.getPageNumber();
-	}
-
-	@Override
-	public void setPageNumber(Integer pageNumber) {
-		boundingBox.setPageNumber(pageNumber);
-	}
-
-	@Override
-	public Integer getLastPageNumber() {
-		return boundingBox.getLastPageNumber();
-	}
-
-	@Override
-	public void setLastPageNumber(Integer lastPageNumber) {
-		boundingBox.setLastPageNumber(lastPageNumber);
-	}
-
-	@Override
-	public double getLeftX() {
-		return boundingBox.getLeftX();
-	}
-
-	@Override
-	public double getBottomY() {
-		return boundingBox.getBottomY();
-	}
-
-	@Override
-	public double getRightX() {
-		return boundingBox.getRightX();
-	}
-
-	@Override
-	public double getTopY() {
-		return boundingBox.getTopY();
-	}
-
-	@Override
-	public BoundingBox getBoundingBox() {
-		return boundingBox;
-	}
-
-	@Override
-	public void setBoundingBox(BoundingBox bbox) {
-		if (bbox instanceof MultiBoundingBox) {
-			boundingBox = new MultiBoundingBox(bbox);
-		} else {
-			boundingBox = new BoundingBox(bbox);
-		}
 	}
 
 	@Override
@@ -236,16 +164,6 @@ public class SemanticNode implements INode {
 	}
 
 	@Override
-	public List<Integer> getErrorCodes() {
-		return errorCodes;
-	}
-
-	@Override
-	public List<List<Object>> getErrorArguments() {
-		return errorArguments;
-	}
-
-	@Override
 	public IAttributesDictionary getAttributesDictionary() {
 		return attributesDictionary != null ? attributesDictionary : new AttributesDictionary();
 	}
@@ -272,7 +190,7 @@ public class SemanticNode implements INode {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(boundingBox);
+		return Objects.hashCode(getBoundingBox());
 	}
 
 	@Override
@@ -285,7 +203,7 @@ public class SemanticNode implements INode {
 		}
 
 		SemanticNode that = (SemanticNode) o;
-		return that.boundingBox.equals(boundingBox);
+		return that.getBoundingBox().equals(getBoundingBox());
 	}
 
 	@Override
@@ -293,8 +211,8 @@ public class SemanticNode implements INode {
 		return "SemanticNode{" +
 		       "initialSemanticType=" + initialSemanticType +
 		       ", correctSemanticScore=" + correctSemanticScore +
-		       ", pageNumber=" + boundingBox.getPageNumber() +
-		       ", boundingBox=" + boundingBox +
+		       ", pageNumber=" + getBoundingBox().getPageNumber() +
+		       ", boundingBox=" + getBoundingBox() +
 		       ", semanticType=" + semanticType +
 		       ", children=" + children +
 		       '}';

@@ -1,5 +1,6 @@
 package org.verapdf.wcag.algorithms.entities.tables.tableBorders;
 
+import org.verapdf.wcag.algorithms.entities.BaseObject;
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
@@ -9,66 +10,33 @@ import org.verapdf.wcag.algorithms.entities.tables.TableToken;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TableBorderCell {
-    private Long id;
+public class TableBorderCell extends BaseObject {
     protected int rowNumber;
     protected int colNumber;
     protected int rowSpan;
     protected int colSpan;
-    private BoundingBox boundingBox;
     private final List<TableToken> content;
     private SemanticType semanticType;
     private INode node;
 
     public TableBorderCell(int rowNumber, int colNumber, int rowSpan, int colSpan, Long id) {
+        super(new BoundingBox());
         this.rowNumber = rowNumber;
         this.colNumber = colNumber;
         this.rowSpan = rowSpan;
         this.colSpan = colSpan;
         content = new LinkedList<>();
-        this.id = id;
+        setRecognizedStructureId(id);
     }
 
     public TableBorderCell(INode node, int rowNumber, int colNumber) {
+        super(node.getBoundingBox());
         this.node = node;
         this.rowSpan = (int) node.getAttributesDictionary().getRowSpan();
         this.colSpan = (int) node.getAttributesDictionary().getColSpan();
         this.rowNumber = rowNumber;
         this.colNumber = colNumber;
-        this.boundingBox = node.getBoundingBox();
         content = new LinkedList<>();
-    }
-
-    public void setBoundingBox(BoundingBox boundingBox) {
-        this.boundingBox = boundingBox;
-    }
-
-    public BoundingBox getBoundingBox() {
-        return boundingBox;
-    }
-
-    public double getTopY() {
-        return boundingBox.getTopY();
-    }
-
-    public double getBottomY() {
-        return boundingBox.getBottomY();
-    }
-
-    public double getLeftX() {
-        return boundingBox.getLeftX();
-    }
-
-    public double getRightX() {
-        return boundingBox.getRightX();
-    }
-
-    public double getWidth() {
-        return boundingBox.getWidth();
-    }
-
-    public double getHeight() {
-        return boundingBox.getHeight();
     }
 
     public void addContent(TableToken token) {
@@ -117,9 +85,5 @@ public class TableBorderCell {
             boundingBox.union(token.getBoundingBox());
         }
         return boundingBox;
-    }
-
-    public Long getId() {
-        return id;
     }
 }

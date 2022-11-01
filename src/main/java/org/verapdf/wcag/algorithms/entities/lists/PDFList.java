@@ -12,12 +12,11 @@ import java.util.List;
 
 public class PDFList extends InfoChunk {
 
-    private final Long id;
     private final List<ListItem> listItems;
 
     public PDFList(Table table) {
         super(table.getBoundingBox());
-        this.id = table.getId();
+        setRecognizedStructureId(table.getId());
         listItems = new ArrayList<>();
         createListItemsFromTableRows(table.getRows());
     }
@@ -28,10 +27,6 @@ public class PDFList extends InfoChunk {
 
     public List<ListItem> getListItems() {
         return listItems;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public void add(ListItem listItem) {

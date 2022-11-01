@@ -77,7 +77,7 @@ public class TableBorderConsumer {
                         }
                         updateTreeWithRecognizedTableRows(table, depth);
                     }
-                    if (ClusterTableConsumer.isNodeInsideTable(tableNode, table.getId(), table.getBoundingBox(), SemanticType.TABLE)) {
+                    if (ClusterTableConsumer.isNodeInsideTable(tableNode, table.getRecognizedStructureId(), table.getBoundingBox(), SemanticType.TABLE)) {
                         StaticContainers.getAccumulatedNodeMapper().updateNode(tableNode, new SemanticTable(table),
                                 1.0, SemanticType.TABLE);
                         ClusterTableConsumer.detectTableCaptions(table.getBoundingBox(), tableNode);
@@ -106,7 +106,7 @@ public class TableBorderConsumer {
             INode node = findParent(row.getNode(), depth);
             row.setNode(node);
             updateTreeWithRecognizedTableRow(row, table, depth);
-            setType(node, SemanticType.TABLE_ROW, table.getId(), row.getBoundingBox());
+            setType(node, SemanticType.TABLE_ROW, table.getRecognizedStructureId(), row.getBoundingBox());
         }
     }
 
@@ -115,14 +115,14 @@ public class TableBorderConsumer {
         Iterator<INode> iterator = nodes.iterator();
         if (nodes.size() < 4) {
             if (nodes.size() == 1) {
-                setType(iterator.next(), SemanticType.TABLE_BODY, table.getId(), table.getBoundingBox());
+                setType(iterator.next(), SemanticType.TABLE_BODY, table.getRecognizedStructureId(), table.getBoundingBox());
             } else if (nodes.size() == 2) {
-                setType(iterator.next(), SemanticType.TABLE_HEADERS, table.getId(), table.getBoundingBox());
-                setType(iterator.next(), SemanticType.TABLE_BODY, table.getId(), table.getBoundingBox());
+                setType(iterator.next(), SemanticType.TABLE_HEADERS, table.getRecognizedStructureId(), table.getBoundingBox());
+                setType(iterator.next(), SemanticType.TABLE_BODY, table.getRecognizedStructureId(), table.getBoundingBox());
             } else if (nodes.size() == 3) {
-                setType(iterator.next(), SemanticType.TABLE_HEADERS, table.getId(), table.getBoundingBox());
-                setType(iterator.next(), SemanticType.TABLE_BODY, table.getId(), table.getBoundingBox());
-                setType(iterator.next(), SemanticType.TABLE_FOOTER, table.getId(), table.getBoundingBox());
+                setType(iterator.next(), SemanticType.TABLE_HEADERS, table.getRecognizedStructureId(), table.getBoundingBox());
+                setType(iterator.next(), SemanticType.TABLE_BODY, table.getRecognizedStructureId(), table.getBoundingBox());
+                setType(iterator.next(), SemanticType.TABLE_FOOTER, table.getRecognizedStructureId(), table.getBoundingBox());
             }
             List<INode> newRowNodes = new ArrayList<>();
             for (INode node : nodes) {
@@ -158,10 +158,10 @@ public class TableBorderConsumer {
                 MultiBoundingBox box = new MultiBoundingBox(cell.getBoundingBox());
                 box.union(cell.getContentBoundingBox());
                 if (isHeaderCell(cells.get(colNumber), cell, table)) {
-                    setType(cells.get(colNumber), SemanticType.TABLE_HEADER, table.getId(), box);
+                    setType(cells.get(colNumber), SemanticType.TABLE_HEADER, table.getRecognizedStructureId(), box);
                     cell.setSemanticType(SemanticType.TABLE_HEADER);
                 } else {
-                    setType(cells.get(colNumber), SemanticType.TABLE_CELL, table.getId(), box);
+                    setType(cells.get(colNumber), SemanticType.TABLE_CELL, table.getRecognizedStructureId(), box);
                     cell.setSemanticType(SemanticType.TABLE_CELL);
                 }
             }
