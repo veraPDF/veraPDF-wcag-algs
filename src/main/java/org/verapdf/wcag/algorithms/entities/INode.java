@@ -6,7 +6,7 @@ import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import java.util.List;
 import java.util.Set;
 
-public interface INode {
+public interface INode extends IObject {
 
 	SemanticType getSemanticType();
 
@@ -14,29 +14,15 @@ public interface INode {
 
 	SemanticType getInitialSemanticType();
 
-	void setRecognizedStructureId(Long id);
-
-	Long getRecognizedStructureId();
-
 	Double getCorrectSemanticScore();
 
 	void setCorrectSemanticScore(Double correctSemanticScore);
-
-	Integer getPageNumber();
 
 	void setPageNumber(Integer pageNumber);
 
 	Integer getLastPageNumber();
 
 	void setLastPageNumber(Integer lastPageNumber);
-
-	double getLeftX();
-
-	double getRightX();
-
-	double getBottomY();
-
-	double getTopY();
 
 	BoundingBox getBoundingBox();
 
@@ -75,10 +61,6 @@ public interface INode {
 	public boolean getHasLowestDepthError();
 
 	public void setHasLowestDepthError();
-
-	public List<Integer> getErrorCodes();
-
-	public List<List<Object>> getErrorArguments();
 
 	public IAttributesDictionary getAttributesDictionary();
 

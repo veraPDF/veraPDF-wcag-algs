@@ -647,7 +647,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         }
         if (firstNumber + 1 != secondNumber) {
             ErrorCodes.addErrorCodeWithArguments(child, ErrorCodes.ERROR_CODE_1011,
-                    prefix + secondTOCI, prefix + (firstNumber + 1));
+                    prefix + secondSubstring, prefix + (firstNumber + 1));
             return false;
         }
         return true;

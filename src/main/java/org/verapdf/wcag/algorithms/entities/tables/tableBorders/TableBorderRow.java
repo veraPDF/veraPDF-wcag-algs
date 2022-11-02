@@ -1,19 +1,21 @@
 package org.verapdf.wcag.algorithms.entities.tables.tableBorders;
 
+import org.verapdf.wcag.algorithms.entities.BaseObject;
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
-public class TableBorderRow {
+public class TableBorderRow extends BaseObject {
     private int rowNumber;
     protected TableBorderCell[] cells;
     private SemanticType semanticType;
     private INode node;
-    private BoundingBox boundingBox;
 
-    public TableBorderRow(int rowNumber, int numberOfColumns) {
+    public TableBorderRow(int rowNumber, int numberOfColumns, Long id) {
+        super(new BoundingBox());
         this.rowNumber = rowNumber;
         cells = new TableBorderCell[numberOfColumns];
+        setRecognizedStructureId(id);
     }
 
     public SemanticType getSemanticType() {
@@ -32,44 +34,8 @@ public class TableBorderRow {
         this.node = node;
     }
 
-    public double getTopY() {
-        return boundingBox.getTopY();
-    }
-
-    public double getBottomY() {
-        return boundingBox.getBottomY();
-    }
-
-    public double getLeftX() {
-        return boundingBox.getLeftX();
-    }
-
-    public double getRightX() {
-        return boundingBox.getRightX();
-    }
-
-    public double getWidth() {
-        return boundingBox.getWidth();
-    }
-
-    public double getHeight() {
-        return boundingBox.getHeight();
-    }
-
-    public Integer getPageNumber() {
-        return boundingBox.getPageNumber();
-    }
-
     public int getRowNumber() {
         return rowNumber;
-    }
-
-    public void setBoundingBox(BoundingBox boundingBox) {
-        this.boundingBox = boundingBox;
-    }
-
-    public BoundingBox getBoundingBox() {
-        return boundingBox;
     }
 
     public int getNumberOfCellWithContent() {

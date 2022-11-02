@@ -1,30 +1,7 @@
 package org.verapdf.wcag.algorithms.entities.content;
 
-import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.entities.IObject;
 
-public interface IChunk {
+public interface IChunk extends IObject {
 
-    double getLeftX();
-
-    double getRightX();
-
-    double getBottomY();
-
-    double getTopY();
-
-    double getCenterX();
-
-    double getCenterY();
-
-    void setPageNumber(int pageNumber);
-
-    Integer getPageNumber();
-
-    void setLastPageNumber(int lastPageNumber);
-
-    Integer getLastPageNumber();
-
-    void setBoundingBox(BoundingBox bbox);
-
-    BoundingBox getBoundingBox();
 }

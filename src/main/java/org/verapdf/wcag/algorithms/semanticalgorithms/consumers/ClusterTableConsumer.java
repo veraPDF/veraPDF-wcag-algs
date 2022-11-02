@@ -401,7 +401,7 @@ public class ClusterTableConsumer {
         for (PDFList list : lists) {
             INode listRoot = updateTreeWithRecognizedList(list);
             if (listRoot != null) {
-                updateNode(listRoot, list.getId(), SemanticType.LIST, false, list.getBoundingBox());
+                updateNode(listRoot, list.getRecognizedStructureId(), SemanticType.LIST, false, list.getBoundingBox());
             }
         }
     }
@@ -412,7 +412,7 @@ public class ClusterTableConsumer {
         for (ListItem item : list.getListItems()) {
             INode itemNode = updateTreeWithRecognizedListItem(item, list);
             if (itemNode != null) {
-                updateNode(itemNode, list.getId(), SemanticType.LIST_ITEM, false, list.getBoundingBox());
+                updateNode(itemNode, list.getRecognizedStructureId(), SemanticType.LIST_ITEM, false, list.getBoundingBox());
                 nodes.add(itemNode);
                 if (itemNode.getInitialSemanticType() != SemanticType.LIST_ITEM) {
                     hasTaggedListItems = false;
@@ -510,7 +510,7 @@ public class ClusterTableConsumer {
                     elementNode.getParent().getChildren().size() == 1) {
                 elementNode = elementNode.getParent();
             }
-            updateNode(elementNode, list.getId(), entry.getValue(), false, list.getBoundingBox());
+            updateNode(elementNode, list.getRecognizedStructureId(), entry.getValue(), false, list.getBoundingBox());
         }
 
         return itemNode;

@@ -5,7 +5,6 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.tables.TableRow;
 
 public class ListItem extends TextInfoChunk {
-    private Long id;
     private final ListLabel label;
     private final ListBody body;
     private SemanticType semanticType;
@@ -15,7 +14,7 @@ public class ListItem extends TextInfoChunk {
         semanticType = SemanticType.LIST_ITEM;
         label = new ListLabel(tableRow.getCells().get(0));
         body = new ListBody(tableRow.getCells().get(1));
-        this.id = tableRow.getId();
+        setRecognizedStructureId(tableRow.getId());
     }
 
     public void add(TableRow tableRow) {
@@ -38,9 +37,5 @@ public class ListItem extends TextInfoChunk {
 
     public ListBody getBody() {
         return body;
-    }
-
-    public Long getId() {
-        return id;
     }
 }

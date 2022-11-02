@@ -1,5 +1,6 @@
 package org.verapdf.wcag.algorithms.entities.tables.tableBorders;
 
+import org.verapdf.wcag.algorithms.entities.BaseObject;
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
@@ -15,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TableBorder {
+public class TableBorder extends BaseObject {
     public static final double TABLE_BORDER_EPSILON = 0.6;
     private static final double MIN_CELL_CONTENT_INTERSECTION_PERCENT = 0.8;
 
@@ -24,23 +25,21 @@ public class TableBorder {
     private final List<Double> yCoordinates;
     private final List<Double> yWidths;
     private TableBorderRow[] rows;
-    private final BoundingBox boundingBox;
     private int numberOfRows;
     private int numberOfColumns;
-    private final Long id;
     private INode node;
     private boolean isBadTable = false;
 
     public TableBorder(TableBorderBuilder builder) {
+        super(new BoundingBox(builder.getBoundingBox()));
         xCoordinates = new LinkedList<>();
         xWidths = new LinkedList<>();
         calculateXCoordinates(builder);
         yCoordinates = new LinkedList<>();
         yWidths = new LinkedList<>();
         calculateYCoordinates(builder);
-        boundingBox = new BoundingBox(builder.getBoundingBox());
         createMatrix(builder);
-        id = StaticContainers.getNextID();
+        setRecognizedStructureId(StaticContainers.getNextID());
     }
 
     private void calculateXCoordinates(TableBorderBuilder builder) {
@@ -105,10 +104,10 @@ public class TableBorder {
         }
         TableBorderRow[] rows = new TableBorderRow[numberOfRows];
         for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
-            rows[rowNumber] = new TableBorderRow(rowNumber, numberOfColumns);
+            rows[rowNumber] = new TableBorderRow(rowNumber, numberOfColumns, getRecognizedStructureId());
             for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
                 rows[rowNumber].cells[colNumber] = new TableBorderCell(rowNumber, colNumber,
-                        numberOfRows - rowNumber, numberOfColumns - colNumber, id);
+                        numberOfRows - rowNumber, numberOfColumns - colNumber, getRecognizedStructureId());
             }
         }
         if (processHorizontalLines(rows, numberOfRows, numberOfColumns, builder) ||
@@ -124,7 +123,7 @@ public class TableBorder {
                 if (rows[rowNumber].cells[colNumber].colNumber == colNumber &&
                         rows[rowNumber].cells[colNumber].rowNumber == rowNumber) {
                     TableBorderCell cell = rows[rowNumber].cells[colNumber];
-                    BoundingBox cellBoundingBox = new BoundingBox(boundingBox.getPageNumber(),
+                    BoundingBox cellBoundingBox = new BoundingBox(getBoundingBox().getPageNumber(),
                             xCoordinates.get(colNumber) - 0.5 * xWidths.get(colNumber),
                             yCoordinates.get(rowNumber + cell.rowSpan) - 0.5 * yWidths.get(rowNumber + cell.rowSpan),
                             xCoordinates.get(colNumber + cell.colSpan) + 0.5 * xWidths.get(colNumber + cell.colSpan),
@@ -330,7 +329,7 @@ public class TableBorder {
         this.rows = new TableBorderRow[this.numberOfRows];
         for (int rowNumber = 0; rowNumber < this.numberOfRows; rowNumber++) {
             int oldRowNumber = usefulRows.get(rowNumber);
-            this.rows[rowNumber] = new TableBorderRow(rowNumber, this.numberOfColumns);
+            this.rows[rowNumber] = new TableBorderRow(rowNumber, this.numberOfColumns, getRecognizedStructureId());
             this.rows[rowNumber].setBoundingBox(rows[oldRowNumber].getBoundingBox());
             for (int colNumber = 0; colNumber < this.numberOfColumns; colNumber++) {
                 int oldColNumber = usefulColumns.get(colNumber);
@@ -342,10 +341,6 @@ public class TableBorder {
                 this.rows[rowNumber].cells[colNumber] = rows[oldRowNumber].cells[oldColNumber];
             }
         }
-    }
-
-    public Integer getPageNumber() {
-        return boundingBox.getPageNumber();
     }
 
     private int getCoordinateX(double x) {
@@ -412,10 +407,6 @@ public class TableBorder {
         return numberOfColumns;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public INode getNode() {
         return node;
     }
@@ -426,10 +417,6 @@ public class TableBorder {
 
     public boolean isBadTable() {
         return isBadTable || numberOfRows < 1 || numberOfColumns < 1 || (numberOfRows == 1 && numberOfColumns == 1);
-    }
-
-    public BoundingBox getBoundingBox() {
-        return boundingBox;
     }
 
     public static class TableBordersComparator implements Comparator<TableBorder> {
