@@ -393,9 +393,15 @@ public class ChunksMergeUtils {
 		double firstChunkEnd = x.getTextEnd();
 		double secondChunkStart = y.getTextStart();
 
-		firstChunkEnd -= numberOfEndWhiteSpaces(x.getValue()) * whitespaceSize(x.getFontSize());
+		int numberOfEndWhiteSpaces = numberOfEndWhiteSpaces(x.getValue());
+		if (numberOfEndWhiteSpaces != x.getValue().length()) {
+			firstChunkEnd -= numberOfEndWhiteSpaces * whitespaceSize(x.getFontSize());
+		}
 
-		secondChunkStart += numberOfStartsWhiteSpaces(y.getValue()) * whitespaceSize(y.getFontSize());
+		int numberOfStartsWhiteSpaces = numberOfStartsWhiteSpaces(y.getValue());
+		if (numberOfStartsWhiteSpaces != y.getValue().length()) {
+			secondChunkStart += numberOfStartsWhiteSpaces * whitespaceSize(y.getFontSize());
+		}
 
 		double distanceBetweenChunks = Math.abs(firstChunkEnd - secondChunkStart);
 		double maxFontSize = Math.max(x.getFontSize(), y.getFontSize());
