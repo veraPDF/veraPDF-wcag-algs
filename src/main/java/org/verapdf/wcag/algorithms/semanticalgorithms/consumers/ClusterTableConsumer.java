@@ -180,6 +180,96 @@ public class ClusterTableConsumer {
                 return false;
             }
         }
+        if (!checkTableCellsLeftAndRight(recognizedTable) || !checkTableCellsTopsAndBottom(recognizedTable)) {
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean checkTableCellsTopsAndBottom(Table recognizedTable) {
+        Double previousMinBottom = null;
+        Double previousMinTop = null;
+        for (int rowNumber = 0; rowNumber < recognizedTable.getNumberOfRows(); rowNumber++) {
+            TableRow row = recognizedTable.getRows().get(rowNumber);
+            Double maxBottom = null;
+            Double minBottom = null;
+            Double maxTop = null;
+            Double minTop = null;
+            for (int colNumber = 0; colNumber < recognizedTable.getNumberOfColumns(); colNumber++) {
+                TableCell cell = row.getCells().get(colNumber);
+                if (cell.getContent().isEmpty()) {
+                    continue;
+                }
+                BoundingBox cellBoundingBox = cell.getBoundingBox();
+                if (maxBottom == null || cellBoundingBox.getBottomY() > maxBottom) {
+                    maxBottom = cellBoundingBox.getBottomY();
+                }
+                if (minBottom == null || cellBoundingBox.getBottomY() < minBottom) {
+                    minBottom = cellBoundingBox.getBottomY();
+                }
+                if (maxTop == null || cellBoundingBox.getTopY() > maxTop) {
+                    maxTop = cellBoundingBox.getTopY();
+                }
+                if (minTop == null || cellBoundingBox.getTopY() < minTop) {
+                    minTop = cellBoundingBox.getTopY();
+                }
+            }
+            if (previousMinBottom != null && maxBottom != null && previousMinBottom < maxBottom) {
+                return false;
+            }
+            if (previousMinTop != null && minTop != null && previousMinTop < minTop) {
+                return false;
+            }
+            if (minBottom != null) {
+                previousMinBottom = minBottom;
+            }
+            if (minTop != null) {
+                previousMinTop = minTop;
+            }
+        }
+        return true;
+    }
+
+    private static boolean checkTableCellsLeftAndRight(Table recognizedTable) {
+        Double previousMaxRight = null;
+        Double previousMaxLeft = null;
+        for (int colNumber = 0; colNumber < recognizedTable.getNumberOfColumns(); colNumber++) {
+            Double maxLeft = null;
+            Double minLeft = null;
+            Double maxRight = null;
+            Double minRight = null;
+            for (int rowNumber = 0; rowNumber < recognizedTable.getNumberOfRows(); rowNumber++) {
+                TableCell cell = recognizedTable.getRows().get(rowNumber).getCells().get(colNumber);
+                if (cell.getContent().isEmpty()) {
+                    continue;
+                }
+                BoundingBox cellBoundingBox = cell.getBoundingBox();
+                if (maxRight == null || cellBoundingBox.getRightX() > maxRight) {
+                    maxRight = cellBoundingBox.getRightX();
+                }
+                if (minRight == null || cellBoundingBox.getRightX() < minRight) {
+                    minRight = cellBoundingBox.getRightX();
+                }
+                if (maxLeft == null || cellBoundingBox.getLeftX() > maxLeft) {
+                    maxLeft = cellBoundingBox.getLeftX();
+                }
+                if (minLeft == null || cellBoundingBox.getLeftX() < minLeft) {
+                    minLeft = cellBoundingBox.getLeftX();
+                }
+            }
+            if (previousMaxRight != null && minRight != null && previousMaxRight > minRight) {
+                return false;
+            }
+            if (previousMaxLeft != null && minLeft != null && previousMaxLeft > minLeft) {
+                return false;
+            }
+            if (maxRight != null) {
+                previousMaxRight = maxRight;
+            }
+            if (maxLeft != null) {
+                previousMaxLeft = maxLeft;
+            }
+        }
         return true;
     }
 
