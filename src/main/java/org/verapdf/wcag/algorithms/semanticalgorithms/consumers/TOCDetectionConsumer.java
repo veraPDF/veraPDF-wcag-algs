@@ -81,7 +81,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
             StaticContainers.getAccumulatedNodeMapper().updateNode(child,
                     StaticContainers.getAccumulatedNodeMapper().get(child), 1.0, SemanticType.TABLE_OF_CONTENT_ITEM);
         }
-        if (tociIndexes.size() > 1 || tociIndexes.size() == 1 && node.getChildren().size() == 1) {
+        if (tociIndexes.size() > 1 || (tociIndexes.size() == 1 && node.getChildren().size() == 1)) {
             node.setRecognizedStructureId(id);
             StaticContainers.getAccumulatedNodeMapper().updateNode(node,
                     StaticContainers.getAccumulatedNodeMapper().get(node), 1.0, SemanticType.TABLE_OF_CONTENT);
@@ -161,7 +161,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
             if (tociInfo == null || child.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT) {
                 continue;
             }
-            if (tociInfo.getText() == null) {
+            if (tociInfo.getText() == null || tociInfo.getText().isEmpty()) {
                 ErrorCodes.addErrorCodeWithArguments(child, ErrorCodes.ERROR_CODE_1000);
                 continue;
             }
