@@ -2,6 +2,7 @@ package org.verapdf.wcag.algorithms.entities.content;
 
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -223,6 +224,10 @@ public class TextChunk extends TextInfoChunk {
 
     public boolean isEmpty() {
         return value.isEmpty() || value.matches("\u0000+");
+    }
+
+    public boolean isWhiteSpaceChunk() {
+        return TextChunkUtils.isWhiteSpaceChunk(this);
     }
 
     @Override
