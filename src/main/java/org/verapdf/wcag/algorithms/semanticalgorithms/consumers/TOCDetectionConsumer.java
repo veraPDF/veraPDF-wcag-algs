@@ -187,7 +187,8 @@ public class TOCDetectionConsumer implements Consumer<INode> {
             if (tociInfo.getText() == null || tociInfo.getText().isEmpty()) {
                 continue;
             }
-            if (tociInfo.getPageNumberLabel() == null && tociInfo.getDestinationPageNumber() == null) {
+            if (tociInfo.getDestinationPageNumber() == null && (tociInfo.getPageNumberLabel() == null ||
+                    tociInfo.getPageNumberLabel() > StaticContainers.getDocument().getNumberOfPages())) {
                 continue;
             }
             indexes.add(index);
@@ -203,6 +204,14 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         //check left and right
         Integer gap = checkTOCIsWithDestinationPage(indexes, infos, children);
         checkTOCIsWithWrongDestination(indexes, tociIndexes, infos, children, gap);
+        for (int i = tociIndexes.size() - 1; i >= 0; i--) {
+            INode child = children.get(tociIndexes.get(i));
+            if (child.getErrorCodes().contains(ErrorCodes.ERROR_CODE_1007) ||
+                    (infos.get(tociIndexes.get(i)).getDestinationPageNumber() == null &&
+                    child.getErrorCodes().contains(ErrorCodes.ERROR_CODE_1010))) {
+                tociIndexes.remove(i);
+            }
+        }
         return tociIndexes;
     }
 
