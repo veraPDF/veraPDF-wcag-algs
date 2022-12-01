@@ -33,6 +33,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
 //    private static final double MAX_LEFT_ALIGNMENT_GAP = 0.1;
     private static final double LENGTH_HEADING_DIFFERENCE = 1.5;
     private final Map<Integer, INode> nodes = new HashMap<>();
+    private INode currentNode;
 
 //    private Double left = null;
     private Double right = null;
@@ -42,8 +43,29 @@ public class TOCDetectionConsumer implements Consumer<INode> {
 
     @Override
     public void accept(INode node) {
+        currentNode = node;
+        detectTOC(node);
         checkTOC(node);
         checkNeighborTOCs(node);
+    }
+    public void detectTOC(INode node) {
+        if (node.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT) {
+            return;
+        }
+        if (node.getChildren().size() < 2) {
+            return;
+        }
+        List<TOCIInfo> infos = getTOCIInfos(node);
+        List<Integer> tociIndexes = detectTOCIs(infos, node);
+        if (tociIndexes.size() > 1) {
+            Long id = StaticContainers.getNextID();
+            for (int index : tociIndexes) {
+                INode child = node.getChildren().get(index);
+                child.setRecognizedStructureId(id);
+                StaticContainers.getAccumulatedNodeMapper().updateNode(child,
+                        StaticContainers.getAccumulatedNodeMapper().get(child), 1.0, SemanticType.TABLE_OF_CONTENT_ITEM);
+            }
+        }
     }
 
     public void checkTOC(INode node) {
@@ -151,6 +173,37 @@ public class TOCDetectionConsumer implements Consumer<INode> {
             }
         }
         return infos;
+    }
+
+    public List<Integer> detectTOCIs(List<TOCIInfo> infos, INode node) {
+        List<Integer> indexes = new ArrayList<>(infos.size());
+        for (int index = 0; index < infos.size(); index++) {
+            TOCIInfo tociInfo = infos.get(index);
+            INode child = node.getChildren().get(index);
+            if (tociInfo == null || child.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT ||
+                    child.getSemanticType() == SemanticType.TABLE_OF_CONTENT) {
+                continue;
+            }
+            if (tociInfo.getText() == null || tociInfo.getText().isEmpty()) {
+                continue;
+            }
+            if (tociInfo.getPageNumberLabel() == null && tociInfo.getDestinationPageNumber() == null) {
+                continue;
+            }
+            indexes.add(index);
+        }
+        if (indexes.size() < 2) {
+            return indexes;
+        }
+        List<INode> children = new ArrayList<>(node.getChildren().size());
+        for (INode child : node.getChildren()) {
+            children.add(new SemanticNode(child.getBoundingBox(), child.getInitialSemanticType(), child.getSemanticType()));
+        }
+        List<Integer> tociIndexes = new ArrayList<>(indexes);
+        //check left and right
+        Integer gap = checkTOCIsWithDestinationPage(indexes, infos, children);
+        checkTOCIsWithWrongDestination(indexes, tociIndexes, infos, children, gap);
+        return tociIndexes;
     }
 
     public List<Integer> checkTOCIs(List<TOCIInfo> infos, List<INode> children) {
@@ -353,14 +406,14 @@ public class TOCDetectionConsumer implements Consumer<INode> {
         return null;
     }
 
-    private static List<TextChunk> getTextChunks(INode node) {
+    private List<TextChunk> getTextChunks(INode node) {
         return getTextChunks(node, null);
     }
 
-    private static List<TextChunk> getTextChunks(INode node, Integer pageNumber) {
+    private List<TextChunk> getTextChunks(INode node, Integer pageNumber) {
         List<TextChunk> textChunks = new LinkedList<>();
         for (INode child : node.getChildren()) {
-            if (child.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT) {
+            if (child == currentNode || child.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT) {
                 continue;
             }
             if (child.getPageNumber() == null || (pageNumber != null && (pageNumber < child.getPageNumber() ||
@@ -471,10 +524,10 @@ public class TOCDetectionConsumer implements Consumer<INode> {
             INode previousNode = currentNode.getPreviousNode();
             INode nextNode = currentNode.getNextNode();
             if (currentNode.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT ||
-                    (nextNode != null && nextNode.getPageNumber() != null &&
-                            nextNode.getPageNumber() <= pageNumber) ||
-                    (previousNode != null && previousNode.getLastPageNumber() != null &&
-                            previousNode.getLastPageNumber() >= pageNumber)) {
+                    (nextNode != null && (nextNode.getPageNumber() == null ||
+                            nextNode.getPageNumber() <= pageNumber)) ||
+                    (previousNode != null && (previousNode.getLastPageNumber() == null ||
+                            previousNode.getLastPageNumber() >= pageNumber))) {
                 currentNode = currentNode.getParent();
             } else {
                 break;
