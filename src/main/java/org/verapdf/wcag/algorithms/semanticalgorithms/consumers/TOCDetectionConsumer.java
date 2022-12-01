@@ -184,7 +184,7 @@ public class TOCDetectionConsumer implements Consumer<INode> {
                     child.getSemanticType() == SemanticType.TABLE_OF_CONTENT) {
                 continue;
             }
-            if (tociInfo.getText() == null || tociInfo.getText().isEmpty()) {
+            if (tociInfo.getText() == null || tociInfo.getText().length() < 10) {
                 continue;
             }
             if (tociInfo.getDestinationPageNumber() == null && (tociInfo.getPageNumberLabel() == null ||
@@ -421,6 +421,9 @@ public class TOCDetectionConsumer implements Consumer<INode> {
 
     private List<TextChunk> getTextChunks(INode node, Integer pageNumber) {
         List<TextChunk> textChunks = new LinkedList<>();
+        if (node == currentNode) {
+            return textChunks;
+        }
         for (INode child : node.getChildren()) {
             if (child == currentNode || child.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT) {
                 continue;
