@@ -181,10 +181,11 @@ public class TOCDetectionConsumer implements Consumer<INode> {
             TOCIInfo tociInfo = infos.get(index);
             INode child = node.getChildren().get(index);
             if (tociInfo == null || child.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT ||
-                    child.getSemanticType() == SemanticType.TABLE_OF_CONTENT) {
+                    child.getSemanticType() == SemanticType.TABLE_OF_CONTENT ||
+                    child.getInitialSemanticType() == SemanticType.LINK) {
                 continue;
             }
-            if (tociInfo.getText() == null || tociInfo.getText().length() < 10) {
+            if (tociInfo.getText() == null || tociInfo.getText().isEmpty()) {
                 continue;
             }
             if (tociInfo.getDestinationPageNumber() == null && (tociInfo.getPageNumberLabel() == null ||
@@ -201,7 +202,6 @@ public class TOCDetectionConsumer implements Consumer<INode> {
             children.add(new SemanticNode(child.getBoundingBox(), child.getInitialSemanticType(), child.getSemanticType()));
         }
         List<Integer> tociIndexes = new ArrayList<>(indexes);
-        //check left and right
         Integer gap = checkTOCIsWithDestinationPage(indexes, infos, children);
         checkTOCIsWithWrongDestination(indexes, tociIndexes, infos, children, gap);
         for (int i = tociIndexes.size() - 1; i >= 0; i--) {
@@ -209,6 +209,13 @@ public class TOCDetectionConsumer implements Consumer<INode> {
             if (child.getErrorCodes().contains(ErrorCodes.ERROR_CODE_1007) ||
                     (infos.get(tociIndexes.get(i)).getDestinationPageNumber() == null &&
                     child.getErrorCodes().contains(ErrorCodes.ERROR_CODE_1010))) {
+                tociIndexes.remove(i);
+            }
+        }
+        checkLeftAndRightAlignments(tociIndexes, infos, children);
+        for (int i = tociIndexes.size() - 1; i >= 0; i--) {
+            INode child = children.get(tociIndexes.get(i));
+            if (child.getErrorCodes().contains(ErrorCodes.ERROR_CODE_1003)) {
                 tociIndexes.remove(i);
             }
         }
