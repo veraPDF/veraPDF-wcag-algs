@@ -57,10 +57,8 @@ public class TableBorderBuilder {
                 }
             }
         }
-        List<Vertex> vertexList1 = new ArrayList<>(vertexes);
-        List<Vertex> vertexList2 = new ArrayList<>(border.vertexes);
-        for (Vertex vertex1 : vertexList1) {
-            for (Vertex vertex2 : vertexList2) {
+        for (Vertex vertex1 : vertexes) {
+            for (Vertex vertex2 : border.vertexes) {
                 if (Vertex.areCloseVertexes(vertex1, vertex2)) {
                     return true;
                 }
