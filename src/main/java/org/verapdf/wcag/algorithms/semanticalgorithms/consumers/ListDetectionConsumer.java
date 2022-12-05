@@ -173,12 +173,12 @@ public class ListDetectionConsumer implements Consumer<INode> {
         int targetListItemNumber;
         Set<ListInterval> listIntervals;
         if (previousInfo instanceof ListItemTextInfo && currentInfo instanceof ListItemTextInfo) {
-            List<ListItemTextInfo> textChildrenInfo = getTextChildrenInfo(currentList, previousList);
+            List<ListItemTextInfo> textChildrenInfo = getTextChildrenInfo(previousList, currentList);
             targetListItemNumber = textChildrenInfo.size();
             listIntervals = ListLabelsUtils.getListItemsIntervals(textChildrenInfo);
         } else if ((previousInfo instanceof ListItemImageInfo && currentInfo instanceof ListItemImageInfo) ||
                 (previousInfo instanceof ListItemLineArtInfo && currentInfo instanceof ListItemLineArtInfo)) {
-            List<ListItemInfo> childrenInfo = getImageChildrenInfo(currentList, previousList);
+            List<ListItemInfo> childrenInfo = getImageChildrenInfo(previousList, currentList);
             targetListItemNumber = childrenInfo.size();
             listIntervals = ListLabelsUtils.getImageListItemsIntervals(childrenInfo);
         } else {
