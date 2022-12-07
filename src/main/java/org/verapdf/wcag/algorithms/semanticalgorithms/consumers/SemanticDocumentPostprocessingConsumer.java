@@ -6,14 +6,11 @@ import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListUtils;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TOCUtils;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.*;
 import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -147,10 +144,11 @@ public class SemanticDocumentPostprocessingConsumer {
 		}
 		int length = 0;
 		boolean isLastCharacterWhiteSpace = false;
+		Character lastCharacter = null;
 		MultiBoundingBox resultBox = new MultiBoundingBox();
 		for (TextChunk textChunk : textChunks) {
 			char[] characters = textChunk.getValue().toCharArray();
-			char lastCharacter = characters[0];
+			lastCharacter = characters[0];
 			isLastCharacterWhiteSpace = TextChunkUtils.isWhiteSpaceChar(lastCharacter);
 			int start = 0;
 			length++;
@@ -161,8 +159,10 @@ public class SemanticDocumentPostprocessingConsumer {
 				} else {
 					if (length > 2) {
 						updateBoundingBox(resultBox, textChunk, start, charIndex);
-						StaticContainers.getRepeatedCharacters().add(new RepeatedCharacters(!isLastCharacterWhiteSpace,
-						                                                                    length, resultBox));
+						if (!Character.isDigit(lastCharacter)) {
+							StaticContainers.getRepeatedCharacters().add(new RepeatedCharacters(!isLastCharacterWhiteSpace,
+									length, resultBox));
+						}
 						resultBox = new MultiBoundingBox();
 					}
 					length = 1;
@@ -174,8 +174,10 @@ public class SemanticDocumentPostprocessingConsumer {
 			updateBoundingBox(resultBox, textChunk, start, characters.length);
 		}
 		if (length > 2) {
-			StaticContainers.getRepeatedCharacters().add(new RepeatedCharacters(!isLastCharacterWhiteSpace,
-			                                                                    length, resultBox));
+			if (!Character.isDigit(lastCharacter)) {
+				StaticContainers.getRepeatedCharacters().add(new RepeatedCharacters(!isLastCharacterWhiteSpace,
+						length, resultBox));
+			}
 		}
 	}
 
