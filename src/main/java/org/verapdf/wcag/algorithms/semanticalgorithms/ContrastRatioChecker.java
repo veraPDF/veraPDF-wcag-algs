@@ -33,12 +33,12 @@ public class ContrastRatioChecker {
 		if (document.getTree() != null) {
 			document.getTree().forEach(v);
 		}
-		for (IPage page : document.getPages()) {
-			BufferedImage renderedPage = v.getRenderPage(page.getPageNumber());
-			page.getArtifacts().stream()
-				.filter(chunk -> chunk instanceof TextChunk)
-				.forEach(chunk -> v.calculateContrastRation((TextChunk)chunk, renderedPage));
-		}
+//		for (IPage page : document.getPages()) {
+//			BufferedImage renderedPage = v.getRenderPage(page.getPageNumber());
+//			page.getArtifacts().stream()
+//				.filter(chunk -> chunk instanceof TextChunk)
+//				.forEach(chunk -> v.calculateContrastRation((TextChunk)chunk, renderedPage));
+//		}
 	}
 
 	/**

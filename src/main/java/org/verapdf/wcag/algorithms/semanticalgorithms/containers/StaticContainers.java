@@ -27,6 +27,7 @@ import org.verapdf.wcag.algorithms.entities.lists.PDFList;
 import org.verapdf.wcag.algorithms.entities.maps.AccumulatedNodeMapper;
 import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.IdMapper;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.WCAGProgressStatus;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -35,6 +36,10 @@ import java.util.List;
 public class StaticContainers {
 
 	private static final ThreadLocal<IDocument> document = new ThreadLocal<>();
+
+	private static final ThreadLocal<WCAGProgressStatus> wcagProgressStatus = new ThreadLocal<>();
+
+	private static final ThreadLocal<Boolean> abortProcessing = new ThreadLocal<>();
 
 	private static final ThreadLocal<AccumulatedNodeMapper> accumulatedNodeMapper = new ThreadLocal<>();
 
@@ -50,8 +55,16 @@ public class StaticContainers {
 
 	private static final ThreadLocal<Long> groupCounter = new ThreadLocal<>();
 
+	static {
+		StaticContainers.abortProcessing.set(false);
+		StaticContainers.wcagProgressStatus.set(null);
+	}
+
 	public static void updateContainers(IDocument document) {
 		StaticContainers.document.set(document);
+		if (StaticContainers.abortProcessing.get() == null) {
+			StaticContainers.abortProcessing.set(false);
+		}
 		StaticContainers.accumulatedNodeMapper.set(new AccumulatedNodeMapper());
 		StaticContainers.tableBordersCollection.set(new TableBordersCollection());
 		StaticContainers.linesCollection.set(new LinesCollection());
@@ -67,6 +80,22 @@ public class StaticContainers {
 
 	public static void setDocument(IDocument document) {
 		StaticContainers.document.set(document);
+	}
+
+	public static WCAGProgressStatus getWCAGProgressStatus() {
+		return wcagProgressStatus.get();
+	}
+
+	public static void setWCAGProgressStatus(WCAGProgressStatus wcagProgressStatus) {
+		StaticContainers.wcagProgressStatus.set(wcagProgressStatus);
+	}
+
+	public static Boolean getAbortProcessing() {
+		return abortProcessing.get();
+	}
+
+	public static void setAbortProcessing(Boolean abortProcessing) {
+		StaticContainers.abortProcessing.set(abortProcessing);
 	}
 
 	public static AccumulatedNodeMapper getAccumulatedNodeMapper() {
