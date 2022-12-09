@@ -84,16 +84,16 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 		}
 		SemanticDocumentPostprocessingConsumer documentPostprocessingConsumer = new SemanticDocumentPostprocessingConsumer();
 		documentPostprocessingConsumer.runPostprocessingChecks(tree);
-		StaticContainers.setWCAGProgressStatus(null);
+		StaticContainers.getWCAGValidationInfo().setWCAGProgressStatus(null);
 	}
 
 	public static boolean startNextStep(WCAGProgressStatus status) {
-		if (StaticContainers.getAbortProcessing()) {
-			StaticContainers.setAbortProcessing(false);
-			StaticContainers.setWCAGProgressStatus(null);
+		if (StaticContainers.getWCAGValidationInfo().getAbortProcessing()) {
+			StaticContainers.getWCAGValidationInfo().setAbortProcessing(false);
+			StaticContainers.getWCAGValidationInfo().setWCAGProgressStatus(null);
 			return false;
 		}
-		StaticContainers.setWCAGProgressStatus(status);
+		StaticContainers.getWCAGValidationInfo().setWCAGProgressStatus(status);
 		return true;
 	}
 }
