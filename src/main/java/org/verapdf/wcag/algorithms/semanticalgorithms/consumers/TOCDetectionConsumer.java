@@ -9,10 +9,7 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tocs.TOCIInfo;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ErrorCodes;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListLabelsUtils;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ArabicNumbersListLabelsDetectionAlgorithm;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ListLabelsDetectionAlgorithm;
 
@@ -219,7 +216,22 @@ public class TOCDetectionConsumer implements Consumer<INode> {
                 tociIndexes.remove(i);
             }
         }
+        removeSingleTOCIIndexes(tociIndexes);
         return tociIndexes;
+    }
+
+    private void removeSingleTOCIIndexes(List<Integer> tociIndexes) {
+        for (int i = tociIndexes.size() - 2; i >= 1; i--) {
+            if (tociIndexes.get(i) - 1 != tociIndexes.get(i - 1) && tociIndexes.get(i) + 1 != tociIndexes.get(i + 1)) {
+                tociIndexes.remove(i);
+            }
+        }
+        if (tociIndexes.size() >= 2 && tociIndexes.get(tociIndexes.size() - 2) + 1 != tociIndexes.get(tociIndexes.size() - 1)) {
+            tociIndexes.remove(tociIndexes.size() - 1);
+        }
+        if (tociIndexes.size() >= 2 && tociIndexes.get(0) + 1 != tociIndexes.get(1)) {
+            tociIndexes.remove(0);
+        }
     }
 
     public List<Integer> checkTOCIs(List<TOCIInfo> infos, List<INode> children) {
