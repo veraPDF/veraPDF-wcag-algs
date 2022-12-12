@@ -29,10 +29,6 @@ public class ClusterTableConsumer extends WCAGConsumer {
     private final List<Table> tables;
     private final List<PDFList> lists;
 
-    static {
-        wcagProgressStatus = WCAGProgressStatus.TABLE_DETECTION;
-    }
-
     public  ClusterTableConsumer() {
         tables = new ArrayList<>();
         lists = new ArrayList<>();
@@ -727,5 +723,9 @@ public class ClusterTableConsumer extends WCAGConsumer {
             }
         }
         return false;
+    }
+
+    public WCAGProgressStatus getWCAGProgressStatus() {
+        return WCAGProgressStatus.TABLE_DETECTION;
     }
 }

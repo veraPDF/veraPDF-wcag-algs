@@ -23,10 +23,6 @@ public class SemanticDocumentPreprocessingConsumer extends WCAGConsumer implemen
 
     private int textChunksNumber;
 
-    static {
-        wcagProgressStatus = WCAGProgressStatus.DOCUMENT_PREPROCESSING;
-    }
-
     public SemanticDocumentPreprocessingConsumer() {
         setNodeParents();
         this.textChunksNumber = 0;
@@ -124,5 +120,9 @@ public class SemanticDocumentPreprocessingConsumer extends WCAGConsumer implemen
 
     public int getTextChunksNumber() {
         return textChunksNumber;
+    }
+
+    public WCAGProgressStatus getWCAGProgressStatus() {
+        return WCAGProgressStatus.DOCUMENT_PREPROCESSING;
     }
 }

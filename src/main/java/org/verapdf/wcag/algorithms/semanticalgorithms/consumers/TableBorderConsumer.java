@@ -24,10 +24,6 @@ import java.util.stream.Collectors;
 
 public class TableBorderConsumer extends WCAGConsumer {
 
-    static {
-        wcagProgressStatus = WCAGProgressStatus.TABLE_BORDER_DETECTION;
-    }
-
     public void recognizeTables(ITree tree) {
         for (INode node : tree) {
             if (node.getChildren().isEmpty()) {
@@ -338,5 +334,9 @@ public class TableBorderConsumer extends WCAGConsumer {
             parents = parentsSet;
         }
         return parents.iterator().next();
+    }
+
+    public WCAGProgressStatus getWCAGProgressStatus() {
+        return WCAGProgressStatus.TABLE_BORDER_DETECTION;
     }
 }

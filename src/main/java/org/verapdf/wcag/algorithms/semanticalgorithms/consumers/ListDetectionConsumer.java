@@ -25,10 +25,6 @@ import java.util.stream.IntStream;
 
 public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INode> {
 
-    static {
-        wcagProgressStatus = WCAGProgressStatus.LIST_DETECTION;
-    }
-
     @Override
     public void accept(INode node) {
         boolean isLeafChild  = node.getChildren()
@@ -263,5 +259,9 @@ public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INod
             return false;
         }
         return true;
+    }
+
+    public WCAGProgressStatus getWCAGProgressStatus() {
+        return WCAGProgressStatus.LIST_DETECTION;
     }
 }
