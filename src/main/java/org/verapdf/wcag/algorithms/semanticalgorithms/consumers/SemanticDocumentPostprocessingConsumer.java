@@ -18,10 +18,6 @@ import java.util.List;
 
 public class SemanticDocumentPostprocessingConsumer extends WCAGConsumer {
 
-	static {
-		wcagProgressStatus = WCAGProgressStatus.DOCUMENT_POSTPROCESSING;
-	}
-
 	public void runPostprocessingChecks(ITree tree) {
 		updateBoundingBoxes(tree);
 		checkForTitle(tree);
@@ -210,5 +206,9 @@ public class SemanticDocumentPostprocessingConsumer extends WCAGConsumer {
 				node.setRecognizedStructureId(newId);
 			}
 		}
+	}
+
+	public WCAGProgressStatus getWCAGProgressStatus() {
+		return WCAGProgressStatus.DOCUMENT_POSTPROCESSING;
 	}
 }

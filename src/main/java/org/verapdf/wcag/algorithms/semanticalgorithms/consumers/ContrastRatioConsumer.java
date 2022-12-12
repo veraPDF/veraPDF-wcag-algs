@@ -39,10 +39,6 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 	private int processedTextChunks;
 	private final Integer textChunksNumber;
 
-	static {
-		wcagProgressStatus = WCAGProgressStatus.CONTRAST_DETECTION;
-	}
-
 	public ContrastRatioConsumer(String sourcePdfPath, int ... textChunksNumber) {
 		this.sourcePdfPath = sourcePdfPath;
 		IIORegistry registry = IIORegistry.getDefaultInstance();
@@ -414,5 +410,9 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		public int compareTo(DataPoint o) {
 			return Double.compare(this.value, o.value);
 		}
+	}
+
+	public WCAGProgressStatus getWCAGProgressStatus() {
+		return WCAGProgressStatus.CONTRAST_DETECTION;
 	}
 }

@@ -16,10 +16,6 @@ import java.util.function.Consumer;
 
 public class TableChecker extends WCAGConsumer implements Consumer<INode> {
 
-    static {
-        wcagProgressStatus = WCAGProgressStatus.TABLE_VALIDATION;
-    }
-
     @Override
     public void accept(INode node) {
         if (node.getInitialSemanticType() != SemanticType.TABLE) {
@@ -432,5 +428,9 @@ public class TableChecker extends WCAGConsumer implements Consumer<INode> {
                 }
             }
         }
+    }
+
+    public WCAGProgressStatus getWCAGProgressStatus() {
+        return WCAGProgressStatus.TABLE_VALIDATION;
     }
 }

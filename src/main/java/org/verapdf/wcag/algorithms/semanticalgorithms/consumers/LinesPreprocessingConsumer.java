@@ -13,10 +13,6 @@ import java.util.HashSet;
 
 public class LinesPreprocessingConsumer extends WCAGConsumer {
 
-    static {
-        wcagProgressStatus = WCAGProgressStatus.LINES_PREPROCESSING;
-    }
-
     private static final double MAX_LINE_WIDTH = 5.0;
 
     private List<List<TableBorderBuilder>> tableBorders;
@@ -118,5 +114,9 @@ public class LinesPreprocessingConsumer extends WCAGConsumer {
                 }
             }
         }
+    }
+
+    public WCAGProgressStatus getWCAGProgressStatus() {
+        return WCAGProgressStatus.LINES_PREPROCESSING;
     }
 }

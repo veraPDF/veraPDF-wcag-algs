@@ -27,10 +27,6 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 	public static final double ONE_LINE_MIN_PROBABILITY_THRESHOLD = 0.1;
 	public static final double FOOTNOTE_MIN_PROBABILITY_THRESHOLD = 0.75;
 
-	static {
-		wcagProgressStatus = WCAGProgressStatus.PARAGRAPH_DETECTION;
-	}
-
 	public AccumulatedNodeConsumer() {
 	}
 
@@ -418,5 +414,9 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 				break;
 			}
 		}
+	}
+
+	public WCAGProgressStatus getWCAGProgressStatus() {
+		return WCAGProgressStatus.PARAGRAPH_DETECTION;
 	}
 }

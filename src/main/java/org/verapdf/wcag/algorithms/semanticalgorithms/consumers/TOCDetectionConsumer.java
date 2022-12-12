@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 
 public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode> {
 
+    public static final double TOC_PROBABILITY_THRESHOLD = 0.75;
+
     private static final String LINK = "Link";
     private static final String SPACES = "\\s\u00A0\u2007\u202F";
     private static final String SPACES_REGEX = "[" + SPACES + "]+";
@@ -53,7 +55,15 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
             return;
         }
         List<TOCIInfo> infos = getTOCIInfos(node);
-        List<Integer> tociIndexes = detectTOCIs(infos, node);
+        List<Integer> tocIndexes = new ArrayList<>(infos.size());
+        for (int index = 0; index < infos.size(); index++) {
+            INode child = node.getChildren().get(index);
+            if (child.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT ||
+                    child.getSemanticType() == SemanticType.TABLE_OF_CONTENT) {
+                tocIndexes.add(index);
+            }
+        }
+        List<Integer> tociIndexes = detectTOCIs(infos, node, tocIndexes);
         if (tociIndexes.size() > 1) {
             Long id = StaticContainers.getNextID();
             for (int index : tociIndexes) {
@@ -61,6 +71,10 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
                 child.setRecognizedStructureId(id);
                 StaticContainers.getAccumulatedNodeMapper().updateNode(child,
                         StaticContainers.getAccumulatedNodeMapper().get(child), 1.0, SemanticType.TABLE_OF_CONTENT_ITEM);
+            }
+            if (tociIndexes.size() + tocIndexes.size() > TOC_PROBABILITY_THRESHOLD * node.getChildren().size()) {
+                node.setSemanticType(SemanticType.TABLE_OF_CONTENT);
+                node.setRecognizedStructureId(id);
             }
         }
     }
@@ -85,7 +99,7 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
 //                findHeading(getNode(info.getDestinationPageNumber()), info.getTextForSearching(), info.getDestinationPageNumber());
 //            }
 //        }
-        List<Integer> tociIndexes = checkTOCIs(infos, node.getChildren());
+        List<Integer> tociIndexes = checkTOCIs(node, infos, node.getChildren());
         Long id = StaticContainers.getNextID();
         for (INode child : node.getChildren()) {
             if (child.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT_ITEM) {
@@ -172,7 +186,7 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
         return infos;
     }
 
-    public List<Integer> detectTOCIs(List<TOCIInfo> infos, INode node) {
+    public List<Integer> detectTOCIs(List<TOCIInfo> infos, INode node, List<Integer> tocIndexes) {
         List<Integer> indexes = new ArrayList<>(infos.size());
         for (int index = 0; index < infos.size(); index++) {
             TOCIInfo tociInfo = infos.get(index);
@@ -199,8 +213,8 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
             children.add(new SemanticNode(child.getBoundingBox(), child.getInitialSemanticType(), child.getSemanticType()));
         }
         List<Integer> tociIndexes = new ArrayList<>(indexes);
-        Integer gap = checkTOCIsWithDestinationPage(indexes, infos, children);
-        checkTOCIsWithWrongDestination(indexes, tociIndexes, infos, children, gap);
+        Integer gap = checkTOCIsWithDestinationPage(node, indexes, infos, children);
+        checkTOCIsWithWrongDestination(node, indexes, tociIndexes, infos, children, gap);
         for (int i = tociIndexes.size() - 1; i >= 0; i--) {
             INode child = children.get(tociIndexes.get(i));
             if (child.getErrorCodes().contains(ErrorCodes.ERROR_CODE_1007) ||
@@ -216,25 +230,28 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
                 tociIndexes.remove(i);
             }
         }
-        removeSingleTOCIIndexes(tociIndexes);
+        removeSingleTOCIIndexes(tociIndexes, tocIndexes);
         return tociIndexes;
     }
 
-    private void removeSingleTOCIIndexes(List<Integer> tociIndexes) {
+    private void removeSingleTOCIIndexes(List<Integer> tociIndexes, List<Integer> tocIndexes) {
         for (int i = tociIndexes.size() - 2; i >= 1; i--) {
-            if (tociIndexes.get(i) - 1 != tociIndexes.get(i - 1) && tociIndexes.get(i) + 1 != tociIndexes.get(i + 1)) {
+            if (tociIndexes.get(i) - 1 != tociIndexes.get(i - 1) && tociIndexes.get(i) + 1 != tociIndexes.get(i + 1) &&
+                    !tocIndexes.contains(tociIndexes.get(i) + 1) && !tocIndexes.contains(tociIndexes.get(i) - 1)) {
                 tociIndexes.remove(i);
             }
         }
-        if (tociIndexes.size() >= 2 && tociIndexes.get(tociIndexes.size() - 2) + 1 != tociIndexes.get(tociIndexes.size() - 1)) {
+        if (tociIndexes.size() >= 2 && tociIndexes.get(tociIndexes.size() - 2) + 1 != tociIndexes.get(tociIndexes.size() - 1) &&
+                !tocIndexes.contains(tociIndexes.get(tociIndexes.size() - 1) - 1)) {
             tociIndexes.remove(tociIndexes.size() - 1);
         }
-        if (tociIndexes.size() >= 2 && tociIndexes.get(0) + 1 != tociIndexes.get(1)) {
+        if (tociIndexes.size() >= 2 && tociIndexes.get(0) + 1 != tociIndexes.get(1) &&
+                !tocIndexes.contains(tociIndexes.get(0) + 1)) {
             tociIndexes.remove(0);
         }
     }
 
-    public List<Integer> checkTOCIs(List<TOCIInfo> infos, List<INode> children) {
+    public List<Integer> checkTOCIs(INode node, List<TOCIInfo> infos, List<INode> children) {
         List<Integer> indexes = new ArrayList<>(infos.size());
         for (int index = 0; index < infos.size(); index++) {
             TOCIInfo tociInfo = infos.get(index);
@@ -250,8 +267,8 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
         }
         List<Integer> tociIndexes = new ArrayList<>(indexes);
         checkLeftAndRightAlignments(indexes, infos, children);
-        Integer gap = checkTOCIsWithDestinationPage(indexes, infos, children);
-        checkTOCIsWithWrongDestination(indexes, tociIndexes, infos, children, gap);
+        Integer gap = checkTOCIsWithDestinationPage(node, indexes, infos, children);
+        checkTOCIsWithWrongDestination(node, indexes, tociIndexes, infos, children, gap);
         return tociIndexes;
     }
 
@@ -288,15 +305,17 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
         }
     }
 
-    private Integer checkTOCIsWithDestinationPage(List<Integer> indexes, List<TOCIInfo> infos, List<INode> children) {
+    private Integer checkTOCIsWithDestinationPage(INode node, List<Integer> indexes, List<TOCIInfo> infos, List<INode> children) {
         List<Integer> newIndexes = new ArrayList<>(indexes.size());
         for (int index : indexes) {
+            currentNode = node != null ? node.getChildren().get(index) : currentNode;
             TOCIInfo info = infos.get(index);
             if (info.getDestinationPageNumber() != null && findText(info.getTextForSearching(), info.getDestinationPageNumber())) {
                 newIndexes.add(index);
                 findHeading(getNode(info.getDestinationPageNumber()), info.getTextForSearching(), info.getDestinationPageNumber());
             }
         }
+        currentNode = node;
         if (newIndexes.isEmpty()) {
             return null;
         }
@@ -325,13 +344,14 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
         return gap;
     }
 
-    private void checkTOCIsWithWrongDestination(List<Integer> indexes, List<Integer> tociIndexes, List<TOCIInfo> infos,
+    private void checkTOCIsWithWrongDestination(INode node, List<Integer> indexes, List<Integer> tociIndexes, List<TOCIInfo> infos,
                                                 List<INode> children, Integer gap) {
         List<List<Integer>> possiblePages = new ArrayList<>(Collections.nCopies(children.size(), null));
         List<Integer> pageLabels = new ArrayList<>(Collections.nCopies(children.size(), null));
         List<Integer> notTOCIIndexes = new LinkedList<>();
         for (Integer index : indexes) {
             TOCIInfo info = infos.get(index);
+            currentNode = node != null ? node.getChildren().get(index) : currentNode;
             List<Integer> pages = getPagesWithText(info.getTextForSearching());
             if (pages.isEmpty()) {
                 ErrorCodes.addErrorCodeWithArguments(children.get(index), ErrorCodes.ERROR_CODE_1007);
@@ -353,6 +373,7 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
                 }
             }
         }
+        currentNode = node;
         indexes.removeAll(notTOCIIndexes);
         if (!indexes.isEmpty() && gap == null) {
             gap = getMostCommonGap(possiblePages, pageLabels);
@@ -690,7 +711,7 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
         List<INode> tocis = new ArrayList<>(2);
         tocis.add(previousTOCI);
         tocis.add(currentTOCI);
-        List<Integer> indexes = checkTOCIs(tociInfos, tocis);
+        List<Integer> indexes = checkTOCIs(null, tociInfos, tocis);
         ErrorCodes.removeErrorCodeWithArgumentsAfterIndex(previousTOCI, numberOfPreviousTOCIErrors);
         ErrorCodes.removeErrorCodeWithArgumentsAfterIndex(currentTOCI, numberOfCurrentTOCIErrors);
         return indexes.size() == 2;
@@ -737,4 +758,7 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
         return true;
     }
 
+    public WCAGProgressStatus getWCAGProgressStatus() {
+        return WCAGProgressStatus.TOC_DETECTION;
+    }
 }
