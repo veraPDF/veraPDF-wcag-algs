@@ -1,12 +1,10 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms;
 
 import org.verapdf.wcag.algorithms.entities.IDocument;
-import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.ITree;
 import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.WCAGProgressStatus;
 
 import java.util.function.Consumer;
 
@@ -16,84 +14,84 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 	public void checkSemanticDocument(IDocument document, String fileName) {
 		StaticContainers.updateContainers(document);
 
-		if (!startNextStep(WCAGProgressStatus.CONTRAST_DETECTION)) {
-			return;
-		}
-		if (fileName != null) {
-			ContrastRatioChecker contrastRatioChecker = new ContrastRatioChecker();
-			contrastRatioChecker.checkDocument(document, fileName);
-		}
-
 		ITree tree = document.getTree();
 		if (tree == null) {
 			return;
 		}
 
-		if (!startNextStep(WCAGProgressStatus.LINES_PREPROCESSING)) {
+		SemanticDocumentPreprocessingConsumer semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer();
+		if (!startNextStep(semanticDocumentValidator)) {
 			return;
 		}
-		LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer();
-		linesPreprocessingConsumer.findTableBorders();
-
-		if (!startNextStep(WCAGProgressStatus.DOCUMENT_PREPROCESSING)) {
-			return;
-		}
-		Consumer<INode> semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer();
 		tree.forEach(semanticDocumentValidator);
 
+		LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer();
+		if (!startNextStep(linesPreprocessingConsumer)) {
+			return;
+		}
+		linesPreprocessingConsumer.findTableBorders();
 		StaticContainers.setTableBordersCollection(new TableBordersCollection(linesPreprocessingConsumer.getTableBorders()));
 
-		if (!startNextStep(WCAGProgressStatus.PARAGRAPH_DETECTION)) {
+		if (fileName != null) {
+			ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(fileName, semanticDocumentValidator.getTextChunksNumber());
+			if (!startNextStep(contrastRatioConsumer)) {
+				return;
+			}
+			document.getTree().forEach(contrastRatioConsumer);
+		}
+
+		AccumulatedNodeConsumer semanticDetectionValidator = new AccumulatedNodeConsumer();
+		if (!startNextStep(semanticDetectionValidator)) {
 			return;
 		}
-		AccumulatedNodeConsumer semanticDetectionValidator = new AccumulatedNodeConsumer();
 		tree.forEach(semanticDetectionValidator);
 
-		if (!startNextStep(WCAGProgressStatus.TOC_DETECTION)) {
+		TOCDetectionConsumer tocDetectionConsumer = new TOCDetectionConsumer();
+		if (!startNextStep(tocDetectionConsumer)) {
 			return;
 		}
-		TOCDetectionConsumer tocDetectionConsumer = new TOCDetectionConsumer();
 		tree.forEach(tocDetectionConsumer);
 
-		if (!startNextStep(WCAGProgressStatus.LIST_DETECTION)) {
+		ListDetectionConsumer listDetectionConsumer = new ListDetectionConsumer();
+		if (!startNextStep(listDetectionConsumer)) {
 			return;
 		}
-		ListDetectionConsumer listDetectionConsumer = new ListDetectionConsumer();
 		tree.forEach(listDetectionConsumer);
 
-		if (!startNextStep(WCAGProgressStatus.TABLE_BORDER_DETECTION)) {
+		TableBorderConsumer tableBorderConsumer = new TableBorderConsumer();
+		if (!startNextStep(tableBorderConsumer)) {
 			return;
 		}
-		TableBorderConsumer tableBorderConsumer = new TableBorderConsumer();
 		tableBorderConsumer.recognizeTables(tree);
 
-		if (!startNextStep(WCAGProgressStatus.TABLE_VALIDATION)) {
+		TableChecker tableChecker = new TableChecker();
+		if (!startNextStep(tableChecker)) {
 			return;
 		}
-		TableChecker tableChecker = new TableChecker();
 		tree.forEach(tableChecker);
 
-		if (!startNextStep(WCAGProgressStatus.TABLE_DETECTION)) {
+		ClusterTableConsumer tableFinder = new ClusterTableConsumer();
+		if (!startNextStep(tableFinder)) {
 			return;
 		}
-		ClusterTableConsumer tableFinder = new ClusterTableConsumer();
 		tableFinder.findTables(tree.getRoot());
 
-		if (!startNextStep(WCAGProgressStatus.DOCUMENT_POSTPROCESSING)) {
+		SemanticDocumentPostprocessingConsumer documentPostprocessingConsumer = new SemanticDocumentPostprocessingConsumer();
+		if (!startNextStep(documentPostprocessingConsumer)) {
 			return;
 		}
-		SemanticDocumentPostprocessingConsumer documentPostprocessingConsumer = new SemanticDocumentPostprocessingConsumer();
 		documentPostprocessingConsumer.runPostprocessingChecks(tree);
-		StaticContainers.getWCAGValidationInfo().setWCAGProgressStatus(null);
+
+		StaticContainers.getWCAGValidationInfo().setCurrentConsumer(null);
 	}
 
-	public static boolean startNextStep(WCAGProgressStatus status) {
+	public static boolean startNextStep(WCAGConsumer consumer) {
 		if (StaticContainers.getWCAGValidationInfo().getAbortProcessing()) {
 			StaticContainers.getWCAGValidationInfo().setAbortProcessing(false);
-			StaticContainers.getWCAGValidationInfo().setWCAGProgressStatus(null);
+			StaticContainers.getWCAGValidationInfo().setCurrentConsumer(null);
 			return false;
 		}
-		StaticContainers.getWCAGValidationInfo().setWCAGProgressStatus(status);
+		StaticContainers.getWCAGValidationInfo().setCurrentConsumer(consumer);
 		return true;
 	}
 }

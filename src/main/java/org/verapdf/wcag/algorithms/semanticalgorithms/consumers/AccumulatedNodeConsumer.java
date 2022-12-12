@@ -9,10 +9,7 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.CaptionUtils;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,13 +19,17 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class AccumulatedNodeConsumer implements Consumer<INode> {
+public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<INode> {
 
 	private static final Logger LOGGER = Logger.getLogger(AccumulatedNodeConsumer.class.getCanonicalName());
 
 	public static final double MERGE_PROBABILITY_THRESHOLD = 0.75;
 	public static final double ONE_LINE_MIN_PROBABILITY_THRESHOLD = 0.1;
 	public static final double FOOTNOTE_MIN_PROBABILITY_THRESHOLD = 0.75;
+
+	static {
+		wcagProgressStatus = WCAGProgressStatus.PARAGRAPH_DETECTION;
+	}
 
 	public AccumulatedNodeConsumer() {
 	}

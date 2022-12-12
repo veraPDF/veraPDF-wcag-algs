@@ -21,13 +21,17 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.utils.*;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class ClusterTableConsumer {
+public class ClusterTableConsumer extends WCAGConsumer {
 
-    private static final Logger LOGGER = Logger.getLogger(AccumulatedNodeConsumer.class.getCanonicalName());
+    private static final Logger LOGGER = Logger.getLogger(ClusterTableConsumer.class.getCanonicalName());
 
     private TableRecognitionArea recognitionArea;
     private final List<Table> tables;
     private final List<PDFList> lists;
+
+    static {
+        wcagProgressStatus = WCAGProgressStatus.TABLE_DETECTION;
+    }
 
     public  ClusterTableConsumer() {
         tables = new ArrayList<>();

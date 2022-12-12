@@ -8,12 +8,17 @@ import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorderCell;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ErrorCodes;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.WCAGProgressStatus;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class TableChecker implements Consumer<INode> {
+public class TableChecker extends WCAGConsumer implements Consumer<INode> {
+
+    static {
+        wcagProgressStatus = WCAGProgressStatus.TABLE_VALIDATION;
+    }
 
     @Override
     public void accept(INode node) {

@@ -16,7 +16,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SemanticDocumentPostprocessingConsumer {
+public class SemanticDocumentPostprocessingConsumer extends WCAGConsumer {
+
+	static {
+		wcagProgressStatus = WCAGProgressStatus.DOCUMENT_POSTPROCESSING;
+	}
 
 	public void runPostprocessingChecks(ITree tree) {
 		updateBoundingBoxes(tree);

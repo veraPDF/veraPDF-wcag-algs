@@ -16,13 +16,18 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainer
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ErrorCodes;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListLabelsUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.WCAGProgressStatus;
 
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class ListDetectionConsumer implements Consumer<INode> {
+public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INode> {
+
+    static {
+        wcagProgressStatus = WCAGProgressStatus.LIST_DETECTION;
+    }
 
     @Override
     public void accept(INode node) {
