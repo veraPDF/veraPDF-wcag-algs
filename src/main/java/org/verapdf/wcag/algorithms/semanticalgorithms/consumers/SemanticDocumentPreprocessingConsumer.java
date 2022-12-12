@@ -10,6 +10,7 @@ import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.WCAGProgressStatus;
 
 import java.util.SortedSet;
 import java.util.Stack;
@@ -17,11 +18,18 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
+public class SemanticDocumentPreprocessingConsumer extends WCAGConsumer implements Consumer<INode> {
     private static final Logger LOGGER = Logger.getLogger(SemanticDocumentPreprocessingConsumer.class.getCanonicalName());
+
+    private int textChunksNumber;
+
+    static {
+        wcagProgressStatus = WCAGProgressStatus.DOCUMENT_PREPROCESSING;
+    }
 
     public SemanticDocumentPreprocessingConsumer() {
         setNodeParents();
+        this.textChunksNumber = 0;
     }
 
     public void setNodeParents() {
@@ -46,6 +54,7 @@ public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
         // setup parent nodes for children
 
         if (node instanceof SemanticSpan) {
+            textChunksNumber++;
             if (node.getChildren().size() != 0) {
                 LOGGER.log(Level.WARNING, "Text chunk cannot contain children: {}", node);
             }
@@ -111,5 +120,9 @@ public class SemanticDocumentPreprocessingConsumer implements Consumer<INode> {
             return true;
         }
         return false;
+    }
+
+    public int getTextChunksNumber() {
+        return textChunksNumber;
     }
 }

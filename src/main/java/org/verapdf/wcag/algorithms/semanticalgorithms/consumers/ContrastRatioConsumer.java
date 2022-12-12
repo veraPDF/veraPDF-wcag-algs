@@ -13,6 +13,7 @@ import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.WCAGProgressStatus;
 
 import javax.imageio.spi.IIORegistry;
 import java.awt.*;
@@ -27,7 +28,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class ContrastRatioConsumer implements Consumer<INode> {
+public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INode> {
 
 	private final Map<Integer, BufferedImage> renderedPages = new HashMap<>();
 	private final String sourcePdfPath;
@@ -35,18 +36,27 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 	private static final int RENDER_DPI = 144;
 	private static final int PDF_DPI = 72;
 	private static final double LUMINOSITY_DIFFERENCE = 0.001;
+	private int processedTextChunks;
+	private final Integer textChunksNumber;
 
-	public ContrastRatioConsumer(String sourcePdfPath) {
+	static {
+		wcagProgressStatus = WCAGProgressStatus.CONTRAST_DETECTION;
+	}
+
+	public ContrastRatioConsumer(String sourcePdfPath, int ... textChunksNumber) {
 		this.sourcePdfPath = sourcePdfPath;
 		IIORegistry registry = IIORegistry.getDefaultInstance();
 		registry.registerServiceProvider(new J2KImageReaderSpi());
 		registry.registerServiceProvider(new JBIG2ImageReaderSpi());
+		this.processedTextChunks = 0;
+		this.textChunksNumber = textChunksNumber.length > 0 ? textChunksNumber[0] : null;
 	}
 
 	@Override
 	public void accept(INode node) {
 		if (node.getChildren().isEmpty() && (node instanceof SemanticTextNode)) {
 			calculateContrastRatio((SemanticTextNode) node);
+			processedTextChunks++;
 		}
 	}
 
@@ -361,6 +371,18 @@ public class ContrastRatioConsumer implements Consumer<INode> {
 			}
 		}
 		return new double[]{absoluteMaxPresent, secondMaxPresent};
+	}
+
+	public int getProcessedTextChunks() {
+		return processedTextChunks;
+	}
+
+	@Override
+	public Double getPercent() {
+		if (textChunksNumber == null) {
+			return null;
+		}
+		return 100.0d * processedTextChunks / textChunksNumber;
 	}
 
 	static class DataPoint implements Comparable<DataPoint> {

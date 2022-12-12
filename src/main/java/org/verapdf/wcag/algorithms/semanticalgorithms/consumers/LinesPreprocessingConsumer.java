@@ -4,13 +4,18 @@ import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.geometry.Vertex;
 import org.verapdf.wcag.algorithms.entities.tables.TableBorderBuilder;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.WCAGProgressStatus;
 
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.HashSet;
 
-public class LinesPreprocessingConsumer {
+public class LinesPreprocessingConsumer extends WCAGConsumer {
+
+    static {
+        wcagProgressStatus = WCAGProgressStatus.LINES_PREPROCESSING;
+    }
 
     private static final double MAX_LINE_WIDTH = 5.0;
 

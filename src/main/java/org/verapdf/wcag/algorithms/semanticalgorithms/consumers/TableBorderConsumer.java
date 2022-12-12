@@ -17,11 +17,16 @@ import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorderCell;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorderRow;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.WCAGProgressStatus;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TableBorderConsumer {
+public class TableBorderConsumer extends WCAGConsumer {
+
+    static {
+        wcagProgressStatus = WCAGProgressStatus.TABLE_BORDER_DETECTION;
+    }
 
     public void recognizeTables(ITree tree) {
         for (INode node : tree) {

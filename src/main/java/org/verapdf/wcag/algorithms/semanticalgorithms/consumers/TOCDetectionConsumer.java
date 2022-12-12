@@ -19,7 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class TOCDetectionConsumer implements Consumer<INode> {
+public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode> {
 
     private static final String LINK = "Link";
     private static final String SPACES = "\\s\u00A0\u2007\u202F";
