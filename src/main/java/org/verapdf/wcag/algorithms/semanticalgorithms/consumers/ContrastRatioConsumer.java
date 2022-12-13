@@ -11,6 +11,7 @@ import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.WCAGProgressStatus;
@@ -37,15 +38,13 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 	private static final int PDF_DPI = 72;
 	private static final double LUMINOSITY_DIFFERENCE = 0.001;
 	private int processedTextChunks;
-	private final Integer textChunksNumber;
 
-	public ContrastRatioConsumer(String sourcePdfPath, int ... textChunksNumber) {
+	public ContrastRatioConsumer(String sourcePdfPath) {
 		this.sourcePdfPath = sourcePdfPath;
 		IIORegistry registry = IIORegistry.getDefaultInstance();
 		registry.registerServiceProvider(new J2KImageReaderSpi());
 		registry.registerServiceProvider(new JBIG2ImageReaderSpi());
 		this.processedTextChunks = 0;
-		this.textChunksNumber = textChunksNumber.length > 0 ? textChunksNumber[0] : null;
 	}
 
 	@Override
@@ -375,10 +374,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 
 	@Override
 	public Double getPercent() {
-		if (textChunksNumber == null) {
-			return null;
-		}
-		return 100.0d * processedTextChunks / textChunksNumber;
+		return 100.0d * processedTextChunks / StaticContainers.getTextChunksNumber();
 	}
 
 	static class DataPoint implements Comparable<DataPoint> {

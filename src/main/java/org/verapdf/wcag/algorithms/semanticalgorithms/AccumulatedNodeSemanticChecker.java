@@ -19,12 +19,6 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 			return;
 		}
 
-		SemanticDocumentPreprocessingConsumer semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer();
-		if (!startNextStep(semanticDocumentValidator)) {
-			return;
-		}
-		tree.forEach(semanticDocumentValidator);
-
 		LinesPreprocessingConsumer linesPreprocessingConsumer = new LinesPreprocessingConsumer();
 		if (!startNextStep(linesPreprocessingConsumer)) {
 			return;
@@ -32,8 +26,16 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 		linesPreprocessingConsumer.findTableBorders();
 		StaticContainers.setTableBordersCollection(new TableBordersCollection(linesPreprocessingConsumer.getTableBorders()));
 
+		SemanticDocumentPreprocessingConsumer semanticDocumentValidator = new SemanticDocumentPreprocessingConsumer();
+		if (!startNextStep(semanticDocumentValidator)) {
+			return;
+		}
+		tree.forEach(semanticDocumentValidator);
+		StaticContainers.setStructElementsNumber(semanticDocumentValidator.getStructElementsNumber());
+		StaticContainers.setTextChunksNumber(semanticDocumentValidator.getTextChunksNumber());
+
 		if (fileName != null) {
-			ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(fileName, semanticDocumentValidator.getTextChunksNumber());
+			ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(fileName);
 			if (!startNextStep(contrastRatioConsumer)) {
 				return;
 			}

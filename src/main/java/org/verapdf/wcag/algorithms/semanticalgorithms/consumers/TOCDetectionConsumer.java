@@ -33,6 +33,7 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
     private static final double LENGTH_HEADING_DIFFERENCE = 1.5;
     private final Map<Integer, INode> nodes = new HashMap<>();
     private INode currentNode;
+    private long processedStructElements = 0;
 
 //    private Double left = null;
     private Double right = null;
@@ -46,6 +47,7 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
         detectTOC(node);
         checkTOC(node);
         checkNeighborTOCs(node);
+        processedStructElements++;
     }
     public void detectTOC(INode node) {
         if (node.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT) {
@@ -256,7 +258,8 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
         for (int index = 0; index < infos.size(); index++) {
             TOCIInfo tociInfo = infos.get(index);
             INode child = children.get(index);
-            if (tociInfo == null || child.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT) {
+            if (tociInfo == null || child.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT ||
+                    child.getSemanticType() == SemanticType.TABLE_OF_CONTENT) {
                 continue;
             }
             if (tociInfo.getText() == null || tociInfo.getText().isEmpty()) {
@@ -760,5 +763,9 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
 
     public WCAGProgressStatus getWCAGProgressStatus() {
         return WCAGProgressStatus.TOC_DETECTION;
+    }
+
+    public Double getPercent() {
+        return 100.0d * processedStructElements / StaticContainers.getStructElementsNumber();
     }
 }
