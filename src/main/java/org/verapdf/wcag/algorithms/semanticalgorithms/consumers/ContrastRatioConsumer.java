@@ -37,7 +37,8 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 	private static final int RENDER_DPI = 144;
 	private static final int PDF_DPI = 72;
 	private static final double LUMINOSITY_DIFFERENCE = 0.001;
-	private int processedTextChunks;
+	private long processedTextChunks;
+	private final Long textChunksNumber;
 
 	public ContrastRatioConsumer(String sourcePdfPath) {
 		this.sourcePdfPath = sourcePdfPath;
@@ -45,6 +46,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		registry.registerServiceProvider(new J2KImageReaderSpi());
 		registry.registerServiceProvider(new JBIG2ImageReaderSpi());
 		this.processedTextChunks = 0;
+		this.textChunksNumber = StaticContainers.getTextChunksNumber();
 	}
 
 	@Override
@@ -368,13 +370,9 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		return new double[]{absoluteMaxPresent, secondMaxPresent};
 	}
 
-	public int getProcessedTextChunks() {
-		return processedTextChunks;
-	}
-
 	@Override
 	public Double getPercent() {
-		return 100.0d * processedTextChunks / StaticContainers.getTextChunksNumber();
+		return 100.0d * processedTextChunks / textChunksNumber;
 	}
 
 	static class DataPoint implements Comparable<DataPoint> {
