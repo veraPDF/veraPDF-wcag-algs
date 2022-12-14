@@ -39,6 +39,10 @@ public class StaticContainers {
 
 	private static final ThreadLocal<WCAGValidationInfo> wcagValidationInfo = new ThreadLocal<>();
 
+	private static final ThreadLocal<Long> structElementsNumber = new ThreadLocal<>();
+
+	private static final ThreadLocal<Long> textChunksNumber = new ThreadLocal<>();
+
 	private static final ThreadLocal<AccumulatedNodeMapper> accumulatedNodeMapper = new ThreadLocal<>();
 
 	private static final ThreadLocal<TableBordersCollection> tableBordersCollection = new ThreadLocal<>();
@@ -66,6 +70,8 @@ public class StaticContainers {
 		StaticContainers.listsCollection.set(new LinkedList<>());
 		StaticContainers.idMapper.set(new IdMapper());
 		StaticContainers.groupCounter.set(0L);
+		StaticContainers.structElementsNumber.set(0L);
+		StaticContainers.textChunksNumber.set(0L);
 	}
 
 	public static IDocument getDocument() {
@@ -78,6 +84,10 @@ public class StaticContainers {
 
 	public static WCAGValidationInfo getWCAGValidationInfo() {
 		return wcagValidationInfo.get();
+	}
+
+	public static void setWCAGValidationInfo(WCAGValidationInfo wcagValidationInfo) {
+		StaticContainers.wcagValidationInfo.set(wcagValidationInfo);
 	}
 
 	public static AccumulatedNodeMapper getAccumulatedNodeMapper() {
@@ -136,5 +146,21 @@ public class StaticContainers {
 		Long id = groupCounter.get();
 		groupCounter.set(id + 1);
 		return id;
+	}
+
+	public static Long getStructElementsNumber() {
+		return structElementsNumber.get();
+	}
+
+	public static void setStructElementsNumber(Long structElementsNumber) {
+		StaticContainers.structElementsNumber.set(structElementsNumber);
+	}
+
+	public static Long getTextChunksNumber() {
+		return textChunksNumber.get();
+	}
+
+	public static void setTextChunksNumber(Long textChunksNumber) {
+		StaticContainers.textChunksNumber.set(textChunksNumber);
 	}
 }

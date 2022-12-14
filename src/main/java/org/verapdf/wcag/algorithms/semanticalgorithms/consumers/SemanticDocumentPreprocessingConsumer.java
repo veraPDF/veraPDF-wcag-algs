@@ -21,11 +21,13 @@ import java.util.logging.Logger;
 public class SemanticDocumentPreprocessingConsumer extends WCAGConsumer implements Consumer<INode> {
     private static final Logger LOGGER = Logger.getLogger(SemanticDocumentPreprocessingConsumer.class.getCanonicalName());
 
-    private int textChunksNumber;
+    private long textChunksNumber;
+    private long structElementsNumber;
 
     public SemanticDocumentPreprocessingConsumer() {
         setNodeParents();
-        this.textChunksNumber = 0;
+        this.textChunksNumber = 0L;
+        this.structElementsNumber = 0L;
     }
 
     public void setNodeParents() {
@@ -69,6 +71,7 @@ public class SemanticDocumentPreprocessingConsumer extends WCAGConsumer implemen
         if (node.getChildren().isEmpty()) {
             return;
         }
+        structElementsNumber++;
         MultiBoundingBox boundingBox = new MultiBoundingBox(node.getBoundingBox());
         for (INode child : node.getChildren()) {
             if (!(child instanceof SemanticFigure) && !(child instanceof IAnnotation)) {
@@ -118,8 +121,12 @@ public class SemanticDocumentPreprocessingConsumer extends WCAGConsumer implemen
         return false;
     }
 
-    public int getTextChunksNumber() {
+    public long getTextChunksNumber() {
         return textChunksNumber;
+    }
+
+    public long getStructElementsNumber() {
+        return structElementsNumber;
     }
 
     public WCAGProgressStatus getWCAGProgressStatus() {
