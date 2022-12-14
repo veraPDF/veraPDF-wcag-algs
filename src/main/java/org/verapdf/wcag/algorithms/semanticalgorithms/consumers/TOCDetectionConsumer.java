@@ -34,12 +34,17 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
     private final Map<Integer, INode> nodes = new HashMap<>();
     private INode currentNode;
     private long processedStructElements = 0;
+    private final Long structElementsNumber;
 
 //    private Double left = null;
     private Double right = null;
     private Double maxRight = -Double.MAX_VALUE;
     private Integer pagesGap = null;
     private Integer lastPageNumber = null;
+
+    public TOCDetectionConsumer() {
+        structElementsNumber = StaticContainers.getStructElementsNumber();
+    }
 
     @Override
     public void accept(INode node) {
@@ -766,6 +771,6 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
     }
 
     public Double getPercent() {
-        return 100.0d * processedStructElements / StaticContainers.getStructElementsNumber();
+        return 100.0d * processedStructElements / structElementsNumber;
     }
 }
