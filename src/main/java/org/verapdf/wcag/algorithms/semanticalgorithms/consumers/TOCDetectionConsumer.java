@@ -52,7 +52,9 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
         detectTOC(node);
         checkTOC(node);
         checkNeighborTOCs(node);
-        processedStructElements++;
+        if (!node.getChildren().isEmpty()) {
+            processedStructElements++;
+        }
     }
     public void detectTOC(INode node) {
         if (node.getInitialSemanticType() == SemanticType.TABLE_OF_CONTENT) {

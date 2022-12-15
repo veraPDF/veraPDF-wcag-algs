@@ -152,7 +152,7 @@ public class ListUtils {
 			InfoChunk line1 = previousItemInfo.getListItemValue();
 			InfoChunk line2 = info.getListItemValue();
 			accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(info.getIndex()));
-			if (line1.getPageNumber() + 1 < line2.getPageNumber()) {
+			if (line1.getPageNumber() + 1 < line2.getPageNumber() || isContainsHeading(children.get(previousItemInfo.getIndex()))) {
 				updateListIntervalCollection(listIntervalsCollection, listInterval, listItemInfos, numberOfColumns);
 				right = -Double.MAX_VALUE;
 				numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
@@ -182,6 +182,27 @@ public class ListUtils {
 			previousItemInfo = info;
 		}
 		updateListIntervalCollection(listIntervalsCollection, listInterval, listItemInfos, numberOfColumns);
+	}
+
+	private static boolean isContainsHeading(INode node) {
+		INode currentNode = node;
+		while (currentNode.getPageNumber() != null) {
+			if ((currentNode.getSemanticType() == SemanticType.HEADING ||
+					currentNode.getSemanticType() == SemanticType.NUMBER_HEADING) &&
+					currentNode.getCorrectSemanticScore() >= NodeUtils.MIN_GOOD_HEADING_PROBABILITY) {
+				return true;
+			}
+			if (currentNode.getChildren().isEmpty()) {
+				return false;
+			}
+			for (INode child : currentNode.getChildren()) {
+				if (child.getPageNumber() != null) {
+					currentNode = child;
+					break;
+				}
+			}
+		}
+		return false;
 	}
 
 	private static void updateListIntervalCollection(ListIntervalsCollection listIntervalsCollection, ListInterval listInterval,
