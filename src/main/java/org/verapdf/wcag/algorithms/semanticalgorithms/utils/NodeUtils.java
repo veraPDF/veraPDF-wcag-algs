@@ -22,6 +22,7 @@ public class NodeUtils {
 
 	public static final double BACKGROUND_FIRST_COLOR_EPSILON = 0.03;
 	public static final double BACKGROUND_SECOND_COLOR_EPSILON = BACKGROUND_FIRST_COLOR_EPSILON * 255;
+	public static final double MIN_GOOD_HEADING_PROBABILITY = 0.9;
 
 	public static double headingProbability(INode node, INode previousNode, INode nextNode, INode nextNextNode,
 	                                        INode initialNode) {
@@ -74,12 +75,23 @@ public class NodeUtils {
 		if (SemanticType.HEADING.equals(initialSemanticType) || SemanticType.NUMBER_HEADING.equals(initialSemanticType)) {
 			headingProbability += HEADING_PROBABILITY_PARAMS[3];
 		}
-		INode nextNeighbor = initialNode.getNextNode();
+		INode nextNeighbor = getNextNonEmptyNode(initialNode);
 		if (nextNeighbor != null && !node.getPageNumber().equals(nextNeighbor.getPageNumber())) {
 			headingProbability -= HEADING_PROBABILITY_PARAMS[7];
 		}
 
 		return Math.max(Math.min(headingProbability * getLinesNumberHeadingProbability(textNode), 1.0), 0.0);
+	}
+
+	private static INode getNextNonEmptyNode(INode node) {
+		INode currentNode = node.getNextNode();
+		while(currentNode != null) {
+			if (currentNode.getPageNumber() != null) {
+				return currentNode;
+			}
+			currentNode = currentNode.getNextNode();
+		}
+		return null;
 	}
 
 	public static double headingProbability(SemanticTextNode textNode, INode neighborNode) {
