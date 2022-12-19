@@ -2,6 +2,7 @@ package org.verapdf.wcag.algorithms.entities.lists;
 
 import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.tables.TableRow;
 
 public class ListItem extends TextInfoChunk {
@@ -15,6 +16,13 @@ public class ListItem extends TextInfoChunk {
         label = new ListLabel(tableRow.getCells().get(0));
         body = new ListBody(tableRow.getCells().get(1));
         setRecognizedStructureId(tableRow.getId());
+    }
+
+    public ListItem(BoundingBox boundingBox, Long id) {
+        super(boundingBox);
+        label = null;
+        body = null;
+        setRecognizedStructureId(id);
     }
 
     public void add(TableRow tableRow) {

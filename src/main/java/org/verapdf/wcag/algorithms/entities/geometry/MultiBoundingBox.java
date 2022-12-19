@@ -143,6 +143,22 @@ public class MultiBoundingBox extends BoundingBox {
         return boundingBoxes;
     }
 
+    public BoundingBox getBoundingBox(int pageNumber) {
+        if (this.pageNumber > pageNumber || this.lastPageNumber < pageNumber) {
+            return null;
+        }
+        if (this.pageNumber == pageNumber && this.lastPageNumber == pageNumber) {
+            return this;
+        }
+        BoundingBox boundingBox = new MultiBoundingBox();
+        for (BoundingBox box : boundingBoxes) {
+            if (box.getPageNumber() == pageNumber) {
+                boundingBox.union(box);
+            }
+        }
+        return boundingBox;
+    }
+
     public Double getRightX(int pageNumber) {
         if (this.pageNumber > pageNumber || this.lastPageNumber < pageNumber) {
             return null;

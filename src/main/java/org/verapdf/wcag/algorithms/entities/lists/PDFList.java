@@ -18,6 +18,12 @@ public class PDFList extends InfoChunk {
         createListItemsFromTableRows(table.getRows());
     }
 
+    public PDFList(Long id) {
+        super();
+        setRecognizedStructureId(id);
+        listItems = new ArrayList<>();
+    }
+
     public int getNumberOfListItems() {
         return listItems.size();
     }
@@ -28,6 +34,11 @@ public class PDFList extends InfoChunk {
 
     public void add(ListItem listItem) {
         listItems.add(listItem);
+        getBoundingBox().union(listItem.getBoundingBox());
+    }
+
+    public void add(int index, ListItem listItem) {
+        listItems.add(index, listItem);
         getBoundingBox().union(listItem.getBoundingBox());
     }
 
@@ -46,6 +57,10 @@ public class PDFList extends InfoChunk {
 //                } else {
 //                    break;
 //                }
+                if (firstCell.getContent().isEmpty() && lastListItem.getLabel().getRightX() >
+                        row.getCells().get(1).getLeftX()) {
+                    return;
+                }
                 lastListItem.add(row);
             } else {
                 TableCell secondCell = row.getCells().get(1);
