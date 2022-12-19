@@ -259,6 +259,17 @@ public class SemanticTextNode extends SemanticNode {
         return null;
     }
 
+    public TextLine getFirstNonSpaceLine(int pageNumber) {
+        for (TextColumn column : getColumns()) {
+            for (TextLine line : column.getLines()) {
+                if (!line.isEmpty() && !line.isSpaceLine() && Objects.equals(line.getPageNumber(), pageNumber)) {
+                    return line;
+                }
+            }
+        }
+        return null;
+    }
+
     public boolean hasFullLines() {
         if (!isEmpty()) {
             return getFirstLine().isFullLine() && getLastLine().isFullLine();

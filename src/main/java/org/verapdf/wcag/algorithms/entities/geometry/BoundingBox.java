@@ -364,6 +364,13 @@ public class BoundingBox {
         lastPageNumber = rect.lastPageNumber;
     }
 
+    public BoundingBox getBoundingBox(int pageNumber) {
+        if (this.pageNumber > pageNumber || this.lastPageNumber < pageNumber) {
+            return null;
+        }
+        return this;
+    }
+
     public void init(double left, double bottom, double right, double top) {
         this.leftX = left;
         this.bottomY = bottom;

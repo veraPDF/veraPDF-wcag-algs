@@ -499,11 +499,24 @@ public class ClusterTableConsumer extends WCAGConsumer {
     private INode updateTreeWithRecognizedList(PDFList list) {
         Set<INode> nodes = new HashSet<>();
         boolean hasTaggedListItems = true;
-        for (ListItem item : list.getListItems()) {
+        for (int index = 0; index < list.getNumberOfListItems(); index++) {
+            ListItem item = list.getListItems().get(index);
             INode itemNode = updateTreeWithRecognizedListItem(item, list);
             if (itemNode != null) {
                 updateNode(itemNode, list.getRecognizedStructureId(), SemanticType.LIST_ITEM, false, list.getBoundingBox());
                 nodes.add(itemNode);
+                if (ListDetectionConsumer.isTwoListItemsOnTwoPages(itemNode)) {
+                    if (itemNode.getPageNumber() < item.getPageNumber()) {
+                        ListItem newItem = new ListItem(itemNode.getBoundingBox().getBoundingBox(itemNode.getPageNumber()),
+                                list.getRecognizedStructureId());
+                        list.add(index, newItem);
+                    } else {
+                        ListItem newItem = new ListItem(itemNode.getBoundingBox().getBoundingBox(itemNode.getPageNumber() + 1),
+                                list.getRecognizedStructureId());
+                        list.add(index + 1, newItem);
+                    }
+                    index++;
+                }
                 if (itemNode.getInitialSemanticType() != SemanticType.LIST_ITEM) {
                     hasTaggedListItems = false;
                 }

@@ -18,16 +18,6 @@ public interface INode extends IObject {
 
 	void setCorrectSemanticScore(Double correctSemanticScore);
 
-	void setPageNumber(Integer pageNumber);
-
-	Integer getLastPageNumber();
-
-	void setLastPageNumber(Integer lastPageNumber);
-
-	BoundingBox getBoundingBox();
-
-	void setBoundingBox(BoundingBox boundingBox);
-
 	List<INode> getChildren();
 
 	void setParent(INode node);

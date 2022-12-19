@@ -7,6 +7,8 @@ import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
 import org.verapdf.wcag.algorithms.entities.lists.ListIntervalsCollection;
+import org.verapdf.wcag.algorithms.entities.lists.ListItem;
+import org.verapdf.wcag.algorithms.entities.lists.PDFList;
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemImageInfo;
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemInfo;
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemLineArtInfo;
@@ -40,6 +42,7 @@ public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INod
         if (node.getSemanticType() != SemanticType.LIST) {
             checkNeighborLists(node);
         }
+        checkListItem(node);
         checkListInsideList(node);
     }
 
@@ -140,6 +143,40 @@ public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INod
             return true;
         }
         return false;
+    }
+
+    public static boolean isTwoListItemsOnTwoPages(INode node) {
+        if (node.getPageNumber() == null || node.getLastPageNumber() == null ||
+                node.getPageNumber() + 1 != node.getLastPageNumber()) {
+            return false;
+        }
+        INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
+        if (!(accumulatedNode instanceof SemanticTextNode)) {
+            return false;
+        }
+        SemanticTextNode textNode = (SemanticTextNode)accumulatedNode;
+        if (textNode.isSpaceNode() || textNode.isEmpty()) {
+            return false;
+        }
+        TextLine line = textNode.getFirstNonSpaceLine();
+        if (!Objects.equals(node.getPageNumber(), line.getPageNumber())) {
+            return false;
+        }
+        TextLine secondLine = textNode.getFirstNonSpaceLine(node.getPageNumber() + 1);
+        List<ListItemTextInfo> textChildrenInfo = new ArrayList<>(2);
+        textChildrenInfo.add(new ListItemTextInfo(0, node.getSemanticType(),
+                line, line.getValue().trim()));
+        textChildrenInfo.add(new ListItemTextInfo(1, node.getSemanticType(),
+                secondLine, secondLine.getValue().trim()));
+        Set<ListInterval> set = ListLabelsUtils.getListItemsIntervals(textChildrenInfo);
+        if (set.size() != 1) {
+            return false;
+        }
+        ListInterval interval = set.iterator().next();
+        if (interval.getStart() != 0 || interval.getEnd() != 1) {
+            return false;
+        }
+        return true;
     }
 
     private void checkNeighborLists(INode node) {
@@ -259,6 +296,19 @@ public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INod
             return false;
         }
         return true;
+    }
+
+    private static void checkListItem(INode node) {
+        if (node.getInitialSemanticType() != SemanticType.LIST_ITEM) {
+            return;
+        }
+        if (isTwoListItemsOnTwoPages(node)) {
+            Long listId = StaticContainers.getNextID();
+            PDFList list = new PDFList(listId);
+            list.add(new ListItem(node.getBoundingBox().getBoundingBox(node.getPageNumber()), listId));
+            list.add(new ListItem(node.getBoundingBox().getBoundingBox(node.getPageNumber() + 1), listId));
+            StaticContainers.getListsCollection().add(list);
+        }
     }
 
     public WCAGProgressStatus getWCAGProgressStatus() {
