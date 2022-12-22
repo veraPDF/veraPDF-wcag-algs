@@ -39,7 +39,7 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 			if (!startNextStep(contrastRatioConsumer)) {
 				return;
 			}
-			document.getTree().forEach(contrastRatioConsumer);
+			contrastRatioConsumer.calculateContrast(document.getTree());
 		}
 
 		AccumulatedNodeConsumer semanticDetectionValidator = new AccumulatedNodeConsumer();

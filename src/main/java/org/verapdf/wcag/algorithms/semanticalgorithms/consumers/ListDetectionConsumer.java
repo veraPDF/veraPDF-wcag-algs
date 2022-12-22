@@ -302,13 +302,21 @@ public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INod
         if (node.getInitialSemanticType() != SemanticType.LIST_ITEM) {
             return;
         }
-        if (isTwoListItemsOnTwoPages(node)) {
-            Long listId = StaticContainers.getNextID();
-            PDFList list = new PDFList(listId);
-            list.add(new ListItem(node.getBoundingBox().getBoundingBox(node.getPageNumber()), listId));
-            list.add(new ListItem(node.getBoundingBox().getBoundingBox(node.getPageNumber() + 1), listId));
-            StaticContainers.getListsCollection().add(list);
+        if (isTwoListItemsOnTwoPages(node) && !isContainsSeveralPagesList(node)) {
+           ErrorCodes.addErrorCodeWithArguments(node, ErrorCodes.ERROR_CODE_1202);
         }
+    }
+
+    private static boolean isContainsSeveralPagesList(INode node) {
+        Iterator<INode> iterator = new DFSTreeNodeIterator(node);
+        while (iterator.hasNext()) {
+            INode child = iterator.next();
+            if (child.getInitialSemanticType() == SemanticType.LIST &&
+                    !Objects.equals(child.getPageNumber(), child.getLastPageNumber())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public WCAGProgressStatus getWCAGProgressStatus() {
