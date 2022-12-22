@@ -6,6 +6,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.verapdf.wcag.algorithms.entities.INode;
+import org.verapdf.wcag.algorithms.entities.ITree;
 import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextColumn;
@@ -47,6 +48,15 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		registry.registerServiceProvider(new JBIG2ImageReaderSpi());
 		this.processedTextChunks = 0;
 		this.textChunksNumber = StaticContainers.getTextChunksNumber();
+	}
+
+	public void calculateContrast(ITree tree) {
+		for (INode node : tree) {
+			accept(node);
+			if (StaticContainers.getWCAGValidationInfo().getAbortProcessing()) {
+				break;
+			}
+		}
 	}
 
 	@Override

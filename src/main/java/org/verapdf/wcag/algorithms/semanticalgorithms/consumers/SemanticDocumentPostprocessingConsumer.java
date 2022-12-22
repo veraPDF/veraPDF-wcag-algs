@@ -21,6 +21,7 @@ public class SemanticDocumentPostprocessingConsumer extends WCAGConsumer {
 	public void runPostprocessingChecks(ITree tree) {
 		updateBoundingBoxes(tree);
 		checkForTitle(tree);
+		setNotes(tree);
 		checkForRepeatedCharacters(tree);
 		setLowestDepthErrorFlag(tree);
 		updateIDs(tree);
@@ -85,6 +86,15 @@ public class SemanticDocumentPostprocessingConsumer extends WCAGConsumer {
 			return true;
 		}
 		return firstChar == secondChar;
+	}
+
+	private void setNotes(ITree tree) {
+		for (INode node : tree) {
+			INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
+			if (accumulatedNode != null && accumulatedNode.getSemanticType() == SemanticType.NOTE) {
+				node.setSemanticType(SemanticType.NOTE);
+			}
+		}
 	}
 
 	private boolean checkNode(INode node) {

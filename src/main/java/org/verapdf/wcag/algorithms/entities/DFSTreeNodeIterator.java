@@ -2,7 +2,7 @@ package org.verapdf.wcag.algorithms.entities;
 
 import java.util.Iterator;
 
-class DFSTreeNodeIterator implements Iterator<INode> {
+public class DFSTreeNodeIterator implements Iterator<INode> {
 
 	private final INode root;
 	private int childIndex;

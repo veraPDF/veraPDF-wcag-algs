@@ -162,12 +162,8 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 		INode accumulatedNode = part;
 		if (part != null && part.getColumns().stream().allMatch(TextColumn::hasOnlyOneBlock)) {
 			boolean isSpan  = SemanticType.SPAN.equals(node.getInitialSemanticType()) &&
-			                  (isLeafChild || node.getChildren().stream()
-			                                      .allMatch(child -> ((child instanceof SemanticSpan) ||
-			                                                          (child instanceof SemanticImageNode) ||
-			                                                          (child instanceof SemanticFigure) ||
-			                                                          child.getSemanticType() == SemanticType.SPAN ||
-			                                                          child.getSemanticType() == null)));
+					(isLeafChild || node.getChildren().stream()
+							.allMatch(AccumulatedNodeConsumer::isAppropriateSpanChild));
 			if (isSpan) {
 				semanticType = SemanticType.SPAN;
 				accumulatedNode = new SemanticSpan(part.getBoundingBox(), part.getColumns());
@@ -177,6 +173,12 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 			}
 		}
 		StaticContainers.getAccumulatedNodeMapper().updateNode(node, accumulatedNode, probability, semanticType);
+	}
+
+	private static boolean isAppropriateSpanChild(INode child) {
+		return (child instanceof SemanticSpan) || (child instanceof SemanticImageNode) ||
+				(child instanceof SemanticFigure) || child.getInitialSemanticType() == SemanticType.LINK ||
+				child.getSemanticType() == SemanticType.SPAN || child.getSemanticType() == null;
 	}
 
 	private SemanticPart buildPartFromNode(INode node) {

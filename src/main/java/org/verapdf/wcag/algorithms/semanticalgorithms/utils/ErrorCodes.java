@@ -33,6 +33,7 @@ public class ErrorCodes {
 	//List error codes
 	public static final int ERROR_CODE_1200 = 1200;//This list and neighbor list(s) should be tagged as one list
 	public static final int ERROR_CODE_1201 = 1201;//Only one List inside list
+	public static final int ERROR_CODE_1202 = 1202;//This list item should be tagged as several different list items
 
 	public static void addErrorCodeWithArguments(INode node, int errorCode, Object ... arguments) {
 		if (!node.getErrorCodes().contains(errorCode)) {
