@@ -152,7 +152,9 @@ public class ListUtils {
 			InfoChunk line1 = previousItemInfo.getListItemValue();
 			InfoChunk line2 = info.getListItemValue();
 			accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(children.get(info.getIndex()));
-			if (line1.getPageNumber() + 1 < line2.getPageNumber() || isContainsHeading(children.get(previousItemInfo.getIndex()))) {
+			if (line1.getPageNumber() + 1 < line2.getPageNumber() ||
+					isContainsHeading(children.get(previousItemInfo.getIndex())) ||
+					children.get(previousItemInfo.getIndex()).getInitialSemanticType() == SemanticType.NOTE) {
 				updateListIntervalCollection(listIntervalsCollection, listInterval, listItemInfos, numberOfColumns);
 				right = -Double.MAX_VALUE;
 				numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
