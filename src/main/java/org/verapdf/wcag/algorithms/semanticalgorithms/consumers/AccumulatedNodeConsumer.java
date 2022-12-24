@@ -153,6 +153,9 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 					accumulatedChild.getSemanticType() != SemanticType.NOTE) {
 				boundingBox.union(child.getBoundingBox());
 			}
+			if (accumulatedChild.getSemanticType() == SemanticType.NOTE) {
+				child.setSemanticType(SemanticType.NOTE);
+			}
 		}
 		if (part != null) {
 			part.setBoundingBox(boundingBox);
