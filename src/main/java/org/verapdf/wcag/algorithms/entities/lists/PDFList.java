@@ -9,6 +9,8 @@ import java.util.List;
 
 public class PDFList extends InfoChunk {
 
+    private final double LIST_ITEM_EPSILON = 0.2;
+
     private final List<ListItem> listItems;
 
     public PDFList(Table table) {
@@ -82,7 +84,8 @@ public class PDFList extends InfoChunk {
             return;
         }
         for (TableTokenRow tokenRow : secondCell.getContent()) {
-            if (tokenRow.getBoundingBox().getTopY() > firstCell.getBoundingBox().getTopY()) {
+            if (tokenRow.getBoundingBox().getTopY() > firstCell.getBoundingBox().getTopY() +
+                    LIST_ITEM_EPSILON * firstCell.getBoundingBox().getHeight()) {
                 previousListItem.getBody().add(tokenRow);
             }
         }
