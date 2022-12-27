@@ -32,6 +32,7 @@ public class SemanticTypeMapper {
         map.put(SemanticType.TABLE_CELL.getValue(), SemanticType.TABLE_CELL);
         map.put(SemanticType.CAPTION.getValue(), SemanticType.CAPTION);
         map.put(SemanticType.TITLE.getValue(), SemanticType.TITLE);
+        map.put(SemanticType.NOTE.getValue(), SemanticType.NOTE);
         map.put(SemanticType.BLOCK_QUOTE.getValue(), SemanticType.BLOCK_QUOTE);
         map.put(SemanticType.PART.getValue(), SemanticType.PART);
     }
