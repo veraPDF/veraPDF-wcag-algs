@@ -22,6 +22,7 @@ import static org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils.TA
 public class ListUtils {
 
 	public static final double LIST_LABEL_HEIGHT_EPSILON = 2.5;
+	public static final double ONE_COLUMN_EPSILON = 0.33;
 
 	private static final Set<SemanticType> listSemanticTypes = new HashSet<>(Arrays.asList(
 			SemanticType.LIST, SemanticType.LIST_ITEM,
@@ -220,6 +221,6 @@ public class ListUtils {
 	}
 
 	private static boolean isOneColumn(InfoChunk line1, InfoChunk line2) {
-		return NodeUtils.areCloseNumbers(line1.getLeftX(), line2.getLeftX(), line1.getBoundingBox().getHeight() / 2);
+		return NodeUtils.areCloseNumbers(line1.getLeftX(), line2.getLeftX(), ONE_COLUMN_EPSILON * line1.getBoundingBox().getHeight());
 	}
 }

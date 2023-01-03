@@ -23,6 +23,11 @@ public class ListTests {
         return Stream.of(
                 Arguments.of("list-with-wrong-order-text-chunks.json", new int[] {}, true, true, new int[][] {{9, 0, 1}}),
                 Arguments.of("7NonTable.json", new int[] {}, true, true, new int[][] {{6, 0, 1}}),
+                Arguments.of("word-pdf-accessibility-guide-pages-48-50.json", new int[]{3}, true, true,
+                        new int[][] {{4, 0, 2}, {1, 0, 1}, {2, 0, 1}}),
+                Arguments.of("word-pdf-accessibility-guide-pages-150-151.json", new int[]{3}, true, true,
+                        new int[][] {{2, 0, 1}, {5, 0, 1}, {3, 0, 1}, {4, 0, 2}, {3, 0, 1}}),
+                Arguments.of("Word_EN_20210201-page-7.json", new int[]{}, false, false, new int[][] {}),
                 Arguments.of("list-with-line-arts-labels.json", new int[] {}, true, true, new int[][] {{7, 0, 1}}),
                 Arguments.of("list_start_with_Figure_pass.json", new int[] {}, true, true, new int[][] {{5, 0, 1}}),
                 Arguments.of("test-document-13.json", new int[] {}, true, true, new int[][] {}),

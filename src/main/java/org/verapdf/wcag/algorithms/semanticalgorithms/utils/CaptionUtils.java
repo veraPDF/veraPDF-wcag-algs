@@ -34,11 +34,23 @@ public class CaptionUtils {
 			return 0.0;
 		}
 		SemanticTextNode textNode = (SemanticTextNode) accumulatedNode;
+		double captionContentProbability = captionContentProbability(textNode, SemanticType.FIGURE.getValue());
+		double linesNumberCaptionProbability = getLinesNumberCaptionProbability(textNode);
+
 		double captionProbability = captionVerticalProbability(textNode, imageNode.getBoundingBox());
 		captionProbability *= captionHorizontalProbability(textNode, imageNode.getBoundingBox());
-		captionProbability *= getLinesNumberCaptionProbability(textNode);
-		captionProbability += captionContentProbability(textNode, SemanticType.FIGURE.getValue());
-		return Math.min(captionProbability, 1.0);
+		captionProbability *= linesNumberCaptionProbability;
+		captionProbability += captionContentProbability;
+
+		double sideCaptionProbability = 0.0;
+		if (captionContentProbability > NodeUtils.EPSILON) {
+			sideCaptionProbability = sideCaptionHorizontalProbability(textNode, imageNode.getBoundingBox());
+			sideCaptionProbability *= sideCaptionVerticalProbability(textNode, imageNode.getBoundingBox());
+			sideCaptionProbability *= sideCaptionSpacingProbability(textNode, imageNode.getBoundingBox());
+			sideCaptionProbability *= linesNumberCaptionProbability;
+			sideCaptionProbability += captionContentProbability;
+		}
+		return Math.min(Math.max(captionProbability, sideCaptionProbability), 1.0);
 	}
 
 	public static double tableCaptionProbability(INode node, BoundingBox tableBoundingBox) {

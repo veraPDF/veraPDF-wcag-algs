@@ -24,6 +24,7 @@ public class ClusterTableTests {
     static Stream<Arguments> clusterTableDetectionTestParams() {
         return Stream.of(
                 Arguments.of("making-PDF-accessible-Acrobat-page-95.json", new int[][] {{3,25}}, true, true),
+                Arguments.of("Word_EN_20210201-page-43.json", new int[][] {}, false, false),
                 Arguments.of("Prevent-Document-Frustration-JAWS-and-PDFs.json", new int[][] {}, false, false),
                 Arguments.of("testdocument10.json", new int[][] {{2,15},{2,12},{2,8},{2,9}}, true, true),
                 Arguments.of("table-word.json", new int[][] {/*{4, 4}*/}, true, true),

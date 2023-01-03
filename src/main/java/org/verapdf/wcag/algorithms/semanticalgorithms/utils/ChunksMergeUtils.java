@@ -24,6 +24,7 @@ public class ChunksMergeUtils {
 
 	private static final double TO_LINE_PROBABILITY_THRESHOLD = 0.75;
 	private static final double[] NORMAL_LINE_PROBABILITY_PARAMS = {2, 0.033};
+	private static final double[] NORMAL_LINE_PROBABILITY_PARAMS_2 = {0.5, 0.033};
 	private static final double[] SUPERSCRIPT_PROBABILITY_PARAMS = {0.69438, 1.70575, 1.43819};
 	private static final double[] SUBSCRIPT_PROBABILITY_PARAMS = {0.71932, 1.0483, 0.37555};
 	private static final double[] COLUMNS_PROBABILITY_PARAMS = {0.75, 0.75};
@@ -32,7 +33,7 @@ public class ChunksMergeUtils {
 	private static final double SUPERSCRIPT_FONTSIZE_THRESHOLD = 0.1;
 	private static final double SUBSCRIPT_BASELINE_THRESHOLD = 0.08;
 	private static final double SUBSCRIPT_FONTSIZE_THRESHOLD = 0.1;
-	private static final double[] FOOTNOTE_PROBABILITY_PARAMS = {0.35, 0.5, 0.15, 0.4, 0.55, 0.2, 0.05};
+	private static final double[] FOOTNOTE_PROBABILITY_PARAMS = {0.35, 0.5, 0.15, 0.4, 0.55, 0.08, 0.05};
 
 	private ChunksMergeUtils() {
 	}
@@ -168,9 +169,11 @@ public class ChunksMergeUtils {
 	}
 
 	public static double getNormalTextProbabilitySecondChunk(TextChunk x, TextChunk y, double baseLineDiff, double fontSizeDiff) {
-		return mergeByCharSpacingProbability(x, y) * mergeNormalLineProbability(Math.abs(baseLineDiff),
-		                                                                        Math.abs(fontSizeDiff),
-		                                                                        NORMAL_LINE_PROBABILITY_PARAMS);
+		double mergeNormalLineProbability = Math.abs(fontSizeDiff) < Math.min(SUPERSCRIPT_FONTSIZE_THRESHOLD,
+				SUBSCRIPT_FONTSIZE_THRESHOLD) ? mergeNormalLineProbability(Math.abs(baseLineDiff), Math.abs(fontSizeDiff),
+				NORMAL_LINE_PROBABILITY_PARAMS_2) : mergeNormalLineProbability(Math.abs(baseLineDiff), Math.abs(fontSizeDiff),
+				NORMAL_LINE_PROBABILITY_PARAMS);
+		return mergeByCharSpacingProbability(x, y) * mergeNormalLineProbability;
 	}
 
 	public static double getSuperscriptProbabilitySecondChunk(TextChunk x, TextChunk y, double baseLineDiff, double fontSizeDiff) {

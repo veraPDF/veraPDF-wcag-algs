@@ -37,6 +37,7 @@ public class TableCheckingTests {
 
     static Stream<Arguments> tableCheckingTestParams() {
         return Stream.of(
+                Arguments.of("word-pdf-accessibility-guide-page-4.json",new Integer[][]{}),
                 Arguments.of("PDF-UA-in-a-Nutshell.json",new Integer[][]{{ErrorCodes.ERROR_CODE_1100,
                         ErrorCodes.ERROR_CODE_1102}, {ErrorCodes.ERROR_CODE_1102}}),
                 Arguments.of("7.2-t15-pass-a.json",new Integer[][]{}),
