@@ -30,6 +30,10 @@ public class TableBordersTests {
         return Stream.of(
                 Arguments.of("test-document-1", new int[][] {{},{},{154},{},{},{}}, new int[][] {{},{},{10},{},{},{}},
                         new int[][] {{},{},{4},{},{},{}}, true, true),
+                Arguments.of("TLC2-Tables", new int[][] {{},{11,11,11,6,6,6,5,8,11,11},{279,44,16,17},{15,22,15},
+                                {61,49,49,4,36}},
+                        new int[][] {{},{2,2,2,1,1,1,1,1,2,2},{3,3},{3,1,3},{12,12,12,5}},
+                        new int[][] {{},{3,3,3,3,3,3,2,2,3,3},{3,3},{3,4,3},{3,2,2,5}}, false, false),
                 Arguments.of("af_css_js_sort_table", new int[][] {{72}}, new int[][] {{14}},
                         new int[][] {{3}}, false, true),
                 Arguments.of("pdfmaker", new int[][] {{55}}, new int[][] {{4}}, new int[][] {{4}}, true, true),
