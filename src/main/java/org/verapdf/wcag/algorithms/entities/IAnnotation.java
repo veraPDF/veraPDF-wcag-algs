@@ -4,4 +4,6 @@ public interface IAnnotation extends INode {
 	String getAnnotationType();
 
 	Integer getDestinationPageNumber();
+
+	Integer getDestinationObjectKeyNumber();
 }

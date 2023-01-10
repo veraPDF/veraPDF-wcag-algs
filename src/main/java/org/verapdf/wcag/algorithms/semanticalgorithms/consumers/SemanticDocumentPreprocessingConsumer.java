@@ -68,6 +68,7 @@ public class SemanticDocumentPreprocessingConsumer extends WCAGConsumer implemen
         if (node instanceof SemanticSpan) {
             checkUnderlinedText(((SemanticSpan)node));
         }
+        StaticContainers.getObjectKeyMapper().put(node.getObjectKeyNumber(), node);
         if (node.getChildren().isEmpty()) {
             return;
         }

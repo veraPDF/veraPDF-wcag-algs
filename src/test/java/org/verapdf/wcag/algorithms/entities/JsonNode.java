@@ -16,6 +16,7 @@ import java.util.Objects;
 public class JsonNode {
 
 	private String type;
+	private Integer objectKeyNumber;
 	private int pageNumber;
 	private double[] boundingBox;
 	private List<JsonNode> children;
@@ -28,6 +29,14 @@ public class JsonNode {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public Integer getObjectKeyNumber() {
+		return objectKeyNumber;
+	}
+
+	public void setObjectKeyNumber(Integer objectKeyNumber) {
+		this.objectKeyNumber = objectKeyNumber;
 	}
 
 	public int getPageNumber() {
@@ -80,6 +89,7 @@ public class JsonNode {
 		}
 		JsonNode jsonNode = (JsonNode) o;
 		return pageNumber == jsonNode.pageNumber &&
+		       Objects.equals(objectKeyNumber, jsonNode.objectKeyNumber) &&
 		       type.equals(jsonNode.type) &&
 		       Arrays.equals(boundingBox, jsonNode.boundingBox) &&
 		       children.equals(jsonNode.children) &&
@@ -89,7 +99,7 @@ public class JsonNode {
 
 	@Override
 	public int hashCode() {
-		int result = Objects.hash(type, pageNumber, children, pages, attributes);
+		int result = Objects.hash(type, objectKeyNumber, pageNumber, children, pages, attributes);
 		result = 31 * result + Arrays.hashCode(boundingBox);
 		return result;
 	}
@@ -98,6 +108,7 @@ public class JsonNode {
 	public String toString() {
 		return "JsonNode{" +
 		       "type='" + type + '\'' +
+		       ", objectKeyNumber=" + objectKeyNumber +
 		       ", pageNumber=" + pageNumber +
 		       ", boundingBox=" + Arrays.toString(boundingBox) +
 		       ", children=" + children +

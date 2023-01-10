@@ -25,6 +25,7 @@ import org.verapdf.wcag.algorithms.entities.RepeatedCharacters;
 import org.verapdf.wcag.algorithms.entities.content.LinesCollection;
 import org.verapdf.wcag.algorithms.entities.lists.PDFList;
 import org.verapdf.wcag.algorithms.entities.maps.AccumulatedNodeMapper;
+import org.verapdf.wcag.algorithms.entities.maps.ObjectKeyMapper;
 import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.IdMapper;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.WCAGValidationInfo;
@@ -45,6 +46,8 @@ public class StaticContainers {
 
 	private static final ThreadLocal<AccumulatedNodeMapper> accumulatedNodeMapper = new ThreadLocal<>();
 
+	private static final ThreadLocal<ObjectKeyMapper> objectKeyMapper = new ThreadLocal<>();
+
 	private static final ThreadLocal<TableBordersCollection> tableBordersCollection = new ThreadLocal<>();
 
 	private static final ThreadLocal<List<PDFList>> listsCollection = new ThreadLocal<>();
@@ -64,6 +67,7 @@ public class StaticContainers {
 	public static void updateContainers(IDocument document) {
 		StaticContainers.document.set(document);
 		StaticContainers.accumulatedNodeMapper.set(new AccumulatedNodeMapper());
+		StaticContainers.objectKeyMapper.set(new ObjectKeyMapper());
 		StaticContainers.tableBordersCollection.set(new TableBordersCollection());
 		StaticContainers.linesCollection.set(new LinesCollection());
 		StaticContainers.repeatedCharacters.set(new ArrayList<>());
@@ -96,6 +100,14 @@ public class StaticContainers {
 
 	public static void setAccumulatedNodeMapper(AccumulatedNodeMapper accumulatedNodeMapper) {
 		StaticContainers.accumulatedNodeMapper.set(accumulatedNodeMapper);
+	}
+
+	public static ObjectKeyMapper getObjectKeyMapper() {
+		return objectKeyMapper.get();
+	}
+
+	public static void setObjectKeyMapper(ObjectKeyMapper objectKeyMapper) {
+		StaticContainers.objectKeyMapper.set(objectKeyMapper);
 	}
 
 	public static TableBordersCollection getTableBordersCollection() {
