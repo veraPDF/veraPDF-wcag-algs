@@ -1,11 +1,13 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.tocs;
 
+import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.TOCDetectionConsumer;
 
 public class TOCIInfo {
 
     private String text;
     private Integer destinationPageNumber;
+    private INode destinationStructElem;
     private Integer pageNumberLabel;
     private double right;
     private double maxTextSize;
@@ -52,5 +54,13 @@ public class TOCIInfo {
 
     public double getMaxTextSize() {
         return maxTextSize;
+    }
+
+    public INode getDestinationStructElem() {
+        return destinationStructElem;
+    }
+
+    public void setDestinationStructElem(INode destinationStructElem) {
+        this.destinationStructElem = destinationStructElem;
     }
 }

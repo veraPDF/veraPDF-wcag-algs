@@ -49,7 +49,7 @@ public class JsonToPdfTree {
 
 	private static AnnotationNode getAnnotationNode(JsonAnnotationNode jsonNode) {
 		return new AnnotationNode(jsonNode.getAnnotationType(), new BoundingBox(jsonNode.getBoundingBox()),
-		                          jsonNode.getDestinationPageNumber());
+		                          jsonNode.getDestinationPageNumber(), jsonNode.getDestinationObjectKeyNumber());
 	}
 
 	private static LineChunk getLineChunk(JsonLineChunk jsonNode) {
@@ -98,7 +98,7 @@ public class JsonToPdfTree {
 		} else if (jsonNode instanceof JsonAnnotationNode) {
 			node = getAnnotationNode((JsonAnnotationNode) jsonNode);
 		} else {
-			node = new SemanticNode(SemanticTypeMapper.getSemanticType(jsonNode.getType()));
+			node = new SemanticNode(SemanticTypeMapper.getSemanticType(jsonNode.getType()), jsonNode.getObjectKeyNumber());
 		}
 
 		JsonAttributes attributes = jsonNode.getAttributes();

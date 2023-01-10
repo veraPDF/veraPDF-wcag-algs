@@ -163,7 +163,7 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
 //            child.getErrorCodes().add(ErrorCodes.ERROR_CODE_1004);
 //            return false;
 //        }
-        if (tociInfo.getDestinationPageNumber() == null) {
+        if (tociInfo.getDestinationPageNumber() == null && tociInfo.getDestinationStructElem() == null) {
             ErrorCodes.addErrorCodeWithArguments(child, ErrorCodes.ERROR_CODE_1001);
             return false;
         }
@@ -208,7 +208,8 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
             if (tociInfo.getText() == null || tociInfo.getText().isEmpty()) {
                 continue;
             }
-            if (tociInfo.getDestinationPageNumber() == null && (tociInfo.getPageNumberLabel() == null ||
+            if (tociInfo.getDestinationPageNumber() == null && tociInfo.getDestinationStructElem() == null &&
+                    (tociInfo.getPageNumberLabel() == null ||
                     tociInfo.getPageNumberLabel() > StaticContainers.getDocument().getNumberOfPages())) {
                 continue;
             }
@@ -227,7 +228,8 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
         for (int i = tociIndexes.size() - 1; i >= 0; i--) {
             INode child = children.get(tociIndexes.get(i));
             if (child.getErrorCodes().contains(ErrorCodes.ERROR_CODE_1007) ||
-                    (infos.get(tociIndexes.get(i)).getDestinationPageNumber() == null &&
+                    ((infos.get(tociIndexes.get(i)).getDestinationPageNumber() == null &&
+                            infos.get(tociIndexes.get(i)).getDestinationStructElem() == null) &&
                     child.getErrorCodes().contains(ErrorCodes.ERROR_CODE_1010))) {
                 tociIndexes.remove(i);
             }
@@ -320,7 +322,12 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
         for (int index : indexes) {
             currentNode = node != null ? node.getChildren().get(index) : currentNode;
             TOCIInfo info = infos.get(index);
-            if (info.getDestinationPageNumber() != null && findText(info.getTextForSearching(), info.getDestinationPageNumber())) {
+            if (info.getDestinationStructElem() != null && info.getDestinationStructElem().getPageNumber() != null &&
+                    findText(info.getTextForSearching(), info.getDestinationStructElem(), info.getDestinationStructElem().getPageNumber())) {
+                newIndexes.add(index);
+                info.setDestinationPageNumber(info.getDestinationStructElem().getPageNumber());
+                findHeading(info.getDestinationStructElem(), info.getTextForSearching(), info.getDestinationPageNumber());
+            } else if (info.getDestinationPageNumber() != null && findText(info.getTextForSearching(), info.getDestinationPageNumber())) {
                 newIndexes.add(index);
                 findHeading(getNode(info.getDestinationPageNumber()), info.getTextForSearching(), info.getDestinationPageNumber());
             }
@@ -416,7 +423,8 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
 
     private TOCIInfo getTOCIInfo(INode node) {
         TOCIInfo info = new TOCIInfo();
-        info.setDestinationPageNumber(getDestinationPageNumber(node));
+        info.setDestinationPageNumber(getDestinationNumber(node, true));
+        info.setDestinationStructElem(StaticContainers.getObjectKeyMapper().get(getDestinationNumber(node, false)));
         info.setRight(node.getRightX());
         List<TextChunk> textChunks = getTextChunks(node);
         info.setMaxTextSize(textChunks.stream().map(TextInfoChunk::getFontSize).max(Double::compare).orElse(0.0));
@@ -447,11 +455,12 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
         return info;
     }
 
-    private Integer getDestinationPageNumber(INode node) {
+    private static Integer getDestinationNumber(INode node, boolean usePageDestination) {
         List<IAnnotation> linkAnnotations = getInheritorAnnotations(node).stream().
                 filter(x -> LINK.equals(x.getAnnotationType())).collect(Collectors.toList());
         for (IAnnotation goToAnnotation : linkAnnotations) {
-            Integer number = goToAnnotation.getDestinationPageNumber();
+            Integer number = usePageDestination ? goToAnnotation.getDestinationPageNumber() :
+                    goToAnnotation.getDestinationObjectKeyNumber();
             if (number != null) {
                 BoundingBox annotationBoundingBox = new BoundingBox(goToAnnotation.getBoundingBox());
                 if (annotationBoundingBox.getPageNumber() == null) {
@@ -548,7 +557,11 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
         if (currentNode == null) {
             return false;
         }
-        String textValue = getTextChunks(currentNode, pageNumber).stream()
+        return findText(text, currentNode, pageNumber);
+    }
+
+    private boolean findText(String text, INode node, int pageNumber) {
+        String textValue = getTextChunks(node, pageNumber).stream()
                 .map(TextChunk::getValue)
                 .collect(Collectors.joining("")).replaceAll(NON_CONTENT_REGEX, "").toUpperCase();
         return textValue.contains(text);

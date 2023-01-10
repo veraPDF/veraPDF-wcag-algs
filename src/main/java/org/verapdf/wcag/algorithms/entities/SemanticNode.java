@@ -12,6 +12,7 @@ public class SemanticNode extends BaseObject implements INode {
 	private SemanticType semanticType;
 
 	private Integer index = null;
+	private Integer objectKeyNumber = null;
 	private INode parent = null;
 	private final List<INode> children;
 	private final SemanticType initialSemanticType;
@@ -26,14 +27,20 @@ public class SemanticNode extends BaseObject implements INode {
 	}
 
 	public SemanticNode(SemanticType initialSemanticType) {
-		this(initialSemanticType, new LinkedList<>(), new LinkedList<>());
+		this(initialSemanticType, null);
 	}
 
-	public SemanticNode(SemanticType initialSemanticType, List<Integer> errorCodes, List<List<Object>> errorArguments) {
+	public SemanticNode(SemanticType initialSemanticType, Integer objectKeyNumber) {
+		this(initialSemanticType, new LinkedList<>(), new LinkedList<>(), objectKeyNumber);
+	}
+
+	public SemanticNode(SemanticType initialSemanticType, List<Integer> errorCodes, List<List<Object>> errorArguments,
+						Integer objectKeyNumber) {
 		super(new BoundingBox(), errorCodes, errorArguments);
 		nodeInfo = new NodeInfo();
 		this.children = new ArrayList<>();
 		this.initialSemanticType = initialSemanticType;
+		this.objectKeyNumber = objectKeyNumber;
 	}
 
 	public SemanticNode(BoundingBox bbox, SemanticType initialSemanticType, SemanticType semanticType) {
@@ -105,6 +112,11 @@ public class SemanticNode extends BaseObject implements INode {
 	@Override
 	public void setIndex(Integer index) {
 		this.index = index;
+	}
+
+	@Override
+	public Integer getObjectKeyNumber() {
+		return objectKeyNumber;
 	}
 
 	@Override

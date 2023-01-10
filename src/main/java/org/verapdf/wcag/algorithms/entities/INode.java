@@ -55,4 +55,6 @@ public interface INode extends IObject {
 	public IAttributesDictionary getAttributesDictionary();
 
 	public void setAttributesDictionary(IAttributesDictionary AttributesDictionary);
+
+	public Integer getObjectKeyNumber();
 }
