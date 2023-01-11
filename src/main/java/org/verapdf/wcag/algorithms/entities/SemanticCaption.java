@@ -42,12 +42,4 @@ public class SemanticCaption extends SemanticTextNode {
         this(initialSemanticType);
         add(new TextLine(textChunk));
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!super.equals(o)) {
-            return false;
-        }
-        return (o instanceof SemanticCaption);
-    }
 }

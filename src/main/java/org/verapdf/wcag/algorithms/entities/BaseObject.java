@@ -5,6 +5,7 @@ import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class BaseObject implements IObject {
 
@@ -115,5 +116,22 @@ public class BaseObject implements IObject {
 	@Override
 	public double getCenterY() {
 		return getBoundingBox().getCenterY();
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(getBoundingBox());
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		BaseObject that = (BaseObject) o;
+		return that.getBoundingBox().equals(getBoundingBox());
 	}
 }

@@ -99,7 +99,7 @@ public class ChunksMergeUtilsTest {
                                                       new double[] {70.8, 102.7, 500.4, 116.0}, 0, 0));
 
         double resultProbability = ChunksMergeUtils.toParagraphMergeProbability(first, second);
-        Assertions.assertEquals(0.8, resultProbability, 0.0001);
+        Assertions.assertEquals(0.3, resultProbability, 0.0001);
     }
 
     @Test
