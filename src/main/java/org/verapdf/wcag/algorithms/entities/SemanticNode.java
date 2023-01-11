@@ -202,7 +202,7 @@ public class SemanticNode extends BaseObject implements INode {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(getBoundingBox());
+		return Objects.hash(getBoundingBox(), objectKeyNumber, index, initialSemanticType, depth);
 	}
 
 	@Override
@@ -210,12 +210,15 @@ public class SemanticNode extends BaseObject implements INode {
 		if (this == o) {
 			return true;
 		}
-		if (o == null || getClass() != o.getClass()) {
+		if (!super.equals(o)) {
 			return false;
 		}
-
 		SemanticNode that = (SemanticNode) o;
-		return that.getBoundingBox().equals(getBoundingBox());
+		return Objects.equals(objectKeyNumber, that.objectKeyNumber) &&
+				Objects.equals(index, that.index) &&
+				Objects.equals(parent, that.parent) &&
+				Objects.equals(initialSemanticType, that.initialSemanticType) &&
+				depth == that.depth;
 	}
 
 	@Override
