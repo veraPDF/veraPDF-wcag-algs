@@ -1,11 +1,11 @@
 package org.verapdf.wcag.algorithms.entities.content;
 
+import org.verapdf.wcag.algorithms.entities.INode;
+import org.verapdf.wcag.algorithms.entities.SemanticFigure;
+import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.TreeSet;
-import java.util.SortedSet;
+import java.util.*;
 
 public class LinesCollection {
 	private final Map<Integer, SortedSet<LineChunk>> horizontalLines;
@@ -21,10 +21,44 @@ public class LinesCollection {
 	public SortedSet<LineChunk> getHorizontalLines(Integer pageNumber) {
 		SortedSet<LineChunk> horizontalLines = this.horizontalLines.get(pageNumber);
 		if (horizontalLines == null) {
-			parseLines(pageNumber);
+			parseLines();
 			horizontalLines = this.horizontalLines.get(pageNumber);
+			if (horizontalLines == null) {
+				this.horizontalLines.put(pageNumber, new TreeSet<>(new LineChunk.HorizontalLineComparator()));
+				horizontalLines = this.horizontalLines.get(pageNumber);
+			}
 		}
 		return horizontalLines;
+	}
+
+	private void parseLines() {
+		for (int pageNumber = 0; pageNumber < StaticContainers.getDocument().getNumberOfPages(); pageNumber++) {
+			parseLines(pageNumber);
+		}
+		parseLines(StaticContainers.getDocument().getTree().getRoot());
+	}
+
+	private void parseLines(INode node) {
+		for (INode child : node.getChildren()) {
+			if (child.getInitialSemanticType() != SemanticType.FIGURE) {
+				parseLines(child);
+			}
+			if (child instanceof SemanticFigure) {
+				LineArtChunk lineArt = ((SemanticFigure)child).getLineArt();
+				if (lineArt == null) {
+					continue;
+				}
+				for (LineChunk lineChunk : lineArt.getLineChunks()) {
+					if (lineChunk.isHorizontalLine()) {
+						this.horizontalLines.get(lineChunk.getPageNumber()).add(lineChunk);
+					} else if (lineChunk.isVerticalLine()) {
+						this.verticalLines.get(lineChunk.getPageNumber()).add(lineChunk);
+					} else if (lineChunk.isSquare()) {
+						this.squares.get(lineChunk.getPageNumber()).add(lineChunk);
+					}
+				}
+			}
+		}
 	}
 
 	private void parseLines(Integer pageNumber) {
@@ -51,8 +85,12 @@ public class LinesCollection {
 	public SortedSet<LineChunk> getVerticalLines(Integer pageNumber) {
 		SortedSet<LineChunk> verticalLines = this.verticalLines.get(pageNumber);
 		if (verticalLines == null) {
-			parseLines(pageNumber);
+			parseLines();
 			verticalLines = this.verticalLines.get(pageNumber);
+			if (verticalLines == null) {
+				this.verticalLines.put(pageNumber, new TreeSet<>(new LineChunk.VerticalLineComparator()));
+				verticalLines = this.verticalLines.get(pageNumber);
+			}
 		}
 		return verticalLines;
 	}
@@ -60,8 +98,12 @@ public class LinesCollection {
 	public SortedSet<LineChunk> getSquares(Integer pageNumber) {
 		SortedSet<LineChunk> squares = this.squares.get(pageNumber);
 		if (squares == null) {
-			parseLines(pageNumber);
+			parseLines();
 			squares = this.squares.get(pageNumber);
+			if (squares == null) {
+				this.squares.put(pageNumber, new TreeSet<>(new LineChunk.VerticalLineComparator()));
+				squares = this.squares.get(pageNumber);
+			}
 		}
 		return squares;
 	}

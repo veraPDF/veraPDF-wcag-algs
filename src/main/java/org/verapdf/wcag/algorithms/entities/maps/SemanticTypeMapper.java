@@ -13,6 +13,7 @@ public class SemanticTypeMapper {
         map.put(SemanticType.PARAGRAPH.getValue(), SemanticType.PARAGRAPH);
         map.put(SemanticType.SPAN.getValue(), SemanticType.SPAN);
         map.put(SemanticType.FORM.getValue(), SemanticType.FORM);
+        map.put(SemanticType.FIGURE.getValue(), SemanticType.FIGURE);
         map.put(SemanticType.LINK.getValue(), SemanticType.LINK);
         map.put(SemanticType.ANNOT.getValue(), SemanticType.ANNOT);
         map.put(SemanticType.HEADING.getValue(), SemanticType.HEADING);

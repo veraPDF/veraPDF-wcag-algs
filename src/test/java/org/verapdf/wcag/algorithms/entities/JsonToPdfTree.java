@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
+import java.util.List;
 
 public class JsonToPdfTree {
 
@@ -44,7 +46,13 @@ public class JsonToPdfTree {
 	}
 
 	private static LineArtChunk getLineArtChunk(JsonLineArtChunk jsonNode) {
-		return new LineArtChunk(new BoundingBox(jsonNode.getPageNumber(), jsonNode.getBoundingBox()));
+		List<LineChunk> lineChunks = new LinkedList<>();
+		if (jsonNode.getLines() != null) {
+			for (JsonLineChunk lineChunk : jsonNode.getLines()) {
+				lineChunks.add(getLineChunk(lineChunk));
+			}
+		}
+		return new LineArtChunk(new BoundingBox(jsonNode.getPageNumber(), jsonNode.getBoundingBox()), lineChunks);
 	}
 
 	private static AnnotationNode getAnnotationNode(JsonAnnotationNode jsonNode) {
