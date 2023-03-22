@@ -56,9 +56,17 @@ public class SemanticDocumentPostprocessingConsumer extends WCAGConsumer {
 
 	public void checkForRepeatedCharacters(ITree tree) {
 		List<TextChunk> chunks = new ArrayList<>();
-		for (INode node : tree) {
-			if (node instanceof SemanticSpan) {
-				for (TextColumn textColumn : ((SemanticSpan) node).getColumns()) {
+		checkForRepeatedCharacters(tree.getRoot(), chunks);
+		checkRepeatedAndAdd(chunks);
+	}
+
+	public void checkForRepeatedCharacters(INode node, List<TextChunk> chunks) {
+		for (INode child : node.getChildren()) {
+			if (child.getInitialSemanticType() != SemanticType.FIGURE) {
+				checkForRepeatedCharacters(child, chunks);
+			}
+			if (child instanceof SemanticSpan) {
+				for (TextColumn textColumn : ((SemanticSpan) child).getColumns()) {
 					for (TextLine textLine : textColumn.getLines()) {
 						for (TextChunk textChunk : textLine.getTextChunks()) {
 							if (textChunk.getValue().isEmpty()) {
@@ -68,14 +76,14 @@ public class SemanticDocumentPostprocessingConsumer extends WCAGConsumer {
 								chunks.add(textChunk);
 							} else {
 								checkRepeatedAndAdd(chunks);
-								chunks = new ArrayList<>(Collections.singletonList(textChunk));
+								chunks.clear();
+								chunks.add(textChunk);
 							}
 						}
 					}
 				}
 			}
 		}
-		checkRepeatedAndAdd(chunks);
 	}
 
 	private boolean areChunksChained(String previousValue, TextChunk secondTextChunk) {
