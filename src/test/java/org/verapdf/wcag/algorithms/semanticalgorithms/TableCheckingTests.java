@@ -62,6 +62,9 @@ public class TableCheckingTests {
         AccumulatedNodeConsumer semanticDetectionValidator = new AccumulatedNodeConsumer();
         tree.forEach(semanticDetectionValidator);
 
+        HeadingCaptionConsumer headingCaptionValidator = new HeadingCaptionConsumer();
+        tree.forEach(headingCaptionValidator);
+
         TableBorderConsumer tableBorderConsumer = new TableBorderConsumer();
         tableBorderConsumer.recognizeTables(tree);
 

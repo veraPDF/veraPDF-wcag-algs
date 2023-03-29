@@ -35,6 +35,9 @@ public class ErrorCodes {
 	public static final int ERROR_CODE_1201 = 1201;//Only one List inside list
 	public static final int ERROR_CODE_1202 = 1202;//This list item should be tagged as several different list items
 
+	//heading error codes
+	public static final int ERROR_CODE_1300 = 1300;//This node is the single child with content
+
 	public static void addErrorCodeWithArguments(INode node, int errorCode, Object ... arguments) {
 		if (!node.getErrorCodes().contains(errorCode)) {
 			node.getErrorCodes().add(errorCode);

@@ -5,6 +5,7 @@ public enum WCAGProgressStatus {
 	DOCUMENT_POSTPROCESSING("Document postprocessing"),
 	LINES_PREPROCESSING("Lines preprocessing"),
 	PARAGRAPH_DETECTION("Paragraph detection"),
+	HEADING_AND_CAPTION_DETECTION("Heading and Caption detection"),
 	CONTRAST_DETECTION("Contrast detection"),
 	LIST_DETECTION("List detection"),
 	TOC_DETECTION("Table of contents detection"),

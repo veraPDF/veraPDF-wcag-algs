@@ -18,48 +18,22 @@ public class NodeUtils {
 	private static final double[] HEADING_PROBABILITY_PARAMS = {0.3, 0.0291, 0.15, 0.27, 0.1, 0.25, 0.2, 0.5, 0.05, 0.1};
 	private static final double[] HEADING_PROBABILITY_PARAMS_SAME_FONT = {0.55, 0.15, 0.55, 0.4, 0.5, 0.15};
 	private static final double[] HEADING_PROBABILITY_PARAMS_DIFF_FONT = {0.44, 0.1, 0.4, 0.23, 0.35, 0.1};
-	private static final double[] HEADING_EPSILONS = {0.05, 0.08};
+	public static final double[] HEADING_EPSILONS = {0.05, 0.08};
 
 	public static final double BACKGROUND_FIRST_COLOR_EPSILON = 0.03;
 	public static final double BACKGROUND_SECOND_COLOR_EPSILON = BACKGROUND_FIRST_COLOR_EPSILON * 255;
 	public static final double MIN_GOOD_HEADING_PROBABILITY = 0.9;
 
-	public static double headingProbability(INode node, INode previousNode, INode nextNode, INode nextNextNode,
-	                                        INode initialNode) {
-		if (node == null) {
-			return 0.0;
-		}
-		if (!(node instanceof SemanticTextNode)) {
-			return 0.0;
-		}
-		SemanticTextNode textNode = (SemanticTextNode) node;
-		if (textNode.isEmpty()) {
-			return 0.0;
-		}
+	public static double headingProbability(SemanticTextNode textNode, SemanticTextNode previousNode, SemanticTextNode nextNode,
+											INode initialNode) {
 		double headingProbability = 0.0;
-		if (previousNode == null || previousNode instanceof SemanticHeading) {
-			if (nextNode != null) {
-				double probabilityNextNode = headingProbability(textNode, nextNode);
-				if (areCloseNumbers(probabilityNextNode, 0.0) && nextNextNode != null) {
-					headingProbability += headingProbability(textNode, nextNextNode);
-				} else {
-					headingProbability += probabilityNextNode;
-				}
+		if (previousNode instanceof SemanticHeading) {
+			if (nextNode == null) {
+				return 0.0;
 			}
-		} else if (nextNode == null) {
-			headingProbability += headingProbability(textNode, previousNode);
+			headingProbability += headingProbability(textNode, nextNode);
 		} else {
-			double probability = headingProbability(textNode, nextNode);
-			if (areCloseNumbers(probability, 0.0)) {
-				if (nextNextNode != null) {
-					headingProbability += Math.min(headingProbability(textNode, previousNode),
-					                               headingProbability(textNode, nextNextNode));
-				} else {
-					headingProbability += headingProbability(textNode, previousNode);
-				}
-			} else {
-				headingProbability += Math.min(headingProbability(textNode, previousNode), probability);
-			}
+			headingProbability += Math.min(headingProbability(textNode, previousNode), headingProbability(textNode, nextNode));
 		}
 		if (textNode.hasFullLines()) {
 			headingProbability += HEADING_PROBABILITY_PARAMS[0];
@@ -76,16 +50,15 @@ public class NodeUtils {
 			headingProbability += HEADING_PROBABILITY_PARAMS[3];
 		}
 		INode nextNeighbor = getNextNonEmptyNode(initialNode);
-		if (nextNeighbor != null && !node.getPageNumber().equals(nextNeighbor.getPageNumber())) {
+		if (nextNeighbor != null && !initialNode.getPageNumber().equals(nextNeighbor.getPageNumber())) {
 			headingProbability -= HEADING_PROBABILITY_PARAMS[7];
 		}
-
 		return Math.max(Math.min(headingProbability * getLinesNumberHeadingProbability(textNode), 1.0), 0.0);
 	}
 
-	private static INode getNextNonEmptyNode(INode node) {
+	public static INode getNextNonEmptyNode(INode node) {
 		INode currentNode = node.getNextNode();
-		while(currentNode != null) {
+		while (currentNode != null) {
 			if (currentNode.getPageNumber() != null) {
 				return currentNode;
 			}
@@ -97,9 +70,6 @@ public class NodeUtils {
 	public static double headingProbability(SemanticTextNode textNode, INode neighborNode) {
 		if (neighborNode == null) {
 			return 1.0;
-		}
-		if (!(neighborNode instanceof SemanticTextNode)) {
-			return 0.0;
 		}
 		SemanticTextNode neighborTextNode = (SemanticTextNode) neighborNode;
 		double probability;
@@ -139,6 +109,20 @@ public class NodeUtils {
 			probability -= params[5];
 		}
 		return probability;
+	}
+
+	public static boolean hasSameStyle(SemanticTextNode textNode, SemanticTextNode neighborTextNode,
+											 double weightEps, double fontEps) {
+		if (!NodeUtils.areCloseNumbers(textNode.getFontWeight(), neighborTextNode.getFontWeight(), weightEps)) {
+			return false;
+		}
+		if (!NodeUtils.areCloseNumbers(textNode.getFontSize(), neighborTextNode.getFontSize(), fontEps)) {
+			return false;
+		}
+		if (!NodeUtils.areCloseNumbers(textNode.getMaxFontSize(), neighborTextNode.getMaxFontSize(), fontEps)) {
+			return false;
+		}
+		return true;
 	}
 
 	private static double getLinesNumberHeadingProbability(SemanticTextNode textNode) {

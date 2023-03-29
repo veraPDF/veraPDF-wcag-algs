@@ -1,10 +1,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
 import org.verapdf.wcag.algorithms.entities.*;
-import org.verapdf.wcag.algorithms.entities.content.TextChunk;
-import org.verapdf.wcag.algorithms.entities.content.TextColumn;
-import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
-import org.verapdf.wcag.algorithms.entities.content.TextLine;
+import org.verapdf.wcag.algorithms.entities.content.*;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.lists.ListElement;
@@ -121,11 +118,12 @@ public class ClusterTableConsumer extends WCAGConsumer {
                         }
                     }
                 }
-            } else if ((node instanceof SemanticImageNode)) {
-                SemanticImageNode imageNode = (SemanticImageNode) node;
-
-                TableToken token = new TableToken(imageNode.getImage(), imageNode);
-                accept(token, node);
+            } else if (node instanceof SemanticFigure) {
+                SemanticFigure imageNode = (SemanticFigure) node;
+                for (ImageChunk imageChunk : imageNode.getImages()) {
+                    TableToken token = new TableToken(imageChunk, imageNode);
+                    accept(token, node);
+                }
             }
         }
     }
@@ -557,10 +555,16 @@ public class ClusterTableConsumer extends WCAGConsumer {
             SemanticTextNode textNode = (SemanticTextNode) node;
             return isTextNodeInsideTable(textNode, boundingBox);
         }
-        if (node instanceof SemanticImageNode) {
-            return boundingBox.getPageNumber() > node.getPageNumber() || boundingBox.getLastPageNumber() <
-                    node.getLastPageNumber() || boundingBox.contains(node.getBoundingBox(),
-                    TableBorder.TABLE_BORDER_EPSILON, TableBorder.TABLE_BORDER_EPSILON);
+        if (node instanceof SemanticFigure) {
+            for (ImageChunk image : ((SemanticFigure)node).getImages()) {
+                if (boundingBox.getPageNumber() < image.getPageNumber() && boundingBox.getLastPageNumber() >
+                        image.getLastPageNumber() && !boundingBox.contains(image.getBoundingBox(),
+                        TableBorder.TABLE_BORDER_EPSILON, TableBorder.TABLE_BORDER_EPSILON)) {
+                    return false;
+                }
+            }
+            return true;
+
         }
         if (node.getPageNumber() != null && semanticType != SemanticType.TABLE &&
                 semanticType != SemanticType.TABLE_BODY && (node.getPageNumber() < boundingBox.getPageNumber() ||
@@ -722,10 +726,10 @@ public class ClusterTableConsumer extends WCAGConsumer {
 
     private static boolean hasOtherChildrenWithContents(INode parent, INode node) {
         for (INode child : parent.getChildren()) {
-            if (child == node || child instanceof SemanticFigure) {
+            if (child == node) {
                 continue;
-            } else if (child instanceof SemanticImageNode) {
-                return true;
+            } else if (child instanceof SemanticFigure) {
+                return !((SemanticFigure)child).getImages().isEmpty();
             } else if (child instanceof SemanticSpan) {
                 SemanticSpan span = (SemanticSpan)child;
                 if (!span.isSpaceNode() && !span.isEmpty()) {
