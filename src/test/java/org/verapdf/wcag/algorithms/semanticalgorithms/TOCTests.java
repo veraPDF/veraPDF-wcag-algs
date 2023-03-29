@@ -59,6 +59,9 @@ public class TOCTests {
         AccumulatedNodeConsumer semanticDetectionValidator = new AccumulatedNodeConsumer();
         tree.forEach(semanticDetectionValidator);
 
+        HeadingCaptionConsumer headingCaptionValidator = new HeadingCaptionConsumer();
+        tree.forEach(headingCaptionValidator);
+
         TOCDetectionConsumer tocDetectionConsumer = new TOCDetectionConsumer();
         tree.forEach(tocDetectionConsumer);
 

@@ -100,7 +100,7 @@ public class JsonToPdfTree {
 		if (jsonNode instanceof JsonTextChunk) {
 			node = new SemanticSpan(getTextChunk((JsonTextChunk) jsonNode));
 		} else if (jsonNode instanceof JsonImageChunk) {
-			node = new SemanticImageNode(getImageChunk((JsonImageChunk) jsonNode));
+			node = new SemanticFigure(getImageChunk((JsonImageChunk) jsonNode));
 		} else if (jsonNode instanceof JsonLineArtChunk) {
 			node = new SemanticFigure(getLineArtChunk((JsonLineArtChunk) jsonNode));
 		} else if (jsonNode instanceof JsonAnnotationNode) {

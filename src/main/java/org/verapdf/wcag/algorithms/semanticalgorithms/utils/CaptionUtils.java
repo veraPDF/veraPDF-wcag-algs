@@ -1,7 +1,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
 import org.verapdf.wcag.algorithms.entities.INode;
-import org.verapdf.wcag.algorithms.entities.SemanticImageNode;
+import org.verapdf.wcag.algorithms.entities.SemanticFigure;
 import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
@@ -21,7 +21,7 @@ public class CaptionUtils {
 	private static final double[] CAPTION_PROBABILITY_PARAMS = {1.0, 0.95, 0.9, 0.85, 0.2, 0.1, 0.03};
 	private static final double WITH_TOLERANCE_FACTOR = 0.33;
 
-	public static double imageCaptionProbability(INode node, SemanticImageNode imageNode) {
+	public static double imageCaptionProbability(INode node, SemanticFigure imageNode) {
 		if (node == null) {
 			return 0;
 		}
@@ -122,7 +122,7 @@ public class CaptionUtils {
 		return false;
 	}
 
-	private static boolean areOverlapping(SemanticTextNode textNode, SemanticImageNode imageNode) {
+	private static boolean areOverlapping(SemanticTextNode textNode, SemanticFigure imageNode) {
 		double tol = WITH_TOLERANCE_FACTOR * textNode.getFontSize();
 		return (textNode.getLeftX() + tol < imageNode.getRightX() && imageNode.getLeftX() + tol < textNode.getRightX());
 	}
@@ -149,7 +149,7 @@ public class CaptionUtils {
 		return 0.0;
 	}
 
-	private static double captionContentProbability(SemanticTextNode textNode, String prefix) {
+	public static double captionContentProbability(SemanticTextNode textNode, String prefix) {
 		String value = textNode.getFirstLine().getValue().trim();
 		if (value.startsWith(prefix)) {
 			value = value.substring(prefix.length()).trim();

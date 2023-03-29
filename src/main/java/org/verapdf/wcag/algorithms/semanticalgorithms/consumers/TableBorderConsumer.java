@@ -4,7 +4,8 @@ import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.ITree;
 import org.verapdf.wcag.algorithms.entities.SemanticTable;
 import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
-import org.verapdf.wcag.algorithms.entities.SemanticImageNode;
+import org.verapdf.wcag.algorithms.entities.SemanticFigure;
+import org.verapdf.wcag.algorithms.entities.content.ImageChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
@@ -36,9 +37,11 @@ public class TableBorderConsumer extends WCAGConsumer {
                             }
                         }
                     }
-                } else if ((node instanceof SemanticImageNode)) {
-                    SemanticImageNode imageNode = (SemanticImageNode) node;
-                    add(new TableToken(imageNode.getImage(), imageNode));
+                } else if (node instanceof SemanticFigure) {
+                    SemanticFigure imageNode = (SemanticFigure) node;
+                    for (ImageChunk image : imageNode.getImages()) {
+                        add(new TableToken(image, imageNode));
+                    }
                 }
             }
         }

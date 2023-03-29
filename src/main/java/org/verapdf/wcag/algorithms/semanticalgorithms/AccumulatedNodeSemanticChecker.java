@@ -48,6 +48,12 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 		}
 		tree.forEach(semanticDetectionValidator);
 
+		HeadingCaptionConsumer headingCaptionConsumer = new HeadingCaptionConsumer();
+		if (!startNextStep(headingCaptionConsumer)) {
+			return;
+		}
+		tree.forEach(headingCaptionConsumer);
+
 		TOCDetectionConsumer tocDetectionConsumer = new TOCDetectionConsumer();
 		if (!startNextStep(tocDetectionConsumer)) {
 			return;

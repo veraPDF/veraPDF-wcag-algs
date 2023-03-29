@@ -44,10 +44,11 @@ public class LinesCollection {
 				parseLines(child);
 			}
 			if (child instanceof SemanticFigure) {
-				LineArtChunk lineArt = ((SemanticFigure)child).getLineArt();
-				if (lineArt == null) {
+				List<LineArtChunk> lineArts = ((SemanticFigure)child).getLineArts();
+				if (lineArts.isEmpty()) {
 					continue;
 				}
+				LineArtChunk lineArt = lineArts.get(0);
 				for (LineChunk lineChunk : lineArt.getLineChunks()) {
 					if (lineChunk.isHorizontalLine()) {
 						this.horizontalLines.get(lineChunk.getPageNumber()).add(lineChunk);

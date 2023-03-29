@@ -11,10 +11,7 @@ import org.verapdf.wcag.algorithms.entities.JsonToPdfTree;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
 import org.verapdf.wcag.algorithms.entities.tables.TableBorderBuilder;
 import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
-import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.AccumulatedNodeConsumer;
-import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.LinesPreprocessingConsumer;
-import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.SemanticDocumentPreprocessingConsumer;
-import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.TableBorderConsumer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 
@@ -89,6 +86,8 @@ public class TableBordersTests {
         StaticContainers.setTableBordersCollection(new TableBordersCollection(linesPreprocessingConsumer.getTableBorders()));
         AccumulatedNodeConsumer paragraphValidator = new AccumulatedNodeConsumer();
         tree.forEach(paragraphValidator);
+        HeadingCaptionConsumer headingCaptionValidator = new HeadingCaptionConsumer();
+        tree.forEach(headingCaptionValidator);
         TableBorderConsumer tableBorderConsumer = new TableBorderConsumer();
         tableBorderConsumer.recognizeTables(tree);
 

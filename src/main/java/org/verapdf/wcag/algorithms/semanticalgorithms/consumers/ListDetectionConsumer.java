@@ -30,7 +30,6 @@ public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INod
         boolean isLeafChild  = node.getChildren()
                 .stream()
                 .allMatch(child -> ((child instanceof SemanticSpan) ||
-                        (child instanceof SemanticImageNode) ||
                         (child instanceof SemanticFigure) ||
                         child.getSemanticType() == null));
         if (isLeafChild) {
@@ -90,19 +89,23 @@ public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INod
             while (!newChild.getChildren().isEmpty()) {
                 newChild = newChild.getChildren().get(0);
             }
-            if (newChild instanceof SemanticImageNode) {
-                ImageChunk image = ((SemanticImageNode) newChild).getImage();
-                if (image.getRightX() <= line.getLeftX() && image.getBoundingBox().getHeight() <
-                        ListUtils.LIST_LABEL_HEIGHT_EPSILON * line.getBoundingBox().getHeight()) {
-                    imageChildrenInfo.add(new ListItemImageInfo(child.getIndex(),
-                            child.getSemanticType(), image));
-                }
-            } else if (newChild instanceof SemanticFigure) {
-                LineArtChunk lineArt = ((SemanticFigure) newChild).getLineArt();
+            if (!(newChild instanceof SemanticFigure)) {
+                continue;
+            }
+            SemanticFigure figure = (SemanticFigure) newChild;
+            if (figure.getImages().isEmpty() && figure.getLineArts().size() == 1) {
+                LineArtChunk lineArt = figure.getLineArts().get(0);
                 if (lineArt.getRightX() <= line.getLeftX() && lineArt.getBoundingBox().getHeight() <
                         ListUtils.LIST_LABEL_HEIGHT_EPSILON * line.getBoundingBox().getHeight()) {
                     lineArtChildrenInfo.add(new ListItemLineArtInfo(child.getIndex(),
                             child.getSemanticType(), lineArt));
+                }
+            } else if (figure.getImages().size() == 1 && figure.getLineArts().isEmpty()) {
+                ImageChunk image = figure.getImages().get(0);
+                if (image.getRightX() <= line.getLeftX() && image.getBoundingBox().getHeight() <
+                        ListUtils.LIST_LABEL_HEIGHT_EPSILON * line.getBoundingBox().getHeight()) {
+                    imageChildrenInfo.add(new ListItemImageInfo(child.getIndex(),
+                            child.getSemanticType(), image));
                 }
             }
         }

@@ -82,6 +82,9 @@ public class ListTests {
         AccumulatedNodeConsumer paragraphValidator = new AccumulatedNodeConsumer();
         tree.forEach(paragraphValidator);
 
+        HeadingCaptionConsumer headingCaptionValidator = new HeadingCaptionConsumer();
+        tree.forEach(headingCaptionValidator);
+
         ListDetectionConsumer listDetectionConsumer = new ListDetectionConsumer();
         tree.forEach(listDetectionConsumer);
 
