@@ -67,8 +67,11 @@ public class HeadingCaptionConsumer extends WCAGConsumer implements Consumer<INo
 
 	private static void acceptHeadings(List<INode> children, List<SemanticTextNode> textChildren, List<Integer> indexes,
 									   boolean singleChild) {
-		List<Double> probabilities = new LinkedList<>();
 		for (int i = 0; i < indexes.size() - 1; i++) {
+			if (indexes.get(i + 1) - indexes.get(i) > 3) {
+				continue;
+			}
+			List<Double> probabilities = new LinkedList<>();
 			boolean areHeadings = true;
 			for (int index = indexes.get(i); index < indexes.get(i + 1); index++) {
 				double probability = NodeUtils.headingProbability(textChildren.get(index),
@@ -76,6 +79,7 @@ public class HeadingCaptionConsumer extends WCAGConsumer implements Consumer<INo
 						textChildren.get(indexes.get(i + 1)) , children.get(index));
 				if (probability < MERGE_PROBABILITY_THRESHOLD) {
 					areHeadings = false;
+					break;
 				}
 				probabilities.add(probability);
 			}
@@ -99,7 +103,7 @@ public class HeadingCaptionConsumer extends WCAGConsumer implements Consumer<INo
 				}
 				textChildren.set(index, accumulatedHeadingChild);
 				StaticContainers.getAccumulatedNodeMapper().updateNode(child, accumulatedHeadingChild,
-						probabilities.get(index) * child.getCorrectSemanticScore(), type);
+						probabilities.get(index - indexes.get(i)) * child.getCorrectSemanticScore(), type);
 			}
 		}
 	}
@@ -180,9 +184,12 @@ public class HeadingCaptionConsumer extends WCAGConsumer implements Consumer<INo
 	}
 
 	private void acceptImageCaption(INode imageNode, INode previousNode, INode nextNode) {
-		SemanticFigure image = (SemanticFigure)StaticContainers.getAccumulatedNodeMapper().get(imageNode);
-		double previousCaptionProbability = CaptionUtils.imageCaptionProbability(previousNode, image);
-		double nextCaptionProbability = CaptionUtils.imageCaptionProbability(nextNode, image);
+		SemanticFigure figure = (SemanticFigure)StaticContainers.getAccumulatedNodeMapper().get(imageNode);
+		if (figure.getImages().isEmpty()) {
+			return;
+		}
+		double previousCaptionProbability = CaptionUtils.imageCaptionProbability(previousNode, figure);
+		double nextCaptionProbability = CaptionUtils.imageCaptionProbability(nextNode, figure);
 		double captionProbability;
 		INode captionNode;
 		if (previousCaptionProbability > nextCaptionProbability) {
