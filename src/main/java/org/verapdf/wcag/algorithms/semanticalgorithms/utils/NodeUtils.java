@@ -122,6 +122,9 @@ public class NodeUtils {
 		if (!NodeUtils.areCloseNumbers(textNode.getMaxFontSize(), neighborTextNode.getMaxFontSize(), fontEps)) {
 			return false;
 		}
+		if (isUpperCaseString(textNode.getValue()) != isUpperCaseString(neighborTextNode.getValue())) {
+			return false;
+		}
 		return true;
 	}
 
