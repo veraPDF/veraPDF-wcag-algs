@@ -73,7 +73,7 @@ public class NodeUtils {
 		}
 		SemanticTextNode neighborTextNode = (SemanticTextNode) neighborNode;
 		double probability;
-		if (textNode.getFontName().equals(neighborTextNode.getFontName())) {
+		if (textNode.getFontName() != null && textNode.getFontName().equals(neighborTextNode.getFontName())) {
 			probability = headingProbability(textNode, neighborTextNode, HEADING_PROBABILITY_PARAMS_SAME_FONT,
 			                                 HEADING_EPSILONS[0], HEADING_EPSILONS[0]);
 		} else {
