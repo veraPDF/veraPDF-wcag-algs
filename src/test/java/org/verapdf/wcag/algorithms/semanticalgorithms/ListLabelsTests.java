@@ -178,7 +178,7 @@ public class ListLabelsTests {
     private List<ListItemTextInfo> createInfoList(List<String> itemsList) {
         List<ListItemTextInfo> list = new ArrayList<>();
         for (int i = 0; i < itemsList.size(); i++) {
-           list.add(new ListItemTextInfo(i, null, new TextLine(new TextChunk(itemsList.get(i))), itemsList.get(i)));
+           list.add(new ListItemTextInfo(i, null, new TextLine(new TextChunk(itemsList.get(i))), itemsList.get(i), false));
         }
         return list;
     }

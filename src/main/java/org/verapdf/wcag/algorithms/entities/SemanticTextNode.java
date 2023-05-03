@@ -249,10 +249,18 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     public TextLine getFirstNonSpaceLine() {
+        return getNonSpaceLine(0);
+    }
+
+    public TextLine getNonSpaceLine(int lineNumber) {
+        int number = 0;
         for (TextColumn column : getColumns()) {
             for (TextLine line : column.getLines()) {
                 if (!line.isEmpty() && !line.isSpaceLine()) {
-                    return line;
+                    if (number == lineNumber) {
+                        return line;
+                    }
+                    number++;
                 }
             }
         }
@@ -260,10 +268,18 @@ public class SemanticTextNode extends SemanticNode {
     }
 
     public TextLine getFirstNonSpaceLine(int pageNumber) {
+        return getNonSpaceLine(0, pageNumber);
+    }
+
+    public TextLine getNonSpaceLine(int lineNumber, int pageNumber) {
+        int number = 0;
         for (TextColumn column : getColumns()) {
             for (TextLine line : column.getLines()) {
                 if (!line.isEmpty() && !line.isSpaceLine() && Objects.equals(line.getPageNumber(), pageNumber)) {
-                    return line;
+                    if (number == lineNumber) {
+                        return line;
+                    }
+                    number++;
                 }
             }
         }

@@ -50,7 +50,7 @@ public class NodeUtils {
 			headingProbability += HEADING_PROBABILITY_PARAMS[3];
 		}
 		INode nextNeighbor = getNextNonEmptyNode(initialNode);
-		if (nextNeighbor != null && !initialNode.getPageNumber().equals(nextNeighbor.getPageNumber())) {
+		if (nextNeighbor != null && initialNode.getPageNumber() != null && !initialNode.getPageNumber().equals(nextNeighbor.getPageNumber())) {
 			headingProbability -= HEADING_PROBABILITY_PARAMS[7];
 		}
 		return Math.max(Math.min(headingProbability * getLinesNumberHeadingProbability(textNode), 1.0), 0.0);
