@@ -193,7 +193,7 @@ public class ClusterTableConsumer extends WCAGConsumer {
             Double minBottom = null;
             Double maxTop = null;
             Double minTop = null;
-            for (int colNumber = 0; colNumber < recognizedTable.getNumberOfColumns(); colNumber++) {
+            for (int colNumber = 0; colNumber < row.getCells().size(); colNumber++) {
                 TableCell cell = row.getCells().get(colNumber);
                 if (cell.getContent().isEmpty()) {
                     continue;
@@ -237,7 +237,11 @@ public class ClusterTableConsumer extends WCAGConsumer {
             Double maxRight = null;
             Double minRight = null;
             for (int rowNumber = 0; rowNumber < recognizedTable.getNumberOfRows(); rowNumber++) {
-                TableCell cell = recognizedTable.getRows().get(rowNumber).getCells().get(colNumber);
+                List<TableCell> cells = recognizedTable.getRows().get(rowNumber).getCells();
+                if (cells.size() <= colNumber) {
+                    continue;
+                }
+                TableCell cell = cells.get(colNumber);
                 if (cell.getContent().isEmpty()) {
                     continue;
                 }
