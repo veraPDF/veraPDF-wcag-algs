@@ -316,8 +316,7 @@ public class TableChecker extends WCAGConsumer implements Consumer<INode> {
             TableBorderCell currentCell = cells[rowNumber][columnNumber];
             if (currentCell.getRowNumber() != rowNumber || currentCell.getColNumber() + currentCell.getColSpan() !=
                     columnNumber + 1 || currentCell.getBoundingBox().getPageNumber() == null ||
-                    currentCell.getBoundingBox().getPageNumber() > pageNumber ||
-                    currentCell.getBoundingBox().getLastPageNumber() < pageNumber) {
+                    currentCell.getBoundingBox().getBoundingBox(pageNumber) == null) {
                 continue;
             }
             if (cell == null || isFirstRightMax(currentCell.getBoundingBox(), cell.getBoundingBox(), pageNumber)) {
@@ -333,8 +332,7 @@ public class TableChecker extends WCAGConsumer implements Consumer<INode> {
             TableBorderCell currentCell = cells[rowNumber][columnNumber];
             if (currentCell.getRowNumber() != rowNumber || currentCell.getColNumber() != columnNumber ||
                     currentCell.getBoundingBox().getPageNumber() == null ||
-                    currentCell.getBoundingBox().getPageNumber() > pageNumber ||
-                    currentCell.getBoundingBox().getLastPageNumber() < pageNumber) {
+                    currentCell.getBoundingBox().getBoundingBox(pageNumber) == null) {
                 continue;
             }
             if (cell == null || isFirstRightMax(cell.getBoundingBox(), currentCell.getBoundingBox(), pageNumber)) {
@@ -351,8 +349,7 @@ public class TableChecker extends WCAGConsumer implements Consumer<INode> {
             if (currentCell.getRowNumber() != rowNumber ||
                     currentCell.getColNumber() + currentCell.getColSpan() != columnNumber + 1 ||
                     currentCell.getBoundingBox().getPageNumber() == null ||
-                    currentCell.getBoundingBox().getPageNumber() > pageNumber ||
-                    currentCell.getBoundingBox().getLastPageNumber() < pageNumber) {
+                    currentCell.getBoundingBox().getBoundingBox(pageNumber) == null) {
                 continue;
             }
             if (cell == null || isFirstLeftMax(currentCell.getBoundingBox(), cell.getBoundingBox(), pageNumber)) {
@@ -368,8 +365,7 @@ public class TableChecker extends WCAGConsumer implements Consumer<INode> {
             TableBorderCell currentCell = cells[rowNumber][columnNumber];
             if (currentCell.getRowNumber() != rowNumber || currentCell.getColNumber() != columnNumber ||
                     currentCell.getBoundingBox().getPageNumber() == null ||
-                    currentCell.getBoundingBox().getPageNumber() > pageNumber ||
-                    currentCell.getBoundingBox().getLastPageNumber() < pageNumber) {
+                    currentCell.getBoundingBox().getBoundingBox(pageNumber) == null) {
                 continue;
             }
             if (cell == null || isFirstLeftMax(cell.getBoundingBox(), currentCell.getBoundingBox(), pageNumber)) {

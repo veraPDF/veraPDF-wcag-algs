@@ -150,9 +150,12 @@ public class MultiBoundingBox extends BoundingBox {
         if (this.pageNumber == pageNumber && this.lastPageNumber == pageNumber) {
             return this;
         }
-        BoundingBox boundingBox = new MultiBoundingBox();
+        BoundingBox boundingBox = null;
         for (BoundingBox box : boundingBoxes) {
             if (box.getPageNumber() == pageNumber) {
+                if (boundingBox == null) {
+                    boundingBox = new MultiBoundingBox();
+                }
                 boundingBox.union(box);
             }
         }
