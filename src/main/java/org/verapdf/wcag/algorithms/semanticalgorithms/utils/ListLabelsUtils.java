@@ -154,7 +154,8 @@ public class ListLabelsUtils {
 		Character secondChar = null;
 		ListInterval interval = new ListInterval();
 		for (ListItemTextInfo info : itemsInfo) {
-			if (!Objects.equals(info.getListItem().charAt(0), firstChar)) {
+			boolean badListItem = info.getListItem().length() == 1 && info.hasOneLine();
+			if (!Objects.equals(info.getListItem().charAt(0), firstChar) || badListItem) {
 				if (SemanticType.LIST.equals(info.getSemanticType())) {
 					interval.getListsIndexes().add(info.getIndex());
 					continue;
@@ -162,8 +163,13 @@ public class ListLabelsUtils {
 				if (interval.getNumberOfListItems() > 1 && checkForSuitableLabel(firstChar, secondChar)) {
 					listIntervals.add(interval);
 				}
-				firstChar = info.getListItem().charAt(0);
-				secondChar = info.getListItem().length() > 1 ? info.getListItem().charAt(1) : ' ';
+				if (badListItem) {
+					firstChar = null;
+					secondChar = null;
+				} else {
+					firstChar = info.getListItem().charAt(0);
+					secondChar = info.getListItem().length() > 1 ? info.getListItem().charAt(1) : ' ';
+				}
 				interval = new ListInterval();
 			}
 			interval.getListItemsInfos().add(info);

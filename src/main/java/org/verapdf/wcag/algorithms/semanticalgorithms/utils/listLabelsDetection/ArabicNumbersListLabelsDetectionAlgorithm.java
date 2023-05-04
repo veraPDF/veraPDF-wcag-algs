@@ -9,6 +9,7 @@ import java.util.*;
 public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetectionAlgorithm {
 
     public static final String ARABIC_NUMBER_REGEX = "\\d+";
+    public static final String DOUBLE_REGEX = ARABIC_NUMBER_REGEX + "\\." + ARABIC_NUMBER_REGEX;
 
     @Override
     public boolean isListLabels(List<String> labels, int commonStartLength, int commonEndLength) {
@@ -26,9 +27,9 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
         boolean haveSameStartZeros = false;
         for (int i = 1; i < labels.size(); i++) {
             String nextSubstring = labels.get(i).substring(startLength, labels.get(i).length() - endLength);
-            int nextNumberOfStartsZeros = getNumberOfStartZeros(nextSubstring);
-            if (numberOfStartZeros != nextNumberOfStartsZeros &&
-                    ((numberOfStartZeros - 1) != nextNumberOfStartsZeros ||
+            int nextNumberOfStartZeros = getNumberOfStartZeros(nextSubstring);
+            if (numberOfStartZeros != nextNumberOfStartZeros &&
+                    ((numberOfStartZeros - 1) != nextNumberOfStartZeros ||
                             (substring.length() - 1) == nextSubstring.length() || haveSameStartZeros)) {
                 return false;
             }
@@ -39,7 +40,7 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
             if (nextNumber == null || !nextNumber.equals(++number)) {
                 return false;
             }
-            numberOfStartZeros = nextNumberOfStartsZeros;
+            numberOfStartZeros = nextNumberOfStartZeros;
             substring = nextSubstring;
         }
         return true;
@@ -53,26 +54,33 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
         for (int i = 0; i < itemsInfo.size(); i++) {
             if (arabicNumberInformation.number != null) {
                 arabicNumberInformation.number++;
-                if (!arabicNumberInformation.checkItem(itemsInfo.get(i).getListItem())) {
-                    if (SemanticType.LIST.equals(itemsInfo.get(i).getSemanticType())) {
+                ListItemTextInfo itemInfo = itemsInfo.get(i);
+                if (!arabicNumberInformation.checkItem(itemInfo) || arabicNumberInformation.isBadItem(itemInfo)) {
+                    if (SemanticType.LIST.equals(itemInfo.getSemanticType())) {
                         arabicNumberInformation.number--;
-                        interval.getListsIndexes().add(itemsInfo.get(i).getIndex());
+                        interval.getListsIndexes().add(itemInfo.getIndex());
                         continue;
                     }
                     if (interval.getNumberOfListItems() > 1) {
                         --i;
                         listIntervals.add(interval);
                     }
-                    --i;
                     arabicNumberInformation.number = null;
                 } else {
-                    interval.getListItemsInfos().add(itemsInfo.get(i));
+                    interval.getListItemsInfos().add(itemInfo);
                 }
-            } else if (i != itemsInfo.size() - 1) {
-                arabicNumberInformation = new ArabicNumberInformation(itemsInfo.get(i).getListItem(),
+            }
+            if (arabicNumberInformation.number == null && i != itemsInfo.size() - 1) {
+                ListItemTextInfo itemInfo = itemsInfo.get(i);
+                arabicNumberInformation = new ArabicNumberInformation(itemInfo.getListItem(),
                                                                       itemsInfo.get(i + 1).getListItem(), i);
-                interval = new ListInterval();
-                interval.getListItemsInfos().add(itemsInfo.get(i));
+                if (arabicNumberInformation.number != null && arabicNumberInformation.isBadItem(itemInfo)) {
+                    arabicNumberInformation.number = null;
+                }
+                if (arabicNumberInformation.number != null) {
+                    interval = new ListInterval();
+                    interval.getListItemsInfos().add(itemInfo);
+                }
             }
         }
         if (arabicNumberInformation.number != null && interval.getNumberOfListItems() > 1) {
@@ -145,29 +153,44 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
             prefix = item.substring(0, this.start);
         }
 
-        private boolean checkItem(String item) {
+        private boolean isBadItem(ListItemTextInfo listItem) {
+            String item = listItem.getListItem();
+            String nextSubstring = item.substring(start);
+            int nextNumberOfStartZeros = getNumberOfStartZeros(nextSubstring);
+            int nextArabicNumberStartLength = getRegexStartLength(nextSubstring);
+            if (nextSubstring.length() == nextNumberOfStartZeros + nextArabicNumberStartLength && listItem.hasOneLine()) {
+                return true;
+            }
+            if (item.matches(DOUBLE_REGEX) && listItem.hasOneLine()) {
+                return true;
+            }
+            return false;
+        }
+
+        private boolean checkItem(ListItemTextInfo listItem) {
+            String item = listItem.getListItem();
             if (!item.startsWith(prefix)) {
                 return false;
             }
             String nextSubstring = item.substring(start);
-            int nextNumberOfStartsZeros = getNumberOfStartZeros(nextSubstring);
+            int nextNumberOfStartZeros = getNumberOfStartZeros(nextSubstring);
             int nextArabicNumberStartLength = getRegexStartLength(nextSubstring);
-            if (numberOfStartZeros != nextNumberOfStartsZeros &&
-                    ((numberOfStartZeros - 1) != nextNumberOfStartsZeros ||
+            if (numberOfStartZeros != nextNumberOfStartZeros &&
+                    ((numberOfStartZeros - 1) != nextNumberOfStartZeros ||
                             (arabicNumberStartLength - 1) == nextArabicNumberStartLength || haveSameStartZeros)) {
                 return false;
             }
             String s = getStringFromNumber(number);
-            if (((numberOfStartZeros == nextNumberOfStartsZeros || numberOfStartZeros - 1 == nextNumberOfStartsZeros) &&
-                    !nextSubstring.startsWith(s, nextNumberOfStartsZeros)) ||
-                    (s.length() + nextNumberOfStartsZeros != nextArabicNumberStartLength)) {
+            if (((numberOfStartZeros == nextNumberOfStartZeros || numberOfStartZeros - 1 == nextNumberOfStartZeros) &&
+                    !nextSubstring.startsWith(s, nextNumberOfStartZeros)) ||
+                    (s.length() + nextNumberOfStartZeros != nextArabicNumberStartLength)) {
                 return false;
             }
             if (arabicNumberStartLength + 1 == nextArabicNumberStartLength) {
                 haveSameStartZeros = true;
                 arabicNumberStartLength = nextArabicNumberStartLength;
             }
-            numberOfStartZeros = nextNumberOfStartsZeros;
+            numberOfStartZeros = nextNumberOfStartZeros;
             return true;
         }
     }

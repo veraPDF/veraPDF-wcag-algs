@@ -83,8 +83,9 @@ public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INod
                 continue;
             }
             TextLine line = textNode.getFirstNonSpaceLine();
+            TextLine secondLine = textNode.getNonSpaceLine(1);
             textChildrenInfo.add(new ListItemTextInfo(child.getIndex(), child.getSemanticType(),
-                    line, line.getValue().trim()));
+                    line, line.getValue().trim(), secondLine == null));
             INode newChild = child;
             while (!newChild.getChildren().isEmpty()) {
                 newChild = newChild.getChildren().get(0);
@@ -166,9 +167,9 @@ public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INod
         TextLine secondLine = textNode.getFirstNonSpaceLine(node.getPageNumber() + 1);
         List<ListItemTextInfo> textChildrenInfo = new ArrayList<>(2);
         textChildrenInfo.add(new ListItemTextInfo(0, node.getSemanticType(),
-                line, line.getValue().trim()));
+                line, line.getValue().trim(), textNode.getNonSpaceLine(1) == null));
         textChildrenInfo.add(new ListItemTextInfo(1, node.getSemanticType(),
-                secondLine, secondLine.getValue().trim()));
+                secondLine, secondLine.getValue().trim(), textNode.getNonSpaceLine(1, node.getPageNumber() + 1) == null));
         Set<ListInterval> set = ListLabelsUtils.getListItemsIntervals(textChildrenInfo);
         if (set.size() != 1) {
             return false;

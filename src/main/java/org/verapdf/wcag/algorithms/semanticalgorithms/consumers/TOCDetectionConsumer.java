@@ -448,8 +448,12 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
                 info.setPageNumberLabel(getPageNumberLabel(textValue, textValue.length() - pageLabelLength));
             }
             textValue = textChunks.stream().map(TextChunk::getValue).collect(Collectors.joining(""));
-            textValue = textValue.substring(0, textValue.length() - numberOfSpaces - pageLabelLength);
-            textValue = textValue.substring(0, getLastRegexIndex(textValue, SPACES_DOTS_SPACES_REGEX));
+            if (textValue.matches(ArabicNumbersListLabelsDetectionAlgorithm.DOUBLE_REGEX)) {
+                textValue = null;
+            } else {
+                textValue = textValue.substring(0, textValue.length() - numberOfSpaces - pageLabelLength);
+                textValue = textValue.substring(0, getLastRegexIndex(textValue, SPACES_DOTS_SPACES_REGEX));
+            }
             info.setText(textValue);
         }
         return info;

@@ -54,28 +54,29 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
         boolean isUpperCase = false;
         ListInterval interval = new ListInterval();
         for (int i = 0; i < itemsInfo.size(); i++) {
-            String item = itemsInfo.get(i).getListItem();
+            ListItemTextInfo itemInfo = itemsInfo.get(i);
+            String item = itemInfo.getListItem();
             if (number != null) {
                 number++;
                 String s = getStringFromNumber(number);
                 if (!item.toUpperCase().startsWith(s, start) || !item.startsWith(prefix) ||
-                    isCharMatchRegex(item, start + s.length()) ||
+                    isCharMatchRegex(item, start + s.length()) || isBadItem(itemInfo, item, s, start) ||
                     ((!item.substring(start, start + s.length()).matches(getLowerCaseRegex()) || isUpperCase) &&
                      (!item.substring(start, start + s.length()).matches(getUpperCaseRegex()) || !isUpperCase))) {
-                    if (SemanticType.LIST.equals(itemsInfo.get(i).getSemanticType())) {
-                        interval.getListsIndexes().add(itemsInfo.get(i).getIndex());
+                    if (SemanticType.LIST.equals(itemInfo.getSemanticType())) {
+                        interval.getListsIndexes().add(itemInfo.getIndex());
                         number--;
                         continue;
                     }
                     if (interval.getNumberOfListItems() > 1) {
                         listIntervals.add(interval);
                     }
-                    i--;
                     number = null;
                 } else {
-                    interval.getListItemsInfos().add(itemsInfo.get(i));
+                    interval.getListItemsInfos().add(itemInfo);
                 }
-            } else if (i != itemsInfo.size() - 1) {
+            }
+            if (number == null && i != itemsInfo.size() - 1) {
                 int commonLength = getCommonStartLength(item, itemsInfo.get(i + 1).getListItem());
                 start = getNotRegexStartLength(item, commonLength);
                 prefix = item.substring(0, start);
@@ -97,19 +98,26 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
                 if (number == null) {
                     continue;
                 }
+                if (isBadItem(itemInfo, item, substring, start)) {
+                    continue;
+                }
                 //only Roman???
                 if (!substring.toUpperCase().startsWith(getStringFromNumber(number))) {
                     number = null;
                     continue;
                 }
                 interval = new ListInterval();
-                interval.getListItemsInfos().add(itemsInfo.get(i));
+                interval.getListItemsInfos().add(itemInfo);
             }
         }
         if (number != null && interval.getNumberOfListItems() > 1) {
             listIntervals.add(interval);
         }
         return listIntervals;
+    }
+
+    private boolean isBadItem(ListItemTextInfo listItem, String item, String s, int start) {
+        return item.length() == start + s.length() && listItem.hasOneLine();
     }
 
     protected abstract String getLowerCaseRegex();
