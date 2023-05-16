@@ -371,6 +371,15 @@ public class BoundingBox {
         return this;
     }
 
+    public boolean isOnePageBoundingBox() {
+        return pageNumber != null && Objects.equals(pageNumber, lastPageNumber);
+    }
+
+    public boolean isSeveralPagesBoundingBox() {
+        return pageNumber != null && !Objects.equals(pageNumber, lastPageNumber);
+    }
+
+
     public void init(double left, double bottom, double right, double top) {
         this.leftX = left;
         this.bottomY = bottom;
