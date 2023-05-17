@@ -210,7 +210,8 @@ public class TableBorderConsumer extends WCAGConsumer {
         }
         if (tableNode != null) {
             while (TableUtils.isInitialTableNode(tableNode) && tableNode.getInitialSemanticType() != SemanticType.TABLE &&
-                    !tableNode.isRoot() && tableNode.getParent().getChildren().size() == 1) {
+                    !tableNode.isRoot() && (tableNode.getParent().getChildren().size() == 1 ||
+                    tableNode.getParent().getBoundingBox().isSeveralPagesBoundingBox())) {
                 tableNode = tableNode.getParent();
             }
         }
