@@ -54,8 +54,10 @@ public class HeadingCaptionConsumer extends WCAGConsumer implements Consumer<INo
 					child.getInitialSemanticType() == SemanticType.NUMBER_HEADING) {
 				INode nextNode = getNextNonEmptyTextNode(child);
 				singleChild = true;
-				children.add(nextNode);
-				textChildren.add((SemanticTextNode)StaticContainers.getAccumulatedNodeMapper().get(nextNode));
+				if (nextNode != null) {
+					children.add(nextNode);
+					textChildren.add((SemanticTextNode)StaticContainers.getAccumulatedNodeMapper().get(nextNode));
+				}
 			}
 		}
 		List<Integer> indexes = getIndexes(textChildren);
