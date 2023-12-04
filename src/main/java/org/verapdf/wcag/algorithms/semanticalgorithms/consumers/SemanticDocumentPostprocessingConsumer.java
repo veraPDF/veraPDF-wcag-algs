@@ -62,7 +62,7 @@ public class SemanticDocumentPostprocessingConsumer extends WCAGConsumer {
 
 	public void checkForRepeatedCharacters(INode node, List<TextChunk> chunks) {
 		for (INode child : node.getChildren()) {
-			if (child.getInitialSemanticType() != SemanticType.FIGURE) {
+			if (child.getInitialSemanticType() != SemanticType.FIGURE && child.getInitialSemanticType() != SemanticType.CODE) {
 				checkForRepeatedCharacters(child, chunks);
 			}
 			if (child instanceof SemanticSpan) {

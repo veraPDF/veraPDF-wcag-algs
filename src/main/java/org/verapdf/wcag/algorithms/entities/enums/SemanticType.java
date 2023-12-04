@@ -28,6 +28,7 @@ public enum SemanticType {
 	TITLE("Title"),
 	BLOCK_QUOTE("BlockQuote"),
 	NOTE("Note"),
+	CODE("Code"),
 	PART("Part");
 
 	private final String value;

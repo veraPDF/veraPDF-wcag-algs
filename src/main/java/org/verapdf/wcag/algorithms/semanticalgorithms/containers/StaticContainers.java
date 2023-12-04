@@ -76,6 +76,9 @@ public class StaticContainers {
 		StaticContainers.groupCounter.set(0L);
 		StaticContainers.structElementsNumber.set(0L);
 		StaticContainers.textChunksNumber.set(0L);
+		if (StaticContainers.getWCAGValidationInfo() == null) {
+			StaticContainers.setWCAGValidationInfo(new WCAGValidationInfo());
+		}
 	}
 
 	public static IDocument getDocument() {
