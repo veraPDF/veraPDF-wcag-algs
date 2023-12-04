@@ -35,6 +35,7 @@ public class SemanticTypeMapper {
         map.put(SemanticType.TITLE.getValue(), SemanticType.TITLE);
         map.put(SemanticType.NOTE.getValue(), SemanticType.NOTE);
         map.put(SemanticType.BLOCK_QUOTE.getValue(), SemanticType.BLOCK_QUOTE);
+        map.put(SemanticType.CODE.getValue(), SemanticType.CODE);
         map.put(SemanticType.PART.getValue(), SemanticType.PART);
     }
 
