@@ -35,10 +35,12 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 		boolean isLeafChild = node.getChildren()
 				.stream()
 				.allMatch(child -> ((child instanceof SemanticSpan) ||
-						(child instanceof SemanticFigure) ||
+						(child instanceof SemanticFigure) || (child instanceof SemanticAnnot) ||
 						child.getSemanticType() == null));
 
 		acceptSpanParagraphPart(node, isLeafChild);
+
+		acceptSemanticAnnot(node);
 
 		acceptSemanticImage(node);
 
@@ -105,13 +107,34 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 		}
 	}
 
+	private void acceptSemanticAnnot(INode node) {
+		SemanticAnnot annot = null;
+		for (INode child : node.getChildren()) {
+			INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
+			if (accumulatedChild instanceof SemanticTextNode) {
+				if (!((SemanticTextNode)accumulatedChild).isEmpty() && !((SemanticTextNode)accumulatedChild).isSpaceNode()) {
+					return;
+				}
+			} else if (accumulatedChild instanceof SemanticAnnot) {
+				if (annot == null) {
+					annot = new SemanticAnnot((SemanticAnnot)accumulatedChild);
+				} else {
+					annot.addAnnots(((SemanticAnnot)accumulatedChild).getAnnots());
+				}
+			}
+		}
+		if (annot != null) {
+			StaticContainers.getAccumulatedNodeMapper().updateNode(node, annot, 1.0, SemanticType.ANNOT);
+		}
+	}
+
 	private void acceptSpanParagraphPart(INode node, boolean isLeafChild) {
 		double probability = 1;
 		SemanticPart part = null;
 		MultiBoundingBox boundingBox = new MultiBoundingBox();
 		for (INode child : node.getChildren()) {
 			if (child.getSemanticType() == null || SemanticType.isIgnoredStandardType(child.getInitialSemanticType()) ||
-					 (child instanceof IAnnotation)) {
+					 (child instanceof SemanticAnnot)) {
 				continue;
 			}
 			INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
@@ -143,7 +166,7 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 		SemanticType semanticType = SemanticType.PART;
 		INode accumulatedNode = part;
 		if (part != null && part.getColumns().stream().allMatch(TextColumn::hasOnlyOneBlock)) {
-			boolean isSpan  = SemanticType.SPAN.equals(node.getInitialSemanticType()) &&
+			boolean isSpan = SemanticType.SPAN.equals(node.getInitialSemanticType()) &&
 					(isLeafChild || node.getChildren().stream()
 							.allMatch(AccumulatedNodeConsumer::isAppropriateSpanChild));
 			if (isSpan) {
@@ -158,7 +181,7 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 	}
 
 	private static boolean isAppropriateSpanChild(INode child) {
-		return (child instanceof SemanticSpan) || (child instanceof SemanticFigure) ||
+		return (child instanceof SemanticSpan) || (child instanceof SemanticFigure) || (child instanceof SemanticAnnot) ||
 				child.getInitialSemanticType() == SemanticType.LINK ||
 				child.getSemanticType() == SemanticType.SPAN || child.getSemanticType() == null;
 	}

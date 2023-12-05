@@ -514,8 +514,8 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
     }
 
     private static List<IAnnotation> getInheritorAnnotations(INode node) {
-        if (node instanceof IAnnotation) {
-            return Collections.singletonList((IAnnotation)node);
+        if (node instanceof SemanticAnnot) {
+            return Collections.singletonList(((SemanticAnnot) node).getAnnots().get(0));
         }
         List<IAnnotation> annotations = new LinkedList<>();
         for (INode child : node.getChildren()) {

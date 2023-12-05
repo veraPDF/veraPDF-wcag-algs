@@ -20,7 +20,7 @@ public class HeadingCaptionConsumer extends WCAGConsumer implements Consumer<INo
 		boolean isLeafChild = node.getChildren()
 				.stream()
 				.allMatch(child -> ((child instanceof SemanticSpan) ||
-						(child instanceof SemanticFigure) ||
+						(child instanceof SemanticFigure) || (child instanceof SemanticAnnot) ||
 						child.getSemanticType() == null));
 		if (isLeafChild) {
 			return;

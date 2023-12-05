@@ -55,9 +55,9 @@ public class JsonToPdfTree {
 		return new LineArtChunk(new BoundingBox(jsonNode.getPageNumber(), jsonNode.getBoundingBox()), lineChunks);
 	}
 
-	private static AnnotationNode getAnnotationNode(JsonAnnotationNode jsonNode) {
-		return new AnnotationNode(jsonNode.getAnnotationType(), new BoundingBox(jsonNode.getBoundingBox()),
-		                          jsonNode.getDestinationPageNumber(), jsonNode.getDestinationObjectKeyNumber());
+	private static SemanticAnnot getAnnotationNode(JsonAnnotationNode jsonNode) {
+		return new SemanticAnnot(new AnnotationNode(jsonNode.getAnnotationType(), new BoundingBox(jsonNode.getBoundingBox()),
+				jsonNode.getDestinationPageNumber(), jsonNode.getDestinationObjectKeyNumber()));
 	}
 
 	private static LineChunk getLineChunk(JsonLineChunk jsonNode) {
