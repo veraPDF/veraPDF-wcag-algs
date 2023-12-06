@@ -1,6 +1,8 @@
 package org.verapdf.wcag.algorithms.entities;
 
-public interface IAnnotation extends INode {
+import org.verapdf.wcag.algorithms.entities.content.IChunk;
+
+public interface IAnnotation extends IChunk {
 	String getAnnotationType();
 
 	Integer getDestinationPageNumber();

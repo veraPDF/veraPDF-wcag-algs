@@ -75,7 +75,7 @@ public class SemanticDocumentPreprocessingConsumer extends WCAGConsumer implemen
         structElementsNumber++;
         MultiBoundingBox boundingBox = new MultiBoundingBox(node.getBoundingBox());
         for (INode child : node.getChildren()) {
-            if (!(child instanceof SemanticFigure) && !(child instanceof IAnnotation)) {
+            if (!(child instanceof SemanticFigure) && !(child instanceof SemanticAnnot)) {
                 boundingBox.union(child.getBoundingBox());
             }
         }

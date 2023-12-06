@@ -30,7 +30,7 @@ public class SemanticDocumentPostprocessingConsumer extends WCAGConsumer {
 		for (INode node : tree) {
 			MultiBoundingBox boundingBox = new MultiBoundingBox();
 			for (INode child : node.getChildren()) {
-				if (!(child instanceof IAnnotation)) {
+				if (!(child instanceof SemanticAnnot)) {
 					boundingBox.union(child.getBoundingBox());
 				}
 			}

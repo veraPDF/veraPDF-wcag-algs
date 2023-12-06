@@ -552,9 +552,6 @@ public class ClusterTableConsumer extends WCAGConsumer {
         if (node.getRecognizedStructureId() == id) {
             return true;
         }
-        if (node instanceof SemanticFigure) {
-            return true;
-        }
         if (node instanceof SemanticTextNode) {
             SemanticTextNode textNode = (SemanticTextNode) node;
             return isTextNodeInsideTable(textNode, boundingBox);
