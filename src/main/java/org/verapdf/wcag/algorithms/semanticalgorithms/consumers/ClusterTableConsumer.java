@@ -161,8 +161,10 @@ public class ClusterTableConsumer extends WCAGConsumer {
 
         if (recognizedTable != null) {
             if (recognizedTable.getTableBorder() == null && ListUtils.isList(recognizedTable)) {
-            	PDFList list = new PDFList(recognizedTable);
-                lists.add(list);
+                if (!HeadingUtils.isHeadings(recognizedTable)) {
+                    PDFList list = new PDFList(recognizedTable);
+                    lists.add(list);   
+                }
             } else if (checkTable(recognizedTable)) {
                 tables.add(recognizedTable);
             }
@@ -424,7 +426,7 @@ public class ClusterTableConsumer extends WCAGConsumer {
         Long id = table.getId();
         Map<INode, Integer> cellNodes = new HashMap<>();
         for (int i = 0; i < row.getCells().size(); i++) {
-            INode cellNode = updateTreeWithRecognizedCell(row.getCells().get(i));
+            INode cellNode = getTableCellNode(row.getCells().get(i));
 
             if (cellNode != null) {
                 cellNodes.put(cellNode, i);
@@ -469,7 +471,7 @@ public class ClusterTableConsumer extends WCAGConsumer {
         return false;
     }
 
-    private INode updateTreeWithRecognizedCell(TableCell cell) {
+    public static INode getTableCellNode(TableCell cell) {
         Set<INode> tableLeafNodes = new HashSet<>();
         for (TableTokenRow tokenRow : cell.getContent()) {
             for (TextChunk chunk : tokenRow.getTextChunks()) {
@@ -535,7 +537,7 @@ public class ClusterTableConsumer extends WCAGConsumer {
 
     private boolean updateNode(INode node, Long id, SemanticType semanticType, boolean hasTableBorder,
                                BoundingBox boundingBox) {
-        if ((((ListUtils.isListNode(node) && !hasTableBorder) || TableUtils.isTableNode(node)) &&
+        if ((((ListUtils.isDetectedListNode(node) && !hasTableBorder) || TableUtils.isTableNode(node)) &&
             node.getRecognizedStructureId() != id) || (semanticType != SemanticType.TABLE && !isNodeInsideTable(node,
                 id, boundingBox, semanticType))) {
                 node.setRecognizedStructureId(null);
@@ -639,7 +641,7 @@ public class ClusterTableConsumer extends WCAGConsumer {
         return findLocalRoot(tableLeafNodes);
     }
 
-    private INode findLocalRoot(Set<INode> nodes) {
+    public static INode findLocalRoot(Set<INode> nodes) {
 
         INode localRoot = null;
         for (INode node : nodes) {
@@ -681,7 +683,7 @@ public class ClusterTableConsumer extends WCAGConsumer {
         return false;
     }
 
-    private void initTreeCounters(INode root) {
+    private static void initTreeCounters(INode root) {
         if (root == null) {
             return;
         }

@@ -28,7 +28,7 @@ public class ListUtils {
 			SemanticType.LIST, SemanticType.LIST_ITEM,
 			SemanticType.LIST_LABEL, SemanticType.LIST_BODY));
 
-	public static boolean isListNode(INode node) {
+	public static boolean isDetectedListNode(INode node) {
 		return listSemanticTypes.contains(node.getSemanticType());
 	}
 
@@ -190,8 +190,7 @@ public class ListUtils {
 	private static boolean isContainsHeading(INode node) {
 		INode currentNode = node;
 		while (currentNode.getPageNumber() != null) {
-			if ((currentNode.getSemanticType() == SemanticType.HEADING ||
-					currentNode.getSemanticType() == SemanticType.NUMBER_HEADING) &&
+			if (HeadingUtils.isDetectedHeadingNode(currentNode) &&
 					currentNode.getCorrectSemanticScore() >= NodeUtils.MIN_GOOD_HEADING_PROBABILITY) {
 				return true;
 			}

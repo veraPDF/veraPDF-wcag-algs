@@ -13,7 +13,6 @@ import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class SemanticDocumentPostprocessingConsumer extends WCAGConsumer {
@@ -120,7 +119,7 @@ public class SemanticDocumentPostprocessingConsumer extends WCAGConsumer {
 			node.setHasLowestDepthError();
 			return;
 		}
-		if ((ListUtils.isListNode(node) || ListUtils.isInitialListNode(node)) &&
+		if ((ListUtils.isDetectedListNode(node) || ListUtils.isInitialListNode(node)) &&
 				node.getSemanticType() != node.getInitialSemanticType()) {
 			node.setHasLowestDepthError();
 			return;
@@ -142,8 +141,7 @@ public class SemanticDocumentPostprocessingConsumer extends WCAGConsumer {
 	}
 
 	private boolean isTitle(INode node) {
-		return SemanticType.HEADING.equals(node.getSemanticType()) && !SemanticType.HEADING.equals(node.getInitialSemanticType()) ||
-		       SemanticType.NUMBER_HEADING.equals(node.getSemanticType()) && !SemanticType.NUMBER_HEADING.equals(node.getInitialSemanticType());
+		return HeadingUtils.isDetectedHeadingNode(node) && !HeadingUtils.isInitialHeadingNode(node);
 	}
 
 	private void checkRepeatedAndAdd(List<TextChunk> textChunks) {

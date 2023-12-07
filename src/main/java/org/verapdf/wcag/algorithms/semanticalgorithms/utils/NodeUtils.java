@@ -45,8 +45,7 @@ public class NodeUtils {
 		if (textNode.isStartsWithArabicNumber()) {
 			headingProbability += HEADING_PROBABILITY_PARAMS[2];
 		}
-		SemanticType initialSemanticType = initialNode.getInitialSemanticType();
-		if (SemanticType.HEADING.equals(initialSemanticType) || SemanticType.NUMBER_HEADING.equals(initialSemanticType)) {
+		if (HeadingUtils.isInitialHeadingNode(initialNode)) {
 			headingProbability += HEADING_PROBABILITY_PARAMS[3];
 		}
 		INode nextNeighbor = getNextNonEmptyNode(initialNode);

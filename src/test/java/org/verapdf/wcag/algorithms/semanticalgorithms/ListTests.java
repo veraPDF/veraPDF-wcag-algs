@@ -125,7 +125,7 @@ public class ListTests {
 
     private void testListTreeStructure(ITree tree) {
         for (INode node : tree) {
-            if (ListUtils.isListNode(node) && !node.isLeaf()) {
+            if (ListUtils.isDetectedListNode(node) && !node.isLeaf()) {
                 Assertions.assertEquals(node.getInitialSemanticType(), node.getSemanticType());
             }
         }

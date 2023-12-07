@@ -50,8 +50,7 @@ public class HeadingCaptionConsumer extends WCAGConsumer implements Consumer<INo
 		boolean singleChild = false;
 		if (children.size() == 1) {
 			INode child = children.get(0);
-			if (child.getInitialSemanticType() == SemanticType.HEADING ||
-					child.getInitialSemanticType() == SemanticType.NUMBER_HEADING) {
+			if (HeadingUtils.isInitialHeadingNode(child)) {
 				INode nextNode = getNextNonEmptyTextNode(child);
 				singleChild = true;
 				if (nextNode != null) {
