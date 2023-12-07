@@ -4,6 +4,7 @@ import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.tables.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ClusterTableConsumer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.TableBorderConsumer;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -26,7 +27,7 @@ public class HeadingUtils {
                 Set<INode> nodes = new HashSet<>();
                 nodes.add(ClusterTableConsumer.getTableCellNode(cell));
                 nodes.add(ClusterTableConsumer.getTableCellNode(cells.get(1)));
-                INode node = ClusterTableConsumer.findLocalRoot(nodes);
+                INode node = TableBorderConsumer.findCommonParent(nodes);
                 boolean isHeading = false;
                 while (node != null) {
                     if (isInitialHeadingNode(node) || node.getInitialSemanticType() == SemanticType.TITLE) {

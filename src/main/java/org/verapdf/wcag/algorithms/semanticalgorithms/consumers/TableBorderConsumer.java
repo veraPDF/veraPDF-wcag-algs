@@ -314,7 +314,7 @@ public class TableBorderConsumer extends WCAGConsumer {
         return nodes.stream().map(node -> findParent(node, depth)).collect(Collectors.toList());
     }
 
-    private static INode findCommonParent(Set<INode> nodes) {
+    public static INode findCommonParent(Set<INode> nodes) {
         if (nodes.size() == 0) {
             return null;
         }
