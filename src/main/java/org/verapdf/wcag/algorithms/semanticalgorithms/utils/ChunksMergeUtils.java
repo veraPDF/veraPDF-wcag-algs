@@ -127,7 +127,7 @@ public class ChunksMergeUtils {
 		double centersDiff = getCentersDifference(x, y);
 		double fontSizeDiff = getFontSizeDifference(x, y);
 
-		if (!TextFormat.NORMAL.equals(x.getTextFormat())) {
+		if (TextFormat.NORMAL != x.getTextFormat()) {
 			TextChunk z = lastLine.getLastNormalTextChunk();
 			if (z != null) {
 				baseLineDiff = getBaseLineDifference(z, y);

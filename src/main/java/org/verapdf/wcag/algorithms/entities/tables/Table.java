@@ -176,7 +176,7 @@ public class Table extends InfoChunk {
     }
 
     private void extractRestNodes(List<TableRow> restRows) {
-        Set<INode> nodeSet = new HashSet<INode>();
+        Set<INode> nodeSet = new HashSet<>();
         for (TableRow row : restRows) {
             for (TableCell cell : row.getCells()) {
                 for (TableTokenRow tableTokenRow : cell.getContent()) {

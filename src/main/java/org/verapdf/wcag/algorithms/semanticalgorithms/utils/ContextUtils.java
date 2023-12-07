@@ -47,6 +47,7 @@ public class ContextUtils {
 			    super(t);
 		    }
 
+		@Override
 		public void serialize(BoundingBox bbox, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
 			    throws IOException {
 			jsonGenerator.writeStartObject();
@@ -73,6 +74,7 @@ public class ContextUtils {
 			super(t);
 		}
 
+		@Override
 		public void serialize(MultiBoundingBox multiBBox, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
 				throws IOException {
 

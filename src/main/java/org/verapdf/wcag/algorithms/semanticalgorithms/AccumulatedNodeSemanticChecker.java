@@ -6,8 +6,6 @@ import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
-import java.util.function.Consumer;
-
 public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 
 	@Override

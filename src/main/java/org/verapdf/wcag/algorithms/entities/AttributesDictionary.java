@@ -23,10 +23,12 @@ public class AttributesDictionary implements IAttributesDictionary {
 		this.colSpan = colSpan;
 	}
 
+	@Override
 	public long getRowSpan() {
 		return rowSpan;
 	}
 
+	@Override
 	public long getColSpan() {
 		return colSpan;
 	}

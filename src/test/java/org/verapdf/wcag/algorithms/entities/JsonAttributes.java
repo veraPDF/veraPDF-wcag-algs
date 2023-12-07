@@ -32,8 +32,8 @@ public class JsonAttributes {
 			return false;
 		}
 		JsonAttributes jsonAttributes = (JsonAttributes) o;
-		return Long.compare(jsonAttributes.colSpan, colSpan) == 0 &&
-				Long.compare(jsonAttributes.rowSpan, rowSpan) == 0;
+		return jsonAttributes.colSpan == colSpan &&
+				jsonAttributes.rowSpan == rowSpan;
 	}
 
 	@Override

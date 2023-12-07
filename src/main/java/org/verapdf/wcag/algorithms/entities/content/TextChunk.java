@@ -58,6 +58,7 @@ public class TextChunk extends TextInfoChunk {
                 chunk.baseLine, chunk.fontColor, chunk.symbolEnds, chunk.slantDegree);
     }
 
+    @Override
     public String getValue() {
         return value;
     }

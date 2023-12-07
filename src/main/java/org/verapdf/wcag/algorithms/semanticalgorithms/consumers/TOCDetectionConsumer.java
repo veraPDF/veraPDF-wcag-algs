@@ -784,10 +784,12 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
         return true;
     }
 
+    @Override
     public WCAGProgressStatus getWCAGProgressStatus() {
         return WCAGProgressStatus.TOC_DETECTION;
     }
 
+    @Override
     public Double getPercent() {
         return 100.0d * processedStructElements / structElementsNumber;
     }

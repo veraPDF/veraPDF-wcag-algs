@@ -350,7 +350,7 @@ public class TableRecognizer {
                 if (rowNumber == null || rowNumber <= i) {
                     if (rowNumber == i) {
                         TableCell cell = new TableCell(column.getRows().get(rowId), SemanticType.TABLE_CELL);
-                        while (rowId + 1 < column.getRows().size() && column.getRows().get(rowId + 1).getRowNumber() == rowNumber) {
+                        while (rowId + 1 < column.getRows().size() && column.getRows().get(rowId + 1).getRowNumber().equals(rowNumber)) {
                             cell.add(column.getRows().get(++rowId));
                         }
                         tableRow.add(cell);

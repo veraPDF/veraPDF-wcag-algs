@@ -342,10 +342,10 @@ public class TableCluster extends TextInfoChunk {
 
         // update merged cluster min gaps
         if (update) {
-            if (leftSet.size() > 0) {
+            if (!leftSet.isEmpty()) {
                 updateMinGap(Side.LEFT);
             }
-            if (rightSet.size() > 0) {
+            if (!rightSet.isEmpty()) {
                 updateMinGap(Side.RIGHT);
             }
         }
@@ -357,7 +357,7 @@ public class TableCluster extends TextInfoChunk {
             return;
         }
 
-        Collections.sort(rows, Comparator.comparingInt(TableTokenRow::getRowNumber).
+        rows.sort(Comparator.comparingInt(TableTokenRow::getRowNumber).
                 thenComparingDouble(y -> -y.getBaseLine()).
                 thenComparingDouble(TableTokenRow::getLeftX));
 
@@ -377,6 +377,7 @@ public class TableCluster extends TextInfoChunk {
         rows = result;
     }
 
+    @Override
     public double getFirstBaseLine() {
         return getFirstRow().getFirstBaseLine();
     }

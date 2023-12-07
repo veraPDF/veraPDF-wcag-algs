@@ -88,7 +88,7 @@ public class ListUtils {
 			INode child = children.get(info.getIndex());
 			if (child.getSemanticType() != SemanticType.TABLE_OF_CONTENT_ITEM &&
 					child.getSemanticType() != SemanticType.TABLE_OF_CONTENT)
-			updateTreeWithRecognizedListItem(child, listId);
+				updateTreeWithRecognizedListItem(child, listId);
 		}
 		if (node.getRecognizedStructureId() == null) {
 			double probability = ((double) (listInterval.getNumberOfListItemsAndLists())) / node.getChildren().size();

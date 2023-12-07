@@ -47,12 +47,14 @@ public class Vertex extends InfoChunk {
     }
 
     public static class VertexComparatorX implements Comparator<Vertex> {
+        @Override
         public int compare(Vertex vertex1, Vertex vertex2){
             return Double.compare(vertex1.getLeftX(), vertex2.getLeftX());
         }
     }
 
     public static class VertexComparatorY implements Comparator<Vertex> {
+        @Override
         public int compare(Vertex vertex1, Vertex vertex2){
             return -Double.compare(vertex1.getTopY(), vertex2.getTopY());
         }

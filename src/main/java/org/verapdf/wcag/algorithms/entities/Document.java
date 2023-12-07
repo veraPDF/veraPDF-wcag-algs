@@ -9,18 +9,20 @@ import java.util.List;
 
 public class Document implements IDocument {
 
-	private ITree tree;
-	private List<IPage> pages;
+	private final ITree tree;
+	private final List<IPage> pages;
 
 	public Document(ITree tree) {
 		this.tree = tree;
 		pages = new LinkedList<>();
 	}
 
+	@Override
 	public ITree getTree(){
 		return tree;
 	}
 
+	@Override
 	public List<IChunk> getArtifacts(Integer pageNumber) {
 		if (pageNumber < pages.size()) {
 			return pages.get(pageNumber).getArtifacts();
@@ -28,14 +30,17 @@ public class Document implements IDocument {
 		return Collections.emptyList();
 	}
 
+	@Override
 	public List<IPage> getPages() {
 		return pages;
 	}
 
+	@Override
 	public int getNumberOfPages() {
 		return pages.size();
 	}
 
+	@Override
 	public IPage getPage(Integer pageNumber) {
 		if (pageNumber < pages.size()) {
 			return pages.get(pageNumber);
@@ -43,6 +48,7 @@ public class Document implements IDocument {
 		return null;
 	}
 
+	@Override
 	public List<IChunk> getArtifacts() {
 		List<IChunk> artifacts = new ArrayList<>();
 		for (IPage page : pages) {

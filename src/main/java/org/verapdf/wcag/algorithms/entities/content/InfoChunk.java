@@ -3,8 +3,6 @@ package org.verapdf.wcag.algorithms.entities.content;
 import org.verapdf.wcag.algorithms.entities.BaseObject;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
-import java.util.Objects;
-
 public abstract class InfoChunk extends BaseObject implements IChunk {
 
     public InfoChunk() {
@@ -14,11 +12,6 @@ public abstract class InfoChunk extends BaseObject implements IChunk {
     public InfoChunk(BoundingBox bbox) {
         super(new BoundingBox());
         setBoundingBox(bbox);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getBoundingBox());
     }
 
     @Override

@@ -4,8 +4,8 @@ import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 public class RepeatedCharacters {
 
-	private boolean nonSpace;
-	private Integer numberOfElements;
+	private final boolean nonSpace;
+	private final Integer numberOfElements;
 	private BoundingBox boundingBox;
 
 	public RepeatedCharacters(boolean nonSpace, Integer numberOfElements, BoundingBox boundingBox) {

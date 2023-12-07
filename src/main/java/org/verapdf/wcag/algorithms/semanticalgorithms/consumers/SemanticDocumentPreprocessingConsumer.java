@@ -48,12 +48,13 @@ public class SemanticDocumentPreprocessingConsumer extends WCAGConsumer implemen
         }
     }
 
+    @Override
     public void accept(INode node) {
         // setup parent nodes for children
 
         if (node instanceof SemanticSpan) {
             textChunksNumber++;
-            if (node.getChildren().size() != 0) {
+            if (!node.getChildren().isEmpty()) {
                 LOGGER.log(Level.WARNING, "Text chunk cannot contain children: {}", node);
             }
         } else if (node.getInitialSemanticType() == SemanticType.SPAN) {
@@ -130,6 +131,7 @@ public class SemanticDocumentPreprocessingConsumer extends WCAGConsumer implemen
         return structElementsNumber;
     }
 
+    @Override
     public WCAGProgressStatus getWCAGProgressStatus() {
         return WCAGProgressStatus.DOCUMENT_PREPROCESSING;
     }

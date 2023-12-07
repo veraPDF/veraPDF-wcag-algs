@@ -142,7 +142,7 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 				boundingBox.union(child.getBoundingBox());
 				continue;
 			}
-			if (child.getSemanticType().equals(SemanticType.FIGURE)) {
+			if (child.getSemanticType() == SemanticType.FIGURE) {
 				continue;
 			}
 			if (part == null) {
@@ -166,7 +166,7 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 		SemanticType semanticType = SemanticType.PART;
 		INode accumulatedNode = part;
 		if (part != null && part.getColumns().stream().allMatch(TextColumn::hasOnlyOneBlock)) {
-			boolean isSpan = SemanticType.SPAN.equals(node.getInitialSemanticType()) &&
+			boolean isSpan = SemanticType.SPAN == node.getInitialSemanticType() &&
 					(isLeafChild || node.getChildren().stream()
 							.allMatch(AccumulatedNodeConsumer::isAppropriateSpanChild));
 			if (isSpan) {
@@ -310,6 +310,7 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 		}
 	}
 
+	@Override
 	public WCAGProgressStatus getWCAGProgressStatus() {
 		return WCAGProgressStatus.PARAGRAPH_DETECTION;
 	}

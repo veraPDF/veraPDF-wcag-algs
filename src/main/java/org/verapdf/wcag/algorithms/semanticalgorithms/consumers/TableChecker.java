@@ -426,6 +426,7 @@ public class TableChecker extends WCAGConsumer implements Consumer<INode> {
         }
     }
 
+    @Override
     public WCAGProgressStatus getWCAGProgressStatus() {
         return WCAGProgressStatus.TABLE_VALIDATION;
     }

@@ -12,7 +12,6 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.RomanNumbersListLabelsDetectionAlgorithm;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ListLabelsUtils {
 
@@ -119,7 +118,7 @@ public class ListLabelsUtils {
 			InfoChunk currentImage = itemsInfo.get(i).getListItemValue();
 			if (!NodeUtils.areCloseNumbers(image.getBoundingBox().getWidth(), currentImage.getBoundingBox().getWidth()) ||
 			    !NodeUtils.areCloseNumbers(image.getBoundingBox().getHeight(), currentImage.getBoundingBox().getHeight())) {
-				if (SemanticType.LIST.equals(itemsInfo.get(i).getSemanticType())) {
+				if (SemanticType.LIST == itemsInfo.get(i).getSemanticType()) {
 					interval.getListsIndexes().add(itemsInfo.get(i).getIndex());
 					continue;
 				}
@@ -156,7 +155,7 @@ public class ListLabelsUtils {
 		for (ListItemTextInfo info : itemsInfo) {
 			boolean badListItem = info.getListItem().length() == 1 && info.hasOneLine();
 			if (!Objects.equals(info.getListItem().charAt(0), firstChar) || badListItem) {
-				if (SemanticType.LIST.equals(info.getSemanticType())) {
+				if (SemanticType.LIST == info.getSemanticType()) {
 					interval.getListsIndexes().add(info.getIndex());
 					continue;
 				}

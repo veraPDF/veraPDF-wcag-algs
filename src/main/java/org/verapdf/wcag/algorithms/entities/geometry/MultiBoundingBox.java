@@ -143,6 +143,7 @@ public class MultiBoundingBox extends BoundingBox {
         return boundingBoxes;
     }
 
+    @Override
     public BoundingBox getBoundingBox(int pageNumber) {
         if (this.pageNumber > pageNumber || this.lastPageNumber < pageNumber) {
             return null;
@@ -162,6 +163,7 @@ public class MultiBoundingBox extends BoundingBox {
         return boundingBox;
     }
 
+    @Override
     public Double getRightX(int pageNumber) {
         if (this.pageNumber > pageNumber || this.lastPageNumber < pageNumber) {
             return null;
@@ -179,6 +181,7 @@ public class MultiBoundingBox extends BoundingBox {
         return maxRight;
     }
 
+    @Override
     public Double getLeftX(int pageNumber) {
         if (this.pageNumber > pageNumber || this.lastPageNumber < pageNumber) {
             return null;
