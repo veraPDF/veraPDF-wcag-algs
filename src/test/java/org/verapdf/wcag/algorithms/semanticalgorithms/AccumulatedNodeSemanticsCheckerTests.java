@@ -26,7 +26,6 @@ class AccumulatedNodeSemanticsCheckerTests {
 
 	static {
 		ignoredSemanticTypes.add(SemanticType.LINK);
-		ignoredSemanticTypes.add(SemanticType.ANNOT);
 		ignoredSemanticTypes.add(SemanticType.FIGURE);
 		ignoredSemanticTypes.add(SemanticType.FORM);
 		ignoredSemanticTypes.add(SemanticType.TABLE);
@@ -80,6 +79,7 @@ class AccumulatedNodeSemanticsCheckerTests {
 
 	static Stream<Arguments> treeSemanticCorrectnessTestParams() {
 		return Stream.of(
+				Arguments.of("annots/annot1.json"), 
 				Arguments.of("headings/Heading1.json"),
 				Arguments.of("headings/Heading2.json"),
 				Arguments.of("headings/Heading3.json"),
@@ -115,6 +115,7 @@ class AccumulatedNodeSemanticsCheckerTests {
 				Arguments.of("spans/Span1.json"),
 				Arguments.of("paragraphs/one_line_vertical_paragraph.json"),
 				Arguments.of("paragraphs/paragraph1.json"),
+				Arguments.of("paragraphs/paragraph2.json"),
 				Arguments.of("paragraphs/paragraph_arrows.json"),
 				Arguments.of("paragraphs/lwg_footnote.json"),
 				Arguments.of("paragraphs/paragraph_not_caption_danish.json"),

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class PDFList extends InfoChunk {
 
-    private final double LIST_ITEM_EPSILON = 0.2;
+    private static final double LIST_ITEM_EPSILON = 0.2;
 
     private final List<ListItem> listItems;
 

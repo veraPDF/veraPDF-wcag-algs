@@ -25,8 +25,7 @@ public class CaptionUtils {
 		if (node == null) {
 			return 0;
 		}
-		if (node.getSemanticType() == SemanticType.HEADING ||
-		    node.getSemanticType() == SemanticType.NUMBER_HEADING) {
+		if (HeadingUtils.isDetectedHeadingNode(node)) {
 			return 0;
 		}
 		INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
@@ -57,9 +56,7 @@ public class CaptionUtils {
 		if (node == null) {
 			return 0.0;
 		}
-		if (node.getSemanticType() == SemanticType.HEADING ||
-				node.getSemanticType() == SemanticType.NUMBER_HEADING ||
-				node.getSemanticType() == SemanticType.LIST) {
+		if (HeadingUtils.isDetectedHeadingNode(node) || node.getSemanticType() == SemanticType.LIST) {
 			return 0.0;
 		}
 		INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);

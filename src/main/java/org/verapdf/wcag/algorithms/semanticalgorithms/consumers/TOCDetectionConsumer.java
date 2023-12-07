@@ -633,8 +633,7 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
         if (node == null) {
             return false;
         }
-        if (node.getInitialSemanticType() == SemanticType.NUMBER_HEADING ||
-                node.getInitialSemanticType() == SemanticType.HEADING) {
+        if (HeadingUtils.isInitialHeadingNode(node)) {
             textValue = getTextChunks(node, pageNumber).stream()
                     .map(TextChunk::getValue).collect(Collectors.joining(""))
                     .replaceAll(NON_CONTENT_REGEX, "").toUpperCase();
@@ -651,7 +650,7 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
             }
             return false;
         }
-        if (node.getSemanticType() == SemanticType.HEADING || node.getSemanticType() == SemanticType.NUMBER_HEADING) {
+        if (HeadingUtils.isDetectedHeadingNode(node)) {
             return true;
         }
         INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);

@@ -19,7 +19,7 @@ public class ChunksMergeUtils {
 	private static final double FONT_WHITESPACE_COMPARISON_THRESHOLD = 0.33;
 	private static final double FONT_LEADING_INTERVAL_STANDARD = 1;
 	private static final double[] DEFAULT_FONT_CHAR_SPACING_INTERVAL = {0, 0.67};
-	private static final double[] DEFAULT_FONT_LEADING_INTERVAL = {0.7, 1.5};
+	private static final double[] DEFAULT_FONT_LEADING_INTERVAL = {0.7, 1.51};
 	private static final double[] PART_FONT_LEADING_INTERVAL = {0.2, 1.5};
 
 	private static final double TO_LINE_PROBABILITY_THRESHOLD = 0.75;
