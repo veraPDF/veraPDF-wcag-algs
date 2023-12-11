@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 
-import java.io.IOException;
-
 public class NodeIdResolver extends TypeIdResolverBase {
 
 	private JavaType superType;
@@ -32,8 +30,8 @@ public class NodeIdResolver extends TypeIdResolverBase {
 	}
 
 	@Override
-	public JavaType typeFromId(DatabindContext context, String id) throws IOException {
-		Class<?> subType = null;
+	public JavaType typeFromId(DatabindContext context, String id) {
+		Class<?> subType;
 		switch (id) {
 			case "TextChunk":
 				subType = JsonTextChunk.class;

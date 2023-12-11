@@ -6,6 +6,7 @@ public interface ITree extends Iterable<INode> {
 
 	INode getRoot();
 
+	@Override
 	default Iterator<INode> iterator() {
 		return new DFSTreeNodeIterator(getRoot());
 	}

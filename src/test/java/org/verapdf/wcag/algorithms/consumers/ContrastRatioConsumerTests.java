@@ -58,7 +58,7 @@ public class ContrastRatioConsumerTests {
 
 		tree.forEach(contrastRatioConsumer);
 		tree.forEach(node -> {
-			if (node.getChildren().size() == 0 && SemanticType.SPAN.equals(node.getSemanticType())) {
+			if (node.getChildren().isEmpty() && SemanticType.SPAN == node.getSemanticType()) {
 				for (TextColumn textColumn : ((SemanticSpan)node).getColumns()) {
 					for (TextLine line : textColumn.getLines()) {
 						for	(TextChunk chunk : line.getTextChunks())	{
@@ -95,7 +95,7 @@ public class ContrastRatioConsumerTests {
 
 		tree.forEach(contrastRatioConsumer);
 		tree.forEach(node -> {
-			if (node.getChildren().size() == 0 && SemanticType.SPAN.equals(node.getSemanticType())) {
+			if (node.getChildren().isEmpty() && SemanticType.SPAN == node.getSemanticType()) {
 				for (TextColumn textColumn : ((SemanticSpan)node).getColumns()) {
 					for (TextLine line : textColumn.getLines()) {
 						for	(TextChunk chunk : line.getTextChunks())	{

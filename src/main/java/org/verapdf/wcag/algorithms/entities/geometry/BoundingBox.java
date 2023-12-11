@@ -225,9 +225,7 @@ public class BoundingBox {
             BoundingBox part = cross(fullRectangle);
             return part != null && part.getArea() >= fullRectangle.getArea() * 0.7;
         }
-        else {
-            return contains(fullRectangle);
-        }
+        return contains(fullRectangle);
     }
 
     public static BoundingBox cross(BoundingBox first, BoundingBox second) {

@@ -17,10 +17,12 @@ public class Page implements IPage {
 		artifacts = new LinkedList<>();
 	}
 
+	@Override
 	public List<IChunk> getArtifacts() {
 		return artifacts;
 	}
 
+	@Override
 	public int getPageNumber() {
 		return pageNumber;
 	}

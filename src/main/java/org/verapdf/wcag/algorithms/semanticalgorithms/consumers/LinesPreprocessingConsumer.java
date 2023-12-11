@@ -116,6 +116,7 @@ public class LinesPreprocessingConsumer extends WCAGConsumer {
         }
     }
 
+    @Override
     public WCAGProgressStatus getWCAGProgressStatus() {
         return WCAGProgressStatus.LINES_PREPROCESSING;
     }

@@ -6,8 +6,8 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 public class TableBorderRow extends BaseObject {
-    private int rowNumber;
-    protected TableBorderCell[] cells;
+    private final int rowNumber;
+    protected final TableBorderCell[] cells;
     private SemanticType semanticType;
     private INode node;
 

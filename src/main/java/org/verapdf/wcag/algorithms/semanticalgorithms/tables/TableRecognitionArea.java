@@ -258,7 +258,7 @@ public class TableRecognitionArea {
     }
 
     private boolean addCluster(TextInfoChunk token) {
-        if (token.getPageNumber() != token.getLastPageNumber()) {
+        if (!token.getPageNumber().equals(token.getLastPageNumber())) {
             isComplete = true;
             return false;
         }

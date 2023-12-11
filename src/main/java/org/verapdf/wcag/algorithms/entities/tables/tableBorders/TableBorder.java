@@ -420,6 +420,7 @@ public class TableBorder extends BaseObject {
     }
 
     public static class TableBordersComparator implements Comparator<TableBorder> {
+        @Override
         public int compare(TableBorder border1, TableBorder border2) {
             int res = Double.compare(border2.getBoundingBox().getTopY(), border1.getBoundingBox().getTopY());
             if (res != 0) {

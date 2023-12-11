@@ -33,7 +33,7 @@ public class HeadingCaptionConsumer extends WCAGConsumer implements Consumer<INo
 		List<INode> children = new ArrayList<>(node.getChildren().size());
 		List<SemanticTextNode> textChildren = new ArrayList<>(node.getChildren().size());
 		for (INode child : node.getChildren()) {
-			if (child != null && !SemanticType.BLOCK_QUOTE.equals(child.getInitialSemanticType())) {
+			if (child != null && SemanticType.BLOCK_QUOTE != child.getInitialSemanticType()) {
 				INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
 				if (accumulatedChild instanceof SemanticTextNode) {
 					SemanticTextNode textNode = (SemanticTextNode)accumulatedChild;
@@ -207,6 +207,7 @@ public class HeadingCaptionConsumer extends WCAGConsumer implements Consumer<INo
 		}
 	}
 
+	@Override
 	public WCAGProgressStatus getWCAGProgressStatus() {
 		return WCAGProgressStatus.HEADING_AND_CAPTION_DETECTION;
 	}

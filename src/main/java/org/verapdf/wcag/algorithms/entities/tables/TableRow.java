@@ -9,7 +9,7 @@ import java.util.List;
 
 public class TableRow extends TextInfoChunk {
     private Long id;
-    private List<TableCell> cells;
+    private final List<TableCell> cells;
     private SemanticType semanticType = null;
 
     public TableRow() {

@@ -46,7 +46,7 @@ public class TextLine extends TextInfoChunk {
     public TextChunk getLastNormalTextChunk() {
         for (int i = textChunks.size() - 2; i >= 0; i--) {
             TextChunk textChunk = textChunks.get(i);
-            if (TextFormat.NORMAL.equals(textChunk.getTextFormat())) {
+            if (TextFormat.NORMAL == textChunk.getTextFormat()) {
                 return textChunk;
             }
         }
@@ -69,6 +69,7 @@ public class TextLine extends TextInfoChunk {
         }
     }
 
+    @Override
     public String getValue() {
         if (textChunks.isEmpty()) {
             return "";

@@ -100,10 +100,12 @@ public class BaseObject implements IObject {
 		recognizedStructureId = id;
 	}
 
+	@Override
 	public double getWidth() {
 		return boundingBox.getWidth();
 	}
 
+	@Override
 	public double getHeight() {
 		return boundingBox.getHeight();
 	}

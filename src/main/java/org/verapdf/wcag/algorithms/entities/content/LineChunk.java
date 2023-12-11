@@ -9,9 +9,9 @@ import java.util.Objects;
 
 public class LineChunk extends InfoChunk {
 
-	public static int BUTT_CAP_STYLE = 0;
-	public static int ROUND_CAP_STYLE = 1;
-	public static int PROJECTING_SQUARE_CAP_STYLE = 2;
+	public static final int BUTT_CAP_STYLE = 0;
+	public static final int ROUND_CAP_STYLE = 1;
+	public static final int PROJECTING_SQUARE_CAP_STYLE = 2;
 
 	private final Vertex start;
 	private final Vertex end;
@@ -74,12 +74,14 @@ public class LineChunk extends InfoChunk {
 		return isSquare;
 	}
 
+	@Override
 	public double getWidth() {
 		return width;
 	}
 
 	public static class HorizontalLineComparator implements Comparator<LineChunk> {
 
+		@Override
 		public int compare(LineChunk line1, LineChunk line2){
 			int res = Double.compare(line2.getCenterY(), line1.getCenterY());
 			if (res != 0) {
@@ -91,6 +93,7 @@ public class LineChunk extends InfoChunk {
 
 	public static class VerticalLineComparator implements Comparator<LineChunk> {
 
+		@Override
 		public int compare(LineChunk line1, LineChunk line2){
 			int res = Double.compare(line1.getCenterX(), line2.getCenterX());
 			if (res != 0) {

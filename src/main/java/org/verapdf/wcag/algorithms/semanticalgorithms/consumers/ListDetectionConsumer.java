@@ -69,8 +69,8 @@ public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INod
             if (child == null) {
                 continue;
             }
-            if (SemanticType.LIST.equals(child.getSemanticType()) && child.getChildren().stream()
-                    .filter(i -> SemanticType.LIST_ITEM.equals(i.getSemanticType()))
+            if (SemanticType.LIST == child.getSemanticType() && child.getChildren().stream()
+                    .filter(i -> SemanticType.LIST_ITEM == i.getSemanticType())
                     .count() > 1) {
                 continue;
             }
@@ -125,12 +125,12 @@ public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INod
     }
 
     private boolean updateTreeWithOneElementList(INode node, List<ListItemTextInfo> itemsInfo) {
-        if (SemanticType.LIST.equals(node.getInitialSemanticType()) &&
+        if (SemanticType.LIST == node.getInitialSemanticType() &&
                 itemsInfo.size() == itemsInfo.stream()
-                        .filter(i -> SemanticType.LIST.equals(i.getSemanticType()))
+                        .filter(i -> SemanticType.LIST == i.getSemanticType())
                         .count() + 1) {
             int index = IntStream.range(0, itemsInfo.size())
-                    .filter(i -> !SemanticType.LIST.equals(itemsInfo.get(i).getSemanticType()))
+                    .filter(i -> SemanticType.LIST != itemsInfo.get(i).getSemanticType())
                     .findFirst().orElse(0);
             if (ListLabelsUtils.isListLabel(itemsInfo.get(index).getListItem())) {
                 int originalIndex = itemsInfo.get(index).getIndex();
@@ -321,6 +321,7 @@ public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INod
         return false;
     }
 
+    @Override
     public WCAGProgressStatus getWCAGProgressStatus() {
         return WCAGProgressStatus.LIST_DETECTION;
     }

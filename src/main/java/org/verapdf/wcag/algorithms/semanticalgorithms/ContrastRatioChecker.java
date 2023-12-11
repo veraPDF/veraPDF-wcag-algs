@@ -2,9 +2,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms;
 
 import org.verapdf.wcag.algorithms.entities.IDocument;
 import org.verapdf.wcag.algorithms.entities.INode;
-import org.verapdf.wcag.algorithms.entities.IPage;
 import org.verapdf.wcag.algorithms.entities.ITree;
-import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.enums.TextType;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ContrastRatioConsumer;
 

@@ -174,7 +174,7 @@ public class TableBorderConsumer extends WCAGConsumer {
 
     private static void setType(INode node, SemanticType type, Long id, BoundingBox boundingBox) {
         if (node != null) {
-            if (((TableUtils.isTableNode(node)) && node.getRecognizedStructureId() != id) ||
+            if (((TableUtils.isTableNode(node)) && !Objects.equals(node.getRecognizedStructureId(), id)) ||
                     !ClusterTableConsumer.isNodeInsideTable(node, id, boundingBox, type)) {
                 node.setRecognizedStructureId(null);
             } else {
@@ -315,7 +315,7 @@ public class TableBorderConsumer extends WCAGConsumer {
     }
 
     public static INode findCommonParent(Set<INode> nodes) {
-        if (nodes.size() == 0) {
+        if (nodes.isEmpty()) {
             return null;
         }
         if (nodes.size() == 1) {
@@ -340,6 +340,7 @@ public class TableBorderConsumer extends WCAGConsumer {
         return parents.iterator().next();
     }
 
+    @Override
     public WCAGProgressStatus getWCAGProgressStatus() {
         return WCAGProgressStatus.TABLE_BORDER_DETECTION;
     }

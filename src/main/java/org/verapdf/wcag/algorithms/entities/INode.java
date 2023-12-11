@@ -1,10 +1,8 @@
 package org.verapdf.wcag.algorithms.entities;
 
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
-import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 import java.util.List;
-import java.util.Set;
 
 public interface INode extends IObject {
 

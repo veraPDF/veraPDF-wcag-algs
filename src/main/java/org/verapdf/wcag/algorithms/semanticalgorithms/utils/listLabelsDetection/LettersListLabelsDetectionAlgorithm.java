@@ -7,6 +7,7 @@ import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
 import java.util.*;
 
 public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDetectionAlgorithm {
+    @Override
     public boolean isListLabels(List<String> labels, int commonStartLength, int commonEndLength) {
         if (!labels.get(0).substring(commonStartLength, labels.get(0).length() - commonEndLength).matches(getRegex())) {
             return false;
@@ -39,13 +40,14 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
             if (nextNumber == null) {
                 return false;
             }
-            if (!substring.equalsIgnoreCase(getStringFromNumber(nextNumber)) || nextNumber != ++number) {
+            if (!substring.equalsIgnoreCase(getStringFromNumber(nextNumber)) || !nextNumber.equals(++number)) {
                 return false;
             }
         }
         return true;
     }
 
+    @Override
     public Set<ListInterval> getItemsIntervals(List<ListItemTextInfo> itemsInfo) {
         Set<ListInterval> listIntervals = new HashSet<>();
         Integer number = null;
@@ -63,7 +65,7 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
                     isCharMatchRegex(item, start + s.length()) || isBadItem(itemInfo, item, s, start) ||
                     ((!item.substring(start, start + s.length()).matches(getLowerCaseRegex()) || isUpperCase) &&
                      (!item.substring(start, start + s.length()).matches(getUpperCaseRegex()) || !isUpperCase))) {
-                    if (SemanticType.LIST.equals(itemInfo.getSemanticType())) {
+                    if (SemanticType.LIST == itemInfo.getSemanticType()) {
                         interval.getListsIndexes().add(itemInfo.getIndex());
                         number--;
                         continue;

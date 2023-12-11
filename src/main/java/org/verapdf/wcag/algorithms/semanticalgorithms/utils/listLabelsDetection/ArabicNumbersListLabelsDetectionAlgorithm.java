@@ -56,7 +56,7 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
                 arabicNumberInformation.number++;
                 ListItemTextInfo itemInfo = itemsInfo.get(i);
                 if (!arabicNumberInformation.checkItem(itemInfo) || arabicNumberInformation.isBadItem(itemInfo)) {
-                    if (SemanticType.LIST.equals(itemInfo.getSemanticType())) {
+                    if (SemanticType.LIST == itemInfo.getSemanticType()) {
                         arabicNumberInformation.number--;
                         interval.getListsIndexes().add(itemInfo.getIndex());
                         continue;

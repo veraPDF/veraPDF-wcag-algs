@@ -11,8 +11,8 @@ public class TableBorderBuilder {
 
     private final BoundingBox boundingBox;
     private final Set<Vertex> vertexes;
-    private final TreeSet<LineChunk> horizontalLines;
-    private final TreeSet<LineChunk> verticalLines;
+    private final SortedSet<LineChunk> horizontalLines;
+    private final SortedSet<LineChunk> verticalLines;
 
     public TableBorderBuilder(LineChunk lineChunk) {
         vertexes = new HashSet<>();
@@ -119,6 +119,7 @@ public class TableBorderBuilder {
     }
 
     public static class TableBorderBuildersComparator implements Comparator<TableBorderBuilder> {
+        @Override
         public int compare(TableBorderBuilder builder1, TableBorderBuilder builder2){
             int res = Double.compare(builder2.getBoundingBox().getTopY(), builder1.getBoundingBox().getTopY());
             if (res != 0) {

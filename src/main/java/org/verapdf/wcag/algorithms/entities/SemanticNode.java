@@ -20,7 +20,7 @@ public class SemanticNode extends BaseObject implements INode {
 	private boolean hasLowestDepthError = false;
 	private IAttributesDictionary attributesDictionary;
 
-	public NodeInfo nodeInfo;
+	public final NodeInfo nodeInfo;
 
 	public SemanticNode() {
 		this((SemanticType)null);
@@ -217,7 +217,7 @@ public class SemanticNode extends BaseObject implements INode {
 		return Objects.equals(objectKeyNumber, that.objectKeyNumber) &&
 				Objects.equals(index, that.index) &&
 				Objects.equals(parent, that.parent) &&
-				Objects.equals(initialSemanticType, that.initialSemanticType) &&
+				initialSemanticType == that.initialSemanticType &&
 				depth == that.depth;
 	}
 

@@ -16,14 +16,17 @@ public class AnnotationNode extends InfoChunk implements IAnnotation {
 		this.destinationObjectKeyNumber = destinationObjectKeyNumber;
 	}
 
+	@Override
 	public String getAnnotationType() {
 		return this.annotationType;
 	}
 
+	@Override
 	public Integer getDestinationPageNumber() {
 		return this.destinationPageNumber;
 	}
 
+	@Override
 	public Integer getDestinationObjectKeyNumber() {
 		return destinationObjectKeyNumber;
 	}

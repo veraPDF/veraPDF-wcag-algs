@@ -171,7 +171,7 @@ public class ClusterTableConsumer extends WCAGConsumer {
             return recognizedTable.getRestNodes();
         }
 
-        return new ArrayList<INode>();
+        return new ArrayList<>();
     }
 
     private boolean checkTable(Table recognizedTable) {
@@ -394,7 +394,7 @@ public class ClusterTableConsumer extends WCAGConsumer {
 
             INode localRoot = findLocalRoot(rows);
             if (localRoot != null) {
-                if (type == SemanticType.TABLE_BODY && localRoot.getPageNumber() != localRoot.getLastPageNumber()) {
+                if (type == SemanticType.TABLE_BODY && !Objects.equals(localRoot.getPageNumber(), localRoot.getLastPageNumber())) {
                     table.setBodyNode(localRoot);
                 } else {
                     updateNode(localRoot, table.getId(), type, table.getTableBorder() != null,
@@ -538,7 +538,7 @@ public class ClusterTableConsumer extends WCAGConsumer {
     private boolean updateNode(INode node, Long id, SemanticType semanticType, boolean hasTableBorder,
                                BoundingBox boundingBox) {
         if ((((ListUtils.isDetectedListNode(node) && !hasTableBorder) || TableUtils.isTableNode(node)) &&
-            node.getRecognizedStructureId() != id) || (semanticType != SemanticType.TABLE && !isNodeInsideTable(node,
+                !Objects.equals(node.getRecognizedStructureId(), id)) || (semanticType != SemanticType.TABLE && !isNodeInsideTable(node,
                 id, boundingBox, semanticType))) {
                 node.setRecognizedStructureId(null);
             return false;
@@ -551,7 +551,7 @@ public class ClusterTableConsumer extends WCAGConsumer {
 
     //optimize
     public static boolean isNodeInsideTable(INode node, Long id, BoundingBox boundingBox, SemanticType semanticType) {
-        if (node.getRecognizedStructureId() == id) {
+        if (Objects.equals(node.getRecognizedStructureId(), id)) {
             return true;
         }
         if (node instanceof SemanticTextNode) {
@@ -745,6 +745,7 @@ public class ClusterTableConsumer extends WCAGConsumer {
         return false;
     }
 
+    @Override
     public WCAGProgressStatus getWCAGProgressStatus() {
         return WCAGProgressStatus.TABLE_DETECTION;
     }

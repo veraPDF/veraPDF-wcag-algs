@@ -514,7 +514,7 @@ public class SemanticTextNode extends SemanticNode {
 
     @Override
     public String toString() {
-        if (columns.size() == 0) {
+        if (columns.isEmpty()) {
             return this.getClass().getName() + "{}";
         }
         StringBuilder result = new StringBuilder(this.getClass().getSimpleName());

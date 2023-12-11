@@ -416,6 +416,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		}
 	}
 
+	@Override
 	public WCAGProgressStatus getWCAGProgressStatus() {
 		return WCAGProgressStatus.CONTRAST_DETECTION;
 	}

@@ -153,7 +153,7 @@ public class TextColumn extends TextInfoChunk {
 
 	@Override
 	public String toString() {
-		StringBuilder stringBuilder = new StringBuilder("");
+		StringBuilder stringBuilder = new StringBuilder();
 		for (TextBlock textBlock : textBlocks) {
 			stringBuilder.append(textBlock);
 		}

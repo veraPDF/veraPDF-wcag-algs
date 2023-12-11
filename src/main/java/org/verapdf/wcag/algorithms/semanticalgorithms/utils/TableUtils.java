@@ -90,11 +90,11 @@ public class TableUtils {
     }
 
     public static void sortClustersLeftToRight(List<TableCluster> clusters) {
-        Collections.sort(clusters, Comparator.comparingDouble(TableCluster::getLeftX));
+        clusters.sort(Comparator.comparingDouble(TableCluster::getLeftX));
     }
 
     public static void sortClustersUpToBottom(List<TableCluster> clusters) {
-        Collections.sort(clusters, Comparator.comparingDouble(TableCluster::getFirstBaseLine).reversed());
+        clusters.sort(Comparator.comparingDouble(TableCluster::getFirstBaseLine).reversed());
     }
 
     public static boolean isWeakCluster(TableCluster cluster, List<TableCluster> headers) {

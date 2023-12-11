@@ -10,10 +10,12 @@ public class SemanticTree implements ITree {
 		this.root = root;
 	}
 
+	@Override
 	public INode getRoot() {
 		return root;
 	}
 
+	@Override
 	public Iterator<INode> iterator() {
 		return new DFSTreeNodeIterator(this.getRoot());
 	}
