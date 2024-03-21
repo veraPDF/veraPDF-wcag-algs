@@ -112,12 +112,12 @@ public class SemanticDocumentPreprocessingConsumer extends WCAGConsumer implemen
                         -Double.MAX_VALUE, textChunk.getBaseLine()),
                 new LineChunk(textChunk.getPageNumber(), Double.MAX_VALUE,
                         textChunk.getBaseLine() - NodeUtils.UNDERLINED_TEXT_EPSILONS[1] * textChunk.getBoundingBox().getHeight(), Double.MAX_VALUE,
-                        textChunk.getBaseLine() - NodeUtils.UNDERLINED_TEXT_EPSILONS[2] * textChunk.getBoundingBox().getHeight()));
+                        textChunk.getBaseLine() - NodeUtils.UNDERLINED_TEXT_EPSILONS[1] * textChunk.getBoundingBox().getHeight()));
     }
 
     private boolean isUnderlinedText(TextChunk textChunk, LineChunk lineChunk) {
         if (NodeUtils.areOverlapping(textChunk, lineChunk) &&
-                (lineChunk.getWidth() < NodeUtils.UNDERLINED_TEXT_EPSILONS[3] * textChunk.getBoundingBox().getHeight())) {
+                (lineChunk.getWidth() < NodeUtils.UNDERLINED_TEXT_EPSILONS[2] * textChunk.getBoundingBox().getHeight())) {
             return true;
         }
         return false;
