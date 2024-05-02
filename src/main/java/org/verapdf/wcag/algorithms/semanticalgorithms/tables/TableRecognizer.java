@@ -256,6 +256,7 @@ public class TableRecognizer {
                 if (j < clusterRow.size() - 1) {
                     TableCluster nextCluster = clusterRow.get(j + 1);
 
+                    //TODO: this gap could be negative, for example, if clusters intersect
                     double gap = nextCluster.getLeftX() - cluster.getRightX();
                     cluster.getFirstRow().setRightGap(new TableClusterGap(nextCluster, gap));
                     nextCluster.getFirstRow().setLeftGap(new TableClusterGap(cluster, gap));

@@ -101,15 +101,27 @@ public class TableUtils {
         if (cluster.getHeader() != null) {
             return false;
         }
-
+        Set<TableClusterGap> visitedGaps = new HashSet<>();
         TableClusterGap gap = cluster.getMinLeftGap();
         while (gap != null && gap.getLink().getHeader() == null) {
+            if (visitedGaps.contains(gap)) {
+                gap = null;
+                break;
+            }
+            visitedGaps.add(gap);
             gap = gap.getLink().getMinLeftGap();
         }
         TableCluster leftHeader = (gap == null) ? null : gap.getLink().getHeader();
 
+        visitedGaps.clear();
+        
         gap = cluster.getMinRightGap();
         while (gap != null && gap.getLink().getHeader() == null) {
+            if (visitedGaps.contains(gap)) {
+                gap = null;
+                break;
+            }
+            visitedGaps.add(gap);
             gap = gap.getLink().getMinRightGap();
         }
         TableCluster rightHeader = (gap == null) ? null : gap.getLink().getHeader();
