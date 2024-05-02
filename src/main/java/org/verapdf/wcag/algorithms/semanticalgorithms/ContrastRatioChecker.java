@@ -1,18 +1,19 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms;
 
-import org.verapdf.wcag.algorithms.entities.IDocument;
-import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.ITree;
 import org.verapdf.wcag.algorithms.entities.enums.TextType;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ContrastRatioConsumer;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 public class ContrastRatioChecker {
+
+	private static final Logger LOGGER = Logger.getLogger(ContrastRatioConsumer.class.getCanonicalName());
 
 	/**
 	 * Traverses the document semantic tree and updates contrast ratio parameter of it's nodes. Uses pdf document
@@ -22,22 +23,26 @@ public class ContrastRatioChecker {
 	 * @param pdfName {@link String} path to the pdf document associated with given tree
 	 */
 	public void checkSemanticTree(ITree tree, String pdfName) {
-		Consumer<INode> v = new ContrastRatioConsumer(pdfName);
-		tree.forEach(v);
+		try (ContrastRatioConsumer v = new ContrastRatioConsumer(pdfName)) {
+			tree.forEach(v);
+		} catch (IOException e) {
+			e.printStackTrace();
+			LOGGER.warning(e.getMessage());
+		}
 	}
 
-	public void checkDocument(IDocument document, String pdfName) {
-		ContrastRatioConsumer v = new ContrastRatioConsumer(pdfName);
-		if (document.getTree() != null) {
-			document.getTree().forEach(v);
-		}
-//		for (IPage page : document.getPages()) {
-//			BufferedImage renderedPage = v.getRenderPage(page.getPageNumber());
-//			page.getArtifacts().stream()
-//				.filter(chunk -> chunk instanceof TextChunk)
-//				.forEach(chunk -> v.calculateContrastRation((TextChunk)chunk, renderedPage));
+//	public void checkDocument(IDocument document, String pdfName) {
+//		ContrastRatioConsumer v = new ContrastRatioConsumer(pdfName);
+//		if (document.getTree() != null) {
+//			document.getTree().forEach(v);
 //		}
-	}
+////		for (IPage page : document.getPages()) {
+////			BufferedImage renderedPage = v.getRenderPage(page.getPageNumber());
+////			page.getArtifacts().stream()
+////				.filter(chunk -> chunk instanceof TextChunk)
+////				.forEach(chunk -> v.calculateContrastRation((TextChunk)chunk, renderedPage));
+////		}
+//	}
 
 	/**
 	 * Determines contrast ratio of two color based on their relative luminance.

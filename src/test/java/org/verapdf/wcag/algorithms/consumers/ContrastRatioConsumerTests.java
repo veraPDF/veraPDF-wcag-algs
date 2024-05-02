@@ -18,8 +18,6 @@ import java.util.stream.Stream;
 
 public class ContrastRatioConsumerTests {
 
-	private final ContrastRatioConsumer contrastRatioConsumer = null;
-
 	private static final String SRC_DIR = "/files/colorcontrast/";
 	private static final String ROOT_DIR = "./src/test/resources/files/colorcontrast/";
 
@@ -54,20 +52,20 @@ public class ContrastRatioConsumerTests {
 	void testColorContrastPass(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
 		IDocument document = JsonToPdfTree.getDocument(SRC_DIR + jsonPdfPath);
 		ITree tree = document.getTree();
-		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath);
-
-		tree.forEach(contrastRatioConsumer);
-		tree.forEach(node -> {
+		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath)) {
+			tree.forEach(contrastRatioConsumer);
+			tree.forEach(node -> {
 			if (node.getChildren().isEmpty() && SemanticType.SPAN == node.getSemanticType()) {
-				for (TextColumn textColumn : ((SemanticSpan)node).getColumns()) {
-					for (TextLine line : textColumn.getLines()) {
-						for	(TextChunk chunk : line.getTextChunks())	{
-							Assertions.assertTrue(chunk.getContrastRatio() >= ratioThreshold);
+					for (TextColumn textColumn : ((SemanticSpan)node).getColumns()) {
+						for (TextLine line : textColumn.getLines()) {
+							for	(TextChunk chunk : line.getTextChunks())	{
+								Assertions.assertTrue(chunk.getContrastRatio() >= ratioThreshold);
+							}
 						}
 					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	static Stream<Arguments> contrastCompletedWithoutExceptionsParams() {
@@ -80,10 +78,10 @@ public class ContrastRatioConsumerTests {
 	void testColorContrastCompletedWithoutExceptions(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
 		IDocument document = JsonToPdfTree.getDocument(SRC_DIR + jsonPdfPath);
 		ITree tree = document.getTree();
-		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath);
-
-		tree.forEach(contrastRatioConsumer);
-		Assertions.assertTrue(true);
+		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath)) {
+			tree.forEach(contrastRatioConsumer);
+			Assertions.assertTrue(true);
+		}
 	}
 
 	@ParameterizedTest(name = "{index}: ({0}, {1}, {2}) => {0}")
@@ -91,41 +89,43 @@ public class ContrastRatioConsumerTests {
 	void testColorContrastFail(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
 		IDocument document = JsonToPdfTree.getDocument(SRC_DIR + jsonPdfPath);
 		ITree tree = document.getTree();
-		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath);
-
-		tree.forEach(contrastRatioConsumer);
-		tree.forEach(node -> {
-			if (node.getChildren().isEmpty() && SemanticType.SPAN == node.getSemanticType()) {
-				for (TextColumn textColumn : ((SemanticSpan)node).getColumns()) {
-					for (TextLine line : textColumn.getLines()) {
-						for	(TextChunk chunk : line.getTextChunks())	{
-							Assertions.assertTrue(chunk.getContrastRatio() < ratioThreshold);
+		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath)) {
+			tree.forEach(contrastRatioConsumer);
+			tree.forEach(node -> {
+				if (node.getChildren().isEmpty() && SemanticType.SPAN == node.getSemanticType()) {
+					for (TextColumn textColumn : ((SemanticSpan)node).getColumns()) {
+						for (TextLine line : textColumn.getLines()) {
+							for	(TextChunk chunk : line.getTextChunks())	{
+								Assertions.assertTrue(chunk.getContrastRatio() < ratioThreshold);
+							}
 						}
 					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	@Test
-	void bBoxWidthZeroValueTest() {
+	void bBoxWidthZeroValueTest() throws IOException {
 		SemanticSpan nodeToCheck = new SemanticSpan();
 		nodeToCheck.add(new TextLine(new TextChunk(new BoundingBox(0, new double [] {100, 100, 100.1, 120}), ".", 14, 118)));
 		nodeToCheck.setPageNumber(0);
 		Assertions.assertEquals(0.1, nodeToCheck.getFirstLine().getFirstTextChunk().getBoundingBox().getWidth(), 0.0001);
-		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + "1.4.3-t02-fail-a.pdf");
-		contrastRatioConsumer.accept(nodeToCheck);
+		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + "1.4.3-t02-fail-a.pdf")) {
+			contrastRatioConsumer.accept(nodeToCheck);
+		}
 		Assertions.assertEquals(0.1, nodeToCheck.getFirstLine().getFirstTextChunk().getBoundingBox().getWidth(), 0.0001);
 	}
 
 	@Test
-	void bBoxHeightZeroValueTest() {
+	void bBoxHeightZeroValueTest() throws IOException {
 		SemanticSpan nodeToCheck = new SemanticSpan();
 		nodeToCheck.add(new TextLine(new TextChunk(new BoundingBox(0, new double [] {100, 100, 110, 100.1}), ".", 14, 118)));
 		nodeToCheck.setPageNumber(0);
 		Assertions.assertEquals(0.1, nodeToCheck.getFirstLine().getFirstTextChunk().getBoundingBox().getHeight(), 0.0001);
-		ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + "1.4.3-t02-fail-a.pdf");
-		contrastRatioConsumer.accept(nodeToCheck);
+		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + "1.4.3-t02-fail-a.pdf")) {
+			contrastRatioConsumer.accept(nodeToCheck);
+		}
 		Assertions.assertEquals(0.1, nodeToCheck.getFirstLine().getFirstTextChunk().getBoundingBox().getHeight(), 0.0001);
 	}
 }
