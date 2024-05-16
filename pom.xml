@@ -7,12 +7,12 @@
     <parent>
         <artifactId>verapdf-parent</artifactId>
         <groupId>org.verapdf</groupId>
-        <version>1.26.1</version>
+        <version>1.26.2</version>
     </parent>
 
     <groupId>org.verapdf</groupId>
     <artifactId>wcag-algorithms</artifactId>
-    <version>1.26.0-RC1</version>
+    <version>1.26.0</version>
 
     <name>veraPDF wcag algorithms</name>
     <description>veraPDF algorithms for semantic checks.</description>
