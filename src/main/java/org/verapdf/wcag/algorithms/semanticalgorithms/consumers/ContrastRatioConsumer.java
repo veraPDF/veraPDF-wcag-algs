@@ -20,6 +20,7 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.utils.WCAGProgressStatus;
 import javax.imageio.spi.IIORegistry;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.Closeable;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -30,19 +31,19 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INode> {
+public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INode>, Closeable {
 
 	private final Map<Integer, BufferedImage> renderedPages = new HashMap<>();
-	private final String sourcePdfPath;
 	private static final Logger logger = Logger.getLogger(ContrastRatioConsumer.class.getCanonicalName());
 	private static final int RENDER_DPI = 144;
 	private static final int PDF_DPI = 72;
 	private static final double LUMINOSITY_DIFFERENCE = 0.001;
 	private long processedTextChunks;
 	private final Long textChunksNumber;
+	private final PDDocument document;
 
-	public ContrastRatioConsumer(String sourcePdfPath) {
-		this.sourcePdfPath = sourcePdfPath;
+	public ContrastRatioConsumer(String sourcePdfPath) throws IOException {
+		this.document = PDDocument.load(new FileInputStream(sourcePdfPath));
 		IIORegistry registry = IIORegistry.getDefaultInstance();
 		registry.registerServiceProvider(new J2KImageReaderSpi());
 		registry.registerServiceProvider(new JBIG2ImageReaderSpi());
@@ -76,12 +77,11 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 	public BufferedImage getRenderPage(int pageNumber) {
 		BufferedImage renderedPage = renderedPages.get(pageNumber);
 		if (renderedPage == null) {
-			try (PDDocument document = PDDocument.load(new FileInputStream(sourcePdfPath))) {
+			try {
 				renderedPage = renderPage(document, pageNumber);
 				renderedPages.clear();
 				renderedPages.put(pageNumber, renderedPage);
-			}
-			catch (IOException | IllegalArgumentException e) {
+			} catch (IOException | IllegalArgumentException e) {
 				e.printStackTrace();
 				logger.warning(e.getMessage());
 			}
@@ -383,6 +383,13 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 	@Override
 	public Double getPercent() {
 		return 100.0d * processedTextChunks / textChunksNumber;
+	}
+
+	@Override
+	public void close() throws IOException {
+		if (document != null) {
+			document.close();
+		}
 	}
 
 	static class DataPoint implements Comparable<DataPoint> {

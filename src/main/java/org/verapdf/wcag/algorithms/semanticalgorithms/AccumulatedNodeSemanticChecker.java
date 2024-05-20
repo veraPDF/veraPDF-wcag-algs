@@ -6,7 +6,12 @@ import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+
 public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
+
+	private static final Logger LOGGER = Logger.getLogger(AccumulatedNodeSemanticChecker.class.getCanonicalName());
 
 	@Override
 	public void checkSemanticDocument(IDocument document, String fileName) {
@@ -33,11 +38,15 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 		StaticContainers.setTextChunksNumber(semanticDocumentValidator.getTextChunksNumber());
 
 		if (fileName != null) {
-			ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(fileName);
-			if (!startNextStep(contrastRatioConsumer)) {
-				return;
+			try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(fileName)) {
+				if (!startNextStep(contrastRatioConsumer)) {
+					return;
+				}
+				contrastRatioConsumer.calculateContrast(document.getTree());
+			} catch (IOException e) {
+				e.printStackTrace();
+				LOGGER.warning(e.getMessage());
 			}
-			contrastRatioConsumer.calculateContrast(document.getTree());
 		}
 
 		AccumulatedNodeConsumer semanticDetectionValidator = new AccumulatedNodeConsumer();
