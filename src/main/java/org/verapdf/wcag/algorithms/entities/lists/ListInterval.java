@@ -13,7 +13,7 @@ public class ListInterval {
 	private List<ListItemInfo> listItemsInfos = new ArrayList<>();
 	public Integer numberOfColumns;
 
-	public  ListInterval() {
+	public ListInterval() {
 
 	}
 
