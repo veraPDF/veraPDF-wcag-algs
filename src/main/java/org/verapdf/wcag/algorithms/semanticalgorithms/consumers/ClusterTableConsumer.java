@@ -26,7 +26,7 @@ public class ClusterTableConsumer extends WCAGConsumer {
     private final List<Table> tables;
     private final List<PDFList> lists;
 
-    public  ClusterTableConsumer() {
+    public ClusterTableConsumer() {
         tables = new ArrayList<>();
         lists = new ArrayList<>();
         init();

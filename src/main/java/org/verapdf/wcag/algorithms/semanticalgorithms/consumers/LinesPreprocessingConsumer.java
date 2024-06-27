@@ -6,10 +6,7 @@ import org.verapdf.wcag.algorithms.entities.tables.TableBorderBuilder;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.WCAGProgressStatus;
 
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 
 public class LinesPreprocessingConsumer extends WCAGConsumer {
 
@@ -32,7 +29,7 @@ public class LinesPreprocessingConsumer extends WCAGConsumer {
     }
 
     private List<TableBorderBuilder> findTableBorders(Integer pageNumber) {
-        List<TableBorderBuilder> tableBorders = new LinkedList<>();
+        List<TableBorderBuilder> tableBorders = new ArrayList<>();
         Set<LineChunk> set = new HashSet<>(StaticContainers.getLinesCollection().getHorizontalLines(pageNumber));
         set.addAll(StaticContainers.getLinesCollection().getVerticalLines(pageNumber));
         set.addAll(StaticContainers.getLinesCollection().getSquares(pageNumber));
