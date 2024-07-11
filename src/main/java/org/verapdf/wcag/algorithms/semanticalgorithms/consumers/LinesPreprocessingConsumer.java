@@ -101,14 +101,16 @@ public class LinesPreprocessingConsumer extends WCAGConsumer {
     private void mergeTableBorders(List<TableBorderBuilder> tableBorders) {
         for (int i = tableBorders.size() - 2; i >= 0; i--) {
             TableBorderBuilder border = tableBorders.get(i);
-            for (int j = i + 1; j < tableBorders.size();) {
+            List<Integer> indexes = new LinkedList<>();
+            for (int j = tableBorders.size() - 1; j > i; j--) {
                 TableBorderBuilder border2 = tableBorders.get(j);
                 if (border.isConnectedBorder(border2)) {
-                    border.mergeBorder(border2);
-                    tableBorders.remove(j);
-                } else {
-                    j++;
+                    indexes.add(j);
                 }
+            }
+            for (Integer index : indexes) {
+                border.mergeBorder(tableBorders.get(index));
+                tableBorders.remove((int)index);
             }
         }
     }
