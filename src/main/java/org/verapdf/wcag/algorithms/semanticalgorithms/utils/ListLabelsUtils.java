@@ -6,10 +6,7 @@ import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
 import org.verapdf.wcag.algorithms.entities.lists.ListIntervalsCollection;
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemInfo;
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.AlfaLettersListLabelsDetectionAlgorithm1;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.AlfaLettersListLabelsDetectionAlgorithm2;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ArabicNumbersListLabelsDetectionAlgorithm;
-import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.RomanNumbersListLabelsDetectionAlgorithm;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.*;
 
 import java.util.*;
 
@@ -17,7 +14,7 @@ public class ListLabelsUtils {
 
 	private static final Set<Character> labels = new HashSet<>(
 			Arrays.asList('\u002D', '\u2022', '\u25CF', '\u2714', '\u2717', '\u2794', '\u27A2', '\uE00A', '\uE00C',
-			              '\uF076', '\u2588', '\u25A0', '\u2013', '\uF0B7', '\uF0A7', '\u25A1', '\uF0A1', '\u25AA', '\u25FC')); //office labels examples (-, •, ✔, ✗, ●, ➔, ➢), pdf files labels examples (█, ■, , □, , ▪, ◼)
+			              '\uF076', '\u2588', '\u25A0', '\u2013', '\uF0B7', '\uF0A7', '\u25A1', '\uF0A1', '\u25AA', '\u25FC', '\u25CB', '\u203B')); //office labels examples (-, •, ✔, ✗, ●, ➔, ➢), pdf files labels examples (█, ■, , □, , ▪, ◼, ○, ※)
 	private static final Character o =  '\u006F';
 
 	public static boolean isListLabel(String value) {
@@ -70,6 +67,7 @@ public class ListLabelsUtils {
 		}
 		return new RomanNumbersListLabelsDetectionAlgorithm().isListLabels(labels, commonStartLength, commonEndLength) ||
 				new ArabicNumbersListLabelsDetectionAlgorithm().isListLabels(labels, commonStartLength, commonEndLength) ||
+				new KoreanLettersListLabelsDetectionAlgorithm().isListLabels(labels, commonStartLength, commonEndLength) ||
 				new AlfaLettersListLabelsDetectionAlgorithm1().isListLabels(labels, commonStartLength, commonEndLength) ||
 				new AlfaLettersListLabelsDetectionAlgorithm2().isListLabels(labels, commonStartLength, commonEndLength);
 	}
@@ -142,6 +140,7 @@ public class ListLabelsUtils {
 		ListIntervalsCollection listIntervals = new ListIntervalsCollection(getItemsWithEqualsLabels(itemsInfo));
 		listIntervals.putAll(new AlfaLettersListLabelsDetectionAlgorithm1().getItemsIntervals(itemsInfo));
 		listIntervals.putAll(new AlfaLettersListLabelsDetectionAlgorithm2().getItemsIntervals(itemsInfo));
+		listIntervals.putAll(new KoreanLettersListLabelsDetectionAlgorithm().getItemsIntervals(itemsInfo));
 		listIntervals.putAll(new RomanNumbersListLabelsDetectionAlgorithm().getItemsIntervals(itemsInfo));
 		listIntervals.putAll(new ArabicNumbersListLabelsDetectionAlgorithm().getItemsIntervals(itemsInfo));
 		return listIntervals.getSet();

@@ -61,7 +61,7 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
             if (number != null) {
                 number++;
                 String s = getStringFromNumber(number);
-                if (!item.toUpperCase().startsWith(s, start) || !item.startsWith(prefix) ||
+                if (s == null || !item.toUpperCase().startsWith(s, start) || !item.startsWith(prefix) ||
                     isCharMatchRegex(item, start + s.length()) || isBadItem(itemInfo, item, s, start) ||
                     ((!item.substring(start, start + s.length()).matches(getLowerCaseRegex()) || isUpperCase) &&
                      (!item.substring(start, start + s.length()).matches(getUpperCaseRegex()) || !isUpperCase))) {
@@ -104,7 +104,7 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
                     continue;
                 }
                 //only Roman???
-                if (!substring.toUpperCase().startsWith(getStringFromNumber(number))) {
+                if (getStringFromNumber(number) == null || !substring.toUpperCase().startsWith(getStringFromNumber(number))) {
                     number = null;
                     continue;
                 }
