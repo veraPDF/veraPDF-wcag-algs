@@ -123,6 +123,10 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
     }
 
     protected abstract String getLowerCaseRegex();
+    
+    protected List<Character> getLetters() {
+        return null;
+    }
 
     protected abstract String getUpperCaseRegex();
 
@@ -135,5 +139,34 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
             return false;
         }
         return s.substring(index, index + 1).matches(regex);
+    }
+
+    @Override
+    protected String getStringFromNumber(Integer number) {
+        return getLettersFromNumber(number);
+    }
+
+    @Override
+    protected Integer getNumberFromString(String string) {
+        return getNumberFromLetters(string);
+    }
+
+    private String getLettersFromNumber(int integer) {
+        integer--;
+        if (integer < getLetters().size()) {
+            return getLetters().get(integer).toString();
+        }
+        return null;
+    }
+
+    private Integer getNumberFromLetters(String s) {
+        if (s.length() != 1) {
+            return null;
+        }
+        int num = getLetters().indexOf(s.charAt(0));
+        if (num < 0) {
+            return null;
+        }
+        return num + 1;
     }
 }
