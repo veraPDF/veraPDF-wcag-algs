@@ -78,14 +78,6 @@ public class LinesPreprocessingConsumer extends WCAGConsumer {
                 i++;
             }
         }
-        for (TableBorderBuilder border : tableBorders) {
-            for (LineChunk lineChunk : border.getVerticalLines()) {
-                StaticContainers.getLinesCollection().getVerticalLines(pageNumber).remove(lineChunk);
-            }
-            for (LineChunk lineChunk : border.getHorizontalLines()) {
-                StaticContainers.getLinesCollection().getHorizontalLines(pageNumber).remove(lineChunk);
-            }
-        }
         for (int i = 0; i < tableBorders.size();) {
             TableBorderBuilder border = tableBorders.get(i);
             if ((border.getHorizontalLinesNumber() <= 2 && border.getVerticalLinesNumber() <= 1) ||
@@ -94,6 +86,10 @@ public class LinesPreprocessingConsumer extends WCAGConsumer {
             } else {
                 i++;
             }
+        }
+        for (TableBorderBuilder border : tableBorders) {
+            StaticContainers.getLinesCollection().getVerticalLines(pageNumber).removeAll(border.getVerticalLines());
+            StaticContainers.getLinesCollection().getHorizontalLines(pageNumber).removeAll(border.getHorizontalLines());
         }
         return tableBorders;
     }

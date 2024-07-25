@@ -12,10 +12,10 @@ public class AlfaLettersListLabelsDetectionAlgorithm1 extends AlfaLettersListLab
         return getNumberFromLetters1(string);
     }
 
-    private static String getLetters1FromNumber(int integer) {
+    private String getLetters1FromNumber(int integer) {
         integer--;
-        int n = integer / letters.size();
-        char c = letters.get(integer % letters.size());
+        int n = integer / getLetters().size();
+        char c = getLetters().get(integer % getLetters().size());
         StringBuilder str = new StringBuilder();
         for (int i = 0; i <= n; i++) {
             str.append(c);
@@ -23,11 +23,11 @@ public class AlfaLettersListLabelsDetectionAlgorithm1 extends AlfaLettersListLab
         return str.toString();
     }
 
-    private static Integer getNumberFromLetters1(String s) {
+    private Integer getNumberFromLetters1(String s) {
         if (s.isEmpty()) {
             return null;
         }
-        int num = letters.indexOf(s.charAt(0));
+        int num = getLetters().indexOf(s.charAt(0));
         if (num < 0) {
             return null;
         }
@@ -36,6 +36,6 @@ public class AlfaLettersListLabelsDetectionAlgorithm1 extends AlfaLettersListLab
                 return null;
             }
         }
-        return letters.size() * (s.length() - 1) + num + 1;
+        return getLetters().size() * (s.length() - 1) + num + 1;
     }
 }
