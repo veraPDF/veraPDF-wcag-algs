@@ -1,11 +1,11 @@
 package org.verapdf.wcag.algorithms.entities.lists;
 
-import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextBlock;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.tables.TableRow;
 
-public class ListItem extends TextInfoChunk {
+public class ListItem extends TextBlock {
     private final ListLabel label;
     private final ListBody body;
     private SemanticType semanticType;
