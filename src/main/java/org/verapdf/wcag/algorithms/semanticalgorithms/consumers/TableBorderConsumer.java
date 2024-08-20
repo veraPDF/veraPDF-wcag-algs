@@ -63,7 +63,7 @@ public class TableBorderConsumer extends WCAGConsumer {
     private void add(TableToken token) {
         TableBorder tableBorder = StaticContainers.getTableBordersCollection().getTableBorder(token.getBoundingBox());
         if (tableBorder != null) {
-            TableBorderCell tableBorderCell = tableBorder.getTableBorderCell(token.getBoundingBox());
+            TableBorderCell tableBorderCell = tableBorder.getTableBorderCell(token);
             if (tableBorderCell != null) {
                 tableBorderCell.addContent(token);
             }

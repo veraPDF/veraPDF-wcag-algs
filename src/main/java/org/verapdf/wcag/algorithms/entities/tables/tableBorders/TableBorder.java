@@ -2,6 +2,7 @@ package org.verapdf.wcag.algorithms.entities.tables.tableBorders;
 
 import org.verapdf.wcag.algorithms.entities.BaseObject;
 import org.verapdf.wcag.algorithms.entities.INode;
+import org.verapdf.wcag.algorithms.entities.IObject;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class TableBorder extends BaseObject {
     public static final double TABLE_BORDER_EPSILON = 0.6;
-    private static final double MIN_CELL_CONTENT_INTERSECTION_PERCENT = 0.8;
+    public static final double MIN_CELL_CONTENT_INTERSECTION_PERCENT = 0.6;
 
     private final List<Double> xCoordinates = new LinkedList<>();
     private final List<Double> xWidths = new LinkedList<>();
@@ -474,7 +475,8 @@ public class TableBorder extends BaseObject {
         }
     }
 
-    public TableBorderCell getTableBorderCell(BoundingBox box) {
+    public TableBorderCell getTableBorderCell(IObject object) {
+        BoundingBox box = object.getBoundingBox();
         int xLeftIndex = getClosestLeftX(box.getLeftX());
         int xRightIndex = getClosestRightX(box.getRightX());
         int yTopIndex = getClosestTopY(box.getTopY());
