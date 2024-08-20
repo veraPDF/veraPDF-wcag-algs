@@ -65,8 +65,7 @@ public class TableBordersCollection {
     public TableBorder getTableBorder(BoundingBox boundingBox) {
         SortedSet<TableBorder> tableBorders = getTableBorders(boundingBox.getPageNumber());
         for (TableBorder tableBorder : tableBorders) {
-            if (tableBorder.getBoundingBox().contains(boundingBox, TableBorder.TABLE_BORDER_EPSILON,
-                    TableBorder.TABLE_BORDER_EPSILON)) {
+            if (boundingBox.getIntersectionPercent(tableBorder.getBoundingBox()) > TableBorder.MIN_CELL_CONTENT_INTERSECTION_PERCENT) {
                 return tableBorder;
             }
         }

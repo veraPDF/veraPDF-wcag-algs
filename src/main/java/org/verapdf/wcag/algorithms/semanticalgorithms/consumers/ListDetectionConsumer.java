@@ -70,7 +70,7 @@ public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INod
         INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
         TableBorder tableBorder = StaticContainers.getTableBordersCollection().getTableBorder(node.getBoundingBox());
         if (accumulatedNode != null && tableBorder != null &&
-                tableBorder.getTableBorderCell(accumulatedNode.getBoundingBox()) == null) {
+                tableBorder.getTableBorderCell(accumulatedNode) == null) {
             return;
         }
         int childrenSize = node.getChildren().size();
