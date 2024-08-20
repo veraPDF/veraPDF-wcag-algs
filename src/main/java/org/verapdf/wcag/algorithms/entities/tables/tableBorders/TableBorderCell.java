@@ -2,6 +2,7 @@ package org.verapdf.wcag.algorithms.entities.tables.tableBorders;
 
 import org.verapdf.wcag.algorithms.entities.BaseObject;
 import org.verapdf.wcag.algorithms.entities.INode;
+import org.verapdf.wcag.algorithms.entities.IObject;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
@@ -16,6 +17,7 @@ public class TableBorderCell extends BaseObject {
     protected int rowSpan;
     protected int colSpan;
     private final List<TableToken> content;
+    private List<IObject> contents;
     private SemanticType semanticType;
     private INode node;
 
@@ -26,6 +28,7 @@ public class TableBorderCell extends BaseObject {
         this.rowSpan = rowSpan;
         this.colSpan = colSpan;
         content = new LinkedList<>();
+        contents = new LinkedList<>();
         setRecognizedStructureId(id);
     }
 
@@ -37,6 +40,7 @@ public class TableBorderCell extends BaseObject {
         this.rowNumber = rowNumber;
         this.colNumber = colNumber;
         content = new LinkedList<>();
+        contents = new LinkedList<>();
     }
 
     public void addContent(TableToken token) {
@@ -45,6 +49,18 @@ public class TableBorderCell extends BaseObject {
 
     public List<TableToken> getContent() {
         return content;
+    }
+
+    public void addContentObject(IObject object) {
+        contents.add(object);
+    }
+
+    public List<IObject> getContents() {
+        return contents;
+    }
+
+    public void setContents(List<IObject> contents) {
+        this.contents = contents;
     }
 
     public SemanticType getSemanticType() {
