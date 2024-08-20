@@ -12,7 +12,7 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.
 public class CaptionUtils {
 
 	private static final double FLOATING_POINT_OPERATIONS_EPS = 1e-7;
-	private static final double[] DEFAULT_INTERVAL_BEFORE_IMAGE = {0, 1.8};
+	private static final double[] DEFAULT_INTERVAL_BEFORE_IMAGE = {-0.2, 1.8};
 	private static final double[] DEFAULT_INTERVAL_AFTER_IMAGE = {0, 1.8};
 	private static final double[] DEFAULT_INTERVAL_BEFORE_LEFT_IMAGE_SIDE = {0, 1.8};
 	private static final double[] DEFAULT_INTERVAL_AFTER_RIGHT_IMAGE_SIDE = {0, 1.8};
