@@ -485,6 +485,23 @@ public class ChunksMergeUtils {
 		return str.length();
 	}
 
+	public static TextChunk getTrimTextChunk(TextChunk textChunk) {
+		int numberOfStartsWhiteSpaces = numberOfStartsWhiteSpaces(textChunk.getValue());
+		int numberOfEndWhiteSpaces = numberOfEndWhiteSpaces(textChunk.getValue());
+		if (numberOfStartsWhiteSpaces == 0 && numberOfEndWhiteSpaces == 0) {
+			return textChunk;
+		}
+		if (textChunk.isWhiteSpaceChunk()) {
+			return textChunk;
+		}
+		TextChunk newTextChunk = new TextChunk(textChunk);
+		newTextChunk.setValue(textChunk.getValue().substring(numberOfStartsWhiteSpaces, textChunk.getValue().length() - numberOfEndWhiteSpaces));
+		newTextChunk.setSymbolEnds(textChunk.getSymbolEnds().subList(numberOfStartsWhiteSpaces, textChunk.getValue().length() - numberOfEndWhiteSpaces + 1));
+		newTextChunk.getBoundingBox().setLeftX(textChunk.getSymbolStartCoordinate(numberOfStartsWhiteSpaces));
+		newTextChunk.getBoundingBox().setRightX(textChunk.getSymbolEndCoordinate(textChunk.getValue().length() - numberOfEndWhiteSpaces - 1));
+		return newTextChunk;
+	}
+
 	private static double whitespaceSize(double fontSize) {
 		return TextChunkUtils.WHITE_SPACE_FACTOR * fontSize;
 	}
