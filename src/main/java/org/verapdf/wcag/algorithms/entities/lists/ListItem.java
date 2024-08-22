@@ -1,14 +1,19 @@
 package org.verapdf.wcag.algorithms.entities.lists;
 
+import org.verapdf.wcag.algorithms.entities.IObject;
 import org.verapdf.wcag.algorithms.entities.content.TextBlock;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.tables.TableRow;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ListItem extends TextBlock {
     private final ListLabel label;
     private final ListBody body;
     private SemanticType semanticType;
+    private List<IObject> contents = new ArrayList<>();
 
     public ListItem(TableRow tableRow) {
         super(tableRow.getBoundingBox(), tableRow.getFontSize(), tableRow.getBaseLine());
@@ -45,5 +50,13 @@ public class ListItem extends TextBlock {
 
     public ListBody getBody() {
         return body;
+    }
+
+    public List<IObject> getContents() {
+        return contents;
+    }
+
+    public void setContents(List<IObject> contents) {
+        this.contents = contents;
     }
 }
