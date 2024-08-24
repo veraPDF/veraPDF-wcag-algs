@@ -51,4 +51,8 @@ public class TableBordersCollection {
         }
         return null;
     }
+    
+    public void removeTableBorder(TableBorder tableBorder, int pageNumber) {
+        tableBorders.get(pageNumber).remove(tableBorder);
+    }
 }
