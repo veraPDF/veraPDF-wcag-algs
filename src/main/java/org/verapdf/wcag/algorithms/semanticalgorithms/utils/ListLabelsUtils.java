@@ -71,7 +71,9 @@ public class ListLabelsUtils {
 				new ArabicNumbersListLabelsDetectionAlgorithm().isListLabels(labels, commonStartLength, commonEndLength) ||
 				new KoreanLettersListLabelsDetectionAlgorithm().isListLabels(labels, commonStartLength, commonEndLength) ||
 				new AlfaLettersListLabelsDetectionAlgorithm1().isListLabels(labels, commonStartLength, commonEndLength) ||
-				new AlfaLettersListLabelsDetectionAlgorithm2().isListLabels(labels, commonStartLength, commonEndLength);
+				new AlfaLettersListLabelsDetectionAlgorithm2().isListLabels(labels, commonStartLength, commonEndLength) ||
+				new LowerCaseSimpleRomanNumbersListLabelsDetectionAlgorithm().isListLabels(labels, commonStartLength, commonEndLength) ||
+				new UpperCaseSimpleRomanNumbersListLabelsDetectionAlgorithm().isListLabels(labels, commonStartLength, commonEndLength);
 	}
 
 	private static boolean isEqualsLabels(List<String> labels) {
@@ -145,6 +147,8 @@ public class ListLabelsUtils {
 		listIntervals.putAll(new KoreanLettersListLabelsDetectionAlgorithm().getItemsIntervals(itemsInfo));
 		listIntervals.putAll(new RomanNumbersListLabelsDetectionAlgorithm().getItemsIntervals(itemsInfo));
 		listIntervals.putAll(new ArabicNumbersListLabelsDetectionAlgorithm().getItemsIntervals(itemsInfo));
+		listIntervals.putAll(new LowerCaseSimpleRomanNumbersListLabelsDetectionAlgorithm().getItemsIntervals(itemsInfo));
+		listIntervals.putAll(new UpperCaseSimpleRomanNumbersListLabelsDetectionAlgorithm().getItemsIntervals(itemsInfo));
 		return listIntervals.getSet();
 	}
 
