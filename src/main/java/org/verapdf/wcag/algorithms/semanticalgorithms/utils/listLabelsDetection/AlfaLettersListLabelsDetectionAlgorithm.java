@@ -5,7 +5,7 @@ import java.util.List;
 
 public abstract class AlfaLettersListLabelsDetectionAlgorithm extends LettersListLabelsDetectionAlgorithm {
 
-    protected static final List<Character> letters = Arrays.asList('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+    protected static final List<Character> LETTERS = Arrays.asList('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
             'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
     private static final String UPPER_CASE_ENGLISH_LETTER_REGEX = "[A-Z]+";
@@ -29,6 +29,6 @@ public abstract class AlfaLettersListLabelsDetectionAlgorithm extends LettersLis
 
     @Override
     protected List<Character> getLetters() {
-        return letters;
+        return LETTERS;
     }
 }

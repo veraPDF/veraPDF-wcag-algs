@@ -5,10 +5,10 @@ import java.util.List;
 
 public class RomanNumber {
 
-    private static final int[] numbers = {1000, 900, 500, 400, 100, 90,
+    private static final int[] NUMBERS = {1000, 900, 500, 400, 100, 90,
             50, 40, 10, 9, 5, 4, 1};
 
-    private static final String[] letters = {"M", "CM", "D", "CD", "C", "XC",
+    private static final String[] LETTERS = {"M", "CM", "D", "CD", "C", "XC",
             "L", "XL", "X", "IX", "V", "IV", "I"};
 
     private final int arabicNumber;
@@ -44,10 +44,10 @@ public class RomanNumber {
     public String toString() {
         StringBuilder roman = new StringBuilder();
         int N = arabicNumber;
-        for (int i = 0; i < numbers.length; i++) {
-            while (N >= numbers[i]) {
-                roman.append(letters[i]);
-                N -= numbers[i];
+        for (int i = 0; i < NUMBERS.length; i++) {
+            while (N >= NUMBERS[i]) {
+                roman.append(LETTERS[i]);
+                N -= NUMBERS[i];
             }
         }
         return roman.toString();

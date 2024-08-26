@@ -5,7 +5,7 @@ import java.util.List;
 
 public class CircledArabicNumbersListLabelsDetectionAlgorithm extends LettersListLabelsDetectionAlgorithm {
 
-    protected static final List<Character> letters = Arrays.asList(
+    protected static final List<Character> LETTERS = Arrays.asList(
             '\u24EA','\u2460','\u2461','\u2462','\u2463','\u2464','\u2465','\u2466','\u2467','\u2468',
             '\u2469','\u246A','\u246B','\u246C','\u246D','\u246E','\u246F','\u2470','\u2471','\u2472',
             '\u2473','\u3251','\u3252','\u3253','\u3254','\u3255','\u3256','\u3257','\u3258','\u3259',
@@ -29,7 +29,7 @@ public class CircledArabicNumbersListLabelsDetectionAlgorithm extends LettersLis
 
     @Override
     protected List<Character> getLetters() {
-        return letters;
+        return LETTERS;
     }
 
     @Override
