@@ -1,11 +1,15 @@
 package org.verapdf.wcag.algorithms.entities.content;
 
+import org.verapdf.wcag.algorithms.entities.enums.TextAlignment;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class TextBlock extends TextInfoChunk {
 
 	private final List<TextLine> textLines = new ArrayList<>();
+	
+	private TextAlignment textAlignment = null;
 
 	public TextBlock() {
 
@@ -120,5 +124,13 @@ public class TextBlock extends TextInfoChunk {
 		}
 		TextBlock that = (TextBlock) o;
 		return this.textLines.equals(that.getLines());
+	}
+
+	public TextAlignment getTextAlignment() {
+		return textAlignment;
+	}
+
+	public void setTextAlignment(TextAlignment textAlignment) {
+		this.textAlignment = textAlignment;
 	}
 }
