@@ -54,6 +54,20 @@ public class SemanticNode extends BaseObject implements INode {
 		this.initialSemanticType = initialSemanticType;
 	}
 
+	public SemanticNode(SemanticNode node) {
+		super(node);
+		this.correctSemanticScore = node.correctSemanticScore;
+		this.semanticType = node.semanticType;
+		this.objectKeyNumber = node.objectKeyNumber;
+		this.parent = node.parent;
+		this.children = node.children;
+		this.initialSemanticType = node.initialSemanticType;
+		this.depth = node.depth;
+		this.hasLowestDepthError = node.hasLowestDepthError;
+		this.attributesDictionary = node.attributesDictionary;
+		this.nodeInfo = node.nodeInfo;
+	}
+
 	public SemanticNode(BoundingBox bbox) {
 		this(bbox, null);
 	}
