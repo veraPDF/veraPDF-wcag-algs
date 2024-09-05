@@ -27,6 +27,14 @@ public class BaseObject implements IObject {
 		this.errorArguments = errorArguments;
 	}
 
+	public BaseObject(BaseObject baseObject) {
+		this.boundingBox = baseObject.boundingBox;
+		this.errorCodes = baseObject.errorCodes;
+		this.errorArguments = baseObject.errorArguments;
+		this.recognizedStructureId = baseObject.recognizedStructureId;
+		this.index = baseObject.index;
+	}
+
 	@Override
 	public Integer getPageNumber() {
 		return boundingBox.getPageNumber();

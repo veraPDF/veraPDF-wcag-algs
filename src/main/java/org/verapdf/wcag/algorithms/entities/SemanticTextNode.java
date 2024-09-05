@@ -26,7 +26,7 @@ public class SemanticTextNode extends SemanticNode {
     private double[] backgroundColor;
 
     public SemanticTextNode(SemanticTextNode textNode) {
-        super(textNode.getBoundingBox(), textNode.getInitialSemanticType(), textNode.getSemanticType());
+        super(textNode);
         columns = new ArrayList<>(textNode.getColumns());
         this.fontWeight = textNode.fontWeight;
         this.fontSize = textNode.fontSize;
