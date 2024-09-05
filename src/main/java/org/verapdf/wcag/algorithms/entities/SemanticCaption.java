@@ -6,6 +6,8 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 
 public class SemanticCaption extends SemanticTextNode {
+    
+    private Long linkedContentId = null; 
 
     public SemanticCaption(SemanticCaption caption) {
         super(caption);
@@ -13,6 +15,7 @@ public class SemanticCaption extends SemanticTextNode {
 
     public SemanticCaption(SemanticTextNode textNode) {
         super(textNode);
+        setSemanticType(SemanticType.CAPTION);
     }
 
     public SemanticCaption() {
@@ -41,5 +44,13 @@ public class SemanticCaption extends SemanticTextNode {
     public SemanticCaption(TextChunk textChunk, SemanticType initialSemanticType) {
         this(initialSemanticType);
         add(new TextLine(textChunk));
+    }
+
+    public Long getLinkedContentId() {
+        return linkedContentId;
+    }
+
+    public void setLinkedContentId(Long linkedContentId) {
+        this.linkedContentId = linkedContentId;
     }
 }

@@ -13,6 +13,7 @@ public class BaseObject implements IObject {
 	private final List<Integer> errorCodes;
 	private final List<List<Object>> errorArguments;
 	private Long recognizedStructureId = null;
+	protected Integer index = null;
 
 	public BaseObject(BoundingBox boundingBox) {
 		this.boundingBox = boundingBox;
@@ -118,6 +119,16 @@ public class BaseObject implements IObject {
 	@Override
 	public double getCenterY() {
 		return getBoundingBox().getCenterY();
+	}
+
+	@Override
+	public Integer getIndex() {
+		return index;
+	}
+
+	@Override
+	public void setIndex(Integer index) {
+		this.index = index;
 	}
 
 	@Override

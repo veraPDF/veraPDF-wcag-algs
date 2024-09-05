@@ -30,10 +30,6 @@ public interface INode extends IObject {
 
 	INode getPreviousNode();
 
-	void setIndex(Integer index);
-
-	Integer getIndex();
-
 	boolean isRoot();
 
 	void addChild(INode child);
