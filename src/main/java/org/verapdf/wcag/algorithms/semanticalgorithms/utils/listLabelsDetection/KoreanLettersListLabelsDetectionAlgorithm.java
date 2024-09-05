@@ -12,6 +12,14 @@ public class KoreanLettersListLabelsDetectionAlgorithm extends LettersListLabels
     private static final String UPPER_CASE_KOREAN_LETTER_REGEX = KOREAN_LETTER_REGEX;
     private static final String LOWER_CASE_KOREAN_LETTER_REGEX = KOREAN_LETTER_REGEX;
 
+    public KoreanLettersListLabelsDetectionAlgorithm() {
+        super();
+    }
+    
+    public KoreanLettersListLabelsDetectionAlgorithm(int increment) {
+        super(increment);
+    }
+
     @Override
     protected String getRegex() {
         return KOREAN_LETTER_REGEX;

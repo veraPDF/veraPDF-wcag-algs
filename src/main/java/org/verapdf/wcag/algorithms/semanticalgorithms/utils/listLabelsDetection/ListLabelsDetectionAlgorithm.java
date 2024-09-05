@@ -8,6 +8,15 @@ import java.util.Set;
 
 public abstract class ListLabelsDetectionAlgorithm {
 
+    private int increment = 1;
+
+    public ListLabelsDetectionAlgorithm() {
+    }
+
+    public ListLabelsDetectionAlgorithm(int increment) {
+        setIncrement(increment);
+    }
+    
     public abstract boolean isListLabels(List<String> labels, int commonStartLength, int commonEndLength);
 
     public abstract Set<ListInterval> getItemsIntervals(List<ListItemTextInfo> itemsInfo);
@@ -78,5 +87,13 @@ public abstract class ListLabelsDetectionAlgorithm {
 
     protected Boolean checkPrefixAndSuffix(String prefix, String suffix) {
         return true;
+    }
+
+    public int getIncrement() {
+        return increment;
+    }
+
+    public void setIncrement(int increment) {
+        this.increment = increment;
     }
 }

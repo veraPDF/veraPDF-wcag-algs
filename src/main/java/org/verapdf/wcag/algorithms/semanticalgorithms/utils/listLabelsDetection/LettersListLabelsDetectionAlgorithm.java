@@ -7,6 +7,14 @@ import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
 import java.util.*;
 
 public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDetectionAlgorithm {
+
+    public LettersListLabelsDetectionAlgorithm() {
+        super();
+    }
+    public LettersListLabelsDetectionAlgorithm(int increment) {
+        super(increment);
+    }
+
     @Override
     public boolean isListLabels(List<String> labels, int commonStartLength, int commonEndLength) {
         if (!labels.get(0).substring(commonStartLength, labels.get(0).length() - commonEndLength).matches(getRegex())) {
@@ -40,9 +48,10 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
             if (nextNumber == null) {
                 return false;
             }
-            if (!substring.equalsIgnoreCase(getStringFromNumber(nextNumber)) || !nextNumber.equals(++number)) {
+            if (!substring.equalsIgnoreCase(getStringFromNumber(nextNumber)) || !nextNumber.equals(number + getIncrement())) {
                 return false;
             }
+            number += getIncrement();
         }
         return true;
     }
@@ -59,7 +68,7 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
             ListItemTextInfo itemInfo = itemsInfo.get(i);
             String item = itemInfo.getListItem();
             if (number != null) {
-                number++;
+                number += getIncrement();
                 String s = getStringFromNumber(number);
                 if (s == null || !item.toUpperCase().startsWith(s, start) || !item.startsWith(prefix) ||
                     isCharMatchRegex(item, start + s.length()) || isBadItem(itemInfo, item, s, start) ||
@@ -67,7 +76,7 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
                      (!item.substring(start, start + s.length()).matches(getUpperCaseRegex()) || !isUpperCase))) {
                     if (SemanticType.LIST == itemInfo.getSemanticType()) {
                         interval.getListsIndexes().add(itemInfo.getIndex());
-                        number--;
+                        number -= getIncrement();
                         continue;
                     }
                     if (interval.getNumberOfListItems() > 1) {

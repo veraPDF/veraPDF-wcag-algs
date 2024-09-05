@@ -12,6 +12,14 @@ public abstract class AlfaLettersListLabelsDetectionAlgorithm extends LettersLis
     private static final String LOWER_CASE_ENGLISH_LETTER_REGEX = "[a-z]+";
     private static final String ENGLISH_LETTER_REGEX = "[A-Za-z]+";
 
+    AlfaLettersListLabelsDetectionAlgorithm() {
+        super();
+    }
+    
+    AlfaLettersListLabelsDetectionAlgorithm(int increment) {
+        super(increment);
+    }
+
     @Override
     protected String getRegex() {
         return ENGLISH_LETTER_REGEX;
