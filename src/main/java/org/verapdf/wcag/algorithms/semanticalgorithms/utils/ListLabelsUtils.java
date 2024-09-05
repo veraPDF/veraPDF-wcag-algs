@@ -32,7 +32,7 @@ public class ListLabelsUtils {
 		return isFirstCharLetter;
 	}
 
-	public static boolean isListLabels(List<String> listLabels) {
+	public static boolean isListLabels(List<String> listLabels, int increment) {
 		if (listLabels.size() < 2) {
 			return false;
 		}
@@ -67,14 +67,14 @@ public class ListLabelsUtils {
 			commonEndLength = minLength - commonStartLength;
 			commonStartLength = minLength - temp;
 		}
-		return new RomanNumbersListLabelsDetectionAlgorithm().isListLabels(labels, commonStartLength, commonEndLength) ||
-				new ArabicNumbersListLabelsDetectionAlgorithm().isListLabels(labels, commonStartLength, commonEndLength) ||
-				new KoreanLettersListLabelsDetectionAlgorithm().isListLabels(labels, commonStartLength, commonEndLength) ||
-				new CircledArabicNumbersListLabelsDetectionAlgorithm().isListLabels(labels, commonStartLength, commonEndLength) ||
-				new AlfaLettersListLabelsDetectionAlgorithm1().isListLabels(labels, commonStartLength, commonEndLength) ||
-				new AlfaLettersListLabelsDetectionAlgorithm2().isListLabels(labels, commonStartLength, commonEndLength) ||
-				new LowerCaseSimpleRomanNumbersListLabelsDetectionAlgorithm().isListLabels(labels, commonStartLength, commonEndLength) ||
-				new UpperCaseSimpleRomanNumbersListLabelsDetectionAlgorithm().isListLabels(labels, commonStartLength, commonEndLength);
+		return new RomanNumbersListLabelsDetectionAlgorithm(increment).isListLabels(labels, commonStartLength, commonEndLength) ||
+				new ArabicNumbersListLabelsDetectionAlgorithm(increment).isListLabels(labels, commonStartLength, commonEndLength) ||
+				new KoreanLettersListLabelsDetectionAlgorithm(increment).isListLabels(labels, commonStartLength, commonEndLength) ||
+				new CircledArabicNumbersListLabelsDetectionAlgorithm(increment).isListLabels(labels, commonStartLength, commonEndLength) ||
+				new AlfaLettersListLabelsDetectionAlgorithm1(increment).isListLabels(labels, commonStartLength, commonEndLength) ||
+				new AlfaLettersListLabelsDetectionAlgorithm2(increment).isListLabels(labels, commonStartLength, commonEndLength) ||
+				new LowerCaseSimpleRomanNumbersListLabelsDetectionAlgorithm(increment).isListLabels(labels, commonStartLength, commonEndLength) ||
+				new UpperCaseSimpleRomanNumbersListLabelsDetectionAlgorithm(increment).isListLabels(labels, commonStartLength, commonEndLength);
 	}
 
 	private static boolean isEqualsLabels(List<String> labels) {

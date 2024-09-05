@@ -12,6 +12,14 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
     public static final String DOUBLE_REGEX = ARABIC_NUMBER_REGEX + "\\." + ARABIC_NUMBER_REGEX;
     public boolean isHeaderOrFooter = false;
 
+    public ArabicNumbersListLabelsDetectionAlgorithm() {
+        super();
+    }
+
+    public ArabicNumbersListLabelsDetectionAlgorithm(int increment) {
+        super(increment);
+    }
+
     @Override
     public boolean isListLabels(List<String> labels, int commonStartLength, int commonEndLength) {
         if (!labels.get(0).substring(commonStartLength, labels.get(0).length() - commonEndLength).matches(getRegex())) {
@@ -38,9 +46,10 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
                 haveSameStartZeros = true;
             }
             Integer nextNumber = getNumberFromString(nextSubstring);
-            if (nextNumber == null || !nextNumber.equals(++number)) {
+            if (nextNumber == null || !nextNumber.equals(number + getIncrement())) {
                 return false;
             }
+            number += getIncrement();
             numberOfStartZeros = nextNumberOfStartZeros;
             substring = nextSubstring;
         }
@@ -54,11 +63,11 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
         ArabicNumberInformation arabicNumberInformation = new ArabicNumberInformation();
         for (int i = 0; i < itemsInfo.size(); i++) {
             if (arabicNumberInformation.number != null) {
-                arabicNumberInformation.number++;
+                arabicNumberInformation.number += getIncrement();
                 ListItemTextInfo itemInfo = itemsInfo.get(i);
                 if (!arabicNumberInformation.checkItem(itemInfo) || arabicNumberInformation.isBadItem(itemInfo)) {
                     if (SemanticType.LIST == itemInfo.getSemanticType()) {
-                        arabicNumberInformation.number--;
+                        arabicNumberInformation.number -= getIncrement();
                         interval.getListsIndexes().add(itemInfo.getIndex());
                         continue;
                     }

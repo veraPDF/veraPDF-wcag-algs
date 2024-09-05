@@ -17,6 +17,13 @@ public class CircledArabicNumbersListLabelsDetectionAlgorithm extends LettersLis
     private static final String UPPER_CASE_KOREAN_LETTER_REGEX = KOREAN_LETTER_REGEX;
     private static final String LOWER_CASE_KOREAN_LETTER_REGEX = KOREAN_LETTER_REGEX;
 
+    public CircledArabicNumbersListLabelsDetectionAlgorithm() {
+    }
+
+    public CircledArabicNumbersListLabelsDetectionAlgorithm(int increment) {
+        setIncrement(increment);
+    }
+
     @Override
     protected String getRegex() {
         return KOREAN_LETTER_REGEX;

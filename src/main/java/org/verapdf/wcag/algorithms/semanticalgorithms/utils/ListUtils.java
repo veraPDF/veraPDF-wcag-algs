@@ -56,7 +56,7 @@ public class ListUtils {
 		if (!imageLabels.isEmpty() && !textLabels.isEmpty()) {
 			return false;
 		}
-		return imageLabels.isEmpty() ? ListLabelsUtils.isListLabels(textLabels) : isListImageLabels(imageLabels);
+		return imageLabels.isEmpty() ? ListLabelsUtils.isListLabels(textLabels, 1) : isListImageLabels(imageLabels);
 	}
 
 	public static boolean isListImageLabels(List<BoundingBox> listLabels) {

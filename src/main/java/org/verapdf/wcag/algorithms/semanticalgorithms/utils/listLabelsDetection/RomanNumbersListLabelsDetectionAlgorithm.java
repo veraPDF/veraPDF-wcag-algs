@@ -6,6 +6,13 @@ public class RomanNumbersListLabelsDetectionAlgorithm extends LettersListLabelsD
     private static final String UPPER_CASE_ROMAN_NUMBER_REGEX = "[MDCLXVI]+";
     private static final String LOWER_CASE_ROMAN_NUMBER_REGEX = "[mdclxvi]+";
 
+    public RomanNumbersListLabelsDetectionAlgorithm() {
+    }
+
+    public RomanNumbersListLabelsDetectionAlgorithm(int increment) {
+        setIncrement(increment);
+    }
+
     @Override
     protected String getRegex() {
         return ROMAN_NUMBER_REGEX;

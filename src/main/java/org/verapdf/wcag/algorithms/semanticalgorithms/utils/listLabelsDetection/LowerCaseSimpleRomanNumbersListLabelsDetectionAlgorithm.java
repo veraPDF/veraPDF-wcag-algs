@@ -13,6 +13,14 @@ public class LowerCaseSimpleRomanNumbersListLabelsDetectionAlgorithm extends Let
     private static final String UPPER_CASE_SIMPLE_ROMAN_NUMBER_REGEX = SIMPLE_ROMAN_NUMBER_REGEX;
     private static final String LOWER_CASE_SIMPLE_ROMAN_NUMBER_LETTER_REGEX = SIMPLE_ROMAN_NUMBER_REGEX;
 
+    public LowerCaseSimpleRomanNumbersListLabelsDetectionAlgorithm() {
+        super();
+    }
+
+    public LowerCaseSimpleRomanNumbersListLabelsDetectionAlgorithm(int increment) {
+        super(increment);
+    }
+
     @Override
     protected String getRegex() {
         return SIMPLE_ROMAN_NUMBER_REGEX;

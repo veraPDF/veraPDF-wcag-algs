@@ -2,6 +2,14 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection
 
 public class AlfaLettersListLabelsDetectionAlgorithm2 extends AlfaLettersListLabelsDetectionAlgorithm {
 
+    public AlfaLettersListLabelsDetectionAlgorithm2() {
+        super();
+    }
+
+    public AlfaLettersListLabelsDetectionAlgorithm2(int increment) {
+        super(increment);
+    }
+    
     @Override
     protected String getStringFromNumber(Integer number) {
         return getLetters2FromNumber(number);
