@@ -84,7 +84,7 @@ public class ListLabelsTests {
     }
 
     void testLabelsList(List<String> labelsList, boolean result) {
-        Assertions.assertEquals(result, ListLabelsUtils.isListLabels(labelsList));
+        Assertions.assertEquals(result, ListLabelsUtils.isListLabels(labelsList, 1));
     }
 
     @Test
