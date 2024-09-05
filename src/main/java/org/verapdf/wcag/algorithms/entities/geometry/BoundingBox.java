@@ -174,6 +174,19 @@ public class BoundingBox {
         }
         return Math.abs(that.topY - topY) > EPSILON;
     }
+    
+    public static boolean areSameBoundingBoxesExcludingPages(BoundingBox boundingBox1, BoundingBox boundingBox2) {
+        if (Math.abs(boundingBox1.leftX - boundingBox2.leftX) > EPSILON) {
+            return false;
+        }
+        if (Math.abs(boundingBox1.bottomY - boundingBox2.bottomY) > EPSILON) {
+            return false;
+        }
+        if (Math.abs(boundingBox1.rightX - boundingBox2.rightX) > EPSILON) {
+            return false;
+        }
+        return Math.abs(boundingBox1.topY - boundingBox2.topY) < EPSILON;
+    }
 
     public boolean overlaps(BoundingBox other) {
         return overlaps(other, EPSILON);
