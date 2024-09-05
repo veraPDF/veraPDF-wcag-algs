@@ -41,4 +41,9 @@ public interface IObject {
 	double getCenterX();
 
 	double getCenterY();
+	
+	Integer getIndex();
+
+	void setIndex(Integer index);
+
 }

@@ -11,7 +11,6 @@ public class SemanticNode extends BaseObject implements INode {
 	private Double correctSemanticScore;
 	private SemanticType semanticType;
 
-	private Integer index = null;
 	private Integer objectKeyNumber = null;
 	private INode parent = null;
 	private final List<INode> children;
@@ -102,16 +101,6 @@ public class SemanticNode extends BaseObject implements INode {
 	@Override
 	public INode getParent() {
 		return parent;
-	}
-
-	@Override
-	public Integer getIndex() {
-		return index;
-	}
-
-	@Override
-	public void setIndex(Integer index) {
-		this.index = index;
 	}
 
 	@Override

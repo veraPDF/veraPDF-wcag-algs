@@ -12,6 +12,8 @@ public class PDFList extends InfoChunk {
     private static final double LIST_ITEM_EPSILON = 0.2;
 
     private final List<ListItem> listItems;
+    
+    private Long previousListId = null;
 
     public PDFList(Table table) {
         super(table.getBoundingBox());
@@ -32,6 +34,22 @@ public class PDFList extends InfoChunk {
 
     public List<ListItem> getListItems() {
         return listItems;
+    }
+
+    public ListItem getLastListItem() {
+        return listItems.get(listItems.size() - 1);
+    }
+
+    public ListItem getFirstListItem() {
+        return listItems.get(0);
+    }
+
+    public ListItem getPenultListItem() {
+        return listItems.get(listItems.size() - 2);
+    }
+
+    public ListItem getSecondListItem() {
+        return listItems.get(1);
     }
 
     public void add(ListItem listItem) {
@@ -92,4 +110,11 @@ public class PDFList extends InfoChunk {
         secondCell.getContent().removeAll(previousListItem.getBody().getContent());
     }
 
+    public Long getPreviousListId() {
+        return previousListId;
+    }
+
+    public void setPreviousListId(Long previousListId) {
+        this.previousListId = previousListId;
+    }
 }
