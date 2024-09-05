@@ -10,7 +10,8 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
 
     public static final String ARABIC_NUMBER_REGEX = "\\d+";
     public static final String DOUBLE_REGEX = ARABIC_NUMBER_REGEX + "\\." + ARABIC_NUMBER_REGEX;
-    public boolean isHeaderOrFooter = false;
+
+    private boolean isHeaderOrFooterDetection = false;
 
     public ArabicNumbersListLabelsDetectionAlgorithm() {
         super();
@@ -173,8 +174,9 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
         private boolean isBadItem(ListItemTextInfo listItem) {
             String item = listItem.getListItem();
             String nextSubstring = item.substring(start);
+            int nextNumberOfStartZeros = getNumberOfStartZeros(nextSubstring);
             int nextArabicNumberStartLength = getRegexStartLength(nextSubstring);
-            if (!isHeaderOrFooter && nextSubstring.length() == nextArabicNumberStartLength && listItem.hasOneLine()) {
+            if (!isHeaderOrFooterDetection && nextSubstring.length() == nextNumberOfStartZeros + nextArabicNumberStartLength && listItem.hasOneLine()) {
                 return true;
             }
             if (item.matches(DOUBLE_REGEX) && listItem.hasOneLine()) {
@@ -209,5 +211,13 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
             numberOfStartZeros = nextNumberOfStartZeros;
             return true;
         }
+    }
+
+    public boolean isHeaderOrFooterDetection() {
+        return isHeaderOrFooterDetection;
+    }
+
+    public void setHeaderOrFooterDetection(boolean headerOrFooterDetection) {
+        isHeaderOrFooterDetection = headerOrFooterDetection;
     }
 }
