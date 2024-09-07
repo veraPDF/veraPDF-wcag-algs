@@ -3,6 +3,7 @@ package org.verapdf.wcag.algorithms.entities.content;
 import org.verapdf.wcag.algorithms.entities.enums.TextAlignment;
 
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 public class TextBlock extends TextInfoChunk {
 
 	private final List<TextLine> textLines = new ArrayList<>();
-	
+
 	private TextAlignment textAlignment = null;
 
 	public TextBlock() {
@@ -89,7 +90,7 @@ public class TextBlock extends TextInfoChunk {
 		textLines.add(line);
 		super.add(line);
 	}
-	
+
 	public void add(List<TextLine> lines) {
 		for (TextLine line : lines) {
 			add(line);
@@ -109,10 +110,13 @@ public class TextBlock extends TextInfoChunk {
 		if (textLines.isEmpty()) {
 			return "";
 		}
-		StringBuilder result = new StringBuilder(textLines.get(0).getValue());
-		for (int i = 1; i < textLines.size(); ++i) {
-			result.append('\n').append(textLines.get(i).getValue());
+
+		StringBuilder result = new StringBuilder("");
+		for (int i = 0; i < textLines.size() - 1; ++i) {
+			result.append(TextChunkUtils.suppressEndHyphenation(textLines.get(i).getValue())).append('\n');
 		}
+
+		result.append(textLines.get(textLines.size() - 1).getValue());
 		return result.toString();
 	}
 
