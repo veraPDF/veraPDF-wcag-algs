@@ -3,7 +3,9 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class TextChunkUtils {
 
@@ -14,6 +16,8 @@ public class TextChunkUtils {
     public static final double TEXT_CHUNK_SPACE_RATIO = 170;
     public static final double TEXT_LINE_SPACE_RATIO = 0.17;
 
+    public static final Set<Character> HYPHENATION_SIGNS = new HashSet<>(Arrays.asList('\u002D','\u2014','\u00AD'));
+
     public static boolean isSpaceChunk(TextChunk chunk) {
         for (char symbol : chunk.getValue().toCharArray()) {
             if (!Character.isSpaceChar(symbol)) {
@@ -21,6 +25,14 @@ public class TextChunkUtils {
             }
         }
         return true;
+    }
+
+    public static String suppressEndHyphenation(String text) {
+        if (TextChunkUtils.HYPHENATION_SIGNS.contains(text.charAt(text.length() - 1))) {
+            text = text.substring(0, text.length() - 1);
+        }
+
+        return text;
     }
 
     public static boolean isWhiteSpaceChunk(TextChunk chunk) {
