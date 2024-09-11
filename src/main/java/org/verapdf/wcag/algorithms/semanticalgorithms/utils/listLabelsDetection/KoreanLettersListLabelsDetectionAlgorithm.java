@@ -21,6 +21,11 @@ public class KoreanLettersListLabelsDetectionAlgorithm extends LettersListLabels
     }
 
     @Override
+    protected String getNumberingStyle(boolean isUpperCase) {
+        return NumberingStyleNames.KOREAN_LETTERS;
+    }
+
+    @Override
     protected String getRegex() {
         return KOREAN_LETTER_REGEX;
     }

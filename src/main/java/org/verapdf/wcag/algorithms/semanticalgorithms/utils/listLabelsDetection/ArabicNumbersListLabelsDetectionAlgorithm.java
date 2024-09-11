@@ -57,6 +57,11 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
     }
 
     @Override
+    protected String getNumberingStyle(boolean isUpperCase) {
+        return NumberingStyleNames.ARABIC_NUMBERS;
+    }
+
+    @Override
     public Set<ListInterval> getItemsIntervals(List<ListItemTextInfo> itemsInfo) {
         Set<ListInterval> listIntervals = new HashSet<>();
         ListInterval interval = new ListInterval();
@@ -73,6 +78,7 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
                     }
                     if (interval.getNumberOfListItems() > 1) {
                         --i;
+                        interval.setNumberingStyle(getNumberingStyle(false));
                         listIntervals.add(interval);
                     }
                     arabicNumberInformation.number = null;
@@ -94,6 +100,7 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
             }
         }
         if (arabicNumberInformation.number != null && interval.getNumberOfListItems() > 1) {
+            interval.setNumberingStyle(getNumberingStyle(false));
             listIntervals.add(interval);
         }
         return listIntervals;

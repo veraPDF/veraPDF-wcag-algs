@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.entities.lists;
 
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemInfo;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.NumberingStyleNames;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 public class ListInterval {
 	private List<Integer> listsIndexes = new ArrayList<>();
 	private List<ListItemInfo> listItemsInfos = new ArrayList<>();
+	private String numberingStyle = NumberingStyleNames.UNKNOWN;
 	public Integer numberOfColumns;
 
 	public ListInterval() {
@@ -27,6 +29,14 @@ public class ListInterval {
 		for (int i = start; i <= end; i++) {
 			listItemsInfos.add(new ListItemInfo(i));
 		}
+	}
+
+	public String getNumberingStyle() {
+		return numberingStyle;
+	}
+
+	public void setNumberingStyle(String numberingStyle) {
+		this.numberingStyle = numberingStyle;
 	}
 
 	public int getStart() {

@@ -26,6 +26,11 @@ public abstract class AlfaLettersListLabelsDetectionAlgorithm extends LettersLis
     }
 
     @Override
+    protected String getNumberingStyle(boolean isUpperCase) {
+        return isUpperCase ? NumberingStyleNames.ENGLISH_LETTERS_UPPER_CASE : NumberingStyleNames.ENGLISH_LETTERS_LOWER_CASE;
+    }
+
+    @Override
     protected String getLowerCaseRegex() {
         return LOWER_CASE_ENGLISH_LETTER_REGEX;
     }
