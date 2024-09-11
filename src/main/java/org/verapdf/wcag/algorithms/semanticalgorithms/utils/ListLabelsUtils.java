@@ -73,8 +73,8 @@ public class ListLabelsUtils {
 				new CircledArabicNumbersListLabelsDetectionAlgorithm(increment).isListLabels(labels, commonStartLength, commonEndLength) ||
 				new AlfaLettersListLabelsDetectionAlgorithm1(increment).isListLabels(labels, commonStartLength, commonEndLength) ||
 				new AlfaLettersListLabelsDetectionAlgorithm2(increment).isListLabels(labels, commonStartLength, commonEndLength) ||
-				new LowerCaseSimpleRomanNumbersListLabelsDetectionAlgorithm(increment).isListLabels(labels, commonStartLength, commonEndLength) ||
-				new UpperCaseSimpleRomanNumbersListLabelsDetectionAlgorithm(increment).isListLabels(labels, commonStartLength, commonEndLength);
+				new RomanNumbersLowerCaseListLabelsDetectionAlgorithm(increment).isListLabels(labels, commonStartLength, commonEndLength) ||
+				new RomanNumbersUpperCaseListLabelsDetectionAlgorithm(increment).isListLabels(labels, commonStartLength, commonEndLength);
 	}
 
 	private static boolean isEqualsLabels(List<String> labels) {
@@ -149,8 +149,8 @@ public class ListLabelsUtils {
 		listIntervals.putAll(new CircledArabicNumbersListLabelsDetectionAlgorithm().getItemsIntervals(itemsInfo));
 		listIntervals.putAll(new RomanNumbersListLabelsDetectionAlgorithm().getItemsIntervals(itemsInfo));
 		listIntervals.putAll(new ArabicNumbersListLabelsDetectionAlgorithm().getItemsIntervals(itemsInfo));
-		listIntervals.putAll(new LowerCaseSimpleRomanNumbersListLabelsDetectionAlgorithm().getItemsIntervals(itemsInfo));
-		listIntervals.putAll(new UpperCaseSimpleRomanNumbersListLabelsDetectionAlgorithm().getItemsIntervals(itemsInfo));
+		listIntervals.putAll(new RomanNumbersLowerCaseListLabelsDetectionAlgorithm().getItemsIntervals(itemsInfo));
+		listIntervals.putAll(new RomanNumbersUpperCaseListLabelsDetectionAlgorithm().getItemsIntervals(itemsInfo));
 		return listIntervals.getSet();
 	}
 
@@ -167,6 +167,7 @@ public class ListLabelsUtils {
 					continue;
 				}
 				if (interval.getNumberOfListItems() > 1 && checkForSuitableLabel(firstChar, secondChar)) {
+					interval.setNumberingStyle(NumberingStyleNames.UNORDERED);
 					listIntervals.add(interval);
 				}
 				if (badListItem) {
@@ -181,6 +182,7 @@ public class ListLabelsUtils {
 			interval.getListItemsInfos().add(info);
 		}
 		if (interval.getNumberOfListItems() > 1 && checkForSuitableLabel(firstChar, secondChar)) {
+			interval.setNumberingStyle(NumberingStyleNames.UNORDERED);
 			listIntervals.add(interval);
 		}
 		return listIntervals;

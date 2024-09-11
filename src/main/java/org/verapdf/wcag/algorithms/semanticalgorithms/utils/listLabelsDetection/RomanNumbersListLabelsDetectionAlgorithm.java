@@ -14,6 +14,11 @@ public class RomanNumbersListLabelsDetectionAlgorithm extends LettersListLabelsD
     }
 
     @Override
+    protected String getNumberingStyle(boolean isUpperCase) {
+        return isUpperCase ? NumberingStyleNames.ROMAN_NUMBERS_UPPER_CASE : NumberingStyleNames.ROMAN_NUMBERS_LOWER_CASE;
+    }
+
+    @Override
     protected String getRegex() {
         return ROMAN_NUMBER_REGEX;
     }

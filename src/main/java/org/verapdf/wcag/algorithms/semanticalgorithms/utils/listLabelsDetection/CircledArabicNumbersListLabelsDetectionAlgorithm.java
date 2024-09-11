@@ -13,9 +13,7 @@ public class CircledArabicNumbersListLabelsDetectionAlgorithm extends LettersLis
             '\u32B5','\u32B6','\u32B7','\u32B8','\u32B9','\u32BA','\u32BB','\u32BC','\u32BD','\u32BE',
             '\u32BF');
 
-    private static final String KOREAN_LETTER_REGEX = "[\u24EA\u2460-\u2473\u3251-\u325F\u32B1-\u32BF]+";
-    private static final String UPPER_CASE_KOREAN_LETTER_REGEX = KOREAN_LETTER_REGEX;
-    private static final String LOWER_CASE_KOREAN_LETTER_REGEX = KOREAN_LETTER_REGEX;
+    private static final String CIRCLED_ARABIC_NUMBERS_REGEX = "[\u24EA\u2460-\u2473\u3251-\u325F\u32B1-\u32BF]+";
 
     public CircledArabicNumbersListLabelsDetectionAlgorithm() {
     }
@@ -25,13 +23,18 @@ public class CircledArabicNumbersListLabelsDetectionAlgorithm extends LettersLis
     }
 
     @Override
+    protected String getNumberingStyle(boolean isUpperCase) {
+        return NumberingStyleNames.CIRCLED_ARABIC_NUMBERS;
+    }
+
+    @Override
     protected String getRegex() {
-        return KOREAN_LETTER_REGEX;
+        return CIRCLED_ARABIC_NUMBERS_REGEX;
     }
 
     @Override
     protected String getLowerCaseRegex() {
-        return LOWER_CASE_KOREAN_LETTER_REGEX;
+        return CIRCLED_ARABIC_NUMBERS_REGEX;
     }
 
     @Override
@@ -41,6 +44,6 @@ public class CircledArabicNumbersListLabelsDetectionAlgorithm extends LettersLis
 
     @Override
     protected String getUpperCaseRegex() {
-        return UPPER_CASE_KOREAN_LETTER_REGEX;
+        return CIRCLED_ARABIC_NUMBERS_REGEX;
     }
 }

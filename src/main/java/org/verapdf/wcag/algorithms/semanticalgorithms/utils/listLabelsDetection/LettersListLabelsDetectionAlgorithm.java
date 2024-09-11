@@ -80,6 +80,7 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
                         continue;
                     }
                     if (interval.getNumberOfListItems() > 1) {
+                        interval.setNumberingStyle(getNumberingStyle(isUpperCase));
                         listIntervals.add(interval);
                     }
                     number = null;
@@ -122,6 +123,7 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
             }
         }
         if (number != null && interval.getNumberOfListItems() > 1) {
+            interval.setNumberingStyle(getNumberingStyle(isUpperCase));
             listIntervals.add(interval);
         }
         return listIntervals;

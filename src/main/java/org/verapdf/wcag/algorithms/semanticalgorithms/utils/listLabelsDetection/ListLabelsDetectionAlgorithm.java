@@ -16,7 +16,9 @@ public abstract class ListLabelsDetectionAlgorithm {
     public ListLabelsDetectionAlgorithm(int increment) {
         setIncrement(increment);
     }
-    
+
+    protected abstract String getNumberingStyle(boolean isUpperCase);
+
     public abstract boolean isListLabels(List<String> labels, int commonStartLength, int commonEndLength);
 
     public abstract Set<ListInterval> getItemsIntervals(List<ListItemTextInfo> itemsInfo);

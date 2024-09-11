@@ -2,6 +2,7 @@ package org.verapdf.wcag.algorithms.entities.lists;
 
 import org.verapdf.wcag.algorithms.entities.content.InfoChunk;
 import org.verapdf.wcag.algorithms.entities.tables.*;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.NumberingStyleNames;
 //import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
 
 import java.util.ArrayList;
@@ -15,6 +16,8 @@ public class PDFList extends InfoChunk {
     
     private Long previousListId = null;
 
+    private String numberingStyle = NumberingStyleNames.UNKNOWN;
+
     public PDFList(Table table) {
         super(table.getBoundingBox());
         setRecognizedStructureId(table.getId());
@@ -26,6 +29,14 @@ public class PDFList extends InfoChunk {
         super();
         setRecognizedStructureId(id);
         listItems = new ArrayList<>();
+    }
+
+    public String getNumberingStyle() {
+        return numberingStyle;
+    }
+
+    public void setNumberingStyle(String numberingStyle) {
+        this.numberingStyle = numberingStyle;
     }
 
     public int getNumberOfListItems() {
