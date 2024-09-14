@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -27,12 +28,16 @@ public class TextChunkUtils {
         return true;
     }
 
-    public static String suppressEndHyphenation(String text) {
-        if (TextChunkUtils.HYPHENATION_SIGNS.contains(text.charAt(text.length() - 1))) {
-            text = text.substring(0, text.length() - 1);
+    public static void formatLineEnd(StringBuilder stringBuilder) {
+        if (StaticContainers.isTextFormatted()){
+            if (TextChunkUtils.HYPHENATION_SIGNS.contains(stringBuilder.charAt(stringBuilder.length() - 1))) {
+                stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            } else {
+                stringBuilder.append(" ");
+            }
+        } else {
+            stringBuilder.append("\n");
         }
-
-        return text;
     }
 
     public static boolean isWhiteSpaceChunk(TextChunk chunk) {

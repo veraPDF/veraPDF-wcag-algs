@@ -64,6 +64,8 @@ public class StaticContainers {
 
 	private static final ThreadLocal<Long> groupCounter = new ThreadLocal<>();
 
+	private static ThreadLocal<Boolean> isTextFormatted = new ThreadLocal<>();
+
 	static {
 		StaticContainers.wcagValidationInfo.set(new WCAGValidationInfo());
 	}
@@ -85,6 +87,7 @@ public class StaticContainers {
 		StaticContainers.groupCounter.set(0L);
 		StaticContainers.structElementsNumber.set(0L);
 		StaticContainers.textChunksNumber.set(0L);
+		StaticContainers.isTextFormatted.set(false);
 		if (StaticContainers.isHuman() == null) {
 			StaticContainers.setIsHuman(true);
 		}
@@ -205,5 +208,13 @@ public class StaticContainers {
 
 	public static void setTextChunksNumber(Long textChunksNumber) {
 		StaticContainers.textChunksNumber.set(textChunksNumber);
+	}
+
+	public static void setTextFormatting(boolean isTextFormatted) {
+		StaticContainers.isTextFormatted.set(isTextFormatted);
+	}
+
+	public static boolean isTextFormatted() {
+		return isTextFormatted.get();
 	}
 }
