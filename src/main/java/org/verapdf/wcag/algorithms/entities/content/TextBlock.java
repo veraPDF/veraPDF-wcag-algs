@@ -124,7 +124,9 @@ public class TextBlock extends TextInfoChunk {
 
 		StringBuilder result = new StringBuilder("");
 		for (int i = 0; i < textLines.size() - 1; ++i) {
-			result.append(TextChunkUtils.suppressEndHyphenation(textLines.get(i).getValue())).append('\n');
+			String textString = textLines.get(i).getValue();
+			result.append(textString);
+			TextChunkUtils.formatLineEnd(result);
 		}
 
 		result.append(textLines.get(textLines.size() - 1).getValue());
