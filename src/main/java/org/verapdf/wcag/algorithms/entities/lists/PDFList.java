@@ -15,6 +15,7 @@ public class PDFList extends InfoChunk {
     private final List<ListItem> listItems;
     
     private Long previousListId = null;
+    private Long nextListId = null;
 
     private String numberingStyle = NumberingStyleNames.UNKNOWN;
 
@@ -127,5 +128,13 @@ public class PDFList extends InfoChunk {
 
     public void setPreviousListId(Long previousListId) {
         this.previousListId = previousListId;
+    }
+
+    public Long getNextListId() {
+        return nextListId;
+    }
+
+    public void setNextListId(Long nextListId) {
+        this.nextListId = nextListId;
     }
 }
