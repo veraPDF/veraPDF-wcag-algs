@@ -172,6 +172,31 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		}
 	}
 
+	public BufferedImage getPageSubImage(BoundingBox bBox) {
+		int pageNumber = bBox.getPageNumber();
+		BufferedImage renderedPage = getRenderPage(pageNumber);
+		double dpiScaling = ((double) RENDER_DPI) / ((double) PDF_DPI);
+		int renderedPageWidth = renderedPage.getRaster().getWidth();
+		int renderedPageHeight = renderedPage.getRaster().getHeight();
+		BoundingBox pageBBox = new BoundingBox(pageNumber,0, 0, renderedPageWidth, renderedPageHeight);
+		BoundingBox scaledBBox = new BoundingBox(pageNumber, bBox.getLeftX() * dpiScaling,
+				bBox.getBottomY() * dpiScaling,
+				bBox.getRightX() * dpiScaling,
+				bBox.getTopY() * dpiScaling);
+		boolean isOverlappingBox = scaledBBox.overlaps(pageBBox);
+		if (isOverlappingBox) {
+			scaledBBox = scaledBBox.cross(pageBBox);
+		} else {
+			return null;
+		}
+
+		int x = (int) (Math.round(scaledBBox.getLeftX()));
+		int y = (int) (Math.round(scaledBBox.getTopY()));
+		int width = getIntegerBBoxValueForProcessing(scaledBBox.getWidth(), 1);
+		int height = getIntegerBBoxValueForProcessing(scaledBBox.getHeight(), 1);
+		return renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
+	}
+
 	private double [] convertCmykToRgb(double [] cmykColorComponentArray) {
 		double [] result = new double[3];
 		if (cmykColorComponentArray.length == 4) {
