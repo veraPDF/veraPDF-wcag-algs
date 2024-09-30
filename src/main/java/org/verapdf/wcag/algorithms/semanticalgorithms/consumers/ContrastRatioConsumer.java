@@ -44,19 +44,21 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 	private final Long textChunksNumber;
 	private PDDocument document;
 	private final String fileName;
+	private final String password;
 
-	public ContrastRatioConsumer(String sourcePdfPath) throws IOException {
-		this();
+	public ContrastRatioConsumer(String sourcePdfPath, String password) throws IOException {
+		this(password);
 		this.document = Loader.loadPDF(new RandomAccessReadBuffer(new FileInputStream(sourcePdfPath)));
 	}
 	
-	public ContrastRatioConsumer() {
+	public ContrastRatioConsumer(String password) {
 		this.fileName = StaticContainers.getFileName();
 		this.processedTextChunks = 0;
 		this.textChunksNumber = StaticContainers.getTextChunksNumber();
 		IIORegistry registry = IIORegistry.getDefaultInstance();
 		registry.registerServiceProvider(new J2KImageReaderSpi());
 		registry.registerServiceProvider(new JBIG2ImageReaderSpi());
+		this.password = password;
 	}
 
 	@Override
@@ -68,7 +70,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 			return true;
 		}
 		try {
-			this.document = Loader.loadPDF(new RandomAccessReadBuffer(new FileInputStream(fileName)));
+			this.document = Loader.loadPDF(new RandomAccessReadBuffer(new FileInputStream(fileName)), password);
 			calculateContrast(StaticContainers.getDocument().getTree());
 		} catch (IOException e) {
 			e.printStackTrace();

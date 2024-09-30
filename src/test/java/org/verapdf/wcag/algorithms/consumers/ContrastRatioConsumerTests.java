@@ -52,7 +52,7 @@ public class ContrastRatioConsumerTests {
 	void testColorContrastPass(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
 		IDocument document = JsonToPdfTree.getDocument(SRC_DIR + jsonPdfPath);
 		ITree tree = document.getTree();
-		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath)) {
+		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath, "")) {
 			tree.forEach(contrastRatioConsumer);
 			tree.forEach(node -> {
 			if (node.getChildren().isEmpty() && SemanticType.SPAN == node.getSemanticType()) {
@@ -78,7 +78,7 @@ public class ContrastRatioConsumerTests {
 	void testColorContrastCompletedWithoutExceptions(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
 		IDocument document = JsonToPdfTree.getDocument(SRC_DIR + jsonPdfPath);
 		ITree tree = document.getTree();
-		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath)) {
+		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath, "")) {
 			tree.forEach(contrastRatioConsumer);
 			Assertions.assertTrue(true);
 		}
@@ -89,7 +89,7 @@ public class ContrastRatioConsumerTests {
 	void testColorContrastFail(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
 		IDocument document = JsonToPdfTree.getDocument(SRC_DIR + jsonPdfPath);
 		ITree tree = document.getTree();
-		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath)) {
+		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath, "")) {
 			tree.forEach(contrastRatioConsumer);
 			tree.forEach(node -> {
 				if (node.getChildren().isEmpty() && SemanticType.SPAN == node.getSemanticType()) {
@@ -111,7 +111,7 @@ public class ContrastRatioConsumerTests {
 		nodeToCheck.add(new TextLine(new TextChunk(new BoundingBox(0, new double [] {100, 100, 100.1, 120}), ".", 14, 118)));
 		nodeToCheck.setPageNumber(0);
 		Assertions.assertEquals(0.1, nodeToCheck.getFirstLine().getFirstTextChunk().getBoundingBox().getWidth(), 0.0001);
-		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + "1.4.3-t02-fail-a.pdf")) {
+		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + "1.4.3-t02-fail-a.pdf", "")) {
 			contrastRatioConsumer.accept(nodeToCheck);
 		}
 		Assertions.assertEquals(0.1, nodeToCheck.getFirstLine().getFirstTextChunk().getBoundingBox().getWidth(), 0.0001);
@@ -123,7 +123,7 @@ public class ContrastRatioConsumerTests {
 		nodeToCheck.add(new TextLine(new TextChunk(new BoundingBox(0, new double [] {100, 100, 110, 100.1}), ".", 14, 118)));
 		nodeToCheck.setPageNumber(0);
 		Assertions.assertEquals(0.1, nodeToCheck.getFirstLine().getFirstTextChunk().getBoundingBox().getHeight(), 0.0001);
-		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + "1.4.3-t02-fail-a.pdf")) {
+		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + "1.4.3-t02-fail-a.pdf", "")) {
 			contrastRatioConsumer.accept(nodeToCheck);
 		}
 		Assertions.assertEquals(0.1, nodeToCheck.getFirstLine().getFirstTextChunk().getBoundingBox().getHeight(), 0.0001);
