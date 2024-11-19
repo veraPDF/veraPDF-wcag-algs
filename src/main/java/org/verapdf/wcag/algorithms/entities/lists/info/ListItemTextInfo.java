@@ -7,7 +7,10 @@ public class ListItemTextInfo extends ListItemInfo {
 	private final TextLine firstLine;
 	private final String listItem;
 	private final boolean hasOneLine;
-
+	private String prefix;
+	private String numberedPart;
+	private String suffix;
+	
 	public ListItemTextInfo(ListItemTextInfo info) {
 		super(info);
 		this.firstLine = info.firstLine;
@@ -35,5 +38,32 @@ public class ListItemTextInfo extends ListItemInfo {
 		return hasOneLine;
 	}
 
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+
+	public String getNumberedPart() {
+		return numberedPart;
+	}
+
+	public void setNumberedPart(String numberedPart) {
+		this.numberedPart = numberedPart;
+	}
+
+	public String getSuffix() {
+		return suffix;
+	}
+
+	public void setSuffix(String suffix) {
+		this.suffix = suffix;
+	}
+	
+	public String getBody() {
+		return getListItem().substring(getPrefix().length() + getNumberedPart().length() + getSuffix().length());
+	}
 }
 

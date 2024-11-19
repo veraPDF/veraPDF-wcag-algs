@@ -50,6 +50,15 @@ public class TextChunkUtils {
         return true;
     }
 
+    public static boolean isContainsWhiteSpaceChar(String string) {
+        for (char symbol : string.toCharArray()) {
+            if (isWhiteSpaceChar(symbol)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean isWhiteSpaceChar(char symbol) {
         return Character.isWhitespace(symbol) || symbol == '\u00A0' || symbol == '\u2007' || symbol == '\u202F';
     }

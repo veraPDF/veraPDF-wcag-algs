@@ -17,23 +17,21 @@ public class TableBorder extends BaseObject {
     public static final double TABLE_BORDER_EPSILON = 0.6;
     private static final double MIN_CELL_CONTENT_INTERSECTION_PERCENT = 0.8;
 
-    private final List<Double> xCoordinates;
-    private final List<Double> xWidths;
-    private final List<Double> yCoordinates;
-    private final List<Double> yWidths;
+    private final List<Double> xCoordinates = new LinkedList<>();
+    private final List<Double> xWidths = new LinkedList<>();
+    private final List<Double> yCoordinates = new LinkedList<>();
+    private final List<Double> yWidths = new LinkedList<>();
     private TableBorderRow[] rows;
     private int numberOfRows;
     private int numberOfColumns;
     private INode node;
     private boolean isBadTable = false;
+    private Long previousTableId;
+    private Long nextTableId;
 
     public TableBorder(TableBorderBuilder builder) {
         super(new BoundingBox(builder.getBoundingBox()));
-        xCoordinates = new LinkedList<>();
-        xWidths = new LinkedList<>();
         calculateXCoordinates(builder);
-        yCoordinates = new LinkedList<>();
-        yWidths = new LinkedList<>();
         calculateYCoordinates(builder);
         createMatrix(builder);
         setRecognizedStructureId(StaticContainers.getNextID());
@@ -428,6 +426,22 @@ public class TableBorder extends BaseObject {
 
     public boolean isBadTable() {
         return isBadTable || numberOfRows < 1 || numberOfColumns < 1 || (numberOfRows == 1 && numberOfColumns == 1);
+    }
+
+    public Long getPreviousTableId() {
+        return previousTableId;
+    }
+
+    public void setPreviousTableId(Long previousTableId) {
+        this.previousTableId = previousTableId;
+    }
+
+    public Long getNextTableId() {
+        return nextTableId;
+    }
+
+    public void setNextTableId(Long nextTableId) {
+        this.nextTableId = nextTableId;
     }
 
     public static class TableBordersComparator implements Comparator<TableBorder> {

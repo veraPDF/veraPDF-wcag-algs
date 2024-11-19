@@ -46,4 +46,8 @@ public interface IObject {
 
 	void setIndex(Integer index);
 
+	Integer getLevel();
+
+	void setLevel(Integer level);
+
 }

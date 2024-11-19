@@ -14,6 +14,7 @@ public class BaseObject implements IObject {
 	private final List<List<Object>> errorArguments;
 	private Long recognizedStructureId = null;
 	protected Integer index = null;
+	protected Integer level = null;
 
 	public BaseObject(BoundingBox boundingBox) {
 		this.boundingBox = boundingBox;
@@ -137,6 +138,16 @@ public class BaseObject implements IObject {
 	@Override
 	public void setIndex(Integer index) {
 		this.index = index;
+	}
+
+	@Override
+	public Integer getLevel() {
+		return level;
+	}
+
+	@Override
+	public void setLevel(Integer level) {
+		this.level = level;
 	}
 
 	@Override

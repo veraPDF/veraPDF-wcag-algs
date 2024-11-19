@@ -23,7 +23,7 @@ public abstract class ListLabelsDetectionAlgorithm {
 
     public abstract Set<ListInterval> getItemsIntervals(List<ListItemTextInfo> itemsInfo);
 
-    protected static int getCommonStartLength(String s1, String s2) {
+    public static int getCommonStartLength(String s1, String s2) {
         return getCommonStartLength(s1, s2, Math.min(s1.length(), s2.length()));
     }
 
