@@ -84,7 +84,11 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
                     }
                     arabicNumberInformation.number = null;
                 } else {
-                    interval.getListItemsInfos().add(itemInfo);
+                    ListItemTextInfo newItemInfo = new ListItemTextInfo(itemInfo);
+                    newItemInfo.setPrefix(arabicNumberInformation.prefix);
+                    newItemInfo.setNumberedPart(itemInfo.getListItem().substring(arabicNumberInformation.start, 
+                            arabicNumberInformation.start + arabicNumberInformation.arabicNumberStartLength));
+                    interval.getListItemsInfos().add(newItemInfo);
                 }
             }
             if (arabicNumberInformation.number == null && i != itemsInfo.size() - 1) {
@@ -96,7 +100,11 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
                 }
                 if (arabicNumberInformation.number != null) {
                     interval = new ListInterval();
-                    interval.getListItemsInfos().add(itemInfo);
+                    ListItemTextInfo newItemInfo = new ListItemTextInfo(itemInfo);
+                    newItemInfo.setPrefix(arabicNumberInformation.prefix);
+                    newItemInfo.setNumberedPart(itemInfo.getListItem().substring(arabicNumberInformation.start,
+                            arabicNumberInformation.start + arabicNumberInformation.arabicNumberStartLength));
+                    interval.getListItemsInfos().add(newItemInfo);
                 }
             }
         }
