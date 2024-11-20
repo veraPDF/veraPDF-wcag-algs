@@ -48,7 +48,7 @@ public class ListItemInfo {
 	public InfoChunk getListItemValue() {
 		return null;
 	}
-
+	
 	public Integer getPageNumber() {
 		return getListItemValue() != null ? getListItemValue().getPageNumber() : null;
 	}

@@ -179,7 +179,10 @@ public class ListLabelsUtils {
 				}
 				interval = new ListInterval();
 			}
-			interval.getListItemsInfos().add(info);
+			ListItemTextInfo newItemInfo = new ListItemTextInfo(info);
+			newItemInfo.setPrefix("");
+			newItemInfo.setNumberedPart(info.getListItem().substring(0, 1));
+			interval.getListItemsInfos().add(newItemInfo);
 		}
 		if (interval.getNumberOfListItems() > 1 && checkForSuitableLabel(firstChar, secondChar)) {
 			interval.setNumberingStyle(NumberingStyleNames.UNORDERED);

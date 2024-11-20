@@ -85,7 +85,10 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
                     }
                     number = null;
                 } else {
-                    interval.getListItemsInfos().add(itemInfo);
+                    ListItemTextInfo newItemInfo = new ListItemTextInfo(itemInfo);
+                    newItemInfo.setPrefix(prefix);
+                    newItemInfo.setNumberedPart(item.substring(start, start + s.length()));
+                    interval.getListItemsInfos().add(newItemInfo);
                 }
             }
             if (number == null && i != itemsInfo.size() - 1) {
@@ -119,7 +122,10 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
                     continue;
                 }
                 interval = new ListInterval();
-                interval.getListItemsInfos().add(itemInfo);
+                ListItemTextInfo newItemInfo = new ListItemTextInfo(itemInfo);
+                newItemInfo.setPrefix(prefix);
+                newItemInfo.setNumberedPart(substring);
+                interval.getListItemsInfos().add(newItemInfo);
             }
         }
         if (number != null && interval.getNumberOfListItems() > 1) {
