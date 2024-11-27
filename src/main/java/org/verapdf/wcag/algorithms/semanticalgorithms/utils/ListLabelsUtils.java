@@ -15,8 +15,8 @@ public class ListLabelsUtils {
 	private static final Set<Character> labels = new HashSet<>(
 			Arrays.asList('\u002D', '\u2022', '\u25CF', '\u2714', '\u2717', '\u2794', '\u27A2', '\uE00A', '\uE00C',
 					'\uF076', '\u2588', '\u25A0', '\u2013', '\uF0B7', '\uF0A7', '\u25A1', '\uF0A1', '\u25AA',
-					'\u25FC', '\u25CB', '\u203B', '\u274D', '\u25E6', '\u25B8', '\u3147', '\uFF4F', '\u002A'));
-	//office labels examples (-, •, ✔, ✗, ●, ➔, ➢), pdf files labels examples (█, ■, , □, , ▪, ◼, ○, ※, ❍, ㅇ, ▸, ◦, ｏ, *)
+					'\u25FC', '\u25CB', '\u203B', '\u274D', '\u25E6', '\u25B8', '\u3147', '\uFF4F', '\u002A', '\u25C7'));
+	//office labels examples (-, •, ✔, ✗, ●, ➔, ➢), pdf files labels examples (█, ■, , □, , ▪, ◼, ○, ※, ❍, ㅇ, ▸, ◦, ｏ, *, '◇')
 	private static final Character o =  '\u006F';
 
 	public static boolean isListLabel(String value) {

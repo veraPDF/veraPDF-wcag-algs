@@ -7,11 +7,11 @@ public class ListIntervalsCollection {
 	private final SortedSet<ListInterval> set;
 
 	public ListIntervalsCollection() {
-		set = new TreeSet<>(Comparator.comparing(ListInterval::getStart));
+		set = new TreeSet<>(ListInterval::compareTo);
 	}
 
 	public ListIntervalsCollection(Set<ListInterval> listIntervals) {
-		set = new TreeSet<>(Comparator.comparing(ListInterval::getStart));
+		this();
 		set.addAll(listIntervals);
 	}
 
