@@ -83,6 +83,10 @@ public class TableBorder extends BaseObject {
         return rows[rowNumber];
     }
 
+    public TableBorderCell getCell(int rowNumber, int columnNumber) {
+        return getRow(rowNumber).getCell(columnNumber);
+    }
+
     public int getNumberOfRowsWithContent() {
         int numberOfRowsWithContent = 0;
         for (TableBorderRow row : rows) {
@@ -448,8 +452,12 @@ public class TableBorder extends BaseObject {
         return isBadTable || numberOfRows < 1 || numberOfColumns < 1;
     }
     
-    public boolean isTextBlock() {
+    public boolean isOneCellTable() {
         return numberOfRows == 1 && numberOfColumns == 1;
+    }
+
+    public boolean isTextBlock() {
+        return isOneCellTable() && !getCell(0, 0).getContents().isEmpty();
     }
 
     public Long getPreviousTableId() {
