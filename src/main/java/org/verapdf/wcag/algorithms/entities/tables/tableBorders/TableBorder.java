@@ -27,8 +27,8 @@ public class TableBorder extends BaseObject {
     private int numberOfColumns;
     private INode node;
     private boolean isBadTable = false;
-    private Long previousTableId;
-    private Long nextTableId;
+    private TableBorder previousTable;
+    private TableBorder nextTable;
 
     public TableBorder(TableBorderBuilder builder) {
         super(new BoundingBox(builder.getBoundingBox()));
@@ -445,23 +445,35 @@ public class TableBorder extends BaseObject {
     }
 
     public boolean isBadTable() {
-        return isBadTable || numberOfRows < 1 || numberOfColumns < 1 || (numberOfRows == 1 && numberOfColumns == 1);
+        return isBadTable || numberOfRows < 1 || numberOfColumns < 1;
+    }
+    
+    public boolean isTextBlock() {
+        return numberOfRows == 1 && numberOfColumns == 1;
     }
 
     public Long getPreviousTableId() {
-        return previousTableId;
-    }
-
-    public void setPreviousTableId(Long previousTableId) {
-        this.previousTableId = previousTableId;
+        return previousTable != null ? previousTable.getRecognizedStructureId() : null;
     }
 
     public Long getNextTableId() {
-        return nextTableId;
+        return nextTable != null ? nextTable.getRecognizedStructureId() : null;
     }
 
-    public void setNextTableId(Long nextTableId) {
-        this.nextTableId = nextTableId;
+    public TableBorder getPreviousTable() {
+        return previousTable;
+    }
+
+    public void setPreviousTable(TableBorder previousTable) {
+        this.previousTable = previousTable;
+    }
+
+    public TableBorder getNextTable() {
+        return nextTable;
+    }
+
+    public void setNextTable(TableBorder nextTable) {
+        this.nextTable = nextTable;
     }
 
     public static class TableBordersComparator implements Comparator<TableBorder> {

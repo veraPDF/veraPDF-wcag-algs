@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class ListInterval {
+public class ListInterval implements Comparable {
 	private List<Integer> listsIndexes = new ArrayList<>();
 	private List<ListItemInfo> listItemsInfos = new ArrayList<>();
 	private String numberingStyle = NumberingStyleNames.UNKNOWN;
@@ -166,6 +166,20 @@ public class ListInterval {
 	}
 
 	public boolean contains(ListInterval second) {
-		return this.getStart() <= second.getStart() && this.getEnd() >= second.getEnd();
+		if (Objects.equals(getFirstListItemInfo().getPageNumber(), getLastListItemInfo().getPageNumber()) &&
+				Objects.equals(second.getFirstListItemInfo().getPageNumber(), second.getLastListItemInfo().getPageNumber()) && 
+				Objects.equals(getFirstListItemInfo().getPageNumber(), second.getFirstListItemInfo().getPageNumber())) {
+			return this.getStart() <= second.getStart() && this.getEnd() >= second.getEnd();
+		}
+		return false;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		ListInterval interval = (ListInterval) o;
+		if (!Objects.equals(getFirstListItemInfo().getPageNumber(), interval.getFirstListItemInfo().getPageNumber())) {
+			return getFirstListItemInfo().getPageNumber() - interval.getFirstListItemInfo().getPageNumber();
+		}
+		return getStart() - interval.getStart();
 	}
 }

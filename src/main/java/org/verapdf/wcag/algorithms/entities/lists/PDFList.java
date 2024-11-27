@@ -158,7 +158,7 @@ public class PDFList extends InfoChunk {
         firstList.setNextList(secondList);
         secondList.setPreviousList(firstList);
     }
-
+    
     public String getCommonPrefix() {
         return commonPrefix;
     }
