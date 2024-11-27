@@ -278,12 +278,12 @@ public class TableBorderConsumer extends WCAGConsumer {
             return true;
         }
         for (int rowNumber = cell.getRowNumber(); rowNumber < cell.getRowNumber() + cell.getRowSpan(); rowNumber++) {
-            if (table.getRow(rowNumber).getCell(cell.getColNumber() - 1).getSemanticType() == SemanticType.TABLE_HEADER) {
+            if (table.getCell(rowNumber, cell.getColNumber() - 1).getSemanticType() == SemanticType.TABLE_HEADER) {
                 return true;
             }
         }
         for (int colNumber = cell.getColNumber(); colNumber < cell.getColNumber() + cell.getColSpan(); colNumber++) {
-            if (table.getRow(cell.getRowNumber() - 1).getCell(colNumber).getSemanticType() == SemanticType.TABLE_HEADER) {
+            if (table.getCell(cell.getRowNumber() - 1, colNumber).getSemanticType() == SemanticType.TABLE_HEADER) {
                 return true;
             }
         }

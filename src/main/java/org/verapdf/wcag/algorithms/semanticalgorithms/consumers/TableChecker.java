@@ -422,7 +422,7 @@ public class TableChecker extends WCAGConsumer implements Consumer<INode> {
         for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
             for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
                 TableBorderCell cell = cells[rowNumber][colNumber];
-                TableBorderCell borderCell = border.getRow(rowNumber).getCell(colNumber);
+                TableBorderCell borderCell = border.getCell(rowNumber, colNumber);
                 if (cell.getRowNumber() == rowNumber && cell.getColNumber() == colNumber &&
                         borderCell.getRowNumber() == rowNumber && borderCell.getColNumber() == colNumber) {
                     if (cell.getRowSpan() != borderCell.getRowSpan()) {
