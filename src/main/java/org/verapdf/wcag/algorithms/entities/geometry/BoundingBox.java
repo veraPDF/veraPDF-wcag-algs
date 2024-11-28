@@ -174,6 +174,22 @@ public class BoundingBox {
         }
         return Math.abs(that.topY - topY) > EPSILON;
     }
+
+    public static boolean areSameBoundingBoxes(BoundingBox boundingBox1, BoundingBox boundingBox2) {
+        if (!Objects.equals(boundingBox1.getPageNumber(), boundingBox2.getPageNumber())) {
+            return false;
+        }
+        if (Math.abs(boundingBox1.leftX - boundingBox2.leftX) > EPSILON) {
+            return false;
+        }
+        if (Math.abs(boundingBox1.bottomY - boundingBox2.bottomY) > EPSILON) {
+            return false;
+        }
+        if (Math.abs(boundingBox1.rightX - boundingBox2.rightX) > EPSILON) {
+            return false;
+        }
+        return Math.abs(boundingBox1.topY - boundingBox2.topY) < EPSILON;
+    }
     
     public static boolean areSameBoundingBoxesExcludingPages(BoundingBox boundingBox1, BoundingBox boundingBox2) {
         if (Math.abs(boundingBox1.leftX - boundingBox2.leftX) > EPSILON) {
@@ -187,6 +203,20 @@ public class BoundingBox {
         }
         return Math.abs(boundingBox1.topY - boundingBox2.topY) < EPSILON;
     }
+
+    public static boolean areOverlapsBoundingBoxesExcludingPages(BoundingBox boundingBox1, BoundingBox boundingBox2) {
+        if (boundingBox1.leftX - boundingBox2.rightX > EPSILON) {
+            return false;
+        }
+        if (boundingBox1.bottomY - boundingBox2.topY > EPSILON) {
+            return false;
+        }
+        if (boundingBox2.leftX - boundingBox1.rightX > EPSILON) {
+            return false;
+        }
+        return boundingBox2.bottomY - boundingBox1.topY < EPSILON;
+    }
+
 
     public boolean overlaps(BoundingBox other) {
         return overlaps(other, EPSILON);
