@@ -12,6 +12,7 @@ public class TextLine extends TextInfoChunk {
     private final List<TextChunk> textChunks = new ArrayList<>();
     private boolean isLineStart = true;
     private boolean isLineEnd = true;
+    private boolean isListLine = false;
 
     public TextLine() {
     }
@@ -136,5 +137,13 @@ public class TextLine extends TextInfoChunk {
             result.append(' ').append(textChunks.get(i).getValue());
         }
         return result.toString();
+    }
+
+    public boolean isListLine() {
+        return isListLine;
+    }
+
+    public void setListLine(boolean listLine) {
+        isListLine = listLine;
     }
 }
