@@ -5,6 +5,7 @@ import org.verapdf.wcag.algorithms.entities.SemanticHeading;
 import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -15,9 +16,10 @@ public class NodeUtils {
 	public static final double VERTEX_FACTOR = 1.5;
 	public static final double VERTEX_TABLE_FACTOR = 4;
 	public static final double[] UNDERLINED_TEXT_EPSILONS = {0.08, 0.35, 0.3};
+	private static final double HEADING_SIZE_FACTOR = 1.5;
 	private static final double[] HEADING_PROBABILITY_PARAMS = {0.3, 0.0291, 0.15, 0.27, 0.1, 0.25, 0.2, 0.5, 0.05, 0.1};
-	private static final double[] HEADING_PROBABILITY_PARAMS_SAME_FONT = {0.55, 0.15, 0.55, 0.4, 0.5, 0.15};
-	private static final double[] HEADING_PROBABILITY_PARAMS_DIFF_FONT = {0.44, 0.1, 0.4, 0.23, 0.35, 0.1};
+	private static final double[] HEADING_PROBABILITY_PARAMS_SAME_FONT = {0.55, 0.15, 0.55, 0.4, 0.5, 0.15, 0.1};
+	private static final double[] HEADING_PROBABILITY_PARAMS_DIFF_FONT = {0.44, 0.1, 0.4, 0.23, 0.35, 0.1, 0.1};
 	public static final double[] HEADING_EPSILONS = {0.05, 0.08};
 
 	public static final double BACKGROUND_FIRST_COLOR_EPSILON = 0.03;
@@ -106,6 +108,11 @@ public class NodeUtils {
 			probability += params[4];
 		} else if (neighborTextNode.getFontSize() > textNode.getFontSize() + fontEps) {
 			probability -= params[5];
+		}
+		if (StaticContainers.isDataLoader()) {
+			if (textNode.getFontSize() > HEADING_SIZE_FACTOR * neighborTextNode.getFontSize() + fontEps) {
+				probability += params[6];
+			}
 		}
 		return probability;
 	}
