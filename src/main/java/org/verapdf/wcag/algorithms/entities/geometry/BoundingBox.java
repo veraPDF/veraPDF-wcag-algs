@@ -271,6 +271,22 @@ public class BoundingBox {
         return contains(fullRectangle);
     }
 
+    public static boolean areHorizontalOverlapping(BoundingBox first, BoundingBox second) {
+        return areHorizontalOverlapping(first, second, 0.0d);
+    }
+
+    private static boolean areHorizontalOverlapping(BoundingBox first, BoundingBox second, double epsilon) {
+        return first.getLeftX() + epsilon < second.getRightX() && second.getLeftX() + epsilon < first.getRightX();
+    }
+
+    public static boolean areVerticalOverlapping(BoundingBox first, BoundingBox second) {
+        return areVerticalOverlapping(first, second, 0.0d);
+    }
+
+    private static boolean areVerticalOverlapping(BoundingBox first, BoundingBox second, double epsilon) {
+        return first.getBottomY() + epsilon < second.getTopY() && second.getBottomY() + epsilon < first.getTopY();
+    }
+    
     public static BoundingBox cross(BoundingBox first, BoundingBox second) {
         BoundingBox result = new BoundingBox(first);
         return result.cross(second, 0, 0);
@@ -419,7 +435,6 @@ public class BoundingBox {
     public boolean isSeveralPagesBoundingBox() {
         return pageNumber != null && !Objects.equals(pageNumber, lastPageNumber);
     }
-
 
     public void init(double left, double bottom, double right, double top) {
         this.leftX = left;
