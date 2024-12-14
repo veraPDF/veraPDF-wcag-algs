@@ -13,6 +13,7 @@ public class TextLine extends TextInfoChunk {
     private boolean isLineStart = true;
     private boolean isLineEnd = true;
     private boolean isListLine = false;
+    private LineArtChunk connectedLineArtLabel = null;  
 
     public TextLine() {
     }
@@ -145,5 +146,13 @@ public class TextLine extends TextInfoChunk {
 
     public void setListLine(boolean listLine) {
         isListLine = listLine;
+    }
+
+    public LineArtChunk getConnectedLineArtLabel() {
+        return connectedLineArtLabel;
+    }
+
+    public void setConnectedLineArtLabel(LineArtChunk connectedLineArtLabel) {
+        this.connectedLineArtLabel = connectedLineArtLabel;
     }
 }
