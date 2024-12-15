@@ -1,11 +1,14 @@
 package org.verapdf.wcag.algorithms.entities.content;
 
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class LineArtChunk extends InfoChunk {
+	
+	private static double LINE_ART_SIZE_EPSILON = 0.002;
 
 	private List<LineChunk> lineChunks;
 
@@ -38,5 +41,10 @@ public class LineArtChunk extends InfoChunk {
 
 	public void setLineChunks(List<LineChunk> lineChunks) {
 		this.lineChunks = lineChunks;
+	}
+	
+	public static boolean areHaveSameSizes(LineArtChunk lineArt1, LineArtChunk lineArt2) {
+		return NodeUtils.areCloseNumbers(lineArt1.getHeight(), lineArt2.getHeight(), LINE_ART_SIZE_EPSILON) &&
+				NodeUtils.areCloseNumbers(lineArt1.getWidth(), lineArt2.getWidth(), LINE_ART_SIZE_EPSILON);
 	}
 }
