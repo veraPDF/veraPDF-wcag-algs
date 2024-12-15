@@ -10,10 +10,7 @@ import org.verapdf.wcag.algorithms.entities.tables.TableBorderBuilder;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TableBorder extends BaseObject {
@@ -124,10 +121,8 @@ public class TableBorder extends BaseObject {
                         rows[rowNumber].cells[colNumber].rowNumber == rowNumber) {
                     TableBorderCell cell = rows[rowNumber].cells[colNumber];
                     BoundingBox cellBoundingBox = new BoundingBox(getBoundingBox().getPageNumber(),
-                            xCoordinates.get(colNumber) - 0.5 * xWidths.get(colNumber),
-                            yCoordinates.get(rowNumber + cell.rowSpan) - 0.5 * yWidths.get(rowNumber + cell.rowSpan),
-                            xCoordinates.get(colNumber + cell.colSpan) + 0.5 * xWidths.get(colNumber + cell.colSpan),
-                            yCoordinates.get(rowNumber) + 0.5 * yWidths.get(rowNumber));
+                            getLeftX(colNumber), getBottomY(rowNumber + cell.rowSpan - 1),
+                            getRightX(colNumber + cell.colSpan - 1), getTopY(rowNumber));
                     cell.setBoundingBox(cellBoundingBox);
                     multiBoundingBox.union(cellBoundingBox);
                 }
@@ -345,8 +340,7 @@ public class TableBorder extends BaseObject {
 
     private int getCoordinateX(double x) {
         for (int i = 0; i < xCoordinates.size(); i++) {
-            if (x <= xCoordinates.get(i) + 0.5 * xWidths.get(i) + NodeUtils.EPSILON &&
-                    x >= xCoordinates.get(i) - 0.5 * xWidths.get(i) - NodeUtils.EPSILON) {
+            if (x <= getRightX(i - 1) + NodeUtils.EPSILON && x >= getLeftX(i) - NodeUtils.EPSILON) {
                 return i;
             }
         }
@@ -355,8 +349,7 @@ public class TableBorder extends BaseObject {
 
     private int getCoordinateY(double y) {
         for (int i = 0; i < yCoordinates.size(); i++) {
-            if (y <= yCoordinates.get(i) + 0.5 * yWidths.get(i) + NodeUtils.EPSILON
-                    && y >= yCoordinates.get(i) - 0.5 * yWidths.get(i) - NodeUtils.EPSILON) {
+            if (y <= getTopY(i) + NodeUtils.EPSILON && y >= getBottomY(i - 1) - NodeUtils.EPSILON) {
                 return i;
             }
         }
@@ -365,7 +358,7 @@ public class TableBorder extends BaseObject {
 
     private int getClosestLeftX(double x) {
         for (int i = xCoordinates.size() - 1; i >= 0; i--) {
-            if (x >= xCoordinates.get(i) - 0.5 * xWidths.get(i) - TABLE_BORDER_EPSILON) {
+            if (x >= getLeftX(i) - TABLE_BORDER_EPSILON) {
                 return i;
             }
         }
@@ -374,7 +367,7 @@ public class TableBorder extends BaseObject {
 
     private int getClosestRightX(double x) {
         for (int i = 0; i < xCoordinates.size(); i++) {
-            if (x <= xCoordinates.get(i) + 0.5 * xWidths.get(i) + TABLE_BORDER_EPSILON) {
+            if (x <= getRightX(i - 1) + TABLE_BORDER_EPSILON) {
                 return i;
             }
         }
@@ -383,7 +376,7 @@ public class TableBorder extends BaseObject {
 
     private int getClosestTopY(double y) {
         for (int i = yCoordinates.size() - 1; i >= 0; i--) {
-            if (y <= yCoordinates.get(i) + 0.5 * yWidths.get(i) + TABLE_BORDER_EPSILON) {
+            if (y <= getTopY(i) + TABLE_BORDER_EPSILON) {
                 return i;
             }
         }
@@ -392,11 +385,29 @@ public class TableBorder extends BaseObject {
 
     private int getClosestBottomY(double y) {
         for (int i = 0; i < yCoordinates.size(); i++) {
-            if (y >= yCoordinates.get(i) - 0.5 * yWidths.get(i) - TABLE_BORDER_EPSILON) {
+            if (y >= getBottomY(i - 1) - TABLE_BORDER_EPSILON) {
                 return i;
             }
         }
         return yCoordinates.size();
+    }
+    
+    public double getLeftX(int columnNumber) {
+        return xCoordinates.get(columnNumber) - 0.5 * xWidths.get(columnNumber);
+    }
+
+    public double getBottomY(int rowNumber) {
+        return yCoordinates.get(rowNumber + 1) - 0.5 * yWidths.get(rowNumber + 1);
+
+    }
+
+    public double getRightX(int columnNumber) {
+        return xCoordinates.get(columnNumber + 1) + 0.5 * xWidths.get(columnNumber + 1);
+
+    }
+
+    public double getTopY(int rowNumber) {
+        return yCoordinates.get(rowNumber) + 0.5 * yWidths.get(rowNumber);
     }
 
     public int getNumberOfRows() {
