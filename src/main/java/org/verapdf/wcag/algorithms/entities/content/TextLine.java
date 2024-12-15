@@ -127,6 +127,28 @@ public class TextLine extends TextInfoChunk {
     public void setNotLineEnd() {
         isLineEnd = false;
     }
+    
+    public Double getSymbolEndCoordinate(int index) {
+        int currentIndex = 0;
+        for (TextChunk textChunk : textChunks) {
+            if (currentIndex + textChunk.getValue().length() > index) {
+                return textChunk.getSymbolEndCoordinate(index - currentIndex);
+            }
+            currentIndex += textChunk.getValue().length();
+        }
+        return null;
+    }
+
+    public Double getSymbolStartCoordinate(int index) {
+        int currentIndex = 0;
+        for (TextChunk textChunk : textChunks) {
+            if (currentIndex + textChunk.getValue().length() > index) {
+                return textChunk.getSymbolStartCoordinate(index - currentIndex);
+            }
+            currentIndex += textChunk.getValue().length();
+        }
+        return null;
+    }
 
     @Override
     public String toString() {
