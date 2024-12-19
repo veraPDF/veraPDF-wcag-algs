@@ -14,9 +14,9 @@ public class PDFList extends InfoChunk {
 
     private final List<ListItem> listItems;
     
-    private Long previousListId = null;
-    private Long nextListId = null;
-
+    private PDFList previousList = null;
+    private PDFList nextList = null;
+    private String commonPrefix = null;
     private String numberingStyle = NumberingStyleNames.UNKNOWN;
 
     public PDFList(Table table) {
@@ -74,6 +74,14 @@ public class PDFList extends InfoChunk {
         getBoundingBox().union(listItem.getBoundingBox());
     }
 
+    public void add(PDFList list) {
+        listItems.addAll(list.getListItems());
+        getBoundingBox().union(list.getBoundingBox());
+        if (list.getNextList() != null) {
+            PDFList.setListConnected(this, list.getNextList());
+        }
+    }
+
     private void createListItemsFromTableRows(List<TableRow> tableRows) {
         ListItem lastListItem = null;
 //        Double maxGap = null;
@@ -123,18 +131,39 @@ public class PDFList extends InfoChunk {
     }
 
     public Long getPreviousListId() {
-        return previousListId;
-    }
-
-    public void setPreviousListId(Long previousListId) {
-        this.previousListId = previousListId;
+        return previousList != null ? previousList.getRecognizedStructureId() : null;
     }
 
     public Long getNextListId() {
-        return nextListId;
+        return nextList != null ? nextList.getRecognizedStructureId() : null;
     }
 
-    public void setNextListId(Long nextListId) {
-        this.nextListId = nextListId;
+    public PDFList getPreviousList() {
+        return previousList;
+    }
+
+    public void setPreviousList(PDFList previousList) {
+        this.previousList = previousList;
+    }
+
+    public PDFList getNextList() {
+        return nextList;
+    }
+
+    public void setNextList(PDFList nextList) {
+        this.nextList = nextList;
+    }
+
+    public static void setListConnected(PDFList firstList, PDFList secondList) {
+        firstList.setNextList(secondList);
+        secondList.setPreviousList(firstList);
+    }
+
+    public String getCommonPrefix() {
+        return commonPrefix;
+    }
+
+    public void setCommonPrefix(String commonPrefix) {
+        this.commonPrefix = commonPrefix;
     }
 }

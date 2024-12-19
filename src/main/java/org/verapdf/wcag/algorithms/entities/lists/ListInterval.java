@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.entities.lists;
 
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemInfo;
+import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.NumberingStyleNames;
 
 import java.util.ArrayList;
@@ -101,6 +102,14 @@ public class ListInterval {
 
 	public Integer getNumberOfColumns() {
 		return numberOfColumns;
+	}
+
+	public String getCommonPrefix() {
+		ListItemInfo listItemInfo = getFirstListItemInfo();
+		if (listItemInfo instanceof ListItemTextInfo) {
+			return ((ListItemTextInfo)listItemInfo).getPrefix();
+		}
+		return null;
 	}
 
 	public int getNumberOfListItemsAndLists() {
