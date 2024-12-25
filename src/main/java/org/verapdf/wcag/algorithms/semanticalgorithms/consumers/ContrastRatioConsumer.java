@@ -91,7 +91,9 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 
 	public void calculateContrastRatio(TextChunk textChunk) {
 		BufferedImage renderedPage = getRenderPage(textChunk.getPageNumber());
-		calculateContrastRation(textChunk, renderedPage);
+		if (renderedPage != null) {
+			calculateContrastRation(textChunk, renderedPage);
+		}
 	}
 
 	private void calculateContrastRatio(SemanticTextNode node) {
