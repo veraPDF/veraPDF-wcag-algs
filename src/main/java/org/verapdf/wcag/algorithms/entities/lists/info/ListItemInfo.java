@@ -49,6 +49,10 @@ public class ListItemInfo {
 		return null;
 	}
 
+	public Integer getPageNumber() {
+		return getListItemValue() != null ? getListItemValue().getPageNumber() : null;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
