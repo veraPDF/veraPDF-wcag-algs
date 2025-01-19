@@ -210,8 +210,10 @@ public class ListUtils {
 	private static void updateListIntervalCollection(ListIntervalsCollection listIntervalsCollection, ListInterval listInterval,
 	                                                 List<ListItemInfo> listItemsInfos, int numberOfColumns) {
 		if (listItemsInfos.size() > 1) {
-			listIntervalsCollection.put(new ListInterval(listItemsInfos, listInterval
-					.getListsIndexesContainedInListItemsIndexes(listItemsInfos), numberOfColumns));
+			ListInterval newListInterval = new ListInterval(listItemsInfos, listInterval
+					.getListsIndexesContainedInListItemsIndexes(listItemsInfos), numberOfColumns);
+			newListInterval.setNumberingStyle(listInterval.getNumberingStyle());
+			listIntervalsCollection.put(newListInterval);
 		}
 	}
 
