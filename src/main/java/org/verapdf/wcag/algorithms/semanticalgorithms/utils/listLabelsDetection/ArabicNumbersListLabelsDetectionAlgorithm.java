@@ -156,9 +156,8 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
         private boolean isBadItem(ListItemTextInfo listItem) {
             String item = listItem.getListItem();
             String nextSubstring = item.substring(start);
-            int nextNumberOfStartZeros = getNumberOfStartZeros(nextSubstring);
             int nextArabicNumberStartLength = getRegexStartLength(nextSubstring);
-            if (nextSubstring.length() == nextNumberOfStartZeros + nextArabicNumberStartLength && listItem.hasOneLine()) {
+            if (nextSubstring.length() == nextArabicNumberStartLength && listItem.hasOneLine()) {
                 return true;
             }
             if (item.matches(DOUBLE_REGEX) && listItem.hasOneLine()) {
