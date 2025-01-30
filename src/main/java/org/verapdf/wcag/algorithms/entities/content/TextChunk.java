@@ -50,7 +50,7 @@ public class TextChunk extends TextInfoChunk {
         this.fontName = fontName;
         this.fontWeight = fontWeight;
         this.italicAngle = italicAngle;
-        this.fontColor = fontColor.clone();
+        this.fontColor = fontColor != null ? fontColor.clone() : null;
     }
 
     public TextChunk(TextChunk chunk) {
