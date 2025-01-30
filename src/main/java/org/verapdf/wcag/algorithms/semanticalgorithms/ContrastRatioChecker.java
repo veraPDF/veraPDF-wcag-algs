@@ -23,7 +23,7 @@ public class ContrastRatioChecker {
 	 * @param pdfName {@link String} path to the pdf document associated with given tree
 	 */
 	public void checkSemanticTree(ITree tree, String pdfName) {
-		try (ContrastRatioConsumer v = new ContrastRatioConsumer(pdfName, "")) {
+		try (ContrastRatioConsumer v = new ContrastRatioConsumer(pdfName)) {
 			tree.forEach(v);
 		} catch (IOException e) {
 			e.printStackTrace();
