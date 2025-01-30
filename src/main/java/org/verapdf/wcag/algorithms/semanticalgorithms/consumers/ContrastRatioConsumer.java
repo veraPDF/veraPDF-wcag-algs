@@ -5,6 +5,8 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.jbig2.JBIG2ImageReaderSpi;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.verapdf.wcag.algorithms.entities.INode;
@@ -36,22 +38,28 @@ import java.util.stream.IntStream;
 public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INode>, Closeable {
 
 	private final Map<Integer, BufferedImage> renderedPages = new HashMap<>();
+	private final Map<Integer, Float> renderDpiForPages = new HashMap<>();
 	private static final Logger logger = Logger.getLogger(ContrastRatioConsumer.class.getCanonicalName());
 	private static final int RENDER_DPI = 144;
-	private static final int PDF_DPI = 72;
+	public static final int PDF_DPI = 72;
 	private static final double LUMINOSITY_DIFFERENCE = 0.001;
 	private long processedTextChunks;
 	private final Long textChunksNumber;
 	private PDDocument document;
 	private final String fileName;
 	private final String password;
+	private final Float imagePixelSize;
 
-	public ContrastRatioConsumer(String sourcePdfPath, String password) throws IOException {
-		this(password);
-		this.document = Loader.loadPDF(new RandomAccessReadBuffer(new FileInputStream(sourcePdfPath)));
+	public ContrastRatioConsumer(String sourcePdfPath) throws IOException {
+		this(sourcePdfPath, "", null);
 	}
 	
-	public ContrastRatioConsumer(String password) {
+	public ContrastRatioConsumer(String sourcePdfPath, String password, Float imagePixelSize) throws IOException {
+		this(password, imagePixelSize);
+		this.document = Loader.loadPDF(new RandomAccessReadBuffer(new FileInputStream(sourcePdfPath)));
+	}
+
+	public ContrastRatioConsumer(String password, Float imagePixelSize) throws IOException {
 		this.fileName = StaticContainers.getFileName();
 		this.processedTextChunks = 0;
 		this.textChunksNumber = StaticContainers.getTextChunksNumber();
@@ -59,6 +67,8 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		registry.registerServiceProvider(new J2KImageReaderSpi());
 		registry.registerServiceProvider(new JBIG2ImageReaderSpi());
 		this.password = password;
+		this.processedTextChunks = 0;
+		this.imagePixelSize = imagePixelSize;
 	}
 
 	@Override
@@ -136,6 +146,14 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 			}
 		}
 	}
+	
+	public double getDpiScalingForPage(int pageNumber) {
+		return (isUseConstantRenderDpi() ? RENDER_DPI : ((double) renderDpiForPages.get(pageNumber))) / ((double) PDF_DPI);
+	}
+
+	public boolean isUseConstantRenderDpi() {
+		return imagePixelSize == null;
+	}
 
 	public void calculateContrastRation(TextChunk textChunk, BufferedImage renderedPage) {
 		if ((textChunk.getValue() != null && (TextChunkUtils.isWhiteSpaceChunk(textChunk)))) {
@@ -143,7 +161,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		}
 
 		BoundingBox bBox = textChunk.getBoundingBox();
-		double dpiScaling = ((double) RENDER_DPI) / ((double) PDF_DPI);
+		double dpiScaling = getDpiScalingForPage(bBox.getPageNumber());
 		int renderedPageWidth = renderedPage.getRaster().getWidth();
 		int renderedPageHeight = renderedPage.getRaster().getHeight();
 		BoundingBox pageBBox = new BoundingBox(textChunk.getPageNumber(),0, 0, renderedPageWidth, renderedPageHeight);
@@ -177,7 +195,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 	public BufferedImage getPageSubImage(BoundingBox bBox) {
 		int pageNumber = bBox.getPageNumber();
 		BufferedImage renderedPage = getRenderPage(pageNumber);
-		double dpiScaling = ((double) RENDER_DPI) / ((double) PDF_DPI);
+		double dpiScaling = getDpiScalingForPage(bBox.getPageNumber());
 		int renderedPageWidth = renderedPage.getRaster().getWidth();
 		int renderedPageHeight = renderedPage.getRaster().getHeight();
 		BoundingBox pageBBox = new BoundingBox(pageNumber,0, 0, renderedPageWidth, renderedPageHeight);
@@ -259,7 +277,18 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		PDFRenderer pdfRenderer = new PDFRenderer(document);
 		pdfRenderer.setRenderingHints(renderingHints);
-		return pdfRenderer.renderImageWithDPI(pageNumber, RENDER_DPI, ImageType.RGB);
+		return pdfRenderer.renderImageWithDPI(pageNumber, getDPI(document, pageNumber), ImageType.RGB);
+	}
+	
+	public float getDPI(PDDocument document, Integer pageNumber) {
+		if (isUseConstantRenderDpi()) {
+			return RENDER_DPI;
+		}
+		PDPage page = document.getPage(pageNumber);
+		PDRectangle cropBox = page.getCropBox();
+		float renderDpiForPage = PDF_DPI * imagePixelSize / Math.max(cropBox.getWidth(), cropBox.getHeight());
+		renderDpiForPages.put(pageNumber, renderDpiForPage);
+		return renderDpiForPage;
 	}
 
 	private double getContrastRatio(BufferedImage image, TextChunk textChunk) {
@@ -442,6 +471,10 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		if (document != null) {
 			document.close();
 		}
+	}
+
+	public Float getImagePixelSize() {
+		return imagePixelSize;
 	}
 
 	static class DataPoint implements Comparable<DataPoint> {
