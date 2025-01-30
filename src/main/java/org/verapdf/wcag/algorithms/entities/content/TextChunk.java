@@ -13,7 +13,7 @@ public class TextChunk extends TextInfoChunk {
     private double fontWeight;
     private double italicAngle;
     private double[] fontColor;
-    private double contrastRatio;
+    private double contrastRatio = Integer.MAX_VALUE;
     private boolean hasSpecialStyle = false;
     private boolean hasSpecialBackground = false;
     private double[] backgroundColor;
