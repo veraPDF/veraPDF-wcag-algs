@@ -37,6 +37,25 @@ public class TableBorder extends BaseObject {
         setRecognizedStructureId(StaticContainers.getNextID());
     }
 
+    public TableBorder(BoundingBox boundingBox,
+                       List<Double> xCoordinates,
+                       List<Double> xWidths,
+                       List<Double> yCoordinates,
+                       List<Double> yWidths,
+                       TableBorderRow[] rows,
+                       int numberOfRows,
+                       int numberOfColumns) {
+        super(boundingBox);
+        this.xCoordinates.addAll(xCoordinates);
+        this.xWidths.addAll(xWidths);
+        this.yCoordinates.addAll(yCoordinates);
+        this.yWidths.addAll(yWidths);
+        this.rows = rows;
+        this.numberOfRows = numberOfRows;
+        this.numberOfColumns = numberOfColumns;
+        setRecognizedStructureId(StaticContainers.getNextID());
+    }
+
     private void calculateXCoordinates(TableBorderBuilder builder) {
         List<Vertex> vertexes = builder.getVertexes().stream().sorted(new Vertex.VertexComparatorX()).collect(Collectors.toList());
         double x1 = vertexes.get(0).getLeftX();
