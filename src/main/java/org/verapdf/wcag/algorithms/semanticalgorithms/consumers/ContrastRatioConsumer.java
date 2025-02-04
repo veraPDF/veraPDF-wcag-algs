@@ -49,17 +49,22 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 	private final String fileName;
 	private final String password;
 	private final Float imagePixelSize;
+	private final boolean enableAntialias;
 
 	public ContrastRatioConsumer(String sourcePdfPath) throws IOException {
 		this(sourcePdfPath, "", null);
 	}
+
+	public ContrastRatioConsumer(String sourcePdfPath, Float imagePixelSize) throws IOException {
+		this(sourcePdfPath, "", imagePixelSize);
+	}
 	
 	public ContrastRatioConsumer(String sourcePdfPath, String password, Float imagePixelSize) throws IOException {
-		this(password, imagePixelSize);
+		this(password, false, imagePixelSize);
 		this.document = Loader.loadPDF(new RandomAccessReadBuffer(new FileInputStream(sourcePdfPath)));
 	}
 
-	public ContrastRatioConsumer(String password, Float imagePixelSize) throws IOException {
+	public ContrastRatioConsumer(String password, boolean enableAntialias, Float imagePixelSize) throws IOException {
 		this.fileName = StaticContainers.getFileName();
 		this.processedTextChunks = 0;
 		this.textChunksNumber = StaticContainers.getTextChunksNumber();
@@ -69,6 +74,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		this.password = password;
 		this.processedTextChunks = 0;
 		this.imagePixelSize = imagePixelSize;
+		this.enableAntialias = enableAntialias;
 	}
 
 	@Override
@@ -274,7 +280,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 
 	private BufferedImage renderPage(PDDocument document, Integer pageNumber) throws IOException {
 		RenderingHints renderingHints = new RenderingHints(null);
-		renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		renderingHints.put(RenderingHints.KEY_ANTIALIASING, enableAntialias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 		PDFRenderer pdfRenderer = new PDFRenderer(document);
 		pdfRenderer.setRenderingHints(renderingHints);
 		return pdfRenderer.renderImageWithDPI(pageNumber, getDPI(document, pageNumber), ImageType.RGB);
