@@ -28,6 +28,7 @@ public class TableBorder extends BaseObject {
     private INode node;
     private boolean isBadTable = false;
     private TableBorder previousTable;
+    private boolean isTableTransformer = false;
     private TableBorder nextTable;
 
     public TableBorder(TableBorderBuilder builder) {
@@ -39,21 +40,15 @@ public class TableBorder extends BaseObject {
     }
 
     public TableBorder(BoundingBox boundingBox,
-                       List<Double> xCoordinates,
-                       List<Double> xWidths,
-                       List<Double> yCoordinates,
-                       List<Double> yWidths,
                        TableBorderRow[] rows,
                        int numberOfRows,
                        int numberOfColumns) {
         super(boundingBox);
-        this.xCoordinates.addAll(xCoordinates);
-        this.xWidths.addAll(xWidths);
-        this.yCoordinates.addAll(yCoordinates);
-        this.yWidths.addAll(yWidths);
         this.rows = rows;
         this.numberOfRows = numberOfRows;
         this.numberOfColumns = numberOfColumns;
+        calculateCoordinatesUsingBoundingBoxesOfRowsAndColumns();
+        isTableTransformer = true;
         setRecognizedStructureId(StaticContainers.getNextID());
     }
 
@@ -471,6 +466,83 @@ public class TableBorder extends BaseObject {
         }
         return yCoordinates.size();
     }
+
+    private void calculateCoordinatesUsingBoundingBoxesOfRowsAndColumns() {
+        this.yCoordinates.add(getTableRowTopY(0));
+        this.yWidths.add(0.0d);
+        for (int rowNumber = 0; rowNumber < numberOfRows - 1; rowNumber++) {
+            this.yCoordinates.add(0.5 * (getTableRowBottomY(rowNumber) + getTableRowTopY(rowNumber + 1)));
+            this.yWidths.add(0.0d);
+        }
+        this.yCoordinates.add(getTableRowBottomY(numberOfRows - 1));
+        this.yWidths.add(0.0d);
+        this.xCoordinates.add(getTableColumnLeftX(0));
+        this.xWidths.add(0.0d);
+        for (int columnNumber = 0; columnNumber < numberOfColumns - 1; columnNumber++) {
+            this.xCoordinates.add(0.5 * (getTableColumnRightX(columnNumber) + getTableColumnLeftX(columnNumber + 1)));
+            this.xWidths.add(0.0d);
+        }
+        this.xCoordinates.add(getTableColumnRightX(numberOfColumns - 1));
+        this.xWidths.add(0.0d);
+    }
+
+    private double getTableColumnRightX(int columnNumber) {
+        double rightX = -Double.MAX_VALUE;
+        for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+            TableBorderCell currentCell = rows[rowNumber].getCell(columnNumber);
+            if (currentCell.getRowNumber() != rowNumber ||
+                    currentCell.getColNumber() + currentCell.getColSpan() != columnNumber + 1) {
+                continue;
+            }
+            if (rightX < currentCell.getRightX()) {
+                rightX = currentCell.getRightX();
+            }
+        }
+        return rightX;
+    }
+
+    private double getTableColumnLeftX(int columnNumber) {
+        double leftX = Double.MAX_VALUE;
+        for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+            TableBorderCell currentCell = rows[rowNumber].getCell(columnNumber);
+            if (currentCell.getRowNumber() != rowNumber || currentCell.getColNumber() != columnNumber) {
+                continue;
+            }
+            if (leftX > currentCell.getLeftX()) {
+                leftX = currentCell.getLeftX();
+            }
+        }
+        return leftX;
+    }
+
+    private double getTableRowBottomY(int rowNumber) {
+        double bottomY = Double.MAX_VALUE;
+        for (int columnNumber = 0; columnNumber < numberOfColumns; columnNumber++) {
+            TableBorderCell currentCell = rows[rowNumber].getCell(columnNumber);
+            if (currentCell.getRowNumber() + currentCell.getRowSpan() != rowNumber + 1 ||
+                    currentCell.getColNumber() != columnNumber) {
+                continue;
+            }
+            if (bottomY > currentCell.getBottomY()) {
+                bottomY = currentCell.getBottomY();
+            }
+        }
+        return bottomY;
+    }
+
+    private double getTableRowTopY(int rowNumber) {
+        double topY = -Double.MAX_VALUE;
+        for (int columnNumber = 0; columnNumber < numberOfColumns; columnNumber++) {
+            TableBorderCell currentCell = rows[rowNumber].getCell(columnNumber);
+            if (currentCell.getRowNumber() != rowNumber || currentCell.getColNumber() != columnNumber) {
+                continue;
+            }
+            if (topY < currentCell.getTopY()) {
+                topY = currentCell.getTopY();
+            }
+        }
+        return topY;
+    }
     
     public double getLeftX(int columnNumber) {
         return xCoordinates.get(columnNumber) - 0.5 * xWidths.get(columnNumber);
@@ -588,6 +660,10 @@ public class TableBorder extends BaseObject {
 
     public void setNextTable(TableBorder nextTable) {
         this.nextTable = nextTable;
+    }
+
+    public boolean isTableTransformer() {
+        return isTableTransformer;
     }
 
     public static class TableBordersComparator implements Comparator<TableBorder> {
