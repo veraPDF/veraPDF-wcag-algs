@@ -201,10 +201,12 @@ public class TableBorder extends BaseObject {
                         numberOfRows - rowNumber, numberOfColumns - colNumber, getRecognizedStructureId());
             }
         }
-        if (processHorizontalLines(rows, numberOfRows, numberOfColumns, builder) ||
-                processVerticalLines(rows, numberOfRows, numberOfColumns, builder)) {
-            return;
-        }
+        boolean[] hasTopBorder = new boolean[numberOfColumns];
+        boolean[] hasBottomBorder = new boolean[numberOfColumns];
+        processHorizontalLines(rows, numberOfRows, builder, hasTopBorder, hasBottomBorder);
+        boolean[] hasLeftBorder = new boolean[numberOfRows];
+        boolean[] hasRightBorder = new boolean[numberOfRows];
+        processVerticalLines(rows, numberOfColumns, builder, hasLeftBorder, hasRightBorder);
         if (processMergedCells(rows, numberOfRows, numberOfColumns)) {
             return;
         }
@@ -233,15 +235,14 @@ public class TableBorder extends BaseObject {
 			this.rows = rows;
 			this.numberOfRows = numberOfRows;
 			this.numberOfColumns = numberOfColumns;
-			return;
+        } else {
+            deleteRedundantRowsAndColumns(rows, numberOfRows, numberOfColumns, redundantRows, usefulRows, redundantColumns, usefulColumns);
         }
-        deleteRedundantRowsAndColumns(rows, numberOfRows, numberOfColumns, redundantRows, usefulRows, redundantColumns, usefulColumns);
+        checkBorders(hasTopBorder, hasBottomBorder, hasLeftBorder, hasRightBorder);
     }
 
-    private boolean processHorizontalLines(TableBorderRow[] rows, int numberOfRows, int numberOfColumns,
-                                        TableBorderBuilder builder) {
-        boolean[] hasTopBorder = new boolean[numberOfColumns];
-        boolean[] hasBottomBorder = new boolean[numberOfColumns];
+    private void processHorizontalLines(TableBorderRow[] rows, int numberOfRows,
+                                        TableBorderBuilder builder, boolean[] hasTopBorder, boolean[] hasBottomBorder) {
         for (LineChunk line : builder.getHorizontalLines()) {
             int rowNumber = getCoordinateY(line.getCenterY());
             int firstColNumber = getCoordinateX(line.getLeftX());
@@ -262,21 +263,10 @@ public class TableBorder extends BaseObject {
                 }
             }
         }
-        if (numberOfRows == 1 || numberOfColumns == 1) {
-            for (int i = 0; i < hasBottomBorder.length; i++) {
-                if (!hasBottomBorder[i] || !hasTopBorder[i]) {
-                    isBadTable = true;
-                    break;
-                }
-            }  
-        }
-        return isBadTable;
     }
 
-    private boolean processVerticalLines(TableBorderRow[] rows, int numberOfRows, int numberOfColumns,
-                                        TableBorderBuilder builder) {
-        boolean[] hasLeftBorder = new boolean[numberOfRows];
-        boolean[] hasRightBorder = new boolean[numberOfRows];
+    private void processVerticalLines(TableBorderRow[] rows, int numberOfColumns,
+                                        TableBorderBuilder builder, boolean[] hasLeftBorder, boolean[] hasRightBorder) {
         for (LineChunk line : builder.getVerticalLines()) {
             int colNumber = getCoordinateX(line.getCenterX());
             int firstRowNumber = getCoordinateY(line.getTopY());
@@ -297,11 +287,21 @@ public class TableBorder extends BaseObject {
                 }
             }
         }
-        if (numberOfRows == 1 || numberOfColumns == 1) {
+    }
+    
+    private boolean checkBorders(boolean[] hasTopBorder, boolean[] hasBottomBorder, 
+                                 boolean[] hasLeftBorder, boolean[] hasRightBorder) {
+        if (!StaticContainers.isDataLoader() || numberOfRows == 1 || numberOfColumns == 1) {
+            for (int i = 0; i < hasBottomBorder.length; i++) {
+                if (!hasBottomBorder[i] || !hasTopBorder[i]) {
+                    isBadTable = true;
+                    return isBadTable;
+                }
+            }
             for (int i = 0; i < hasRightBorder.length; i++) {
                 if (!hasRightBorder[i] || !hasLeftBorder[i]) {
                     isBadTable = true;
-                    break;
+                    return isBadTable;
                 }
             }
         }
