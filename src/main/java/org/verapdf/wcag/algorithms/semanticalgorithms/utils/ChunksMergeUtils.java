@@ -497,8 +497,10 @@ public class ChunksMergeUtils {
 		TextChunk newTextChunk = new TextChunk(textChunk);
 		newTextChunk.setValue(textChunk.getValue().substring(numberOfStartsWhiteSpaces, textChunk.getValue().length() - numberOfEndWhiteSpaces));
 		newTextChunk.setSymbolEnds(textChunk.getSymbolEnds().subList(numberOfStartsWhiteSpaces, textChunk.getValue().length() - numberOfEndWhiteSpaces + 1));
-		newTextChunk.getBoundingBox().setLeftX(textChunk.getSymbolStartCoordinate(numberOfStartsWhiteSpaces));
-		newTextChunk.getBoundingBox().setRightX(textChunk.getSymbolEndCoordinate(textChunk.getValue().length() - numberOfEndWhiteSpaces - 1));
+		if (newTextChunk.isHorizontalText() || newTextChunk.isVerticalText()) {
+			newTextChunk.setTextStart(textChunk.getSymbolStartCoordinate(numberOfStartsWhiteSpaces));
+			newTextChunk.setTextEnd(textChunk.getSymbolEndCoordinate(textChunk.getValue().length() - numberOfEndWhiteSpaces - 1));
+		}
 		return newTextChunk;
 	}
 

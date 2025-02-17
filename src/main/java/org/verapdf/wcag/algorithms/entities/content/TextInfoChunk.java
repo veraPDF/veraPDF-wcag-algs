@@ -89,6 +89,20 @@ public abstract class TextInfoChunk extends InfoChunk {
         return getLeftX();
     }
 
+    public void setTextStart(double textStart) {
+        if (isLeftRightHorizontalText()) {
+            getBoundingBox().setLeftX(textStart);
+        } else if (isRightLeftHorizontalText()) {
+            getBoundingBox().setRightX(textStart);
+        } else if (isBottomUpVerticalText()) {
+            getBoundingBox().setBottomY(textStart);
+        } else if (isUpBottomVerticalText()) {
+            getBoundingBox().setTopY(textStart);
+        } else {
+            getBoundingBox().setLeftX(textStart);
+        }
+    }
+
     public boolean isHorizontalText() {
         return isLeftRightHorizontalText() || isRightLeftHorizontalText();
     }
@@ -127,6 +141,20 @@ public abstract class TextInfoChunk extends InfoChunk {
             return getBottomY();
         }
         return getRightX();
+    }
+
+    public void setTextEnd(double textEnd) {
+        if (isLeftRightHorizontalText()) {
+            getBoundingBox().setRightX(textEnd);
+        } else if (isRightLeftHorizontalText()) {
+            getBoundingBox().setLeftX(textEnd);
+        } else if (isBottomUpVerticalText()) {
+            getBoundingBox().setTopY(textEnd);
+        } else if (isUpBottomVerticalText()) {
+            getBoundingBox().setBottomY(textEnd);
+        } else {
+            getBoundingBox().setRightX(textEnd);
+        }
     }
 
     public double getTextCenter() {
