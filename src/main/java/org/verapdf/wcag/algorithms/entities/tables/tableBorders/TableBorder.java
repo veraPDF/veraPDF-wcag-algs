@@ -75,6 +75,64 @@ public class TableBorder extends BaseObject {
         xWidths.add(x2 - x1);
     }
 
+    public TableBorder(INode tableNode) {
+        super(new BoundingBox());
+        List<INode> tableRows = TableChecker.getTableRows(tableNode);
+        this.numberOfRows = tableRows.size();
+        if (numberOfRows == 0) {
+            return;
+        }
+        this.numberOfColumns = TableChecker.getNumberOfColumns(tableRows.get(0));
+        rows = new TableBorderRow[numberOfRows];
+        for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+            rows[rowNumber] = new TableBorderRow(rowNumber, numberOfColumns, null);
+        }
+        Integer pageNumber = null;
+        for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+            TableBorderRow row = rows[rowNumber];
+            int columnNumber = 0;
+            for (INode elem : tableRows.get(rowNumber).getChildren()) {
+                SemanticType type = elem.getInitialSemanticType();
+                if (SemanticType.TABLE_CELL != type && SemanticType.TABLE_HEADER != type) {
+                    continue;
+                }
+                while (columnNumber < numberOfColumns && row.getCells()[columnNumber] != null) {
+                    ++columnNumber;
+                }
+                TableBorderCell cell = new TableBorderCell(elem, rowNumber, columnNumber);
+                BoundingBox box = new BoundingBox();
+                addContentToCell(cell, box, elem);
+                cell.setBoundingBox(box);
+                if (cell.getPageNumber() != null) {
+                    if (pageNumber != null && !Objects.equals(pageNumber, cell.getPageNumber())) {
+                        isBadTable = true;
+                    }
+                    pageNumber = cell.getPageNumber();
+                }
+                for (int i = 0; i < cell.getRowSpan(); i++) {
+                    for (int j = 0; j < cell.getColSpan(); j++) {
+                        rows[rowNumber + i].getCells()[columnNumber + j] = cell;
+                    }
+                }
+                columnNumber += cell.getColSpan();
+            }
+        }
+        calculateCoordinatesUsingBoundingBoxesOfRowsAndColumns();
+        getBoundingBox().union(new BoundingBox(pageNumber, xCoordinates.get(0), yCoordinates.get(numberOfRows), xCoordinates.get(numberOfColumns), yCoordinates.get(0)));
+        for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+            BoundingBox multiBoundingBox = new MultiBoundingBox();
+            for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
+                if (rows[rowNumber].cells[colNumber].colNumber == colNumber &&
+                        rows[rowNumber].cells[colNumber].rowNumber == rowNumber) {
+                    multiBoundingBox.union(rows[rowNumber].cells[colNumber].getBoundingBox());
+                }
+            }
+            multiBoundingBox.setLeftX(getLeftX());
+            multiBoundingBox.setRightX(getRightX());
+            rows[rowNumber].setBoundingBox(multiBoundingBox);
+        }
+    }
+
     public TableBorderRow[] getRows() {
         return rows;
     }
@@ -474,6 +532,54 @@ public class TableBorder extends BaseObject {
 
     public void setPreviousTable(TableBorder previousTable) {
         this.previousTable = previousTable;
+    }
+
+    public boolean checkTableCoordinates() {
+        for (int i = 0; i < xCoordinates.size() - 1; i++) {
+            if (xCoordinates.get(i) > xCoordinates.get(i + 1)) {
+                return false;
+            }
+        }
+        for (int i = 0; i < yCoordinates.size() - 1; i++) {
+            if (yCoordinates.get(i) < yCoordinates.get(i + 1)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean checkEmptyRowsOrColumns() {
+        for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+            if (NodeUtils.areCloseNumbers(getTableRowBottomY(rowNumber), Double.MAX_VALUE)) {
+                return false;
+            }
+            if (NodeUtils.areCloseNumbers(getTableRowTopY(rowNumber), -Double.MAX_VALUE)) {
+                return false;
+            }
+        }
+        for (int columnNumber = 0; columnNumber < numberOfColumns; columnNumber++) {
+            if (NodeUtils.areCloseNumbers(getTableColumnLeftX(columnNumber), Double.MAX_VALUE)) {
+                return false;
+            }
+            if (NodeUtils.areCloseNumbers(getTableColumnRightX(columnNumber), -Double.MAX_VALUE)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void addContentToCell(TableBorderCell cell, BoundingBox boundingBox, INode elem) {
+        for (INode child : elem.getChildren()) {
+            if (child instanceof SemanticSpan) {
+                cell.addContentObject(((SemanticSpan)child).getColumns().get(0).getFirstLine().getFirstTextChunk());
+                boundingBox.union(child.getBoundingBox());
+            } else if (child instanceof SemanticFigure) {
+                cell.addContentObject(child);
+                boundingBox.union(child.getBoundingBox());
+            } else {
+                addContentToCell(cell, boundingBox, child);
+            }
+        }
     }
 
     public TableBorder getNextTable() {
