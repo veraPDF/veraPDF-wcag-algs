@@ -722,8 +722,13 @@ public class TableBorder extends BaseObject {
         if (yBottomIndex == yCoordinates.size()) {
             yBottomIndex--;
         }
-        if (xLeftIndex >= xRightIndex || yTopIndex >= yBottomIndex) {
-            return null;
+        while (xLeftIndex >= xRightIndex) {
+            xLeftIndex--;
+            xRightIndex++;
+        } 
+        while (yTopIndex >= yBottomIndex) {
+            yTopIndex--;
+            yBottomIndex++;
         }
         for (int xIndex = xLeftIndex; xIndex < xRightIndex; xIndex++) {
             for (int yIndex = yTopIndex; yIndex < yBottomIndex; yIndex++) {
