@@ -77,7 +77,7 @@ public class TableChecker extends WCAGConsumer implements Consumer<INode> {
         }
     }
 
-    private static List<INode> getTableRows(INode table) {
+    public static List<INode> getTableRows(INode table) {
         List<INode> listTR = new LinkedList<>();
         for (INode elem : table.getChildren()) {
             SemanticType type = elem.getInitialSemanticType();
@@ -95,7 +95,7 @@ public class TableChecker extends WCAGConsumer implements Consumer<INode> {
         return listTR;
     }
 
-    private static Integer getNumberOfColumns(INode firstTR) {
+    public static Integer getNumberOfColumns(INode firstTR) {
         int numberOfColumns = 0;
         for (INode elem : firstTR.getChildren()) {
             SemanticType type = elem.getInitialSemanticType();
