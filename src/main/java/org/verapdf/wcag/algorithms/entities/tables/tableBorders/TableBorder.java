@@ -1,13 +1,13 @@
 package org.verapdf.wcag.algorithms.entities.tables.tableBorders;
 
-import org.verapdf.wcag.algorithms.entities.BaseObject;
-import org.verapdf.wcag.algorithms.entities.INode;
-import org.verapdf.wcag.algorithms.entities.IObject;
+import org.verapdf.wcag.algorithms.entities.*;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
+import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.Vertex;
 import org.verapdf.wcag.algorithms.entities.tables.TableBorderBuilder;
+import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.TableChecker;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 
@@ -62,7 +62,7 @@ public class TableBorder extends BaseObject {
         double x1 = vertexes.get(0).getLeftX();
         double x2 = vertexes.get(0).getRightX();
         for (Vertex v : vertexes) {
-            if (x2 < v.getLeftX() - NodeUtils.TABLE_BORDER_EPSILON) {
+            if (x2 < v.getLeftX() - NodeUtils.VERTEX_TABLE_FACTOR * v.getRadius()) {
                 xCoordinates.add(0.5 * (x1 + x2));
                 xWidths.add(x2 - x1);
                 x1 = v.getLeftX();
@@ -160,7 +160,7 @@ public class TableBorder extends BaseObject {
         double y1 = vertexes.get(0).getTopY();
         double y2 = vertexes.get(0).getBottomY();
         for (Vertex v : vertexes) {
-            if (y2 > v.getTopY() + NodeUtils.TABLE_BORDER_EPSILON) {
+            if (y2 > v.getTopY() + NodeUtils.VERTEX_TABLE_FACTOR * v.getRadius()) {
                 yCoordinates.add(0.5 * (y1 + y2));
                 yWidths.add(y1 - y2);
                 y1 = v.getTopY();

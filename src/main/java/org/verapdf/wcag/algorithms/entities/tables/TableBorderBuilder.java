@@ -13,6 +13,7 @@ public class TableBorderBuilder {
     private final Set<Vertex> vertexes;
     private final SortedSet<LineChunk> horizontalLines;
     private final SortedSet<LineChunk> verticalLines;
+    private double maxVertexRadius = 0.0;
 
     public TableBorderBuilder(LineChunk lineChunk) {
         vertexes = new HashSet<>();
@@ -24,6 +25,9 @@ public class TableBorderBuilder {
 
     public void addVertex(Vertex v) {
         vertexes.add(v);
+        if (maxVertexRadius < v.getRadius()) {
+            maxVertexRadius = v.getRadius();
+        }
     }
 
     public void addLine(LineChunk lineChunk) {
@@ -40,7 +44,7 @@ public class TableBorderBuilder {
     }
 
     public boolean isConnectedBorder(TableBorderBuilder border) {
-        if (!boundingBox.overlaps(border.boundingBox, NodeUtils.TABLE_BORDER_EPSILON)) {
+        if (!boundingBox.overlaps(border.boundingBox, maxVertexRadius + border.maxVertexRadius)) {
             return false;
         }
         for (LineChunk horizontalLine : getHorizontalLines()) {
