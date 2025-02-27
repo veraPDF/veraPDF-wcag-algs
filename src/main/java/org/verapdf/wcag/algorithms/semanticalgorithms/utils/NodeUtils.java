@@ -33,9 +33,10 @@ public class NodeUtils {
 			if (nextNode == null) {
 				return 0.0;
 			}
-			headingProbability += headingProbability(textNode, nextNode);
+			headingProbability += headingProbability(textNode, nextNode, true);
 		} else {
-			headingProbability += Math.min(headingProbability(textNode, previousNode), headingProbability(textNode, nextNode));
+			headingProbability += Math.min(headingProbability(textNode, previousNode, false), 
+					headingProbability(textNode, nextNode, true));
 		}
 		if (!StaticContainers.isDataLoader()) {
 			if (textNode.hasFullLines()) {
@@ -70,9 +71,14 @@ public class NodeUtils {
 		return null;
 	}
 
-	public static double headingProbability(SemanticTextNode textNode, INode neighborNode) {
+	public static double headingProbability(SemanticTextNode textNode, INode neighborNode, boolean isNextNode) {
 		if (neighborNode == null) {
 			return 1.0;
+		}
+		if (StaticContainers.isDataLoader()) {
+			if (isNextNode && textNode.getTopY() < neighborNode.getTopY()) {
+				return 0.0;
+			}
 		}
 		SemanticTextNode neighborTextNode = (SemanticTextNode) neighborNode;
 		double probability;
