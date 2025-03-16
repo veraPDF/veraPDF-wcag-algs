@@ -162,6 +162,24 @@ public class TextChunk extends TextInfoChunk {
     public Double getSymbolEndCoordinate(int index) {
         return index >= -1 && index < this.symbolEnds.size() - 1 ? this.symbolEnds.get(index + 1) : null;
     }
+    
+    public Integer getSymbolEndIndexByCoordinate(double coordinate) {
+        for (int index = this.symbolEnds.size() - 1; index >= 0; index--) {
+            if (symbolEnds.get(index) < coordinate) {
+                return index;
+            }
+        }
+        return null;
+    }
+
+    public Integer getSymbolStartIndexByCoordinate(double coordinate) {
+        for (int index = 0; index < this.symbolEnds.size(); index++) {
+            if (symbolEnds.get(index) > coordinate) {
+                return index;
+            }
+        }
+        return null;
+    }
 
     public Double getSymbolWidth(int index) {
         return index >= 0 && index < this.symbolEnds.size() - 1 ?
@@ -198,6 +216,20 @@ public class TextChunk extends TextInfoChunk {
             return getBoundingBox().getHeight();
         }
         return getBoundingBox().getWidth();
+    }
+
+    public static TextChunk getTextChunk(TextChunk textChunk, int start, int end) {
+        if (start == 0 && textChunk.getValue().length() == end) {
+            return textChunk;
+        }
+        TextChunk newTextChunk = new TextChunk(textChunk);
+        newTextChunk.setValue(textChunk.getValue().substring(start, end));
+        newTextChunk.setSymbolEnds(textChunk.getSymbolEnds().subList(start, end + 1));
+        if (newTextChunk.isHorizontalText() || newTextChunk.isVerticalText()) {
+            newTextChunk.setTextStart(textChunk.getSymbolStartCoordinate(start));
+            newTextChunk.setTextEnd(textChunk.getSymbolEndCoordinate(end - 1));
+        }
+        return newTextChunk;
     }
 
     public void addAll(List<TextChunk> otherChunks) {
