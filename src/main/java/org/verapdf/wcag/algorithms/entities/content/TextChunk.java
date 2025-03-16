@@ -156,11 +156,11 @@ public class TextChunk extends TextInfoChunk {
     }
 
     public Double getSymbolStartCoordinate(int index) {
-        return index >= 0 && index < this.symbolEnds.size() - 1 ? this.symbolEnds.get(index) : null;
+        return index >= 0 && index < this.symbolEnds.size() ? this.symbolEnds.get(index) : null;
     }
 
     public Double getSymbolEndCoordinate(int index) {
-        return index >= 0 && index < this.symbolEnds.size() - 1 ? this.symbolEnds.get(index + 1) : null;
+        return index >= -1 && index < this.symbolEnds.size() - 1 ? this.symbolEnds.get(index + 1) : null;
     }
 
     public Double getSymbolWidth(int index) {
