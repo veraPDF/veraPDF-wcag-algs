@@ -196,8 +196,8 @@ public class TableBorder extends BaseObject {
                         rows[rowNumber].cells[colNumber].rowNumber == rowNumber) {
                     TableBorderCell cell = rows[rowNumber].cells[colNumber];
                     BoundingBox cellBoundingBox = new BoundingBox(getBoundingBox().getPageNumber(),
-                            getLeftX(colNumber), getBottomY(rowNumber + cell.rowSpan - 1),
-                            getRightX(colNumber + cell.colSpan - 1), getTopY(rowNumber));
+                            xCoordinates.get(colNumber), yCoordinates.get(rowNumber + cell.rowSpan),
+                            xCoordinates.get(colNumber + cell.colSpan), yCoordinates.get(rowNumber));
                     cell.setBoundingBox(cellBoundingBox);
                     multiBoundingBox.union(cellBoundingBox);
                 }
