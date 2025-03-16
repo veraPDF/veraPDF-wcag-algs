@@ -2,6 +2,8 @@ package org.verapdf.wcag.algorithms.entities.tables;
 
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
+import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorderCell;
+import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorderRow;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -29,6 +31,25 @@ public class TableBordersCollection {
             tableBorders.add(borders);
         }
     }
+    
+    public void clear() {
+        for (SortedSet<TableBorder> tables : tableBorders) {
+            tables.clear();
+        }
+    }
+
+    public void clearContentsOfTable() {
+        for (SortedSet<TableBorder> tables : tableBorders) {
+            for (TableBorder table : tables) {
+                for (TableBorderRow row : table.getRows()) {
+                    for (TableBorderCell cell : row.getCells()) {
+                        cell.getContents().clear();
+                    }
+                }
+            }
+        }
+    }
+
 
     public List<SortedSet<TableBorder>> getTableBorders() {
         return tableBorders;
