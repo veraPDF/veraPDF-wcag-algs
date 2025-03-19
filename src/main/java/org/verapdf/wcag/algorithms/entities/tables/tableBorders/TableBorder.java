@@ -39,6 +39,13 @@ public class TableBorder extends BaseObject {
         setRecognizedStructureId(StaticContainers.getNextID());
     }
 
+    public TableBorder(int numberOfRows, int numberOfColumns) {
+        super(new BoundingBox());
+        this.numberOfRows = numberOfRows;
+        this.numberOfColumns = numberOfColumns;
+        this.rows = new TableBorderRow[numberOfRows];
+    }
+
     public TableBorder(BoundingBox boundingBox,
                        TableBorderRow[] rows,
                        int numberOfRows,
@@ -711,5 +718,45 @@ public class TableBorder extends BaseObject {
             }
         }
         return null;
+    }
+
+    public Set<TableBorderCell> getTableBorderCells(IObject object) {
+        BoundingBox box = object.getBoundingBox();
+        int xLeftIndex = getClosestLeftX(box.getLeftX());
+        int xRightIndex = getClosestRightX(box.getRightX());
+        int yTopIndex = getClosestTopY(box.getTopY());
+        int yBottomIndex = getClosestBottomY(box.getBottomY());
+        if (xLeftIndex == xCoordinates.size() - 1 || yTopIndex == yCoordinates.size() - 1 ||
+                xRightIndex == 0 || yBottomIndex == 0) {
+            return Collections.emptySet();
+        }
+        if (xLeftIndex < 0) {
+            xLeftIndex = 0;
+        }
+        if (yTopIndex < 0) {
+            yTopIndex = 0;
+        }
+        if (xRightIndex == xCoordinates.size()) {
+            xRightIndex--;
+        }
+        if (yBottomIndex == yCoordinates.size()) {
+            yBottomIndex--;
+        }
+        while (xLeftIndex >= xRightIndex) {
+            xLeftIndex--;
+            xRightIndex++;
+        }
+        while (yTopIndex >= yBottomIndex) {
+            yTopIndex--;
+            yBottomIndex++;
+        }
+        Set<TableBorderCell> cells = new HashSet<>();
+        for (int xIndex = xLeftIndex; xIndex < xRightIndex; xIndex++) {
+            for (int yIndex = yTopIndex; yIndex < yBottomIndex; yIndex++) {
+                TableBorderCell cell = rows[yIndex].cells[xIndex];
+                cells.add(cell);
+            }
+        }
+        return cells;
     }
 }
