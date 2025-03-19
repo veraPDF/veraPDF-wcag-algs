@@ -3,6 +3,7 @@ package org.verapdf.wcag.algorithms.entities.content;
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.ArrayList;
@@ -26,6 +27,22 @@ public class TextLine extends TextInfoChunk {
     public TextLine(TextLine line) {
         super(line.getBoundingBox(), line.getFontSize(), line.getBaseLine(), line.getSlantDegree());
         textChunks.addAll(line.getTextChunks());
+    }
+
+    public TextLine(TextLine line, int beginIndex, int endIndex) {
+        super(new BoundingBox(), line.getFontSize(), line.getBaseLine(), line.getSlantDegree());
+        int currentIndex = 0;
+        for (TextChunk textChunk : line.textChunks) {
+            int nextIndex = currentIndex + textChunk.getValue().length();
+            if (nextIndex > beginIndex) {
+                add(ChunksMergeUtils.getTrimTextChunk(TextChunk.getTextChunk(textChunk, Math.max(beginIndex - currentIndex, 0),
+                        Math.min(nextIndex - currentIndex, textChunk.getValue().length()))));
+            }
+            currentIndex = nextIndex;
+            if (currentIndex > endIndex) {
+                return;
+            }
+        }
     }
 
     public List<TextChunk> getTextChunks() {
