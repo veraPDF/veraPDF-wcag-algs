@@ -22,15 +22,18 @@ public class TextLine extends TextInfoChunk {
     public TextLine(TextChunk chunk) {
         super(new MultiBoundingBox(chunk.getBoundingBox()), chunk.getFontSize(), chunk.getBaseLine(), chunk.getSlantDegree());
         textChunks.add(chunk);
+        setHiddenText(chunk.isHiddenText());
     }
 
     public TextLine(TextLine line) {
         super(line.getBoundingBox(), line.getFontSize(), line.getBaseLine(), line.getSlantDegree());
         textChunks.addAll(line.getTextChunks());
+        setHiddenText(line.isHiddenText());
     }
 
     public TextLine(TextLine line, int beginIndex, int endIndex) {
         super(new BoundingBox(), line.getFontSize(), line.getBaseLine(), line.getSlantDegree());
+        setHiddenText(line.isHiddenText());
         int currentIndex = 0;
         for (TextChunk textChunk : line.textChunks) {
             int nextIndex = currentIndex + textChunk.getValue().length();

@@ -24,6 +24,7 @@ public class SemanticTextNode extends SemanticNode {
     private TextFormat textFormat = TextFormat.NORMAL;
     private Double maxFontSize;
     private double[] backgroundColor;
+    private boolean isHiddenText = false;
 
     public SemanticTextNode(SemanticTextNode textNode) {
         super(textNode);
@@ -526,5 +527,13 @@ public class SemanticTextNode extends SemanticNode {
         }
         result.append("}");
         return result.toString();
+    }
+
+    public boolean isHiddenText() {
+        return isHiddenText;
+    }
+
+    public void setHiddenText(boolean hiddenText) {
+        isHiddenText = hiddenText;
     }
 }

@@ -9,6 +9,7 @@ public abstract class TextInfoChunk extends InfoChunk {
     protected double fontSize = 0d;
     protected double baseLine = Double.MAX_VALUE;
     protected double slantDegree = 0.0;
+    protected boolean isHiddenText = false;
 
     public TextInfoChunk() {
     }
@@ -173,6 +174,14 @@ public abstract class TextInfoChunk extends InfoChunk {
 
     public double getFirstBaseLine() {
         return getBaseLine();
+    }
+
+    public boolean isHiddenText() {
+        return isHiddenText;
+    }
+
+    public void setHiddenText(boolean hiddenText) {
+        isHiddenText = hiddenText;
     }
 
     @Override
