@@ -32,6 +32,11 @@ public class PDFList extends InfoChunk {
         listItems = new ArrayList<>();
     }
 
+    public PDFList() {
+        super();
+        listItems = new ArrayList<>();
+    }
+
     public String getNumberingStyle() {
         return numberingStyle;
     }

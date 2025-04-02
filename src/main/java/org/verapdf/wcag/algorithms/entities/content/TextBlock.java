@@ -34,11 +34,13 @@ public class TextBlock extends TextInfoChunk {
 	public TextBlock(TextLine line) {
 		super(line.getBoundingBox(), line.getFontSize(), line.getBaseLine());
 		textLines.add(line);
+		setHiddenText(line.isHiddenText());
 	}
 
 	public TextBlock(TextBlock block) {
 		super(block.getBoundingBox(), block.getFontSize(), block.getBaseLine());
 		textLines.addAll(block.getLines());
+		setHiddenText(block.isHiddenText());
 	}
 
 	public List<TextLine> getLines() {
