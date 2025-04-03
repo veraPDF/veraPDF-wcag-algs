@@ -210,8 +210,8 @@ public class StaticContainers {
 		StaticContainers.textChunksNumber.set(textChunksNumber);
 	}
 
-	public static void setKeepLineBreaks(boolean isTextFormatted) {
-		StaticContainers.keepLineBreaks.set(isTextFormatted);
+	public static void setKeepLineBreaks(boolean keepLineBreaks) {
+		StaticContainers.keepLineBreaks.set(keepLineBreaks);
 	}
 
 	public static boolean isKeepLineBreaks() {

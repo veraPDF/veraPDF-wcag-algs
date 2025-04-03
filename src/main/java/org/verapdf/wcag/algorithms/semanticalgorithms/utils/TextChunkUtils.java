@@ -29,7 +29,7 @@ public class TextChunkUtils {
     }
 
     public static void formatLineEnd(StringBuilder stringBuilder) {
-        if (StaticContainers.isKeepLineBreaks()){
+        if (StaticContainers.isKeepLineBreaks()) {
             stringBuilder.append("\n");
         } else {
             if (TextChunkUtils.HYPHENATION_SIGNS.contains(stringBuilder.charAt(stringBuilder.length() - 1))) {

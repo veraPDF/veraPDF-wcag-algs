@@ -262,11 +262,13 @@ public class TableBorder extends BaseObject {
                 }
             }
         }
-        for (int i = 0; i < hasBottomBorder.length; i++) {
-            if (!hasBottomBorder[i] || !hasTopBorder[i]) {
-                isBadTable = true;
-                break;
-            }
+        if (numberOfRows == 1 || numberOfColumns == 1) {
+            for (int i = 0; i < hasBottomBorder.length; i++) {
+                if (!hasBottomBorder[i] || !hasTopBorder[i]) {
+                    isBadTable = true;
+                    break;
+                }
+            }  
         }
         return isBadTable;
     }
@@ -295,10 +297,12 @@ public class TableBorder extends BaseObject {
                 }
             }
         }
-        for (int i = 0; i < hasRightBorder.length; i++) {
-            if (!hasRightBorder[i] || !hasLeftBorder[i]) {
-                isBadTable = true;
-                break;
+        if (numberOfRows == 1 || numberOfColumns == 1) {
+            for (int i = 0; i < hasRightBorder.length; i++) {
+                if (!hasRightBorder[i] || !hasLeftBorder[i]) {
+                    isBadTable = true;
+                    break;
+                }
             }
         }
         return isBadTable;
@@ -763,12 +767,27 @@ public class TableBorder extends BaseObject {
             yBottomIndex++;
         }
         Set<TableBorderCell> cells = new HashSet<>();
+        int rowNumber = getRowNumber(yTopIndex, yBottomIndex, box);
         for (int xIndex = xLeftIndex; xIndex < xRightIndex; xIndex++) {
-            for (int yIndex = yTopIndex; yIndex < yBottomIndex; yIndex++) {
-                TableBorderCell cell = rows[yIndex].cells[xIndex];
-                cells.add(cell);
-            }
+            TableBorderCell cell = rows[rowNumber].cells[xIndex];
+            cells.add(cell);
         }
         return cells;
+    }
+    
+    private int getRowNumber(int yTopIndex, int yBottomIndex, BoundingBox box) {
+        if (yTopIndex + 1 == yBottomIndex) {
+            return yTopIndex;
+        }
+        double maxPercent = -Double.MAX_VALUE;
+        int rowNumber = 0;
+        for (int yIndex = yTopIndex; yIndex < yBottomIndex; yIndex++) {
+            double percent = box.getVerticalIntersectionPercent(rows[yIndex].getBoundingBox());
+            if (percent > maxPercent) {
+                maxPercent = percent;
+                rowNumber = yIndex;
+            }
+        }
+        return rowNumber;
     }
 }
