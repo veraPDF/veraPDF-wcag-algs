@@ -472,6 +472,18 @@ public class BoundingBox {
         return (xIntersection / getWidth()) * (yIntersection / getHeight());
     }
 
+    public double getVerticalIntersectionPercent(BoundingBox boundingBox) {
+        if (!Objects.equals(getPageNumber(), boundingBox.getPageNumber())) {
+            return 0.0;
+        }
+        double yIntersection = Math.min(Math.min(getHeight(), boundingBox.getHeight()),
+                Math.min(getTopY() - boundingBox.getBottomY(), boundingBox.getTopY() - getBottomY()));
+        if (yIntersection <= 0.0) {
+            return 0.0;
+        }
+        return yIntersection / getHeight();
+    }
+
     public String getLocation() {
         return ContextUtils.getContext(this);
     }
