@@ -13,7 +13,7 @@ public class TextChunk extends TextInfoChunk {
     private double fontWeight;
     private double italicAngle;
     private double[] fontColor;
-    private double contrastRatio;
+    private double contrastRatio = Integer.MAX_VALUE;
     private boolean hasSpecialStyle = false;
     private boolean hasSpecialBackground = false;
     private double[] backgroundColor;
@@ -169,30 +169,21 @@ public class TextChunk extends TextInfoChunk {
     }
 
     public void adjustSymbolEndsToBoundingBox(List<Double> symbolEnds) {
-        if (this.symbolEnds == null) {
+        double textStart = getTextStart();
+        double textEnd = getTextEnd();
+        if (symbolEnds == null) {
             this.symbolEnds = new ArrayList<>(value.length() + 1);
-            double symbolEnd = getTextStart();
+            double symbolEnd = textStart;
             this.symbolEnds.add(symbolEnd);
-            double averageWidth = getAverageSymbolWidth();
-            if (isRightLeftHorizontalText() || isUpBottomVerticalText()) {
-                for (int i = 0; i < value.length(); i++) {
-                    symbolEnd -= averageWidth;
-                    this.symbolEnds.add(symbolEnd);
-                }
-            } else {
-                for (int i = 0; i < value.length(); i++) {
-                    symbolEnd += averageWidth;
-                    this.symbolEnds.add(symbolEnd);
-                }
+            double averageWidth = (textEnd - textStart) / value.length();
+            for (int i = 0; i < value.length(); i++) {
+                symbolEnd += averageWidth;
+                this.symbolEnds.add(symbolEnd);
             }
             return;
         }
-        double textStart = getTextStart();
-        if (isRightLeftHorizontalText() || isUpBottomVerticalText()) {
-            this.symbolEnds = symbolEnds.stream().map(e -> e - textStart).collect(Collectors.toList());
-        } else {
-            this.symbolEnds = symbolEnds.stream().map(e -> e + textStart).collect(Collectors.toList());
-        }
+        double multiplier = (textEnd - textStart) / (symbolEnds.get(symbolEnds.size() - 1) - symbolEnds.get(0));
+        this.symbolEnds = symbolEnds.stream().map(e -> textStart + e * multiplier).collect(Collectors.toList());
     }
 
     public double getAverageSymbolWidth() {

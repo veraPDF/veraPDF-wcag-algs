@@ -91,7 +91,9 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 
 	public void calculateContrastRatio(TextChunk textChunk) {
 		BufferedImage renderedPage = getRenderPage(textChunk.getPageNumber());
-		calculateContrastRation(textChunk, renderedPage);
+		if (renderedPage != null) {
+			calculateContrastRation(textChunk, renderedPage);
+		}
 	}
 
 	private void calculateContrastRatio(SemanticTextNode node) {
@@ -109,7 +111,6 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 
 	public void calculateContrastRation(TextChunk textChunk, BufferedImage renderedPage) {
 		if ((textChunk.getValue() != null && (TextChunkUtils.isWhiteSpaceChunk(textChunk)))) {
-			textChunk.setContrastRatio(Integer.MAX_VALUE);
 			return;
 		}
 
@@ -127,7 +128,6 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		if (isOverlappingBox) {
 			scaledBBox = scaledBBox.cross(pageBBox);
 		} else if (!pageBBox.contains(scaledBBox)) {
-			textChunk.setContrastRatio(Integer.MAX_VALUE);
 			return;
 		}
 		int x = (int) (Math.round(scaledBBox.getLeftX()));
@@ -135,7 +135,6 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		int width = getIntegerBBoxValueForProcessing(scaledBBox.getWidth(), 1);
 		int height = getIntegerBBoxValueForProcessing(scaledBBox.getHeight(), 1);
 		if (width <= 1 || height <= 1) {
-			textChunk.setContrastRatio(Integer.MAX_VALUE);
 			return;
 		}
 		try {

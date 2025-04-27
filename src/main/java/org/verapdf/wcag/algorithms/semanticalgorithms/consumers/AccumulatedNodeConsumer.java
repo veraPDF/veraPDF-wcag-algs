@@ -259,7 +259,7 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 				mergeProbability = differentLinesProbability;
 				TextColumn lastColumn = new TextColumn(currentTextNode.getLastColumn());
 				TextBlock lastBlock = new TextBlock(lastColumn.getLastTextBlock());
-				lastBlock.getLines().addAll(lines);
+				lastBlock.add(lines);
 				lastColumn.setLastTextBlock(lastBlock);
 				currentTextNode.setLastColumn(lastColumn);
 				if (nextTextNode.getColumnsNumber() > 1) {

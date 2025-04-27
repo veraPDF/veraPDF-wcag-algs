@@ -6,10 +6,7 @@ import org.verapdf.wcag.algorithms.entities.tables.TableBorderBuilder;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.WCAGProgressStatus;
 
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 
 public class LinesPreprocessingConsumer extends WCAGConsumer {
 
@@ -32,7 +29,7 @@ public class LinesPreprocessingConsumer extends WCAGConsumer {
     }
 
     private List<TableBorderBuilder> findTableBorders(Integer pageNumber) {
-        List<TableBorderBuilder> tableBorders = new LinkedList<>();
+        List<TableBorderBuilder> tableBorders = new ArrayList<>();
         Set<LineChunk> set = new HashSet<>(StaticContainers.getLinesCollection().getHorizontalLines(pageNumber));
         set.addAll(StaticContainers.getLinesCollection().getVerticalLines(pageNumber));
         set.addAll(StaticContainers.getLinesCollection().getSquares(pageNumber));
@@ -81,14 +78,6 @@ public class LinesPreprocessingConsumer extends WCAGConsumer {
                 i++;
             }
         }
-        for (TableBorderBuilder border : tableBorders) {
-            for (LineChunk lineChunk : border.getVerticalLines()) {
-                StaticContainers.getLinesCollection().getVerticalLines(pageNumber).remove(lineChunk);
-            }
-            for (LineChunk lineChunk : border.getHorizontalLines()) {
-                StaticContainers.getLinesCollection().getHorizontalLines(pageNumber).remove(lineChunk);
-            }
-        }
         for (int i = 0; i < tableBorders.size();) {
             TableBorderBuilder border = tableBorders.get(i);
             if ((border.getHorizontalLinesNumber() <= 2 && border.getVerticalLinesNumber() <= 1) ||
@@ -98,20 +87,26 @@ public class LinesPreprocessingConsumer extends WCAGConsumer {
                 i++;
             }
         }
+        for (TableBorderBuilder border : tableBorders) {
+            StaticContainers.getLinesCollection().getVerticalLines(pageNumber).removeAll(border.getVerticalLines());
+            StaticContainers.getLinesCollection().getHorizontalLines(pageNumber).removeAll(border.getHorizontalLines());
+        }
         return tableBorders;
     }
 
     private void mergeTableBorders(List<TableBorderBuilder> tableBorders) {
         for (int i = tableBorders.size() - 2; i >= 0; i--) {
             TableBorderBuilder border = tableBorders.get(i);
-            for (int j = i + 1; j < tableBorders.size();) {
+            List<Integer> indexes = new LinkedList<>();
+            for (int j = tableBorders.size() - 1; j > i; j--) {
                 TableBorderBuilder border2 = tableBorders.get(j);
                 if (border.isConnectedBorder(border2)) {
-                    border.mergeBorder(border2);
-                    tableBorders.remove(j);
-                } else {
-                    j++;
+                    indexes.add(j);
                 }
+            }
+            for (Integer index : indexes) {
+                border.mergeBorder(tableBorders.get(index));
+                tableBorders.remove((int)index);
             }
         }
     }

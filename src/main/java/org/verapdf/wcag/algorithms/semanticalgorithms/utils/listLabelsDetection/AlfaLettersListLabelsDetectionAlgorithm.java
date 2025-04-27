@@ -26,4 +26,9 @@ public abstract class AlfaLettersListLabelsDetectionAlgorithm extends LettersLis
     protected String getUpperCaseRegex() {
         return UPPER_CASE_ENGLISH_LETTER_REGEX;
     }
+
+    @Override
+    protected List<Character> getLetters() {
+        return letters;
+    }
 }

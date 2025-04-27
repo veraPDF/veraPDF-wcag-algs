@@ -73,6 +73,12 @@ public class TextBlock extends TextInfoChunk {
 		textLines.add(line);
 		super.add(line);
 	}
+	
+	public void add(List<TextLine> lines) {
+		for (TextLine line : lines) {
+			add(line);
+		}
+	}
 
 	public int getLinesNumber() {
 		return textLines.size();

@@ -61,7 +61,7 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
             if (number != null) {
                 number++;
                 String s = getStringFromNumber(number);
-                if (!item.toUpperCase().startsWith(s, start) || !item.startsWith(prefix) ||
+                if (s == null || !item.toUpperCase().startsWith(s, start) || !item.startsWith(prefix) ||
                     isCharMatchRegex(item, start + s.length()) || isBadItem(itemInfo, item, s, start) ||
                     ((!item.substring(start, start + s.length()).matches(getLowerCaseRegex()) || isUpperCase) &&
                      (!item.substring(start, start + s.length()).matches(getUpperCaseRegex()) || !isUpperCase))) {
@@ -104,7 +104,7 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
                     continue;
                 }
                 //only Roman???
-                if (!substring.toUpperCase().startsWith(getStringFromNumber(number))) {
+                if (getStringFromNumber(number) == null || !substring.toUpperCase().startsWith(getStringFromNumber(number))) {
                     number = null;
                     continue;
                 }
@@ -123,6 +123,10 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
     }
 
     protected abstract String getLowerCaseRegex();
+    
+    protected List<Character> getLetters() {
+        return null;
+    }
 
     protected abstract String getUpperCaseRegex();
 
@@ -135,5 +139,34 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
             return false;
         }
         return s.substring(index, index + 1).matches(regex);
+    }
+
+    @Override
+    protected String getStringFromNumber(Integer number) {
+        return getLettersFromNumber(number);
+    }
+
+    @Override
+    protected Integer getNumberFromString(String string) {
+        return getNumberFromLetters(string);
+    }
+
+    private String getLettersFromNumber(int integer) {
+        integer--;
+        if (integer < getLetters().size()) {
+            return getLetters().get(integer).toString();
+        }
+        return null;
+    }
+
+    private Integer getNumberFromLetters(String s) {
+        if (s.length() != 1) {
+            return null;
+        }
+        int num = getLetters().indexOf(s.charAt(0));
+        if (num < 0) {
+            return null;
+        }
+        return num + 1;
     }
 }
