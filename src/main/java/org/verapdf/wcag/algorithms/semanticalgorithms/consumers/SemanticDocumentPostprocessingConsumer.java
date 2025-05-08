@@ -69,7 +69,7 @@ public class SemanticDocumentPostprocessingConsumer extends WCAGConsumer {
 							if (textChunk.getValue().isEmpty()) {
 								continue;
 							}
-							if (!chunks.isEmpty() && areChunksChained(chunks.get(chunks.size() - 1).getValue(), textChunk)) {
+							if (!chunks.isEmpty() && areChunksChained(chunks.get(chunks.size() - 1), textChunk)) {
 								chunks.add(textChunk);
 							} else {
 								checkRepeatedAndAdd(chunks);
@@ -83,8 +83,11 @@ public class SemanticDocumentPostprocessingConsumer extends WCAGConsumer {
 		}
 	}
 
-	private boolean areChunksChained(String previousValue, TextChunk secondTextChunk) {
-		char firstChar = previousValue.charAt(previousValue.length() - 1);
+	private boolean areChunksChained(TextChunk previousTextChunk, TextChunk secondTextChunk) {
+		if (!TextChunkUtils.areTextChunksHaveSameBaseLine(previousTextChunk, secondTextChunk)) {
+			return false;
+		}
+		char firstChar = previousTextChunk.getValue().charAt(previousTextChunk.getValue().length() - 1);
 		char secondChar = secondTextChunk.getValue().charAt(0);
 		if (TextChunkUtils.isWhiteSpaceChar(firstChar) && TextChunkUtils.isWhiteSpaceChar(secondChar)) {
 			return true;
