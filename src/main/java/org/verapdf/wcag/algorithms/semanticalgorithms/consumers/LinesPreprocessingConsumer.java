@@ -3,6 +3,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.geometry.Vertex;
 import org.verapdf.wcag.algorithms.entities.tables.TableBorderBuilder;
+import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.WCAGProgressStatus;
 
@@ -13,6 +14,19 @@ public class LinesPreprocessingConsumer extends WCAGConsumer {
     private static final double MAX_LINE_WIDTH = 5.0;
 
     private List<List<TableBorderBuilder>> tableBorders;
+
+    @Override
+    public boolean run() {
+        if (!StaticContainers.isHuman()) {
+            return false;
+        }
+        if (!startStep()) {
+            return true;
+        }
+        findTableBorders();
+        StaticContainers.setTableBordersCollection(new TableBordersCollection(getTableBorders()));
+        return false;
+    }
 
     public List<List<TableBorderBuilder>> getTableBorders() {
         if (tableBorders == null) {

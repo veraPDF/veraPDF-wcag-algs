@@ -14,6 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SemanticDocumentPostprocessingConsumer extends WCAGConsumer {
+	
+	@Override
+	public boolean run() {
+		if (!startStep()) {
+			return true;
+		}
+		runPostprocessingChecks(StaticContainers.getDocument().getTree());
+		return false;
+	}
 
 	public void runPostprocessingChecks(ITree tree) {
 		updateBoundingBoxes(tree);

@@ -13,6 +13,18 @@ public class HeadingCaptionConsumer extends WCAGConsumer implements Consumer<INo
 	public static final double MERGE_PROBABILITY_THRESHOLD = 0.75;
 
 	@Override
+	public boolean run() {
+		if (!StaticContainers.isHuman()) {
+			return false;
+		}
+		if (!startStep()) {
+			return true;
+		}
+		StaticContainers.getDocument().getTree().forEach(this);
+		return false;
+	}	
+	
+	@Override
 	public void accept(INode node) {
 		if (node.getChildren().isEmpty()) {
 			return;

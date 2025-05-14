@@ -40,15 +40,39 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 	private static final double LUMINOSITY_DIFFERENCE = 0.001;
 	private long processedTextChunks;
 	private final Long textChunksNumber;
-	private final PDDocument document;
+	private PDDocument document;
+	private final String fileName;
 
 	public ContrastRatioConsumer(String sourcePdfPath) throws IOException {
+		this();
 		this.document = PDDocument.load(new FileInputStream(sourcePdfPath));
+	}
+	
+	public ContrastRatioConsumer() {
+		this.fileName = StaticContainers.getFileName();
+		this.processedTextChunks = 0;
+		this.textChunksNumber = StaticContainers.getTextChunksNumber();
 		IIORegistry registry = IIORegistry.getDefaultInstance();
 		registry.registerServiceProvider(new J2KImageReaderSpi());
 		registry.registerServiceProvider(new JBIG2ImageReaderSpi());
-		this.processedTextChunks = 0;
-		this.textChunksNumber = StaticContainers.getTextChunksNumber();
+	}
+
+	@Override
+	public boolean run() {
+		if (fileName == null) {
+			return false;
+		}
+		if (!startStep()) {
+			return true;
+		}
+		try {
+			this.document = PDDocument.load(new FileInputStream(fileName));
+			calculateContrast(StaticContainers.getDocument().getTree());
+		} catch (IOException e) {
+			e.printStackTrace();
+			logger.warning(e.getMessage());
+		}
+		return false;
 	}
 
 	public void calculateContrast(ITree tree) {

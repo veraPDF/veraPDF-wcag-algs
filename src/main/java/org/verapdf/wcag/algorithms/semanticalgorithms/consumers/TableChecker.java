@@ -17,6 +17,18 @@ import java.util.function.Consumer;
 public class TableChecker extends WCAGConsumer implements Consumer<INode> {
 
     @Override
+    public boolean run() {
+        if (!StaticContainers.isHuman()) {
+            return false;
+        }
+        if (!startStep()) {
+            return true;
+        }
+        StaticContainers.getDocument().getTree().forEach(this);
+        return false;
+    }
+
+    @Override
     public void accept(INode node) {
         if (node.getInitialSemanticType() != SemanticType.TABLE) {
             return;

@@ -25,6 +25,18 @@ import java.util.stream.Collectors;
 
 public class TableBorderConsumer extends WCAGConsumer {
 
+    @Override
+    public boolean run() {
+        if (!StaticContainers.isHuman()) {
+            return false;
+        }
+        if (!startStep()) {
+            return true;
+        }
+        recognizeTables(StaticContainers.getDocument().getTree());
+        return false;
+    }
+
     public void recognizeTables(ITree tree) {
         for (INode node : tree) {
             if (node.getChildren().isEmpty()) {

@@ -38,7 +38,11 @@ public class StaticContainers {
 
 	private static final ThreadLocal<IDocument> document = new ThreadLocal<>();
 
+	private static final ThreadLocal<String> fileName = new ThreadLocal<>();
+
 	private static final ThreadLocal<WCAGValidationInfo> wcagValidationInfo = new ThreadLocal<>();
+	
+	private static final ThreadLocal<Boolean> isHuman = new ThreadLocal<>();
 
 	private static final ThreadLocal<Long> structElementsNumber = new ThreadLocal<>();
 
@@ -65,7 +69,12 @@ public class StaticContainers {
 	}
 
 	public static void updateContainers(IDocument document) {
+		updateContainers(document, null);
+	}
+
+	public static void updateContainers(IDocument document, String fileName) {
 		StaticContainers.document.set(document);
+		StaticContainers.fileName.set(fileName);
 		StaticContainers.accumulatedNodeMapper.set(new AccumulatedNodeMapper());
 		StaticContainers.objectKeyMapper.set(new ObjectKeyMapper());
 		StaticContainers.tableBordersCollection.set(new TableBordersCollection());
@@ -76,6 +85,9 @@ public class StaticContainers {
 		StaticContainers.groupCounter.set(0L);
 		StaticContainers.structElementsNumber.set(0L);
 		StaticContainers.textChunksNumber.set(0L);
+		if (StaticContainers.isHuman() == null) {
+			StaticContainers.setIsHuman(true);
+		}
 		if (StaticContainers.getWCAGValidationInfo() == null) {
 			StaticContainers.setWCAGValidationInfo(new WCAGValidationInfo());
 		}
@@ -87,6 +99,14 @@ public class StaticContainers {
 
 	public static void setDocument(IDocument document) {
 		StaticContainers.document.set(document);
+	}
+
+	public static String getFileName() {
+		return fileName.get();
+	}
+
+	public static void setFileName(String fileName) {
+		StaticContainers.fileName.set(fileName);
 	}
 
 	public static WCAGValidationInfo getWCAGValidationInfo() {
@@ -119,6 +139,14 @@ public class StaticContainers {
 
 	public static void setTableBordersCollection(TableBordersCollection tableBordersCollection) {
 		StaticContainers.tableBordersCollection.set(tableBordersCollection);
+	}
+
+	public static Boolean isHuman() {
+		return isHuman.get();
+	}
+
+	public static void setIsHuman(Boolean isHuman) {
+		StaticContainers.isHuman.set(isHuman);
 	}
 
 	public static LinesCollection getLinesCollection() {

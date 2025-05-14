@@ -30,6 +30,17 @@ public class SemanticDocumentPreprocessingConsumer extends WCAGConsumer implemen
         this.structElementsNumber = 0L;
     }
 
+    @Override
+    public boolean run() {
+        if (!startStep()) {
+            return true;
+        }
+        StaticContainers.getDocument().getTree().forEach(this);
+        StaticContainers.setStructElementsNumber(getStructElementsNumber());
+        StaticContainers.setTextChunksNumber(getTextChunksNumber());
+        return false;
+    }
+
     public void setNodeParents() {
         Stack<INode> nodeStack = new Stack<>();
         INode root = StaticContainers.getDocument().getTree().getRoot();
