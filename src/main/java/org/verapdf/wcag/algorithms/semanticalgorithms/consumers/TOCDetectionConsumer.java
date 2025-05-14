@@ -58,7 +58,7 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
     @Override
     public void accept(INode node) {
         currentNode = node;
-        if (!StaticContainers.isHuman()) {
+        if (StaticContainers.isHuman()) {
             detectTOC(node);
         }
         checkTOC(node);
