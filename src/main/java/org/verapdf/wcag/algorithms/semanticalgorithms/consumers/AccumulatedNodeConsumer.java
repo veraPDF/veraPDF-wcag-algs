@@ -25,6 +25,15 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 	}
 
 	@Override
+	public boolean run() {
+		if (!startStep()) {
+			return true;
+		}
+		StaticContainers.getDocument().getTree().forEach(this);
+		return false;
+	}
+
+	@Override
 	public void accept(INode node) {
 
 		if (node.getChildren().isEmpty()) {

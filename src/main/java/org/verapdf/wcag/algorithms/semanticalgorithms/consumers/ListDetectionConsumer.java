@@ -26,6 +26,18 @@ import java.util.stream.IntStream;
 public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INode> {
 
     @Override
+    public boolean run() {
+        if (!StaticContainers.isHuman()) {
+            return false;
+        }
+        if (!startStep()) {
+            return true;
+        }
+        StaticContainers.getDocument().getTree().forEach(this);
+        return false;
+    }
+    
+    @Override
     public void accept(INode node) {
         boolean isLeafChild  = node.getChildren()
                 .stream()

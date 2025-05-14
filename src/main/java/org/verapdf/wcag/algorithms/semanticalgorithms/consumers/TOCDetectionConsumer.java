@@ -45,11 +45,22 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
     public TOCDetectionConsumer() {
         structElementsNumber = StaticContainers.getStructElementsNumber();
     }
+    
+    @Override
+    public boolean run() {
+        if (!startStep()) {
+            return true;
+        }
+        StaticContainers.getDocument().getTree().forEach(this);
+        return false;
+    }
 
     @Override
     public void accept(INode node) {
         currentNode = node;
-        detectTOC(node);
+        if (!StaticContainers.isHuman()) {
+            detectTOC(node);
+        }
         checkTOC(node);
         checkNeighborTOCs(node);
         if (!node.getChildren().isEmpty()) {

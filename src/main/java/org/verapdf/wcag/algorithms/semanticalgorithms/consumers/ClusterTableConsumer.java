@@ -32,6 +32,18 @@ public class ClusterTableConsumer extends WCAGConsumer {
         init();
     }
 
+    @Override
+    public boolean run() {
+        if (!StaticContainers.isHuman()) {
+            return false;
+        }
+        if (!startStep()) {
+            return true;
+        }
+        findTables(StaticContainers.getDocument().getTree().getRoot());
+        return false;
+    }
+
     private void init() {
         recognitionArea = new TableRecognitionArea();
     }
