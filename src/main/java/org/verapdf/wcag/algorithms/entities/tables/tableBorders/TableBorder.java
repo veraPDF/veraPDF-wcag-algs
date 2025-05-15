@@ -133,6 +133,18 @@ public class TableBorder extends BaseObject {
             multiBoundingBox.setRightX(getRightX());
             rows[rowNumber].setBoundingBox(multiBoundingBox);
         }
+        for (int rowNumber = 0; rowNumber < getNumberOfRows(); rowNumber++) {
+            for (int columnNumber = 0; columnNumber < getNumberOfColumns(); columnNumber++) {
+                TableBorderCell cell = getCell(rowNumber, columnNumber);
+                if (cell.getRowNumber() == rowNumber && cell.getColNumber() == columnNumber) {
+                    if (cell.getBoundingBox().getPageNumber() == null) {
+                        BoundingBox boundingBox = new BoundingBox(getLeftX(columnNumber), getBottomY(rowNumber + cell.getRowSpan() - 1),
+                                getRightX(columnNumber + cell.getColSpan() - 1), getTopY(rowNumber));
+                        cell.setBoundingBox(boundingBox);
+                    }
+                }
+            }
+        }
     }
 
     public TableBorderRow[] getRows() {
