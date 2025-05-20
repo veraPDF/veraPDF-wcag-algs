@@ -1,5 +1,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms;
 
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -40,8 +42,8 @@ public class ContrastRatioCheckerTests {
 	@ParameterizedTest(name = "{index}: ({0} ({1}) => {0}))")
 	@MethodSource("contrastTestPassParams")
 	public void createImagesFromPdfPdfBoxPassTest(String sourcePath, int[] bBox, TextType type) throws IOException {
-		PDDocument document = PDDocument.load(getClass().getResourceAsStream(
-				sourcePath));
+		PDDocument document = Loader.loadPDF(new RandomAccessReadBuffer(getClass().getResourceAsStream(
+				sourcePath)));
 		PDFRenderer pdfRenderer = new PDFRenderer(document);
 		for (int page = 0; page < document.getNumberOfPages(); ++page) {
 			BufferedImage bim = pdfRenderer.renderImageWithDPI(page, 300, ImageType.RGB);
@@ -57,8 +59,8 @@ public class ContrastRatioCheckerTests {
 	@ParameterizedTest(name = "{index}: ({0} ({1} , {2}) => {0}))")
 	@MethodSource("contrastTestFailParams")
 	public void createImagesFromPdfPdfBoxFailTest(String sourcePath, int[] bBox, TextType type) throws IOException {
-		PDDocument document = PDDocument.load(getClass().getResourceAsStream(
-				sourcePath));
+		PDDocument document = Loader.loadPDF(new RandomAccessReadBuffer(getClass().getResourceAsStream(
+				sourcePath)));
 		PDFRenderer pdfRenderer = new PDFRenderer(document);
 		for (int page = 0; page < document.getNumberOfPages(); ++page) {
 			BufferedImage bim = pdfRenderer.renderImageWithDPI(page, 300, ImageType.RGB);

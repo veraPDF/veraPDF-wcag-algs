@@ -1,6 +1,8 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.consumers;
 
 import com.github.jaiimageio.jpeg2000.impl.J2KImageReaderSpi;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.jbig2.JBIG2ImageReaderSpi;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
@@ -45,7 +47,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 
 	public ContrastRatioConsumer(String sourcePdfPath) throws IOException {
 		this();
-		this.document = PDDocument.load(new FileInputStream(sourcePdfPath));
+		this.document = Loader.loadPDF(new RandomAccessReadBuffer(new FileInputStream(sourcePdfPath)));
 	}
 	
 	public ContrastRatioConsumer() {
@@ -66,7 +68,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 			return true;
 		}
 		try {
-			this.document = PDDocument.load(new FileInputStream(fileName));
+			this.document = Loader.loadPDF(new RandomAccessReadBuffer(new FileInputStream(fileName)));
 			calculateContrast(StaticContainers.getDocument().getTree());
 		} catch (IOException e) {
 			e.printStackTrace();
