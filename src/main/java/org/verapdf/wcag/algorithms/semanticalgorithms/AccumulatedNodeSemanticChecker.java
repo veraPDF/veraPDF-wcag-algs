@@ -35,9 +35,6 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 			e.printStackTrace();
 			LOGGER.warning(e.getMessage());
 		}
-		if (new ContrastRatioConsumer().run()) {
-			return;
-		}
 		if (new AccumulatedNodeConsumer().run()) {
 			return;
 		}
