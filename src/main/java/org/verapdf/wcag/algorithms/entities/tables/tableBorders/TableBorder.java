@@ -457,22 +457,11 @@ public class TableBorder extends BaseObject {
         for (int xIndex = xLeftIndex; xIndex < xRightIndex; xIndex++) {
             for (int yIndex = yTopIndex; yIndex < yBottomIndex; yIndex++) {
                 TableBorderCell cell = rows[yIndex].cells[xIndex];
-                if (getIntersectionPercent(cell, box) > MIN_CELL_CONTENT_INTERSECTION_PERCENT) {
+                if (box.getIntersectionPercent(cell.getBoundingBox()) > MIN_CELL_CONTENT_INTERSECTION_PERCENT) {
                     return cell;
                 }
             }
         }
         return null;
-    }
-
-    private static double getIntersectionPercent(TableBorderCell cell, BoundingBox boundingBox) {
-        double xIntersection = Math.min(Math.min(cell.getWidth(), boundingBox.getWidth()),
-                Math.min(cell.getRightX() - boundingBox.getLeftX(), boundingBox.getRightX() - cell.getLeftX()));
-        double yIntersection = Math.min(Math.min(cell.getHeight(), boundingBox.getHeight()),
-                Math.min(cell.getTopY() - boundingBox.getBottomY(), boundingBox.getTopY() - cell.getBottomY()));
-        if (xIntersection <= 0.0 || yIntersection <= 0.0) {
-            return 0.0;
-        }
-        return (xIntersection / boundingBox.getWidth()) * (yIntersection / boundingBox.getHeight());
     }
 }
