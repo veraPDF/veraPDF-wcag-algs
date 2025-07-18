@@ -70,6 +70,13 @@ public class LinesPreprocessingConsumer extends WCAGConsumer {
                             isCross = true;
                         }
                     }
+                } else if (line.isSquare()) {
+                    for (Vertex vertex : border.getVertexes()) {
+                        if (Vertex.areCloseVertexes(vertex, line.getStart())) {
+                            isCross = true;
+                            break;
+                        }
+                    }
                 }
                 if (isCross) {
                     border.addLine(line);
