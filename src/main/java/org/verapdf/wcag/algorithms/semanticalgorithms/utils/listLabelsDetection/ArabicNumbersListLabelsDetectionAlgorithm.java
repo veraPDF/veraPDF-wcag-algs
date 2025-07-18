@@ -10,6 +10,7 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
 
     public static final String ARABIC_NUMBER_REGEX = "\\d+";
     public static final String DOUBLE_REGEX = ARABIC_NUMBER_REGEX + "\\." + ARABIC_NUMBER_REGEX;
+    public boolean isHeaderOrFooter = false;
 
     @Override
     public boolean isListLabels(List<String> labels, int commonStartLength, int commonEndLength) {
@@ -157,7 +158,7 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
             String item = listItem.getListItem();
             String nextSubstring = item.substring(start);
             int nextArabicNumberStartLength = getRegexStartLength(nextSubstring);
-            if (nextSubstring.length() == nextArabicNumberStartLength && listItem.hasOneLine()) {
+            if (!isHeaderOrFooter && nextSubstring.length() == nextArabicNumberStartLength && listItem.hasOneLine()) {
                 return true;
             }
             if (item.matches(DOUBLE_REGEX) && listItem.hasOneLine()) {
