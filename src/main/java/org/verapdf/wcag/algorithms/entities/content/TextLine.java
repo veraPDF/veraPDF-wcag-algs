@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.entities.content;
 
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
@@ -59,6 +60,7 @@ public class TextLine extends TextInfoChunk {
     }
 
     public void add(TextLine line) {
+        addSpaceIfRequired(line);
         double size = this.fontSize;
         textChunks.addAll(line.getTextChunks());
         super.add(line);
@@ -67,6 +69,16 @@ public class TextLine extends TextInfoChunk {
         } else if (isSpaceLine()) {
             this.fontSize = line.getFontSize();
         }
+    }
+
+    protected void addSpaceIfRequired(TextLine line) {
+        if (line.getLeftX() - this.getRightX() < this.fontSize * TextChunkUtils.TEXT_LINE_SPACE_RATIO) {
+            return;
+        }
+
+        BoundingBox boundingBox = new BoundingBox();
+        boundingBox.init(this.getRightX(), this.getBottomY(), line.getLeftX(), this.getTopY());
+        textChunks.add(new TextChunk(boundingBox, " ", this.getFontSize(), this.baseLine));
     }
 
     @Override

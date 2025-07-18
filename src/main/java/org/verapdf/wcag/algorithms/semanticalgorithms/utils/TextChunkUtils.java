@@ -11,6 +11,8 @@ public class TextChunkUtils {
 
     public static final double NEIGHBORS_EPSILON = 0.2;
     public static final double BASELINE_DIFFERENCE_EPSILON = 0.01;
+    public static final double TEXT_CHUNK_SPACE_RATIO = 170;
+    public static final double TEXT_LINE_SPACE_RATIO = 0.17;
 
     public static boolean isSpaceChunk(TextChunk chunk) {
         for (char symbol : chunk.getValue().toCharArray()) {
