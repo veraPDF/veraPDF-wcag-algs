@@ -413,6 +413,20 @@ public class BoundingBox {
         return this;
     }
 
+    public double getIntersectionPercent(BoundingBox boundingBox) {
+        if (!Objects.equals(getPageNumber(), boundingBox.getPageNumber())) {
+            return 0.0;
+        }
+        double xIntersection = Math.min(Math.min(getWidth(), boundingBox.getWidth()),
+                Math.min(getRightX() - boundingBox.getLeftX(), boundingBox.getRightX() - getLeftX()));
+        double yIntersection = Math.min(Math.min(getHeight(), boundingBox.getHeight()),
+                Math.min(getTopY() - boundingBox.getBottomY(), boundingBox.getTopY() - getBottomY()));
+        if (xIntersection <= 0.0 || yIntersection <= 0.0) {
+            return 0.0;
+        }
+        return (xIntersection / getWidth()) * (yIntersection / getHeight());
+    }
+
     public String getLocation() {
         return ContextUtils.getContext(this);
     }
