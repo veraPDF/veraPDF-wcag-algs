@@ -4,6 +4,8 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 
 public class SemanticHeading extends SemanticParagraph {
 
+	private Integer headingLevel;
+
 	public SemanticHeading(SemanticHeading heading) {
 		super(heading);
 		setSemanticType(SemanticType.HEADING);
@@ -31,5 +33,13 @@ public class SemanticHeading extends SemanticParagraph {
 
 	public SemanticHeading() {
 		setSemanticType(SemanticType.HEADING);
+	}
+
+	public Integer getHeadingLevel() {
+		return headingLevel;
+	}
+
+	public void setHeadingLevel(Integer headingLevel) {
+		this.headingLevel = headingLevel;
 	}
 }
