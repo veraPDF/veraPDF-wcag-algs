@@ -2,6 +2,8 @@ package org.verapdf.wcag.algorithms.entities.content;
 
 import org.verapdf.wcag.algorithms.entities.enums.TextAlignment;
 
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +17,16 @@ public class TextBlock extends TextInfoChunk {
 
 	}
 
+	public TextBlock(BoundingBox bbox, double fontSize, double baseLine) {
+		super(bbox, fontSize, baseLine);
+		this.fontSize = fontSize;
+		this.baseLine = baseLine;
+	}
+
+	public TextBlock(BoundingBox boundingBox) {
+		super(boundingBox);
+	}
+	
 	public TextBlock(TextLine line) {
 		super(line.getBoundingBox(), line.getFontSize(), line.getBaseLine());
 		textLines.add(line);
