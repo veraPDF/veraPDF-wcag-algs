@@ -28,6 +28,8 @@ public enum SemanticType {
 	TITLE("Title"),
 	BLOCK_QUOTE("BlockQuote"),
 	NOTE("Note"),
+	HEADER("Header"),
+	FOOTER("Footer"),
 	CODE("Code"),
 	PART("Part");
 
