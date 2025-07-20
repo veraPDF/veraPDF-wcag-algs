@@ -70,6 +70,12 @@ public class ClusterTableConsumer extends WCAGConsumer {
         updateTreeWithRecognizedLists(root);
     }
 
+    public void processEnd() {
+        if (recognitionArea.isValid()) {
+            recognize();
+        }
+    }
+
     private void acceptChildren(INode node) {
         if (node.getSemanticType() == SemanticType.TABLE) {
             INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
@@ -147,7 +153,7 @@ public class ClusterTableConsumer extends WCAGConsumer {
         }
     }
 
-    private void accept(TextInfoChunk token, INode node) {
+    public void accept(TextInfoChunk token, INode node) {
         if (recognitionArea.addTokenToRecognitionArea(token) && recognitionArea.getTableBorder() == null) {
             findTableBorder();
         }
