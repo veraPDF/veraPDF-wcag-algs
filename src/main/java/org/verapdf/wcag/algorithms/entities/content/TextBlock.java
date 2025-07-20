@@ -12,6 +12,9 @@ public class TextBlock extends TextInfoChunk {
 
 	private final List<TextLine> textLines = new ArrayList<>();
 
+	private boolean hasStartLine = false;
+	private boolean hasEndLine = false;
+
 	private TextAlignment textAlignment = null;
 
 	public TextBlock() {
@@ -97,6 +100,14 @@ public class TextBlock extends TextInfoChunk {
 		}
 	}
 
+	public double getFirstLineIndent() {
+		TextLine secondTextLine = getSecondLine();
+		if (secondTextLine != null) {
+			return getFirstLine().getLeftX() - secondTextLine.getLeftX();
+		}
+		return 0.0d;
+	}
+
 	public int getLinesNumber() {
 		return textLines.size();
 	}
@@ -148,5 +159,21 @@ public class TextBlock extends TextInfoChunk {
 
 	public void setTextAlignment(TextAlignment textAlignment) {
 		this.textAlignment = textAlignment;
+	}
+
+	public boolean isHasStartLine() {
+		return hasStartLine;
+	}
+
+	public void setHasStartLine(boolean hasStartLine) {
+		this.hasStartLine = hasStartLine;
+	}
+
+	public boolean isHasEndLine() {
+		return hasEndLine;
+	}
+
+	public void setHasEndLine(boolean hasEndLine) {
+		this.hasEndLine = hasEndLine;
 	}
 }
