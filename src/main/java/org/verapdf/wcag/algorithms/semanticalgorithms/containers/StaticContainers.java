@@ -66,6 +66,8 @@ public class StaticContainers {
 
 	private static ThreadLocal<Boolean> keepLineBreaks = new ThreadLocal<>();
 
+	private static final ThreadLocal<Boolean> isIgnoreCharactersWithoutUnicode = new ThreadLocal<>();
+
 	static {
 		StaticContainers.wcagValidationInfo.set(new WCAGValidationInfo());
 	}
@@ -87,6 +89,7 @@ public class StaticContainers {
 		StaticContainers.groupCounter.set(0L);
 		StaticContainers.structElementsNumber.set(0L);
 		StaticContainers.textChunksNumber.set(0L);
+		StaticContainers.isIgnoreCharactersWithoutUnicode.set(true);
 		StaticContainers.keepLineBreaks.set(true);
 		if (StaticContainers.isHuman() == null) {
 			StaticContainers.setIsHuman(true);
@@ -216,5 +219,13 @@ public class StaticContainers {
 
 	public static boolean isKeepLineBreaks() {
 		return keepLineBreaks.get();
+	}
+
+	public static Boolean getIsIgnoreCharactersWithoutUnicode() {
+		return isIgnoreCharactersWithoutUnicode.get();
+	}
+
+	public static void setIsIgnoreCharactersWithoutUnicode(Boolean isIgnoreCharactersWithoutUnicode) {
+		StaticContainers.isIgnoreCharactersWithoutUnicode.set(isIgnoreCharactersWithoutUnicode);
 	}
 }
