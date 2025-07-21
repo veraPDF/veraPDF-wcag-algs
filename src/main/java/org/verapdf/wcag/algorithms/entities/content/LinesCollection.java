@@ -35,7 +35,9 @@ public class LinesCollection {
 		for (int pageNumber = 0; pageNumber < StaticContainers.getDocument().getNumberOfPages(); pageNumber++) {
 			parseLines(pageNumber);
 		}
-		parseLines(StaticContainers.getDocument().getTree().getRoot());
+		if (!StaticContainers.isDataLoader()) {
+			parseLines(StaticContainers.getDocument().getTree().getRoot());
+		}
 	}
 
 	private void parseLines(INode node) {
