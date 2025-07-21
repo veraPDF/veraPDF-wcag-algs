@@ -64,7 +64,9 @@ public class StaticContainers {
 
 	private static final ThreadLocal<Long> groupCounter = new ThreadLocal<>();
 
-	private static ThreadLocal<Boolean> keepLineBreaks = new ThreadLocal<>();
+	private static final ThreadLocal<Boolean> keepLineBreaks = new ThreadLocal<>();
+
+	private static final ThreadLocal<Boolean> isDataLoader = new ThreadLocal<>();
 
 	private static final ThreadLocal<Boolean> isIgnoreCharactersWithoutUnicode = new ThreadLocal<>();
 
@@ -91,6 +93,7 @@ public class StaticContainers {
 		StaticContainers.textChunksNumber.set(0L);
 		StaticContainers.isIgnoreCharactersWithoutUnicode.set(true);
 		StaticContainers.keepLineBreaks.set(true);
+		StaticContainers.isDataLoader.set(false);
 		if (StaticContainers.isHuman() == null) {
 			StaticContainers.setIsHuman(true);
 		}
@@ -219,6 +222,14 @@ public class StaticContainers {
 
 	public static boolean isKeepLineBreaks() {
 		return keepLineBreaks.get();
+	}
+
+	public static void setIsDataLoader(boolean isDataLoader) {
+		StaticContainers.isDataLoader.set(isDataLoader);
+	}
+
+	public static boolean isDataLoader() {
+		return isDataLoader.get();
 	}
 
 	public static Boolean getIsIgnoreCharactersWithoutUnicode() {

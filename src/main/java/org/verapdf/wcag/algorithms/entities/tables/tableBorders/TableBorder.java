@@ -602,7 +602,7 @@ public class TableBorder extends BaseObject {
     }
 
     public boolean isBadTable() {
-        return isBadTable || numberOfRows < 1 || numberOfColumns < 1;
+        return isBadTable || numberOfRows < 1 || numberOfColumns < 1 || (!StaticContainers.isDataLoader() && numberOfRows == 1 && numberOfColumns == 1);
     }
     
     public boolean isOneCellTable() {
