@@ -3,6 +3,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
 import java.util.*;
 
@@ -182,10 +183,12 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
         private boolean isBadItem(ListItemTextInfo listItem) {
             String item = listItem.getListItem();
             String nextSubstring = item.substring(start);
-            int nextNumberOfStartZeros = getNumberOfStartZeros(nextSubstring);
-            int nextArabicNumberStartLength = getRegexStartLength(nextSubstring);
-            if (!isHeaderOrFooterDetection && nextSubstring.length() == nextNumberOfStartZeros + nextArabicNumberStartLength && listItem.hasOneLine()) {
-                return true;
+            if (!StaticContainers.isDataLoader()) {
+                int nextNumberOfStartZeros = getNumberOfStartZeros(nextSubstring);
+                int nextArabicNumberStartLength = getRegexStartLength(nextSubstring);
+                if (!isHeaderOrFooterDetection && nextSubstring.length() == nextNumberOfStartZeros + nextArabicNumberStartLength && listItem.hasOneLine()) {
+                    return true;
+                }   
             }
             if (item.matches(DOUBLE_REGEX) && listItem.hasOneLine()) {
                 return true;
