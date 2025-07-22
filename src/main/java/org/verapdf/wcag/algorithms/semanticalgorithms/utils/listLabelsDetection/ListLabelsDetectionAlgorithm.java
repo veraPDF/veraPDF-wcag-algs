@@ -87,7 +87,11 @@ public abstract class ListLabelsDetectionAlgorithm {
         return 0;
     }
 
-    protected Boolean checkPrefixAndSuffix(String prefix, String suffix) {
+    public int recalculatePrefixLength(String string, int prefixLength) {
+        return prefixLength;
+    }
+
+    public Boolean checkPrefixAndSuffix(String prefix, String suffix) {
         return true;
     }
 

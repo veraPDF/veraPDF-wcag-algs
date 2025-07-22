@@ -9,6 +9,7 @@ public class ListItemTextInfo extends ListItemInfo {
 	private final boolean hasOneLine;
 	private String prefix;
 	private String numberedPart;
+	private Integer number;
 	private String suffix;
 	
 	public ListItemTextInfo(ListItemTextInfo info) {
@@ -64,6 +65,14 @@ public class ListItemTextInfo extends ListItemInfo {
 	
 	public String getBody() {
 		return getListItem().substring(getPrefix().length() + getNumberedPart().length() + getSuffix().length());
+	}
+
+	public Integer getNumber() {
+		return number;
+	}
+
+	public void setNumber(Integer number) {
+		this.number = number;
 	}
 }
 
