@@ -6,6 +6,7 @@ import org.verapdf.wcag.algorithms.entities.content.TextColumn;
 import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -393,6 +394,9 @@ public class ChunksMergeUtils {
 			return 0.0;
 		}
 
+		if (StaticContainers.isDataLoader()) {
+			return 1.0;
+		}
 		double firstChunkEnd = x.getTextEnd();
 		double secondChunkStart = y.getTextStart();
 
