@@ -6,6 +6,7 @@ import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
 import org.verapdf.wcag.algorithms.entities.lists.ListIntervalsCollection;
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemInfo;
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.*;
 
 import java.util.*;
@@ -160,7 +161,8 @@ public class ListLabelsUtils {
 		Character secondChar = null;
 		ListInterval interval = new ListInterval();
 		for (ListItemTextInfo info : itemsInfo) {
-			boolean badListItem = info.getListItem().length() == 1 && info.hasOneLine();
+			boolean badListItem = info.getListItem().length() == 1 && info.hasOneLine() || 
+					(StaticContainers.isDataLoader() && firstChar != null && Objects.equals(firstChar, secondChar));
 			if (!Objects.equals(info.getListItem().charAt(0), firstChar) || badListItem) {
 				if (SemanticType.LIST == info.getSemanticType()) {
 					interval.getListsIndexes().add(info.getIndex());
