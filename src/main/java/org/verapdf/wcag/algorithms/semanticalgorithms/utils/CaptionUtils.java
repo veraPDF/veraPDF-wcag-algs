@@ -3,6 +3,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.SemanticFigure;
 import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
+import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
@@ -25,7 +26,7 @@ public class CaptionUtils {
 		if (node == null) {
 			return 0;
 		}
-		if (HeadingUtils.isDetectedHeadingNode(node)) {
+		if (HeadingUtils.isDetectedHeadingNode(node) || (StaticContainers.isDataLoader() && node.getSemanticType() == SemanticType.LIST)) {
 			return 0;
 		}
 		INode accumulatedNode = StaticContainers.getAccumulatedNodeMapper().get(node);
@@ -79,7 +80,7 @@ public class CaptionUtils {
 				(textNode.getLinesNumber() - 1) * (textNode.getLinesNumber() - 1));
 	}
 
-	private static boolean isContaining(SemanticTextNode textNode, BoundingBox imageBoundingBox) {
+	public static boolean isContaining(SemanticTextNode textNode, BoundingBox imageBoundingBox) {
 		double tol = WITH_TOLERANCE_FACTOR * textNode.getFontSize();
 		return (imageBoundingBox.getLeftX() + tol > textNode.getLeftX() &&
 				imageBoundingBox.getRightX() < textNode.getRightX() + tol);
@@ -89,6 +90,12 @@ public class CaptionUtils {
 		double tol = WITH_TOLERANCE_FACTOR * textNode.getFontSize();
 		return (textNode.getLeftX() + tol > imageBoundingBox.getLeftX() &&
 				textNode.getRightX() < imageBoundingBox.getRightX() + tol);
+	}
+
+	public static boolean isContaining(TextLine firstLine, TextLine secondLine) {
+		double tol = WITH_TOLERANCE_FACTOR * firstLine.getFontSize();
+		return (secondLine.getLeftX() + tol > firstLine.getLeftX() &&
+				secondLine.getRightX() < firstLine.getRightX() + tol);
 	}
 
 	private static boolean areStrongCenterOverlapping(SemanticTextNode textNode, BoundingBox imageBoundingBox) {
@@ -117,6 +124,11 @@ public class CaptionUtils {
 			return true;
 		}
 		return false;
+	}
+
+	public static boolean areOverlapping(TextLine textLine, BoundingBox boundingBox) {
+		double tol = WITH_TOLERANCE_FACTOR * textLine.getFontSize();
+		return (textLine.getLeftX() + tol < boundingBox.getRightX() && boundingBox.getLeftX() + tol < textLine.getRightX());
 	}
 
 	private static boolean areOverlapping(SemanticTextNode textNode, SemanticFigure imageNode) {
@@ -159,7 +171,7 @@ public class CaptionUtils {
 		return 0.0;
 	}
 
-	private static double captionHorizontalProbability(SemanticTextNode textNode, BoundingBox imageBoundingBox) {
+	public static double captionHorizontalProbability(SemanticTextNode textNode, BoundingBox imageBoundingBox) {
 		if (isContaining(imageBoundingBox, textNode) && areStrongCenterOverlapping(textNode, imageBoundingBox)) {
 			return CAPTION_PROBABILITY_PARAMS[0];
 		}
