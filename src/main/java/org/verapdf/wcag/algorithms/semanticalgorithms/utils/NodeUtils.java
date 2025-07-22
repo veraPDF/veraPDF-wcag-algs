@@ -37,22 +37,24 @@ public class NodeUtils {
 		} else {
 			headingProbability += Math.min(headingProbability(textNode, previousNode), headingProbability(textNode, nextNode));
 		}
-		if (textNode.hasFullLines()) {
-			headingProbability += HEADING_PROBABILITY_PARAMS[0];
-		} else if (textNode.getFirstLine().isLineStart()) {
-			headingProbability += HEADING_PROBABILITY_PARAMS[8];
-		} else if (!textNode.getFirstLine().isLineStart() && !textNode.getLastLine().isLineEnd()) {
-			headingProbability -= HEADING_PROBABILITY_PARAMS[9];
-		}
-		if (textNode.isStartsWithArabicNumber()) {
-			headingProbability += HEADING_PROBABILITY_PARAMS[2];
-		}
-		if (HeadingUtils.isInitialHeadingNode(initialNode)) {
-			headingProbability += HEADING_PROBABILITY_PARAMS[3];
-		}
-		INode nextNeighbor = getNextNonEmptyNode(initialNode);
-		if (nextNeighbor != null && initialNode.getPageNumber() != null && !initialNode.getPageNumber().equals(nextNeighbor.getPageNumber())) {
-			headingProbability -= HEADING_PROBABILITY_PARAMS[7];
+		if (!StaticContainers.isDataLoader()) {
+			if (textNode.hasFullLines()) {
+				headingProbability += HEADING_PROBABILITY_PARAMS[0];
+			} else if (textNode.getFirstLine().isLineStart()) {
+				headingProbability += HEADING_PROBABILITY_PARAMS[8];
+			} else if (!textNode.getFirstLine().isLineStart() && !textNode.getLastLine().isLineEnd()) {
+				headingProbability -= HEADING_PROBABILITY_PARAMS[9];
+			}
+			if (textNode.isStartsWithArabicNumber()) {
+				headingProbability += HEADING_PROBABILITY_PARAMS[2];
+			}
+			if (HeadingUtils.isInitialHeadingNode(initialNode)) {
+				headingProbability += HEADING_PROBABILITY_PARAMS[3];
+			}
+			INode nextNeighbor = getNextNonEmptyNode(initialNode);
+			if (nextNeighbor != null && initialNode.getPageNumber() != null && !initialNode.getPageNumber().equals(nextNeighbor.getPageNumber())) {
+				headingProbability -= HEADING_PROBABILITY_PARAMS[7];
+			}
 		}
 		return Math.max(Math.min(headingProbability * getLinesNumberHeadingProbability(textNode), 1.0), 0.0);
 	}
