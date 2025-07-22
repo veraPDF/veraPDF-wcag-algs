@@ -5,6 +5,7 @@ import org.verapdf.wcag.algorithms.entities.SemanticHeading;
 import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
 import java.awt.*;
@@ -29,7 +30,8 @@ public class NodeUtils {
 	public static double headingProbability(SemanticTextNode textNode, SemanticTextNode previousNode, SemanticTextNode nextNode,
 											INode initialNode) {
 		double headingProbability = 0.0;
-		if (previousNode instanceof SemanticHeading) {
+		if (previousNode instanceof SemanticHeading || 
+				(previousNode != null && previousNode.getSemanticType() == SemanticType.HEADING)) {
 			if (nextNode == null) {
 				return 0.0;
 			}
