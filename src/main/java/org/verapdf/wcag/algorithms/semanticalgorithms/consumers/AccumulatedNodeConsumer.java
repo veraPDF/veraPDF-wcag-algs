@@ -195,7 +195,7 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 				child.getSemanticType() == SemanticType.SPAN || child.getSemanticType() == null;
 	}
 
-	private SemanticPart buildPartFromNode(INode node) {
+	public static SemanticPart buildPartFromNode(INode node) {
 		if (isNullableSemanticType(node)) {
 			return null;
 		}
@@ -206,7 +206,7 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 		return null;
 	}
 
-	private double toPartMergeProbability(SemanticPart part, INode node) {
+	public static double toPartMergeProbability(SemanticPart part, INode node) {
 		if (isNullableSemanticType(node)) {
 			return 0d;
 		}
@@ -216,7 +216,7 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 		return 0d;
 	}
 
-	private boolean isNullableSemanticType(INode node) {
+	private static boolean isNullableSemanticType(INode node) {
 		if (node.getSemanticType() == null) {
 			LOGGER.log(Level.WARNING, "Node with nullable semantic type: {}", node);
 			return true;
@@ -224,7 +224,7 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 		return false;
 	}
 
-	private double toTextNodeMergeProbability(SemanticPart currentTextNode, SemanticTextNode nextTextNode) {
+	public static double toTextNodeMergeProbability(SemanticPart currentTextNode, SemanticTextNode nextTextNode) {
 		if (nextTextNode.isEmpty()) {
 			return 1;
 		}
@@ -242,7 +242,7 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 		double footnoteProbability = ChunksMergeUtils.getFootnoteProbability(currentTextNode, nextTextNode,
 		                                                                     lastLine, nextLine);
 		double mergeProbability;
-		if (footnoteProbability > Math.max(toColumnsMergeProbability, Math.max(oneLineProbability,
+		if (!StaticContainers.isDataLoader() && footnoteProbability > Math.max(toColumnsMergeProbability, Math.max(oneLineProbability,
 		                                                                       differentLinesProbability)) &&
 		    footnoteProbability > FOOTNOTE_MIN_PROBABILITY_THRESHOLD) {
 			mergeProbability = footnoteProbability;
@@ -307,7 +307,7 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 		return (nextTextNode.getCorrectSemanticScore() == null) ? mergeProbability : (Math.min(mergeProbability, nextTextNode.getCorrectSemanticScore()));
 	}
 
-	private void updateTextChunksFormat(SemanticTextNode textNode) {
+	private static void updateTextChunksFormat(SemanticTextNode textNode) {
 		TextFormat format = textNode.getTextFormat();
 		TextLine line = textNode.getFirstLine();
 		for (TextChunk chunk : line.getTextChunks()) {
