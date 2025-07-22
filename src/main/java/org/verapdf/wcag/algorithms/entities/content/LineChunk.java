@@ -12,6 +12,7 @@ public class LineChunk extends InfoChunk {
 	public static final int BUTT_CAP_STYLE = 0;
 	public static final int ROUND_CAP_STYLE = 1;
 	public static final int PROJECTING_SQUARE_CAP_STYLE = 2;
+	public static final double TABLE_BORDER_EPSILON = 0.01;
 
 	private final Vertex start;
 	private final Vertex end;
@@ -124,6 +125,9 @@ public class LineChunk extends InfoChunk {
 	@Override
 	public String toString() {
 		return "LineChunk{" +
+				(isHorizontalLine ? "horizontal, " : "") +
+				(isVerticalLine ? "vertical, " : "") +
+				(isSquare ? "square, " : "") +
 				"startX=" + start.getX() +
 				", startY=" + start.getY() +
 				", endX=" + end.getX() +
@@ -142,12 +146,12 @@ public class LineChunk extends InfoChunk {
 	}
 
 	public static boolean haveIntersection(LineChunk horizontalLine, LineChunk verticalLine) {
-		if (verticalLine.getRightX() + NodeUtils.EPSILON < horizontalLine.getBoundingBox().getLeftX() ||
-				verticalLine.getLeftX() - NodeUtils.EPSILON > horizontalLine.getBoundingBox().getRightX()) {
+		if (verticalLine.getRightX() + TABLE_BORDER_EPSILON < horizontalLine.getBoundingBox().getLeftX() ||
+				verticalLine.getLeftX() - TABLE_BORDER_EPSILON > horizontalLine.getBoundingBox().getRightX()) {
 			return false;
 		}
-		if (horizontalLine.getTopY() + NodeUtils.EPSILON < verticalLine.getBoundingBox().getBottomY() ||
-				horizontalLine.getBottomY() - NodeUtils.EPSILON > verticalLine.getBoundingBox().getTopY()) {
+		if (horizontalLine.getTopY() + TABLE_BORDER_EPSILON < verticalLine.getBoundingBox().getBottomY() ||
+				horizontalLine.getBottomY() - TABLE_BORDER_EPSILON > verticalLine.getBoundingBox().getTopY()) {
 			return false;
 		}
 		return true;
