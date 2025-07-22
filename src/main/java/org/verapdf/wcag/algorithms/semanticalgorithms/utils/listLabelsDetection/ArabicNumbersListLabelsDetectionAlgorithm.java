@@ -139,6 +139,11 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
         return null;
     }
 
+    @Override
+    public int recalculatePrefixLength(String string, int prefixLength) {
+        return getNotRegexStartLength(string, prefixLength);
+    }
+
     private static int getNumberOfStartZeros(String s) {
         for (int i = 0; i < s.length(); i++) {
             if (s.charAt(i) != '0') {

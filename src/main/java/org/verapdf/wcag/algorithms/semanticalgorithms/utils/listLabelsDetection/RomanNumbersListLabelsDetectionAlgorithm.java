@@ -48,7 +48,7 @@ public class RomanNumbersListLabelsDetectionAlgorithm extends LettersListLabelsD
     }
 
     @Override
-    protected Boolean checkPrefixAndSuffix(String prefix, String suffix) {
+    public Boolean checkPrefixAndSuffix(String prefix, String suffix) {
         return (prefix.isEmpty() || !Character.isLetter(prefix.charAt(prefix.length() - 1))) &&
                (suffix.isEmpty() || !Character.isLetter(suffix.charAt(0)));
     }
