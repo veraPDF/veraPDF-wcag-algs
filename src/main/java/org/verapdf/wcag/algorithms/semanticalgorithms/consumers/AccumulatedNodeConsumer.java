@@ -233,10 +233,15 @@ public class AccumulatedNodeConsumer extends WCAGConsumer implements Consumer<IN
 		TextLine nextLine = nextTextNode.getFirstLine();
 		double oneLineProbability = ChunksMergeUtils.countOneLineProbability(nextTextNode, lastLine, nextLine);
 		double differentLinesProbability;
-		if (currentTextNode.getLastColumn().getLinesNumber() > 1 && nextTextNode.getFirstColumn().getLinesNumber() > 1) {
+		if (currentTextNode.getLastColumn().getLastTextBlock().getLinesNumber() > 1 && (StaticContainers.isDataLoader() || nextTextNode.getFirstColumn().getLinesNumber() > 1)) {
 			differentLinesProbability = ChunksMergeUtils.toParagraphMergeProbability(lastLine, nextLine);
 		} else {
 			differentLinesProbability = ChunksMergeUtils.mergeLeadingProbability(lastLine, nextLine);
+		}
+		if (StaticContainers.isDataLoader()) {
+			if (!CaptionUtils.areOverlapping(lastLine, nextTextNode.getBoundingBox())) {
+				differentLinesProbability = 0d;
+			}
 		}
 		double toColumnsMergeProbability = ChunksMergeUtils.toColumnsMergeProbability(lastLine, nextLine);
 		double footnoteProbability = ChunksMergeUtils.getFootnoteProbability(currentTextNode, nextTextNode,
