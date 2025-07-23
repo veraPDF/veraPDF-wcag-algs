@@ -10,6 +10,13 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainer
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ArabicNumbersListLabelsDetectionAlgorithm;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.ListLabelsDetectionAlgorithm;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class CaptionUtils {
 
 	private static final double FLOATING_POINT_OPERATIONS_EPS = 1e-7;
@@ -19,8 +26,25 @@ public class CaptionUtils {
 	private static final double[] DEFAULT_INTERVAL_AFTER_RIGHT_IMAGE_SIDE = {0, 1.8};
 	private static final double IMAGE_INTERVAL_STANDARD = 1;
 	private static final double IMAGE_INTERVAL_SIDE_STANDARD = 1;
-	private static final double[] CAPTION_PROBABILITY_PARAMS = {1.0, 0.95, 0.9, 0.85, 0.2, 0.1, 0.03};
+	private static final double[] CAPTION_PROBABILITY_PARAMS = {1.0, 0.95, 0.9, 0.85, 0.2, 0.1, 0.03, 0.03};
 	private static final double WITH_TOLERANCE_FACTOR = 0.33;
+
+	private static final String CAPTION_REGEX = "^\\s*(\\S+)\\s*(\\d*)\\s*([.:]?)\\s*(\\S*)";
+
+	private static final Pattern PATTERN = Pattern.compile(CAPTION_REGEX);
+
+	private static final Map<SemanticType, List<String>> OBJECT_NAMES = new HashMap<>();
+
+	static {
+		List<String> tableNames = new ArrayList<>();
+		tableNames.add("table");
+		OBJECT_NAMES.put(SemanticType.TABLE, tableNames);
+
+		List<String> figureNames = new ArrayList<>();
+		figureNames.add("figure");
+		figureNames.add("image");
+		OBJECT_NAMES.put(SemanticType.FIGURE, figureNames);
+	}
 
 	public static double imageCaptionProbability(INode node, SemanticFigure imageNode) {
 		if (node == null) {
@@ -34,7 +58,7 @@ public class CaptionUtils {
 			return 0.0;
 		}
 		SemanticTextNode textNode = (SemanticTextNode) accumulatedNode;
-		double captionContentProbability = captionContentProbability(textNode, SemanticType.FIGURE.getValue());
+		double captionContentProbability = captionContentProbability(textNode, imageNode.getSemanticType());
 		double linesNumberCaptionProbability = getLinesNumberCaptionProbability(textNode);
 
 		double captionProbability = captionVerticalProbability(textNode, imageNode.getBoundingBox());
@@ -71,12 +95,12 @@ public class CaptionUtils {
 		double captionProbability = captionVerticalProbability(textNode, tableBoundingBox);
 		captionProbability *= captionHorizontalProbability(textNode, tableBoundingBox);
 		captionProbability *= getLinesNumberCaptionProbability(textNode);
-		captionProbability += captionContentProbability(textNode, SemanticType.TABLE.getValue());
+		captionProbability += captionContentProbability(textNode, SemanticType.TABLE);
 		return Math.min(captionProbability, 1.0);
 	}
 
 	private static double getLinesNumberCaptionProbability(SemanticTextNode textNode) {
-		return Math.max(0, 1 - CAPTION_PROBABILITY_PARAMS[6] *
+		return Math.max(0, 1 - (StaticContainers.isDataLoader() ? CAPTION_PROBABILITY_PARAMS[7] : CAPTION_PROBABILITY_PARAMS[6]) *
 				(textNode.getLinesNumber() - 1) * (textNode.getLinesNumber() - 1));
 	}
 
@@ -158,17 +182,39 @@ public class CaptionUtils {
 		return 0.0;
 	}
 
-	public static double captionContentProbability(SemanticTextNode textNode, String prefix) {
-		String value = textNode.getFirstLine().getValue().trim();
-		if (value.startsWith(prefix)) {
-			value = value.substring(prefix.length()).trim();
-			if (!value.isEmpty() && ListLabelsDetectionAlgorithm.getRegexStartLength(value,
-					ArabicNumbersListLabelsDetectionAlgorithm.ARABIC_NUMBER_REGEX) > 0) {
-				return CAPTION_PROBABILITY_PARAMS[4];
+	public static double captionContentProbability(SemanticTextNode textNode, SemanticType type) {
+		if (!StaticContainers.isDataLoader()) {
+			String value = textNode.getFirstLine().getValue().trim();
+			if (value.startsWith(type.getValue())) {
+				value = value.substring(type.getValue().length()).trim();
+				if (!value.isEmpty() && ListLabelsDetectionAlgorithm.getRegexStartLength(value,
+						ArabicNumbersListLabelsDetectionAlgorithm.ARABIC_NUMBER_REGEX) > 0) {
+					return CAPTION_PROBABILITY_PARAMS[4];
+				}
+				return CAPTION_PROBABILITY_PARAMS[5];
 			}
-			return CAPTION_PROBABILITY_PARAMS[5];
+			return 0.0;
 		}
-		return 0.0;
+		Matcher matcher = PATTERN.matcher(textNode.getFirstLine().getValue());
+		if (!matcher.find()) {
+			return 0.0;
+		}
+
+		List<String> objectNames = OBJECT_NAMES.get(type);
+		if (!objectNames.contains(matcher.group(1).toLowerCase())){
+			return 0.0;
+		}
+		
+		double captionProbability = CAPTION_PROBABILITY_PARAMS[5];
+		if (!matcher.group(2).isEmpty()) {
+			captionProbability += CAPTION_PROBABILITY_PARAMS[5];
+		}
+
+		if (matcher.group(4).isEmpty() == matcher.group(3).isEmpty()) {
+			captionProbability += CAPTION_PROBABILITY_PARAMS[5];
+		}
+
+		return captionProbability;
 	}
 
 	public static double captionHorizontalProbability(SemanticTextNode textNode, BoundingBox imageBoundingBox) {
