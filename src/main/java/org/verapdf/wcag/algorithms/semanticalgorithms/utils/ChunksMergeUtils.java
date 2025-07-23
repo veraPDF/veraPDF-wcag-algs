@@ -30,6 +30,8 @@ public class ChunksMergeUtils {
 	private static final double[] SUBSCRIPT_PROBABILITY_PARAMS = {0.71932, 1.0483, 0.37555};
 	private static final double[] COLUMNS_PROBABILITY_PARAMS = {0.75, 0.75};
 	private static final double[] FONT_SIZE_DIFFERENCE_PARAMS = {0.95, 3.97};
+	private static final double DIFFERENT_LINES_PARAM = 1.3;
+	private static final double ALIGNMENT_PARAM = 0.02;
 	private static final double SUPERSCRIPT_BASELINE_THRESHOLD = 0.1;
 	private static final double SUPERSCRIPT_FONTSIZE_THRESHOLD = 0.1;
 	private static final double SUBSCRIPT_BASELINE_THRESHOLD = 0.08;
@@ -374,16 +376,49 @@ public class ChunksMergeUtils {
 		return null;
 	}
 
+	public static TextAlignment getAlignment(TextLine previousLine, TextLine currentLine) {
+		double maxFontSize = Math.max(previousLine.getFontSize(), currentLine.getFontSize());
+		double delta = maxFontSize * ALIGNMENT_PARAM;
+		boolean isLeft = NodeUtils.areCloseNumbers(previousLine.getLeftX(), currentLine.getLeftX(), delta);
+		boolean isRight = NodeUtils.areCloseNumbers(previousLine.getRightX(), currentLine.getRightX(), delta);
+		if (isLeft && isRight) {
+			return TextAlignment.JUSTIFY;
+		}
+		if (isLeft) {
+			return TextAlignment.LEFT;
+		}
+		if (isRight) {
+			return TextAlignment.RIGHT;
+		}
+		boolean isCenter = NodeUtils.areCloseNumbers(previousLine.getCenterX(), currentLine.getCenterX(), delta);
+		if (isCenter) {
+			return TextAlignment.CENTER;
+		}
+		return null;
+	}
+
 	public static double mergeLeadingProbability(TextBlock x, TextLine y) {
 		double maxBaseLinesDifference = 0.0d;
 		for (int lineNumber = 0; lineNumber < x.getLinesNumber() - 1; lineNumber++) {
 			maxBaseLinesDifference = Math.max(maxBaseLinesDifference,
-					x.getLines().get(lineNumber).getBaseLine() - x.getLines().get(lineNumber + 1).getBaseLine());
+					Math.abs(x.getLines().get(lineNumber).getBaseLine() - x.getLines().get(lineNumber + 1).getBaseLine()));
 		}
-		if (x.getLastLine().getBaseLine() - y.getBaseLine() > maxBaseLinesDifference * 1.15d) {
-			return 0.0;
+		if (Math.abs(x.getLastLine().getBaseLine() - y.getBaseLine()) > maxBaseLinesDifference * DIFFERENT_LINES_PARAM) {
+			return 0.0d;
 		}
-		return 1.0;
+		return 1.0d;
+	}
+
+	public static double mergeLeadingProbability(TextLine x, TextBlock y) {
+		double maxBaseLinesDifference = 0.0d;
+		for (int lineNumber = 0; lineNumber < y.getLinesNumber() - 1; lineNumber++) {
+			maxBaseLinesDifference = Math.max(maxBaseLinesDifference,
+					Math.abs(y.getLines().get(lineNumber).getBaseLine() - y.getLines().get(lineNumber + 1).getBaseLine()));
+		}
+		if (Math.abs(x.getBaseLine() - y.getFirstLine().getBaseLine()) > maxBaseLinesDifference * DIFFERENT_LINES_PARAM) {
+			return 0.0d;
+		}
+		return 1.0d;
 	}
 
 	public static double mergeLeadingProbability(TextLine x, TextLine y) {
