@@ -1,10 +1,8 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
 import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
-import org.verapdf.wcag.algorithms.entities.content.TextChunk;
-import org.verapdf.wcag.algorithms.entities.content.TextColumn;
-import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
-import org.verapdf.wcag.algorithms.entities.content.TextLine;
+import org.verapdf.wcag.algorithms.entities.content.*;
+import org.verapdf.wcag.algorithms.entities.enums.TextAlignment;
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
@@ -22,6 +20,7 @@ public class ChunksMergeUtils {
 	private static final double[] DEFAULT_FONT_CHAR_SPACING_INTERVAL = {0, 0.67};
 	private static final double[] DATA_LOADER_DEFAULT_FONT_CHAR_SPACING_INTERVAL = {0, 10};
 	private static final double[] DEFAULT_FONT_LEADING_INTERVAL = {0.7, 1.51};
+	private static final double[] DATA_LOADER_DEFAULT_FONT_LEADING_INTERVAL = {0.7, 2.2};
 	private static final double[] PART_FONT_LEADING_INTERVAL = {0.2, 1.5};
 
 	private static final double TO_LINE_PROBABILITY_THRESHOLD = 0.75;
@@ -325,8 +324,70 @@ public class ChunksMergeUtils {
 		return mergeByFontSizeProbability(x, y);
 	}
 
+	public static TextAlignment getAlignment(TextBlock textBlock, TextLine currentLine) {
+		TextLine lastLine = textBlock.getLastLine();
+		double maxFontSize = Math.max(lastLine.getFontSize(), currentLine.getFontSize());
+		double delta = maxFontSize * 0.00013;
+		if (textBlock.getTextAlignment() == null || textBlock.getTextAlignment() == TextAlignment.JUSTIFY) {
+			boolean isLeft = NodeUtils.areCloseNumbers(lastLine.getLeftX(), currentLine.getLeftX(), delta);
+			boolean isRight = NodeUtils.areCloseNumbers(lastLine.getRightX(), currentLine.getRightX(), delta);
+			if (isLeft && isRight) {
+				return TextAlignment.JUSTIFY;
+			}
+			if (isLeft) {
+				//move to different method?
+				//this is last line of paragraph
+				//how to remember this information
+				return TextAlignment.JUSTIFY; //maybe should be TextAlignment.LEFT;
+			}
+			if (isRight) {
+				return TextAlignment.RIGHT;
+			}
+			boolean isCenter = NodeUtils.areCloseNumbers(lastLine.getCenterX(), currentLine.getCenterX(), delta);
+			if (isCenter) {
+				return TextAlignment.CENTER;
+			}
+			return null;
+		}
+		switch (textBlock.getTextAlignment()) {
+			case LEFT:
+				if (NodeUtils.areCloseNumbers(lastLine.getLeftX(), currentLine.getLeftX(), delta)) {
+					return TextAlignment.LEFT;
+				}
+				break;
+			case RIGHT:
+				if (NodeUtils.areCloseNumbers(lastLine.getRightX(), currentLine.getRightX(), delta)) {
+					if (textBlock.getLinesNumber() == 2 && NodeUtils.areCloseNumbers(lastLine.getLeftX(), currentLine.getLeftX(), delta)) {
+						//move to different method?
+						//first line contains indentation
+						return TextAlignment.JUSTIFY;
+					}
+					return TextAlignment.RIGHT;
+				}
+				break;
+			case CENTER:
+				if (NodeUtils.areCloseNumbers(lastLine.getCenterX(), currentLine.getCenterX(), delta)) {
+					return TextAlignment.CENTER;
+				}
+				break;
+		}
+		return null;
+	}
+
+	public static double mergeLeadingProbability(TextBlock x, TextLine y) {
+		double maxBaseLinesDifference = 0.0d;
+		for (int lineNumber = 0; lineNumber < x.getLinesNumber() - 1; lineNumber++) {
+			maxBaseLinesDifference = Math.max(maxBaseLinesDifference,
+					x.getLines().get(lineNumber).getBaseLine() - x.getLines().get(lineNumber + 1).getBaseLine());
+		}
+		if (x.getLastLine().getBaseLine() - y.getBaseLine() > maxBaseLinesDifference * 1.15d) {
+			return 0.0;
+		}
+		return 1.0;
+	}
+
 	public static double mergeLeadingProbability(TextLine x, TextLine y) {
-		return mergeLeadingProbability(x, y, DEFAULT_FONT_LEADING_INTERVAL);
+		return mergeLeadingProbability(x, y, StaticContainers.isDataLoader() ? DATA_LOADER_DEFAULT_FONT_LEADING_INTERVAL : DEFAULT_FONT_LEADING_INTERVAL);
 	}
 
 	public static double mergeLeadingProbability(TextLine x, TextLine y, double[] fontLeadingInterval) {
