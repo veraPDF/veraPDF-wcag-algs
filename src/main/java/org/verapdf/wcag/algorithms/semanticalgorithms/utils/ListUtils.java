@@ -172,14 +172,31 @@ public class ListUtils {
 					numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
 					listItemInfos = new ArrayList<>();
 				}
-				listItemInfos.add(info);
 				if (!isOneColumn(line1, line2)) {
-					numberOfColumns += lastChildNumberOfColumns + 1;
+					if (StaticContainers.isDataLoader()) {
+						updateListIntervalCollection(listIntervalsCollection, listInterval, listItemInfos, numberOfColumns);
+						right = -Double.MAX_VALUE;
+						numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
+						listItemInfos = new ArrayList<>();
+						listItemInfos.add(info);
+						previousItemInfo = info;
+						continue;
+					} else {
+						numberOfColumns += lastChildNumberOfColumns + 1;
+					}
 				}
+				listItemInfos.add(info);
 				right = Math.max(right, accumulatedChild.getRightX());
 			} else {
-				numberOfColumns++;
-				right = accumulatedChild.getRightX();
+				if (StaticContainers.isDataLoader()) {
+					updateListIntervalCollection(listIntervalsCollection, listInterval, listItemInfos, numberOfColumns);
+					right = -Double.MAX_VALUE;
+					numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
+					listItemInfos = new ArrayList<>();
+				} else {
+					numberOfColumns++;
+					right = accumulatedChild.getRightX();
+				}
 				listItemInfos.add(info);
 			}
 			previousItemInfo = info;
