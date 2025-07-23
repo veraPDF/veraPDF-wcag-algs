@@ -27,7 +27,7 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 		if (new SemanticDocumentPreprocessingConsumer().run()) {
 			return;
 		}
-		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer("")) {
+		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer()) {
 			if (contrastRatioConsumer.run()) {
 				return;
 			}

@@ -51,20 +51,20 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 	private final Float imagePixelSize;
 	private final boolean enableAntialias;
 
-	public ContrastRatioConsumer(String sourcePdfPath) throws IOException {
-		this(sourcePdfPath, "", null);
+	public ContrastRatioConsumer() throws IOException {
+		this("", false, null);
 	}
 
-	public ContrastRatioConsumer(String sourcePdfPath, Float imagePixelSize) throws IOException {
-		this(sourcePdfPath, "", imagePixelSize);
+	public ContrastRatioConsumer(String sourcePdfPath) throws IOException {
+		this(sourcePdfPath, "", false, null);
 	}
-	
-	public ContrastRatioConsumer(String sourcePdfPath, String password, Float imagePixelSize) throws IOException {
-		this(password, false, imagePixelSize);
+
+	public ContrastRatioConsumer(String sourcePdfPath, String password, boolean enableAntialias, Float imagePixelSize) throws IOException {
+		this(password, enableAntialias, imagePixelSize);
 		this.document = Loader.loadPDF(new RandomAccessReadBuffer(new FileInputStream(sourcePdfPath)));
 	}
 
-	public ContrastRatioConsumer(String password, boolean enableAntialias, Float imagePixelSize) throws IOException {
+	public ContrastRatioConsumer(String password, boolean enableAntialias, Float imagePixelSize) {
 		this.fileName = StaticContainers.getFileName();
 		this.processedTextChunks = 0;
 		this.textChunksNumber = StaticContainers.getTextChunksNumber();
