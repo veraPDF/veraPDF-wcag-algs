@@ -1,5 +1,6 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
+import org.verapdf.wcag.algorithms.entities.lists.TextListInterval;
 import org.verapdf.wcag.algorithms.entities.content.InfoChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
@@ -16,8 +17,8 @@ public class ListLabelsUtils {
 	private static final Set<Character> labels = new HashSet<>(
 			Arrays.asList('\u002D', '\u2022', '\u25CF', '\u2714', '\u2717', '\u2794', '\u27A2', '\uE00A', '\uE00C',
 					'\uF076', '\u2588', '\u25A0', '\u2013', '\uF0B7', '\uF0A7', '\u25A1', '\uF0A1', '\u25AA',
-					'\u25FC', '\u25CB', '\u203B', '\u274D', '\u25E6', '\u25B8', '\u3147', '\uFF4F', '\u002A', '\u25C7'));
-	//office labels examples (-, •, ✔, ✗, ●, ➔, ➢), pdf files labels examples (█, ■, , □, , ▪, ◼, ○, ※, ❍, ㅇ, ▸, ◦, ｏ, *, '◇')
+					'\u25FC', '\u25CB', '\u203B', '\u274D', '\u25E6', '\u25B8', '\u3147', '\uFF4F', '\u002A', '\u25C7', '\u25ef'));
+	//office labels examples (-, •, ✔, ✗, ●, ➔, ➢), pdf files labels examples (█, ■, , □, , ▪, ◼, ○, ※, ❍, ㅇ, ▸, ◦, ｏ, *, '◇', '◯')
 	private static final Character o =  '\u006F';
 
 	public static boolean isListLabel(String value) {
@@ -76,6 +77,82 @@ public class ListLabelsUtils {
 				new AlfaLettersListLabelsDetectionAlgorithm2(increment).isListLabels(labels, commonStartLength, commonEndLength) ||
 				new RomanNumbersLowerCaseListLabelsDetectionAlgorithm(increment).isListLabels(labels, commonStartLength, commonEndLength) ||
 				new RomanNumbersUpperCaseListLabelsDetectionAlgorithm(increment).isListLabels(labels, commonStartLength, commonEndLength);
+	}
+
+	public static boolean isTwoListItemsOfOneList(TextListInterval interval, ListItemTextInfo listItem, Boolean isSequential, boolean isUnordered) {
+		ListItemTextInfo previousListItem = interval.getLastListItemInfo();
+		String style = interval.getNumberingStyle();
+		if ((NumberingStyleNames.UNKNOWN.equals(style) && isUnordered)) {
+			if (isUnorderedListItems(interval, listItem, previousListItem)) {
+				return true;
+			}
+		} else if (NumberingStyleNames.UNORDERED.equals(style)) {
+			return isUnordered && isUnorderedListItems(interval, listItem, previousListItem);
+		}
+		String string1 = previousListItem.getListItem();
+		String string2 = listItem.getListItem();
+		int commonStartLength = getCommonStartLength(string1, string2);
+		ListItemTextInfo previousItem = null;
+		ListItemTextInfo currentItem = null;
+		ListLabelsDetectionAlgorithm algo = null;
+		if (NumberingStyleNames.UNKNOWN.equals(style)) {
+			for (Map.Entry<String, ListLabelsDetectionAlgorithm> entry : NumberingStyleNames.getMap().entrySet()) {
+				ListLabelsDetectionAlgorithm currentAlgo = entry.getValue();
+				previousItem = currentAlgo.getListItemInfo(previousListItem, commonStartLength);
+				if (previousItem == null) {
+					continue;
+				}
+				currentItem = currentAlgo.getListItemInfo(listItem, commonStartLength);
+				if (currentItem != null) {
+					style = entry.getKey();
+					algo = currentAlgo;
+					break;
+				}
+			}
+		} else {
+			previousItem = previousListItem;
+			algo = NumberingStyleNames.getAlgo(interval.getNumberingStyle());
+			currentItem = algo.getListItemInfo(listItem, commonStartLength);
+		}
+		if (!NumberingStyleNames.KOREAN_LETTERS.equals(style)) {
+			isSequential = true;
+		}
+		if (previousItem == null || currentItem == null) {
+			return false;
+		}
+		if (previousListItem.getPrefix() != null && !Objects.equals(previousListItem.getPrefix(), previousItem.getPrefix())) {
+			return false;
+		}
+		if (currentItem.getNumber() <= previousItem.getNumber()) {
+			return false;
+		}
+		if (previousItem.getNumber() + 1 != currentItem.getNumber() && isSequential) {
+			return false;
+		}
+		if (!previousItem.getSuffix().isEmpty() && !currentItem.getSuffix().isEmpty() &&
+				previousItem.getSuffix().charAt(0) != currentItem.getSuffix().charAt(0)) {
+			return false;
+		}
+		if (!algo.checkPrefixAndSuffix(previousItem.getPrefix(), previousItem.getSuffix()) ||
+				!algo.checkPrefixAndSuffix(currentItem.getPrefix(), currentItem.getSuffix())) {
+			return false;
+		}
+		interval.setLastListItemInfo(previousItem);
+		interval.setNumberingStyle(style);
+		interval.getListItemsInfos().add(currentItem);
+		return true;
+	}
+
+	private static boolean isUnorderedListItems(TextListInterval interval, ListItemTextInfo listItem, ListItemTextInfo previousListItem) {
+		List<ListItemTextInfo> items = new ArrayList<>(2);
+		items.add(previousListItem);
+		items.add(listItem);
+		if (!getItemsWithEqualsLabels(items).isEmpty()) {
+			interval.setNumberingStyle(NumberingStyleNames.UNORDERED);
+			interval.getListItemsInfos().add(listItem);
+			return true;
+		}
+		return false;
 	}
 
 	private static boolean isEqualsLabels(List<String> labels) {

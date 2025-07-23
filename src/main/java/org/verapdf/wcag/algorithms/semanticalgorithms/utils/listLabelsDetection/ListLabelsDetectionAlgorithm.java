@@ -87,6 +87,25 @@ public abstract class ListLabelsDetectionAlgorithm {
         return 0;
     }
 
+    public ListItemTextInfo getListItemInfo(ListItemTextInfo listItemTextInfo, int prefixLength) {
+        ListItemTextInfo newListItemTextInfo = new ListItemTextInfo(listItemTextInfo);
+        int newPrefixLength = recalculatePrefixLength(listItemTextInfo.getListItem(), prefixLength);
+        String substring = listItemTextInfo.getListItem().substring(newPrefixLength);
+        int regexStartLength = getRegexStartLength(substring);
+        if (regexStartLength == 0) {
+            return null;
+        }
+        newListItemTextInfo.setNumberedPart(substring.substring(0, regexStartLength));
+        Integer number = getNumberFromString(newListItemTextInfo.getNumberedPart());
+        if (number == null) {
+            return null;
+        }
+        newListItemTextInfo.setNumber(number);
+        newListItemTextInfo.setPrefix(listItemTextInfo.getListItem().substring(0, newPrefixLength));
+        newListItemTextInfo.setSuffix(substring.substring(regexStartLength));
+        return newListItemTextInfo;
+    }
+
     public int recalculatePrefixLength(String string, int prefixLength) {
         return prefixLength;
     }
