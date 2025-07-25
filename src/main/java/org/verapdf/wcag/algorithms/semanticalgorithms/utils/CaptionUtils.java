@@ -26,7 +26,7 @@ public class CaptionUtils {
 	private static final double[] DEFAULT_INTERVAL_AFTER_RIGHT_IMAGE_SIDE = {0, 1.8};
 	private static final double IMAGE_INTERVAL_STANDARD = 1;
 	private static final double IMAGE_INTERVAL_SIDE_STANDARD = 1;
-	private static final double[] CAPTION_PROBABILITY_PARAMS = {1.0, 0.95, 0.9, 0.85, 0.2, 0.1, 0.03, 0.03};
+	private static final double[] CAPTION_PROBABILITY_PARAMS = {1.0, 0.95, 0.9, 0.85, 0.2, 0.1, 0.03, 0.003};
 	private static final double WITH_TOLERANCE_FACTOR = 0.33;
 
 	private static final String CAPTION_REGEX = "^\\s*(\\S+)\\s*(\\d*)\\s*([.:]?)\\s*(\\S*)";
