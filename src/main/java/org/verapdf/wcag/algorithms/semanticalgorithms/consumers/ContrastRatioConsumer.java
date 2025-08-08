@@ -61,7 +61,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 
 	public ContrastRatioConsumer(String sourcePdfPath, String password, boolean enableAntialias, Float imagePixelSize) throws IOException {
 		this(password, enableAntialias, imagePixelSize);
-		this.document = Loader.loadPDF(new RandomAccessReadBuffer(new FileInputStream(sourcePdfPath)));
+		this.document = Loader.loadPDF(new RandomAccessReadBuffer(new FileInputStream(sourcePdfPath)), password);
 	}
 
 	public ContrastRatioConsumer(String password, boolean enableAntialias, Float imagePixelSize) {
