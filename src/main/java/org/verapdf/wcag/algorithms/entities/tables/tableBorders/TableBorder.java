@@ -490,7 +490,7 @@ public class TableBorder extends BaseObject {
         return yCoordinates.size();
     }
 
-    private void calculateCoordinatesUsingBoundingBoxesOfRowsAndColumns() {
+    public void calculateCoordinatesUsingBoundingBoxesOfRowsAndColumns() {
         this.yCoordinates.add(getTableRowTopY(0));
         this.yWidths.add(0.0d);
         for (int rowNumber = 0; rowNumber < numberOfRows - 1; rowNumber++) {
