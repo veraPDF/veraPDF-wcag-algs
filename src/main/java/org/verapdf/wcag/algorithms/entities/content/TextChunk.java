@@ -223,6 +223,9 @@ public class TextChunk extends TextInfoChunk {
         if (start == 0 && textChunk.getValue().length() == end) {
             return textChunk;
         }
+        if (start >= end) {
+            return null;
+        }
         TextChunk newTextChunk = new TextChunk(textChunk);
         newTextChunk.setValue(textChunk.getValue().substring(start, end));
         newTextChunk.setSymbolEnds(textChunk.getSymbolEnds().subList(start, end + 1));

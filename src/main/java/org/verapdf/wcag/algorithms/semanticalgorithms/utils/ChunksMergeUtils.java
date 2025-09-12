@@ -588,6 +588,9 @@ public class ChunksMergeUtils {
 	}
 
 	public static TextChunk getTrimTextChunk(TextChunk textChunk) {
+		if (textChunk == null) {
+			return null;
+		}
 		if (textChunk.isWhiteSpaceChunk()) {
 			return textChunk;
 		}
