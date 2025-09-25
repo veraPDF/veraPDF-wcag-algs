@@ -6,6 +6,7 @@ import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
 import java.awt.*;
@@ -21,6 +22,7 @@ public class NodeUtils {
 	private static final double[] HEADING_PROBABILITY_PARAMS = {0.3, 0.0291, 0.15, 0.27, 0.1, 0.25, 0.2, 0.5, 0.05, 0.1};
 	private static final double[] HEADING_PROBABILITY_PARAMS_SAME_FONT = {0.55, 0.15, 0.55, 0.4, 0.5, 0.15, 0.1};
 	private static final double[] HEADING_PROBABILITY_PARAMS_DIFF_FONT = {0.44, 0.1, 0.4, 0.23, 0.35, 0.1, 0.1};
+	public static final double HEADING_PROBABILITY_VERTICAL_GAP_BONUS = 0.32;
 	public static final double[] HEADING_EPSILONS = {0.05, 0.08};
 
 	public static final double BACKGROUND_FIRST_COLOR_EPSILON = 0.03;
@@ -99,6 +101,8 @@ public class NodeUtils {
 		} else if (!isUpperCaseString(textNode.getValue()) && isUpperCaseString(neighborTextNode.getValue())) {
 			probability -= HEADING_PROBABILITY_PARAMS[6];
 		}
+		probability += getVerticalGapBonus(textNode, neighborTextNode);
+
 		return probability;
 	}
 
@@ -183,6 +187,42 @@ public class NodeUtils {
 			}
 		}
 		return true;
+	}
+
+	private static double getVerticalGapBonus(SemanticTextNode textNode, SemanticTextNode neighborTextNode) {
+		double gap = verticalGap(textNode, neighborTextNode);
+		if (gap >= textNode.getFontSize()) {
+			return HEADING_PROBABILITY_VERTICAL_GAP_BONUS;
+		} else if (gap >= (textNode.getFontSize() / 2)) {
+			return HEADING_PROBABILITY_VERTICAL_GAP_BONUS / 2;
+		}
+		return 0.0;
+	}
+
+	private static double verticalGap(SemanticTextNode textNode, SemanticTextNode neighborTextNode) {
+		BoundingBox textBox = textNode.getBoundingBox();
+		BoundingBox neighborBox = neighborTextNode.getBoundingBox();
+		if (textBox == null || neighborBox == null) {
+			return 0.0;
+		}
+		if (overlapsVertically(textBox, neighborBox)) {
+			return 0.0;
+		}
+		if (textBox.getTopY() <= neighborBox.getBottomY()) {
+			return neighborBox.getBottomY() - textBox.getTopY();
+		}
+		if (neighborBox.getTopY() <= textBox.getBottomY()) {
+			return textBox.getBottomY() - neighborBox.getTopY();
+		}
+		return 0.0;
+	}
+
+	private static boolean overlapsVertically(BoundingBox first, BoundingBox second) {
+		if (first == null || second == null) {
+			return false;
+		}
+		return first.getBottomY() < second.getTopY() - EPSILON &&
+		       second.getBottomY() < first.getTopY() - EPSILON;
 	}
 
 	public static boolean hasSimilarBackgroundColor(Color firstColor, Color secondColor) {
