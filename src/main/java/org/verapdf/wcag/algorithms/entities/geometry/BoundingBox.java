@@ -484,6 +484,22 @@ public class BoundingBox {
         return yIntersection / getHeight();
     }
 
+    public double getVerticalGap(BoundingBox boundingBox) {
+        if (boundingBox == null) {
+            return 0.0;
+        }
+        if (areVerticalOverlapping(this, boundingBox)) {
+            return 0.0;
+        }
+        if (this.getTopY() <= boundingBox.getBottomY()) {
+            return boundingBox.getBottomY() - this.getTopY();
+        }
+        if (boundingBox.getTopY() <= this.getBottomY()) {
+            return this.getBottomY() - boundingBox.getTopY();
+        }
+        return 0.0;
+    }
+
     public String getLocation() {
         return ContextUtils.getContext(this);
     }

@@ -37,6 +37,20 @@ public class NodeUtilsTest {
     }
 
     @Test
+    public void headingProbabilityIsolatedWithBold() {
+        double[] prevBBox = {0, 120, 100, 130};
+        double[] curBBox = {0, 100, 80, 110};
+        double[] nextBBox = {0, 80, 100, 90};
+        SemanticTextNode prev = createTextNode("Paragraph", 10.0, 400.0, prevBBox);
+        SemanticTextNode cur = createTextNode("Heading", 10.0, 700.0, curBBox);
+        SemanticTextNode next = createTextNode("Paragraph", 10.0, 400.0, nextBBox);
+
+        double probability = NodeUtils.headingProbability(cur, prev, next, cur);
+
+        assertThat(probability).isGreaterThanOrEqualTo(HEADING_PROBABILITY);
+    }
+
+    @Test
     public void headingProbabilityPenalizesSmallerText() {
         double[] curBBox = {0, 100, 100, 110};
         double[] nextBBox = {0, 80, 100, 94};
@@ -50,7 +64,7 @@ public class NodeUtilsTest {
 
     @Test
     public void headingProbabilityDifferentFontWithBold() {
-        double[] curBBox = {0, 100, 100, 112};
+        double[] curBBox = {0, 100, 80, 112};
         double[] nextBBox = {0, 85, 100, 95};
         SemanticTextNode cur = createTextNode("Heading", 12.0, 700.0, curBBox, GRAY, "HeadingFont", null);
         SemanticTextNode next = createTextNode("Paragraph", 10.0, 400.0, nextBBox, GRAY, "BodyFont", null);
