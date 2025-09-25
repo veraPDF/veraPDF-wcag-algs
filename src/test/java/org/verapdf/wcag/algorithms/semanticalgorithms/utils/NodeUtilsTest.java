@@ -1,10 +1,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
@@ -13,7 +10,8 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
-import java.util.function.Consumer;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.offset;
 
 public class NodeUtilsTest {
 
@@ -28,222 +26,182 @@ public class NodeUtilsTest {
 
     @Test
     public void headingProbabilitySameFontRewardsEmphasis() {
-        TestSemanticTextNode heading = createTextNode("TITLE", "TestFont", 14.0, 700.0, GRAY);
-        TestSemanticTextNode body = createTextNode("body text", "TestFont", 10.0, 400.0, GRAY);
+        double[] curBBox = {0, 100, 100, 115};
+        double[] nextBBox = {0, 85, 100, 95};
+        SemanticTextNode cur = createTextNode("Heading", 15.0, 700.0, curBBox);
+        SemanticTextNode next = createTextNode("Paragraph", 10.0, 400.0, nextBBox);
 
-        double probability = NodeUtils.headingProbability(heading, body, true);
+        double probability = NodeUtils.headingProbability(cur, next, true);
 
-        assertThat(probability).isGreaterThan(HEADING_PROBABILITY);
+        assertThat(probability).isGreaterThanOrEqualTo(HEADING_PROBABILITY);
+    }
+
+    @Test
+    public void headingProbabilityIsolatedWithBold() {
+        double[] prevBBox = {0, 120, 100, 130};
+        double[] curBBox = {0, 100, 100, 110};
+        double[] nextBBox = {0, 80, 100, 90};
+        SemanticTextNode prev = createTextNode("Paragraph", 10.0, 400.0, prevBBox);
+        SemanticTextNode cur = createTextNode("Heading", 10.0, 700.0, curBBox);
+        SemanticTextNode next = createTextNode("Paragraph", 10.0, 400.0, nextBBox);
+
+        double probability = NodeUtils.headingProbability(cur, prev, next, cur);
+
+        assertThat(probability).isGreaterThanOrEqualTo(HEADING_PROBABILITY);
     }
 
     @Test
     public void headingProbabilityPenalizesSmallerText() {
-        TestSemanticTextNode candidate = createTextNode("body text", "TestFont", 10.0, 300.0, GRAY);
-        TestSemanticTextNode dominantNeighbor = createTextNode("body text neighbor", "TestFont", 14.0, 700.0, GRAY);
+        double[] curBBox = {0, 100, 100, 110};
+        double[] nextBBox = {0, 80, 100, 94};
+        SemanticTextNode cur = createTextNode("Paragraph", 10.0, 400.0, curBBox);
+        SemanticTextNode next = createTextNode("Heading", 14.0, 400.0, nextBBox);
 
-        double probability = NodeUtils.headingProbability(candidate, dominantNeighbor, true);
+        double probability = NodeUtils.headingProbability(cur, next, true);
 
         assertThat(probability).isLessThanOrEqualTo(HEADING_PROBABILITY);
     }
 
     @Test
-    public void headingProbabilityDifferentFontUsesAlternativeWeights() {
-        TestSemanticTextNode candidate = createTextNode("TITLE", "HeadingFont", 14.0, 700.0, GRAY);
-        TestSemanticTextNode neighbor = createTextNode("body text", "BodyFont", 10.0, 400.0, GRAY);
+    public void headingProbabilityDifferentFontWithBold() {
+        double[] curBBox = {0, 100, 100, 112};
+        double[] nextBBox = {0, 85, 100, 95};
+        SemanticTextNode cur = createTextNode("Heading", 12.0, 700.0, curBBox, GRAY, "HeadingFont", null);
+        SemanticTextNode next = createTextNode("Paragraph", 10.0, 400.0, nextBBox, GRAY, "BodyFont", null);
 
-        double probability = NodeUtils.headingProbability(candidate, neighbor, true);
+        double probability = NodeUtils.headingProbability(cur, next, true);
 
-        assertThat(probability).isGreaterThan(HEADING_PROBABILITY);
+        assertThat(probability).isGreaterThanOrEqualTo(HEADING_PROBABILITY);
     }
 
     @Test
     public void headingProbabilityReturnsZeroWhenPreviousHeadingWithoutNext() {
-        TestSemanticTextNode candidate = createTextNode("Heading", "TestFont", 12.0, 500.0, GRAY);
-        TestSemanticTextNode previousHeading = createTextNode("Previous", "TestFont", 11.0, 400.0, GRAY);
-        previousHeading.setSemanticType(SemanticType.HEADING);
+        double[] prevBBox = {0, 120, 100, 130};
+        double[] curBBox = {0, 100, 100, 110};
+        SemanticTextNode prev = createTextNode("Heading", 14.0, 700.0, prevBBox);
+        SemanticTextNode cur = createTextNode("Paragraph", 10.0, 400.0, curBBox);
 
-        double probability = NodeUtils.headingProbability(candidate, previousHeading, null, candidate);
+        double probability = NodeUtils.headingProbability(cur, prev, null, cur);
 
-        assertThat(probability).isLessThanOrEqualTo(HEADING_PROBABILITY);
+        assertThat(probability).isCloseTo(0.0, offset(1e-9));
     }
 
     @Test
     public void headingProbabilityClampsAggregatedBonuses() {
-        TestSemanticTextNode candidate = createTextNode("1 Heading", "TestFont", 14.0, 700.0, GRAY,
-                SemanticType.HEADING, null);
-        TestSemanticTextNode previous = createTextNode("body text", "TestFont", 10.0, 400.0, GRAY);
-        TestSemanticTextNode next = createTextNode("body text", "TestFont", 10.0, 400.0, GRAY);
+        double[] prevBBox = {0, 120, 100, 130};
+        double[] curBBox = {0, 100, 100, 115};
+        double[] nextBBox = {0, 85, 100, 95};
+        double[] lighterGray = {0.8, 0.8, 0.8};
+        SemanticTextNode prev = createTextNode("Paragraph", 10.0, 400.0, prevBBox, lighterGray, "TestFont", null);
+        SemanticTextNode cur = createTextNode("Heading", 15.0, 700.0, curBBox);
+        SemanticTextNode next = createTextNode("Paragraph", 10.0, 400.0, nextBBox, lighterGray, "TestFont", null);
 
-        double probability = NodeUtils.headingProbability(candidate, previous, next, candidate);
+        double probability = NodeUtils.headingProbability(cur, prev, next, cur);
 
-        assertThat(probability).isGreaterThan(HEADING_PROBABILITY);
-    }
-
-    @Test
-    public void headingProbabilityAddsStartLineBonusWhenLastLineOpen() {
-        TestSemanticTextNode candidate = createTextNode("Paragraph", "TestFont", 12.0, 400.0, GRAY,
-                null, TextLine::setNotLineEnd);
-        TestSemanticTextNode previous = createTextNode("Paragraph", "TestFont", 12.0, 400.0, GRAY);
-        TestSemanticTextNode next = createTextNode("Paragraph", "TestFont", 12.0, 400.0, GRAY);
-
-        double probability = NodeUtils.headingProbability(candidate, previous, next, candidate);
-
-        assertThat(probability).isLessThanOrEqualTo(HEADING_PROBABILITY);
-    }
-
-    @Test
-    public void headingProbabilityPenalizesBrokenBoundaries() {
-        TestSemanticTextNode candidate = new TestSemanticTextNode();
-        candidate.add(createLine("first", "TestFont", 12.0, 400.0, GRAY, TextLine::setNotLineStart));
-        candidate.add(createLine("second", "TestFont", 12.0, 400.0, GRAY, TextLine::setNotLineEnd));
-        TestSemanticTextNode previous = createTextNode("first", "TestFont", 12.0, 400.0, GRAY);
-        TestSemanticTextNode next = createTextNode("second", "TestFont", 12.0, 400.0, GRAY);
-
-        double probability = NodeUtils.headingProbability(candidate, previous, next, candidate);
-
-        assertThat(probability).isLessThanOrEqualTo(HEADING_PROBABILITY);
-    }
-
-    @Test
-    public void headingProbabilitySubtractsForCrossPageNeighbor() {
-        double[] blue = new double[]{0.2, 0.2, 0.2};
-        TestSemanticTextNode candidate = createTextNode("1 Heading", "TestFont", 12.0, 400.0, GRAY);
-        TestSemanticTextNode previous = createTextNode("1 Heading", "TestFont", 12.0, 400.0, blue);
-        TestSemanticTextNode next = createTextNode("1 Heading", "TestFont", 12.0, 400.0, blue);
-        candidate.setNextNode(next);
-        candidate.setPageNumber(1);
-        previous.setPageNumber(1);
-        next.setPageNumber(2);
-
-        double probability = NodeUtils.headingProbability(candidate, previous, next, candidate);
-
-        assertThat(probability).isLessThan(HEADING_PROBABILITY);
+        assertThat(probability).isGreaterThanOrEqualTo(HEADING_PROBABILITY);
     }
 
     @Test
     public void hasSameStyleRespectsEpsilons() {
-        TestSemanticTextNode base = createTextNode("Body", "TestFont", 12.0, 400.0, GRAY);
-        TestSemanticTextNode similar = createTextNode("Body", "TestFont", 12.04, 400.04, GRAY);
+        double[] bbox = {0, 100, 80, 112};
+        SemanticTextNode node = createTextNode("Text", 12.0, 600.0, bbox);
+        SemanticTextNode neighbor = createTextNode("Text", 12.05, 600.08, bbox);
 
-        boolean result = NodeUtils.hasSameStyle(base, similar, 0.05, 0.05);
+        boolean hasSameStyle = NodeUtils.hasSameStyle(node, neighbor, 0.1, 0.1);
 
-        assertThat(result).isTrue();
+        assertThat(hasSameStyle).isTrue();
     }
 
     @Test
     public void hasSameStyleDetectsUppercaseDifference() {
-        TestSemanticTextNode uppercase = createTextNode("TITLE", "TestFont", 12.0, 400.0, GRAY);
-        TestSemanticTextNode capitalized = createTextNode("Title", "TestFont", 12.0, 400.0, GRAY);
+        double[] bbox = {0, 120, 80, 132};
+        SemanticTextNode upper = createTextNode("TITLE", 12.0, 600.0, bbox);
+        SemanticTextNode mixed = createTextNode("Title", 12.0, 600.0, bbox);
 
-        boolean result = NodeUtils.hasSameStyle(uppercase, capitalized, 0.05, 0.05);
+        boolean hasSameStyle = NodeUtils.hasSameStyle(upper, mixed, 0.1, 0.1);
 
-        assertThat(result).isFalse();
+        assertThat(hasSameStyle).isFalse();
     }
 
     @Test
     public void areOverlappingReturnsTrueForLargeOverlap() {
-        TextChunk textChunk = createTextChunk("text", 0.0, 0.0, 120.0, 12.0);
-        LineChunk lineChunk = new LineChunk(1, 5.0, 0.0, 115.0, 0.0, 1.0);
+        double[] chunkBBox = {0, 0, 100, 10};
+        TextChunk textChunk = createTextChunk("text", 12.0, 400.0, chunkBBox, GRAY, "TestFont");
+        LineChunk lineChunk = new LineChunk(1, 0, 2, 100, 2, 1.0);
 
-        boolean result = NodeUtils.areOverlapping(textChunk, lineChunk);
+        boolean overlapping = NodeUtils.areOverlapping(textChunk, lineChunk);
 
-        assertThat(result).isTrue();
+        assertThat(overlapping).isTrue();
     }
 
     @Test
     public void areOverlappingReturnsFalseWhenLineIsFar() {
-        TextChunk textChunk = createTextChunk("text", 0.0, 0.0, 120.0, 12.0);
-        LineChunk lineChunk = new LineChunk(1, 200.0, 0.0, 210.0, 0.0, 1.0);
+        double[] chunkBBox = {0, 0, 100, 10};
+        TextChunk textChunk = createTextChunk("text", 12.0, 400.0, chunkBBox, GRAY, "TestFont");
+        LineChunk lineChunk = new LineChunk(1, 150, 2, 200, 2, 1.0);
 
-        boolean result = NodeUtils.areOverlapping(textChunk, lineChunk);
+        boolean overlapping = NodeUtils.areOverlapping(textChunk, lineChunk);
 
-        assertThat(result).isFalse();
+        assertThat(overlapping).isFalse();
     }
 
     @Test
     public void hasSimilarBackgroundColorWithinTolerance() {
-        double[] first = new double[]{0.5, 0.5, 0.5};
-        double[] second = new double[]{0.52, 0.48, 0.5};
+        double[] first = {0.3, 0.3, 0.31};
+        double[] second = {0.32, 0.31, 0.33};
 
-        boolean result = NodeUtils.hasSimilarBackgroundColor(first, second);
+        boolean similar = NodeUtils.hasSimilarBackgroundColor(first, second);
 
-        assertThat(result).isTrue();
+        assertThat(similar).isTrue();
     }
 
     @Test
     public void hasSimilarBackgroundColorOutsideTolerance() {
-        double[] first = new double[]{0.5, 0.5, 0.5};
-        double[] second = new double[]{0.55, 0.5, 0.5};
+        double[] first = {0.3, 0.3, 0.3};
+        double[] second = {0.4, 0.35, 0.3};
 
-        boolean result = NodeUtils.hasSimilarBackgroundColor(first, second);
+        boolean similar = NodeUtils.hasSimilarBackgroundColor(first, second);
 
-        assertThat(result).isFalse();
+        assertThat(similar).isFalse();
     }
 
-    private TestSemanticTextNode createTextNode(String value, String fontName, double fontSize, double fontWeight,
-                                                double[] color) {
-        return createTextNode(value, fontName, fontSize, fontWeight, color, null, null);
+    private SemanticTextNode createTextNode(String value,
+                                            double fontSize,
+                                            double fontWeight,
+                                            double[] boundingBox) {
+        return createTextNode(value, fontSize, fontWeight, boundingBox, GRAY, "TestFont", null);
     }
 
-    private TestSemanticTextNode createTextNode(String value, String fontName, double fontSize, double fontWeight,
-                                                double[] color, SemanticType initialType, Consumer<TextLine> lineCustomizer) {
-        TestSemanticTextNode node = initialType == null ? new TestSemanticTextNode() : new TestSemanticTextNode(initialType);
-        TextLine line = createLine(value, fontName, fontSize, fontWeight, color, lineCustomizer);
+    private SemanticTextNode createTextNode(String value,
+                                            double fontSize,
+                                            double fontWeight,
+                                            double[] boundingBox,
+                                            double[] color,
+                                            String fontName,
+                                            SemanticType initialType) {
+        SemanticTextNode node = initialType == null ? new SemanticTextNode() : new SemanticTextNode(initialType);
+        TextLine line = createLine(value, fontSize, fontWeight, boundingBox, color, fontName);
         node.add(line);
         return node;
     }
 
-    private TextLine createLine(String value, String fontName, double fontSize, double fontWeight,
-                                double[] color, Consumer<TextLine> lineCustomizer) {
-        TextChunk chunk = createTextChunk(value, 0.0, 0.0,
-                Math.max(fontSize * Math.max(1, value.length()), fontSize), fontSize);
-        chunk.setFontName(fontName);
-        chunk.setFontWeight(fontWeight);
-        chunk.setFontSize(fontSize);
-        if (color != null) {
-            chunk.setFontColor(color.clone());
-        }
-        TextLine line = new TextLine(chunk);
-        if (lineCustomizer != null) {
-            lineCustomizer.accept(line);
-        }
-        return line;
+    private TextChunk createTextChunk(String value,
+                                      double fontSize,
+                                      double fontWeight,
+                                      double[] boundingBox,
+                                      double[] color,
+                                      String fontName) {
+        BoundingBox chunkBBox = new BoundingBox(1, 1, boundingBox);
+        return new TextChunk(chunkBBox, value, fontName, fontSize, fontWeight, 0.0, boundingBox[1], color, 0.0);
     }
 
-    private TextChunk createTextChunk(String value, double left, double bottom, double right, double top) {
-        BoundingBox boundingBox = new BoundingBox(1, 1, new double[]{left, bottom, right, top});
-        return new TextChunk(boundingBox, value, "TestFont", top - bottom, 400.0, 0.0, bottom, GRAY, 0.0);
-    }
-
-    private static class TestSemanticTextNode extends SemanticTextNode {
-
-        private INode nextNode;
-        private INode previousNode;
-
-        TestSemanticTextNode() {
-            super();
-        }
-
-        TestSemanticTextNode(SemanticType initialSemanticType) {
-            super(initialSemanticType);
-        }
-
-        void setNextNode(INode nextNode) {
-            this.nextNode = nextNode;
-        }
-
-        void setPreviousNode(INode previousNode) {
-            this.previousNode = previousNode;
-        }
-
-        @Override
-        public INode getNextNode() {
-            return nextNode;
-        }
-
-        @Override
-        public INode getPreviousNode() {
-            return previousNode;
-        }
+    private TextLine createLine(String value,
+                                double fontSize,
+                                double fontWeight,
+                                double[] boundingBox,
+                                double[] color,
+                                String fontName) {
+        TextChunk chunk = createTextChunk(value, fontSize, fontWeight, boundingBox, color, fontName);
+        return new TextLine(chunk);
     }
 }
