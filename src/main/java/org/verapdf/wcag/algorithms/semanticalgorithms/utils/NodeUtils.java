@@ -6,6 +6,7 @@ import org.verapdf.wcag.algorithms.entities.SemanticTextNode;
 import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
 import java.awt.*;
@@ -21,6 +22,10 @@ public class NodeUtils {
 	private static final double[] HEADING_PROBABILITY_PARAMS = {0.3, 0.0291, 0.15, 0.27, 0.1, 0.25, 0.2, 0.5, 0.05, 0.1};
 	private static final double[] HEADING_PROBABILITY_PARAMS_SAME_FONT = {0.55, 0.15, 0.55, 0.4, 0.5, 0.15, 0.1};
 	private static final double[] HEADING_PROBABILITY_PARAMS_DIFF_FONT = {0.44, 0.1, 0.4, 0.23, 0.35, 0.1, 0.1};
+	public static final double HEADING_PROBABILITY_HIGH_SCORE = 0.5;
+	public static final double HEADING_PROBABILITY_MEDIUM_SCORE  = 0.3;
+	public static final double HEADING_PROBABILITY_SMALL_SCORE = 0.2;
+	public static final double HEADING_PROBABILITY_VERY_SMALL_SCORE = 0.1;
 	public static final double[] HEADING_EPSILONS = {0.05, 0.08};
 
 	public static final double BACKGROUND_FIRST_COLOR_EPSILON = 0.03;
@@ -99,6 +104,26 @@ public class NodeUtils {
 		} else if (!isUpperCaseString(textNode.getValue()) && isUpperCaseString(neighborTextNode.getValue())) {
 			probability -= HEADING_PROBABILITY_PARAMS[6];
 		}
+
+		if (isFarFromNeighbor(textNode, neighborTextNode, textNode.getFontSize())) {
+			probability += HEADING_PROBABILITY_SMALL_SCORE;
+		}
+		if (isFarFromNeighbor(textNode, neighborTextNode, textNode.getFontSize() / 2)) {
+			probability += HEADING_PROBABILITY_VERY_SMALL_SCORE;
+		}
+
+		if (isSingleLine(textNode)) {
+			probability += HEADING_PROBABILITY_SMALL_SCORE;
+		} else {
+			probability -= HEADING_PROBABILITY_SMALL_SCORE;
+		}
+
+		if (isShorterThanNeighbor(textNode, neighborTextNode)) {
+			probability += HEADING_PROBABILITY_SMALL_SCORE;
+		} else {
+			probability -= HEADING_PROBABILITY_SMALL_SCORE;
+		}
+
 		return probability;
 	}
 
@@ -183,6 +208,46 @@ public class NodeUtils {
 			}
 		}
 		return true;
+	}
+
+	private static double verticalGap(SemanticTextNode textNode, SemanticTextNode neighborTextNode) {
+		BoundingBox textBox = textNode.getBoundingBox();
+		BoundingBox neighborBox = neighborTextNode.getBoundingBox();
+		if (textBox == null || neighborBox == null) {
+			return 0.0;
+		}
+		if (overlapsVertically(textBox, neighborBox)) {
+			return 0.0;
+		}
+		if (textBox.getTopY() <= neighborBox.getBottomY()) {
+			return neighborBox.getBottomY() - textBox.getTopY();
+		}
+		if (neighborBox.getTopY() <= textBox.getBottomY()) {
+			return textBox.getBottomY() - neighborBox.getTopY();
+		}
+		return 0.0;
+	}
+
+	private static boolean overlapsVertically(BoundingBox first, BoundingBox second) {
+		if (first == null || second == null) {
+			return false;
+		}
+		return first.getBottomY() < second.getTopY() - EPSILON &&
+		       second.getBottomY() < first.getTopY() - EPSILON;
+	}
+
+	private static boolean isFarFromNeighbor(SemanticTextNode textNode, SemanticTextNode neighborTextNode, double factor) {
+		double gap = verticalGap(textNode, neighborTextNode);
+        return gap >= factor;
+    }
+
+	private static boolean isSingleLine(SemanticTextNode first) {
+		return first != null &&	first.getBoundingBox().getHeight() < (first.getFontSize() * 2);
+	}
+
+	private static boolean isShorterThanNeighbor(SemanticTextNode first, SemanticTextNode second) {
+		return first != null && second != null &&
+				first.getBoundingBox().getWidth() < second.getBoundingBox().getWidth();
 	}
 
 	public static boolean hasSimilarBackgroundColor(Color firstColor, Color secondColor) {
