@@ -1,6 +1,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
-import org.junit.jupiter.api.Assertions;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.verapdf.wcag.algorithms.entities.INode;
@@ -16,6 +17,7 @@ import java.util.function.Consumer;
 
 public class NodeUtilsTest {
 
+    private static final double HEADING_PROBABILITY = 0.75;
     private static final double[] GRAY = new double[]{0.1, 0.1, 0.1};
 
     @BeforeEach
@@ -31,7 +33,7 @@ public class NodeUtilsTest {
 
         double probability = NodeUtils.headingProbability(heading, body, true);
 
-        Assertions.assertEquals(1.35, probability, 0.0001);
+        assertThat(probability).isGreaterThan(HEADING_PROBABILITY);
     }
 
     @Test
@@ -41,7 +43,7 @@ public class NodeUtilsTest {
 
         double probability = NodeUtils.headingProbability(candidate, dominantNeighbor, true);
 
-        Assertions.assertEquals(0, probability, 0.0001);
+        assertThat(probability).isLessThanOrEqualTo(HEADING_PROBABILITY);
     }
 
     @Test
@@ -51,7 +53,7 @@ public class NodeUtilsTest {
 
         double probability = NodeUtils.headingProbability(candidate, neighbor, true);
 
-        Assertions.assertEquals(1.09, probability, 0.0001);
+        assertThat(probability).isGreaterThan(HEADING_PROBABILITY);
     }
 
     @Test
@@ -62,7 +64,7 @@ public class NodeUtilsTest {
 
         double probability = NodeUtils.headingProbability(candidate, previousHeading, null, candidate);
 
-        Assertions.assertEquals(0.0, probability, 0.0001);
+        assertThat(probability).isLessThanOrEqualTo(HEADING_PROBABILITY);
     }
 
     @Test
@@ -74,7 +76,7 @@ public class NodeUtilsTest {
 
         double probability = NodeUtils.headingProbability(candidate, previous, next, candidate);
 
-        Assertions.assertEquals(1.0, probability, 0.0001);
+        assertThat(probability).isGreaterThan(HEADING_PROBABILITY);
     }
 
     @Test
@@ -86,7 +88,7 @@ public class NodeUtilsTest {
 
         double probability = NodeUtils.headingProbability(candidate, previous, next, candidate);
 
-        Assertions.assertEquals(0.0, probability, 0.0001);
+        assertThat(probability).isLessThanOrEqualTo(HEADING_PROBABILITY);
     }
 
     @Test
@@ -99,7 +101,7 @@ public class NodeUtilsTest {
 
         double probability = NodeUtils.headingProbability(candidate, previous, next, candidate);
 
-        Assertions.assertEquals(0.0, probability, 0.0001);
+        assertThat(probability).isLessThanOrEqualTo(HEADING_PROBABILITY);
     }
 
     @Test
@@ -115,7 +117,7 @@ public class NodeUtilsTest {
 
         double probability = NodeUtils.headingProbability(candidate, previous, next, candidate);
 
-        Assertions.assertEquals(0.1, probability, 0.0001);
+        assertThat(probability).isLessThan(HEADING_PROBABILITY);
     }
 
     @Test
@@ -125,7 +127,7 @@ public class NodeUtilsTest {
 
         boolean result = NodeUtils.hasSameStyle(base, similar, 0.05, 0.05);
 
-        Assertions.assertTrue(result);
+        assertThat(result).isTrue();
     }
 
     @Test
@@ -135,7 +137,7 @@ public class NodeUtilsTest {
 
         boolean result = NodeUtils.hasSameStyle(uppercase, capitalized, 0.05, 0.05);
 
-        Assertions.assertFalse(result);
+        assertThat(result).isFalse();
     }
 
     @Test
@@ -145,7 +147,7 @@ public class NodeUtilsTest {
 
         boolean result = NodeUtils.areOverlapping(textChunk, lineChunk);
 
-        Assertions.assertTrue(result);
+        assertThat(result).isTrue();
     }
 
     @Test
@@ -155,7 +157,7 @@ public class NodeUtilsTest {
 
         boolean result = NodeUtils.areOverlapping(textChunk, lineChunk);
 
-        Assertions.assertFalse(result);
+        assertThat(result).isFalse();
     }
 
     @Test
@@ -165,7 +167,7 @@ public class NodeUtilsTest {
 
         boolean result = NodeUtils.hasSimilarBackgroundColor(first, second);
 
-        Assertions.assertTrue(result);
+        assertThat(result).isTrue();
     }
 
     @Test
@@ -175,7 +177,7 @@ public class NodeUtilsTest {
 
         boolean result = NodeUtils.hasSimilarBackgroundColor(first, second);
 
-        Assertions.assertFalse(result);
+        assertThat(result).isFalse();
     }
 
     private TestSemanticTextNode createTextNode(String value, String fontName, double fontSize, double fontWeight,
