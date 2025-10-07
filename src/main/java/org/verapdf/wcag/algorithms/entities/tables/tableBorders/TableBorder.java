@@ -138,7 +138,8 @@ public class TableBorder extends BaseObject {
                 TableBorderCell cell = getCell(rowNumber, columnNumber);
                 if (cell.getRowNumber() == rowNumber && cell.getColNumber() == columnNumber) {
                     if (cell.getBoundingBox().getPageNumber() == null) {
-                        BoundingBox boundingBox = new BoundingBox(getLeftX(columnNumber), getBottomY(rowNumber + cell.getRowSpan() - 1),
+                        BoundingBox boundingBox = new BoundingBox(pageNumber, getLeftX(columnNumber), 
+                                getBottomY(rowNumber + cell.getRowSpan() - 1),
                                 getRightX(columnNumber + cell.getColSpan() - 1), getTopY(rowNumber));
                         cell.setBoundingBox(boundingBox);
                     }
