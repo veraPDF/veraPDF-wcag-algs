@@ -25,7 +25,7 @@ public class BoundingBox {
     }
 
     public BoundingBox(double[] bbox) {
-        init(bbox[0], bbox[1], bbox[2], bbox[3]);
+        init(Math.min(bbox[0], bbox[2]), Math.min(bbox[1], bbox[3]), Math.max(bbox[0], bbox[2]), Math.max(bbox[1], bbox[3]));
     }
 
     public BoundingBox(Integer pageNumber, double[] bbox) {
@@ -34,22 +34,22 @@ public class BoundingBox {
     }
 
     public BoundingBox(Integer pageNumber, Integer lastPageNumber, double[] bbox) {
-        init(bbox[0], bbox[1], bbox[2], bbox[3]);
+        init(Math.min(bbox[0], bbox[2]), Math.min(bbox[1], bbox[3]), Math.max(bbox[0], bbox[2]), Math.max(bbox[1], bbox[3]));
         this.pageNumber = pageNumber;
         this.lastPageNumber = lastPageNumber;
     }
 
     public BoundingBox(double left, double bottom, double right, double top) {
-        init(left, bottom, right, top);
+        init(Math.min(left, right), Math.min(bottom, top), Math.max(left, right), Math.max(bottom, top));
     }
 
     public BoundingBox(Integer pageNumber, double left, double bottom, double right, double top) {
-        init(left, bottom, right, top);
+        init(Math.min(left, right), Math.min(bottom, top), Math.max(left, right), Math.max(bottom, top));
         this.pageNumber = this.lastPageNumber = pageNumber;
     }
 
     public BoundingBox(Integer pageNumber, Integer lastPageNumber, double left, double bottom, double right, double top) {
-        init(left, bottom, right, top);
+        init(Math.min(left, right), Math.min(bottom, top), Math.max(left, right), Math.max(bottom, top));
         this.pageNumber = pageNumber;
         this.lastPageNumber = lastPageNumber;
     }
