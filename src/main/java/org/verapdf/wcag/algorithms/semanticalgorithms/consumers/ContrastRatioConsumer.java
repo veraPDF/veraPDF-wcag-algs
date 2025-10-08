@@ -307,6 +307,9 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 			approximatedTextLuminosity = textLuminosity;
 			double diff = 1.0;
 			Map<Color, DataPoint> imageColorMap = getImageColorMap(image);
+            if (imageColorMap.size() == 1) {
+                return 1.0;
+            }
 			textChunk.setBackgroundColor(checkForBackgroundColor(imageColorMap, textColor));
 			List<DataPoint> dpFullArray = new ArrayList<>(new TreeSet<>(imageColorMap.values()));
 			for (DataPoint dp : dpFullArray) {
