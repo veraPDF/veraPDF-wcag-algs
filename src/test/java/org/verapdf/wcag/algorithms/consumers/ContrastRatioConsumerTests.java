@@ -12,6 +12,7 @@ import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ContrastRatioConsumer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
 import java.io.IOException;
 import java.util.stream.Stream;
@@ -87,7 +88,8 @@ public class ContrastRatioConsumerTests {
 	@ParameterizedTest(name = "{index}: ({0}, {1}, {2}) => {0}")
 	@MethodSource("contrastTestFailParams")
 	void testColorContrastFail(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
-		IDocument document = JsonToPdfTree.getDocument(SRC_DIR + jsonPdfPath);
+        StaticContainers.setIsDataLoader(false);
+        IDocument document = JsonToPdfTree.getDocument(SRC_DIR + jsonPdfPath);
 		ITree tree = document.getTree();
 		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath)) {
 			tree.forEach(contrastRatioConsumer);
