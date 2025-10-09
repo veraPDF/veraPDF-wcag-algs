@@ -9,6 +9,7 @@ import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListLabelsUtils;
 
 import java.util.ArrayList;
@@ -185,6 +186,7 @@ public class ListLabelsTests {
 
     @Test
     void testItemsList() {
+        StaticContainers.setIsDataLoader(false);
         List<String> itemsList = new ArrayList<>();
         for (int i = 9; i < 100; i++) {
             itemsList.add("0" + i);
