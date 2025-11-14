@@ -1,12 +1,12 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+
+import static java.lang.Character.isSpaceChar;
 
 public class TextChunkUtils {
 
@@ -21,7 +21,7 @@ public class TextChunkUtils {
 
     public static boolean isSpaceChunk(TextChunk chunk) {
         for (char symbol : chunk.getValue().toCharArray()) {
-            if (!Character.isSpaceChar(symbol)) {
+            if (!isSpaceChar(symbol)) {
                 return false;
             }
         }
@@ -88,6 +88,57 @@ public class TextChunkUtils {
     public static boolean areNeighborsTextChunks(TextChunk firstTextChunk, TextChunk secondTextChunk) {
         return NodeUtils.areCloseNumbers(firstTextChunk.getTextEnd(), secondTextChunk.getTextStart(),
                 NEIGHBORS_EPSILON * firstTextChunk.getBoundingBox().getHeight());
+    }
+
+    public static List<TextChunk> splitTextChunk(TextChunk originalChunk) {
+        String text = originalChunk.getValue();
+
+        List<Integer> columnBoundaries = findPartsBoundaries(originalChunk, text);
+
+        if (columnBoundaries.size() <= 1) {
+            List<TextChunk> result = new ArrayList<>();
+            result.add(originalChunk);
+            return result;
+        }
+
+        return createPartsFromBoundaries(originalChunk, text, columnBoundaries);
+    }
+
+    public static List<Integer> findPartsBoundaries(TextChunk chunk, String text) {
+        double threshold = chunk.getFontSize() * 0.77;
+        List<Integer> boundaries = new ArrayList<>();
+        boundaries.add(0);
+
+        for (int i = 0; i < text.length(); i++) {
+            if (isSpaceChar(text.charAt(i))) {
+                Double width = chunk.getSymbolWidth(i);
+                if (width != null && width > threshold) {
+                    boundaries.add(i);
+                }
+            }
+        }
+
+        boundaries.add(text.length());
+
+        return boundaries;
+    }
+
+    public static List<TextChunk> createPartsFromBoundaries(TextChunk originalChunk, String text, List<Integer> boundaries) {
+        List<TextChunk> parts = new ArrayList<>();
+
+        for (int i = 0; i < boundaries.size() - 1; i++) {
+            int start = boundaries.get(i);
+            int end = boundaries.get(i + 1);
+
+            if (start >= end) continue;
+
+            String columnText = text.substring(start, end).trim();
+            if (columnText.isEmpty()) continue;
+
+            parts.add(TextChunk.getTextChunk(originalChunk, start, end));
+        }
+
+        return parts;
     }
 
 }
