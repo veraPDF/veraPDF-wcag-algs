@@ -233,10 +233,12 @@ public class TextChunk extends TextInfoChunk {
             newTextChunk.setTextStart(textChunk.getSymbolStartCoordinate(start));
             newTextChunk.setTextEnd(textChunk.getSymbolEndCoordinate(end - 1));
         }
-        double startX = textChunk.getSymbolStartCoordinate(start);
-        double endX = textChunk.getSymbolEndCoordinate(end - 1);
+        Double startX = textChunk.getSymbolStartCoordinate(start);
+        Double endX = textChunk.getSymbolEndCoordinate(end - 1);
 
-        newTextChunk.setBoundingBox(new BoundingBox(textChunk.getPageNumber(), startX, textChunk.getBottomY(), endX, textChunk.getTopY()));
+        if (startX != null && endX != null) {
+            newTextChunk.setBoundingBox(new BoundingBox(textChunk.getPageNumber(), startX, textChunk.getBottomY(), endX, textChunk.getTopY()));
+        }
 
         return newTextChunk;
     }

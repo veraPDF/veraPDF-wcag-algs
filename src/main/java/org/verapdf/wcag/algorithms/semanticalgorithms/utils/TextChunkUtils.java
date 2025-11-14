@@ -93,15 +93,15 @@ public class TextChunkUtils {
     public static List<TextChunk> splitTextChunk(TextChunk originalChunk) {
         String text = originalChunk.getValue();
 
-        List<Integer> columnBoundaries = findPartsBoundaries(originalChunk, text);
+        List<Integer> partsBoundaries = findPartsBoundaries(originalChunk, text);
 
-        if (columnBoundaries.size() <= 1) {
+        if (partsBoundaries.size() <= 2) {
             List<TextChunk> result = new ArrayList<>();
             result.add(originalChunk);
             return result;
         }
 
-        return createPartsFromBoundaries(originalChunk, text, columnBoundaries);
+        return createPartsFromBoundaries(originalChunk, text, partsBoundaries);
     }
 
     public static List<Integer> findPartsBoundaries(TextChunk chunk, String text) {
@@ -131,9 +131,6 @@ public class TextChunkUtils {
             int end = boundaries.get(i + 1);
 
             if (start >= end) continue;
-
-            String columnText = text.substring(start, end).trim();
-            if (columnText.isEmpty()) continue;
 
             parts.add(TextChunk.getTextChunk(originalChunk, start, end));
         }
