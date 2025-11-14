@@ -1,7 +1,6 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
-import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
 import java.util.*;
@@ -16,6 +15,7 @@ public class TextChunkUtils {
     public static final double BASELINE_DIFFERENCE_EPSILON = 0.01;
     public static final double TEXT_CHUNK_SPACE_RATIO = 170;
     public static final double TEXT_LINE_SPACE_RATIO = 0.17;
+    public static final double SPLIT_THRESHOLD_FACTOR = 0.77;
 
     public static final Set<Character> HYPHENATION_SIGNS = new HashSet<>(Arrays.asList('\u002D','\u2014','\u00AD'));
 
@@ -105,7 +105,7 @@ public class TextChunkUtils {
     }
 
     public static List<Integer> findPartsBoundaries(TextChunk chunk, String text) {
-        double threshold = chunk.getFontSize() * 0.77;
+        double threshold = chunk.getFontSize() * SPLIT_THRESHOLD_FACTOR;
         List<Integer> boundaries = new ArrayList<>();
         boundaries.add(0);
 
