@@ -184,7 +184,7 @@ public class TextChunk extends TextInfoChunk {
 
     public Double getSymbolWidth(int index) {
         return index >= 0 && index < this.symbolEnds.size() - 1 ?
-               this.symbolEnds.get(index + 1) - this.symbolEnds.get(index) : null;
+               Math.abs(this.symbolEnds.get(index + 1) - this.symbolEnds.get(index)) : null;
     }
 
     public void adjustSymbolEndsToBoundingBox(List<Double> symbolEnds) {

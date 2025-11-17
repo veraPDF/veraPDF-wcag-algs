@@ -2,11 +2,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class TextChunkUtils {
 
@@ -16,6 +12,7 @@ public class TextChunkUtils {
     public static final double BASELINE_DIFFERENCE_EPSILON = 0.01;
     public static final double TEXT_CHUNK_SPACE_RATIO = 170;
     public static final double TEXT_LINE_SPACE_RATIO = 0.17;
+    public static final double SPLIT_THRESHOLD_FACTOR = 0.77;
 
     public static final Set<Character> HYPHENATION_SIGNS = new HashSet<>(Arrays.asList('\u002D','\u2014','\u00AD'));
 
@@ -88,6 +85,49 @@ public class TextChunkUtils {
     public static boolean areNeighborsTextChunks(TextChunk firstTextChunk, TextChunk secondTextChunk) {
         return NodeUtils.areCloseNumbers(firstTextChunk.getTextEnd(), secondTextChunk.getTextStart(),
                 NEIGHBORS_EPSILON * firstTextChunk.getBoundingBox().getHeight());
+    }
+
+    public static List<TextChunk> splitTextChunkByWhiteSpaces(TextChunk originalChunk) {
+        List<Integer> partsBoundaries = findWideWhiteSpaces(originalChunk);
+
+        if (partsBoundaries.size() <= 2) {
+            List<TextChunk> result = new ArrayList<>();
+            result.add(originalChunk);
+            return result;
+        }
+        return createPartsFromBoundaries(originalChunk, partsBoundaries);
+    }
+
+    private static List<Integer> findWideWhiteSpaces(TextChunk chunk) {
+        double threshold = chunk.getFontSize() * SPLIT_THRESHOLD_FACTOR;
+        List<Integer> boundaries = new ArrayList<>();
+        boundaries.add(-1);
+        String text = chunk.getValue();
+
+        for (int i = 1; i < text.length(); i++) {
+            if (isWhiteSpaceChar(text.charAt(i))) {
+                Double width = chunk.getSymbolWidth(i);
+                if (width != null && width > threshold) {
+                    boundaries.add(i);
+                }
+            }
+        }
+        boundaries.add(text.length());
+        return boundaries;
+    }
+
+    private static List<TextChunk> createPartsFromBoundaries(TextChunk originalChunk, List<Integer> boundaries) {
+        List<TextChunk> parts = new ArrayList<>();
+
+        for (int i = 0; i < boundaries.size() - 1; i++) {
+            int start = boundaries.get(i);
+            int end = boundaries.get(i + 1);
+            TextChunk part = ChunksMergeUtils.getTrimTextChunk(TextChunk.getTextChunk(originalChunk, start + 1, end));
+            if (part != null && !part.isWhiteSpaceChunk()) {
+                parts.add(part);
+            }
+        }
+        return parts;
     }
 
 }
