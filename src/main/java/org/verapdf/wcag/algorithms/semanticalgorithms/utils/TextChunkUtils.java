@@ -2,9 +2,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
-
 import java.util.*;
-
 import static java.lang.Character.isSpaceChar;
 
 public class TextChunkUtils {
@@ -91,33 +89,31 @@ public class TextChunkUtils {
     }
 
     public static List<TextChunk> splitTextChunk(TextChunk originalChunk) {
-        List<Integer> partsBoundaries = findPartsBoundaries(originalChunk, originalChunk.getValue());
+        List<Integer> partsBoundaries = findPartsBoundaries(originalChunk);
 
         if (partsBoundaries.size() <= 2) {
             List<TextChunk> result = new ArrayList<>();
             result.add(originalChunk);
             return result;
         }
-
         return createPartsFromBoundaries(originalChunk, partsBoundaries);
     }
 
-    private static List<Integer> findPartsBoundaries(TextChunk chunk, String text) {
+    private static List<Integer> findPartsBoundaries(TextChunk chunk) {
         double threshold = chunk.getFontSize() * SPLIT_THRESHOLD_FACTOR;
         List<Integer> boundaries = new ArrayList<>();
         boundaries.add(0);
+        String text = chunk.getValue();
 
         for (int i = 1; i < text.length(); i++) {
-            if (isSpaceChar(text.charAt(i))) {
+            if (isWhiteSpaceChar(text.charAt(i))) {
                 Double width = chunk.getSymbolWidth(i);
                 if (width != null && width > threshold) {
                     boundaries.add(i);
                 }
             }
         }
-
         boundaries.add(text.length());
-
         return boundaries;
     }
 
@@ -127,10 +123,8 @@ public class TextChunkUtils {
         for (int i = 0; i < boundaries.size() - 1; i++) {
             int start = boundaries.get(i);
             int end = boundaries.get(i + 1);
-
-            parts.add(TextChunk.getTextChunk(originalChunk, start, end));
+            parts.add(ChunksMergeUtils.getTrimTextChunk(TextChunk.getTextChunk(originalChunk, start, end)));
         }
-
         return parts;
     }
 

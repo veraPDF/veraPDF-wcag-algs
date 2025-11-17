@@ -233,7 +233,6 @@ public class TextChunk extends TextInfoChunk {
             newTextChunk.setTextStart(textChunk.getSymbolStartCoordinate(start));
             newTextChunk.setTextEnd(textChunk.getSymbolEndCoordinate(end - 1));
         }
-
         return newTextChunk;
     }
 
