@@ -102,7 +102,7 @@ public class TextChunkUtils {
     private static List<Integer> findPartsBoundaries(TextChunk chunk) {
         double threshold = chunk.getFontSize() * SPLIT_THRESHOLD_FACTOR;
         List<Integer> boundaries = new ArrayList<>();
-        boundaries.add(0);
+        boundaries.add(-1);
         String text = chunk.getValue();
 
         for (int i = 1; i < text.length(); i++) {
@@ -123,7 +123,10 @@ public class TextChunkUtils {
         for (int i = 0; i < boundaries.size() - 1; i++) {
             int start = boundaries.get(i);
             int end = boundaries.get(i + 1);
-            parts.add(ChunksMergeUtils.getTrimTextChunk(TextChunk.getTextChunk(originalChunk, start, end)));
+            TextChunk part = ChunksMergeUtils.getTrimTextChunk(TextChunk.getTextChunk(originalChunk, start + 1, end));
+            if (part != null && !part.isWhiteSpaceChunk()) {
+                parts.add(part);
+            }
         }
         return parts;
     }
