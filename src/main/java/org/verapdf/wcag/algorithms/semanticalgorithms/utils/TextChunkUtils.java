@@ -3,7 +3,6 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import java.util.*;
-import static java.lang.Character.isSpaceChar;
 
 public class TextChunkUtils {
 
@@ -19,7 +18,7 @@ public class TextChunkUtils {
 
     public static boolean isSpaceChunk(TextChunk chunk) {
         for (char symbol : chunk.getValue().toCharArray()) {
-            if (!isSpaceChar(symbol)) {
+            if (!Character.isSpaceChar(symbol)) {
                 return false;
             }
         }
@@ -88,8 +87,8 @@ public class TextChunkUtils {
                 NEIGHBORS_EPSILON * firstTextChunk.getBoundingBox().getHeight());
     }
 
-    public static List<TextChunk> splitTextChunk(TextChunk originalChunk) {
-        List<Integer> partsBoundaries = findPartsBoundaries(originalChunk);
+    public static List<TextChunk> splitTextChunkByWhiteSpaces(TextChunk originalChunk) {
+        List<Integer> partsBoundaries = findWideWhiteSpaces(originalChunk);
 
         if (partsBoundaries.size() <= 2) {
             List<TextChunk> result = new ArrayList<>();
@@ -99,7 +98,7 @@ public class TextChunkUtils {
         return createPartsFromBoundaries(originalChunk, partsBoundaries);
     }
 
-    private static List<Integer> findPartsBoundaries(TextChunk chunk) {
+    private static List<Integer> findWideWhiteSpaces(TextChunk chunk) {
         double threshold = chunk.getFontSize() * SPLIT_THRESHOLD_FACTOR;
         List<Integer> boundaries = new ArrayList<>();
         boundaries.add(-1);
