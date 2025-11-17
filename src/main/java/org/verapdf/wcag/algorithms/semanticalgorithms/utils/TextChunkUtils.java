@@ -91,9 +91,7 @@ public class TextChunkUtils {
     }
 
     public static List<TextChunk> splitTextChunk(TextChunk originalChunk) {
-        String text = originalChunk.getValue();
-
-        List<Integer> partsBoundaries = findPartsBoundaries(originalChunk, text);
+        List<Integer> partsBoundaries = findPartsBoundaries(originalChunk, originalChunk.getValue());
 
         if (partsBoundaries.size() <= 2) {
             List<TextChunk> result = new ArrayList<>();
@@ -101,15 +99,15 @@ public class TextChunkUtils {
             return result;
         }
 
-        return createPartsFromBoundaries(originalChunk, text, partsBoundaries);
+        return createPartsFromBoundaries(originalChunk, partsBoundaries);
     }
 
-    public static List<Integer> findPartsBoundaries(TextChunk chunk, String text) {
+    private static List<Integer> findPartsBoundaries(TextChunk chunk, String text) {
         double threshold = chunk.getFontSize() * SPLIT_THRESHOLD_FACTOR;
         List<Integer> boundaries = new ArrayList<>();
         boundaries.add(0);
 
-        for (int i = 0; i < text.length(); i++) {
+        for (int i = 1; i < text.length(); i++) {
             if (isSpaceChar(text.charAt(i))) {
                 Double width = chunk.getSymbolWidth(i);
                 if (width != null && width > threshold) {
@@ -123,14 +121,12 @@ public class TextChunkUtils {
         return boundaries;
     }
 
-    public static List<TextChunk> createPartsFromBoundaries(TextChunk originalChunk, String text, List<Integer> boundaries) {
+    private static List<TextChunk> createPartsFromBoundaries(TextChunk originalChunk, List<Integer> boundaries) {
         List<TextChunk> parts = new ArrayList<>();
 
         for (int i = 0; i < boundaries.size() - 1; i++) {
             int start = boundaries.get(i);
             int end = boundaries.get(i + 1);
-
-            if (start >= end) continue;
 
             parts.add(TextChunk.getTextChunk(originalChunk, start, end));
         }
