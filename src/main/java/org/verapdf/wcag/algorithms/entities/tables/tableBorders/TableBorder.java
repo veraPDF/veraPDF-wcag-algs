@@ -120,6 +120,10 @@ public class TableBorder extends BaseObject {
             }
         }
         calculateCoordinatesUsingBoundingBoxesOfRowsAndColumns();
+        calculateBoundingBoxesUsingCoordinates(pageNumber, false);
+    }
+    
+    public void calculateBoundingBoxesUsingCoordinates(Integer pageNumber, boolean isRewriteBoundingBoxes) {
         getBoundingBox().union(new BoundingBox(pageNumber, xCoordinates.get(0), yCoordinates.get(numberOfRows), xCoordinates.get(numberOfColumns), yCoordinates.get(0)));
         for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
             BoundingBox multiBoundingBox = new MultiBoundingBox();
@@ -137,8 +141,8 @@ public class TableBorder extends BaseObject {
             for (int columnNumber = 0; columnNumber < getNumberOfColumns(); columnNumber++) {
                 TableBorderCell cell = getCell(rowNumber, columnNumber);
                 if (cell.getRowNumber() == rowNumber && cell.getColNumber() == columnNumber) {
-                    if (cell.getBoundingBox().getPageNumber() == null) {
-                        BoundingBox boundingBox = new BoundingBox(pageNumber, getLeftX(columnNumber), 
+                    if (isRewriteBoundingBoxes || cell.getBoundingBox().getPageNumber() == null) {
+                        BoundingBox boundingBox = new BoundingBox(pageNumber, getLeftX(columnNumber),
                                 getBottomY(rowNumber + cell.getRowSpan() - 1),
                                 getRightX(columnNumber + cell.getColSpan() - 1), getTopY(rowNumber));
                         cell.setBoundingBox(boundingBox);

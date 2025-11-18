@@ -2,10 +2,13 @@ package org.verapdf.wcag.algorithms.entities.tables;
 
 import org.verapdf.wcag.algorithms.entities.INode;
 import org.verapdf.wcag.algorithms.entities.content.InfoChunk;
+import org.verapdf.wcag.algorithms.entities.content.LineChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorder;
+import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorderCell;
+import org.verapdf.wcag.algorithms.entities.tables.tableBorders.TableBorderRow;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.tables.TableCluster;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TableUtils;
@@ -311,5 +314,27 @@ public class Table extends InfoChunk {
 
      public void setBodyNode(INode bodyNode) {
         this.bodyNode = bodyNode;
+     }
+     
+     public TableBorder createTableBorderFromTable() {
+        int numberOfRows = this.rows.size();
+        int numberOfColumns = this.rows.get(0).getCells().size();
+        TableBorderRow[] tableBorderRows = new TableBorderRow[numberOfRows];
+        for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
+            TableBorderRow tableBorderRow = new TableBorderRow(rowNumber, numberOfColumns, null);
+            TableRow tableRow = this.rows.get(rowNumber);
+            tableBorderRow.setBoundingBox(tableRow.getBoundingBox());
+            tableBorderRows[rowNumber] = tableBorderRow;
+            for (int colNumber = 0; colNumber < numberOfColumns; colNumber++) {
+                TableBorderCell tableBorderCell = new TableBorderCell(rowNumber, colNumber, 1, 1, 0L);
+                tableBorderCell.setBoundingBox(tableRow.getCells().get(colNumber).getBoundingBox());
+                tableBorderCell.getBoundingBox().setLeftX(tableBorderCell.getLeftX() - LineChunk.TABLE_BORDER_EPSILON);
+                tableBorderCell.getBoundingBox().setRightX(tableBorderCell.getRightX() + LineChunk.TABLE_BORDER_EPSILON);
+                tableBorderRow.getCells()[colNumber] = tableBorderCell;
+            }
+        }
+        TableBorder tableBorder = new TableBorder(getBoundingBox(), tableBorderRows, numberOfRows, numberOfColumns);
+//        tableBorder.calculateBoundingBoxesUsingCoordinates(getPageNumber(), true);
+        return tableBorder;
      }
 }
