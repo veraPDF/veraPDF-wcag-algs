@@ -6,6 +6,7 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainer
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils.isWhiteSpaceChar;
@@ -261,35 +262,32 @@ public class TextChunk extends TextInfoChunk {
     }
 
     public void compressSpaces() {
-        if (value == null || value.isEmpty() || symbolEnds == null || symbolEnds.size() != value.length() + 1) {
-            return;
-        }
+        if (value != null && !value.isEmpty() && Pattern.compile("\\s{2,}").matcher(value).find()) {
+            StringBuilder newValue = new StringBuilder();
+            List<Double> newSymbolEnds = new ArrayList<>();
+            boolean lastWasSpace = false;
+            newSymbolEnds.add(symbolEnds.get(0));
 
-        StringBuilder newValue = new StringBuilder();
-        List<Double> newSymbolEnds = new ArrayList<>();
-        boolean lastWasSpace = false;
-        newSymbolEnds.add(symbolEnds.get(0));
+            for (int i = 0; i < value.length(); i++) {
+                char currentChar = value.charAt(i);
 
-        for (int i = 0; i < value.length(); i++) {
-            char currentChar = value.charAt(i);
-
-            if (isWhiteSpaceChar(currentChar)) {
-                if (!lastWasSpace) {
-                    newValue.append(currentChar);
-                    lastWasSpace = true;
-                    newSymbolEnds.add(symbolEnds.get(i + 1));
+                if (isWhiteSpaceChar(currentChar)) {
+                    if (!lastWasSpace) {
+                        newValue.append(currentChar);
+                        lastWasSpace = true;
+                        newSymbolEnds.add(symbolEnds.get(i + 1));
+                    } else {
+                        newSymbolEnds.set(newSymbolEnds.size() - 1, symbolEnds.get(i + 1));
+                    }
                 } else {
-                    newSymbolEnds.remove(newSymbolEnds.size() - 1);
+                    newValue.append(currentChar);
+                    lastWasSpace = false;
                     newSymbolEnds.add(symbolEnds.get(i + 1));
                 }
-            } else {
-                newValue.append(currentChar);
-                lastWasSpace = false;
-                newSymbolEnds.add(symbolEnds.get(i + 1));
             }
+            this.value = newValue.toString();
+            this.symbolEnds = newSymbolEnds;
         }
-        this.value = newValue.toString();
-        this.symbolEnds = newSymbolEnds;
     }
 
     @Override
