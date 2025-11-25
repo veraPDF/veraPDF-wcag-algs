@@ -88,7 +88,6 @@ public class ContrastRatioConsumerTests {
 	@ParameterizedTest(name = "{index}: ({0}, {1}, {2}) => {0}")
 	@MethodSource("contrastTestFailParams")
 	void testColorContrastFail(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
-        StaticContainers.setIsDataLoader(false);
         IDocument document = JsonToPdfTree.getDocument(SRC_DIR + jsonPdfPath);
 		ITree tree = document.getTree();
 		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath)) {
