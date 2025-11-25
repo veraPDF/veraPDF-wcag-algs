@@ -72,6 +72,7 @@ public class StaticContainers {
 
 	static {
 		StaticContainers.wcagValidationInfo.set(new WCAGValidationInfo());
+        StaticContainers.setIsDataLoader(false);
 	}
 
 	public static void updateContainers(IDocument document) {
