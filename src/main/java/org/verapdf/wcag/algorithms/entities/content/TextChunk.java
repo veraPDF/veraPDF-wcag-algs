@@ -261,7 +261,7 @@ public class TextChunk extends TextInfoChunk {
     }
 
     public void compressSpaces() {
-        if (value == null || value.isEmpty()) {
+        if (value == null || value.isEmpty() || symbolEnds == null || symbolEnds.size() != value.length() + 1) {
             return;
         }
 
@@ -278,7 +278,7 @@ public class TextChunk extends TextInfoChunk {
                     newValue.append(currentChar);
                     lastWasSpace = true;
                     newSymbolEnds.add(symbolEnds.get(i + 1));
-                } else  {
+                } else {
                     newSymbolEnds.remove(newSymbolEnds.size() - 1);
                     newSymbolEnds.add(symbolEnds.get(i + 1));
                 }
