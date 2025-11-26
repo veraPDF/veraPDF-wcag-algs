@@ -6,7 +6,6 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainer
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils.isWhiteSpaceChar;
@@ -262,7 +261,7 @@ public class TextChunk extends TextInfoChunk {
     }
 
     public void compressSpaces() {
-        if (value != null && !value.isEmpty() && Pattern.compile("\\s{2,}").matcher(value).find()) {
+        if (value != null && !value.isEmpty() && hasConsecutiveWhiteSpace()) {
             StringBuilder newValue = new StringBuilder();
             List<Double> newSymbolEnds = new ArrayList<>();
             boolean lastWasSpace = false;
@@ -288,6 +287,25 @@ public class TextChunk extends TextInfoChunk {
             this.value = newValue.toString();
             this.symbolEnds = newSymbolEnds;
         }
+    }
+
+    public boolean hasConsecutiveWhiteSpace() {
+        if (value == null || value.length() < 2) {
+            return false;
+        }
+
+        boolean lastWasSpace = false;
+        for (int i = 0; i < value.length(); i++) {
+            if (isWhiteSpaceChar(value.charAt(i))) {
+                if (lastWasSpace) {
+                    return true;
+                }
+                lastWasSpace = true;
+            } else {
+                lastWasSpace = false;
+            }
+        }
+        return false;
     }
 
     @Override
