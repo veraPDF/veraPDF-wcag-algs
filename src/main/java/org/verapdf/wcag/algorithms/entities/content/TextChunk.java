@@ -258,6 +258,54 @@ public class TextChunk extends TextInfoChunk {
         return TextChunkUtils.isWhiteSpaceChunk(this);
     }
 
+    public void compressSpaces() {
+        if (value != null && !value.isEmpty() && hasConsecutiveWhiteSpaces()) {
+            StringBuilder newValue = new StringBuilder();
+            List<Double> newSymbolEnds = new ArrayList<>();
+            boolean lastWasSpace = false;
+            newSymbolEnds.add(symbolEnds.get(0));
+
+            for (int i = 0; i < value.length(); i++) {
+                char currentChar = value.charAt(i);
+
+                if (TextChunkUtils.isWhiteSpaceChar(currentChar)) {
+                    if (!lastWasSpace) {
+                        newValue.append(currentChar);
+                        lastWasSpace = true;
+                        newSymbolEnds.add(symbolEnds.get(i + 1));
+                    } else {
+                        newSymbolEnds.set(newSymbolEnds.size() - 1, symbolEnds.get(i + 1));
+                    }
+                } else {
+                    newValue.append(currentChar);
+                    lastWasSpace = false;
+                    newSymbolEnds.add(symbolEnds.get(i + 1));
+                }
+            }
+            this.value = newValue.toString();
+            this.symbolEnds = newSymbolEnds;
+        }
+    }
+
+    public boolean hasConsecutiveWhiteSpaces() {
+        if (value == null || value.length() < 2) {
+            return false;
+        }
+
+        boolean lastWasSpace = false;
+        for (int i = 0; i < value.length(); i++) {
+            if (TextChunkUtils.isWhiteSpaceChar(value.charAt(i))) {
+                if (lastWasSpace) {
+                    return true;
+                }
+                lastWasSpace = true;
+            } else {
+                lastWasSpace = false;
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!super.equals(o)) {
