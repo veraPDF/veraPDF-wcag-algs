@@ -8,8 +8,6 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils.isWhiteSpaceChar;
-
 public class TextChunk extends TextInfoChunk {
     private String value;
     private String fontName;
@@ -261,7 +259,7 @@ public class TextChunk extends TextInfoChunk {
     }
 
     public void compressSpaces() {
-        if (value != null && !value.isEmpty() && hasConsecutiveWhiteSpace()) {
+        if (value != null && !value.isEmpty() && hasConsecutiveWhiteSpaces()) {
             StringBuilder newValue = new StringBuilder();
             List<Double> newSymbolEnds = new ArrayList<>();
             boolean lastWasSpace = false;
@@ -270,7 +268,7 @@ public class TextChunk extends TextInfoChunk {
             for (int i = 0; i < value.length(); i++) {
                 char currentChar = value.charAt(i);
 
-                if (isWhiteSpaceChar(currentChar)) {
+                if (TextChunkUtils.isWhiteSpaceChar(currentChar)) {
                     if (!lastWasSpace) {
                         newValue.append(currentChar);
                         lastWasSpace = true;
@@ -289,14 +287,14 @@ public class TextChunk extends TextInfoChunk {
         }
     }
 
-    public boolean hasConsecutiveWhiteSpace() {
+    public boolean hasConsecutiveWhiteSpaces() {
         if (value == null || value.length() < 2) {
             return false;
         }
 
         boolean lastWasSpace = false;
         for (int i = 0; i < value.length(); i++) {
-            if (isWhiteSpaceChar(value.charAt(i))) {
+            if (TextChunkUtils.isWhiteSpaceChar(value.charAt(i))) {
                 if (lastWasSpace) {
                     return true;
                 }
