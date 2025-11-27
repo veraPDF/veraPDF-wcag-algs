@@ -52,4 +52,9 @@ public class RomanNumbersListLabelsDetectionAlgorithm extends LettersListLabelsD
         return (prefix.isEmpty() || !Character.isLetter(prefix.charAt(prefix.length() - 1))) &&
                (suffix.isEmpty() || !Character.isLetter(suffix.charAt(0)));
     }
+
+    @Override
+    public int recalculatePrefixLength(String string, int prefixLength) {
+        return getNotRegexStartLength(string, prefixLength);
+    }
 }
