@@ -123,6 +123,9 @@ public class ListLabelsUtils {
 		if (previousListItem.getPrefix() != null && !Objects.equals(previousListItem.getPrefix(), previousItem.getPrefix())) {
 			return false;
 		}
+        if (!previousItem.getNumberedPart().equals(previousItem.getNumberedPart().toUpperCase()) == currentItem.getNumberedPart().equals(currentItem.getNumberedPart().toUpperCase())) {
+            return false;
+        }
 		if (currentItem.getNumber() <= previousItem.getNumber()) {
 			return false;
 		}
