@@ -37,7 +37,7 @@ public class AlfaLettersListLabelsDetectionAlgorithm2 extends AlfaLettersListLab
         }
         int result = 0;
         for (char c : s.toCharArray()) {
-            int num = getLetters().indexOf(c);
+            int num = getLetters().indexOf(Character.toUpperCase(c));
             if (num < 0) {
                 return null;
             }
