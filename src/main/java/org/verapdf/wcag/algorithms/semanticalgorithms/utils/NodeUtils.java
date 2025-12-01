@@ -163,7 +163,7 @@ public class NodeUtils {
 				UNDERLINED_TEXT_EPSILONS[0] * textChunk.getBoundingBox().getWidth();
 	}
 
-	private static boolean isUpperCaseString(String str) {
+	public static boolean isUpperCaseString(String str) {
 		int nonLetters = 0;
 		for (char character : str.toCharArray()) {
 			if (!Character.isLetter(character)) {
