@@ -31,7 +31,7 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
         } else {
             return false;
         }
-        Integer number = getNumberFromString(substring.toUpperCase());
+        Integer number = getNumberFromString(substring);
         if (number == null) {
             return false;
         }
@@ -44,7 +44,7 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
                     (!substring.matches(getUpperCaseRegex()) || !isUpperCase)) {
                 return false;
             }
-            Integer nextNumber = getNumberFromString(substring.toUpperCase());
+            Integer nextNumber = getNumberFromString(substring);
             if (nextNumber == null) {
                 return false;
             }
@@ -109,7 +109,7 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
                 } else {
                     continue;
                 }
-                number = getNumberFromString(substring.toUpperCase());
+                number = getNumberFromString(substring);
                 if (number == null) {
                     continue;
                 }
