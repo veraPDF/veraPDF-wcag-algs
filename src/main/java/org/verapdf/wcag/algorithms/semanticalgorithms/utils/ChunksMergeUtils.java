@@ -31,7 +31,7 @@ public class ChunksMergeUtils {
 	private static final double[] COLUMNS_PROBABILITY_PARAMS = {0.75, 0.75};
 	private static final double[] FONT_SIZE_DIFFERENCE_PARAMS = {0.95, 3.97};
 	private static final double DIFFERENT_LINES_PARAM = 1.3;
-	private static final double ALIGNMENT_PARAM = 0.02;
+	private static final double ALIGNMENT_PARAM = 0.2;
 	private static final double SUPERSCRIPT_BASELINE_THRESHOLD = 0.1;
 	private static final double SUPERSCRIPT_FONTSIZE_THRESHOLD = 0.1;
 	private static final double SUBSCRIPT_BASELINE_THRESHOLD = 0.08;
