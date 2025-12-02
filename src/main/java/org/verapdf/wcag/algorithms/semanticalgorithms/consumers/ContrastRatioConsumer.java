@@ -66,7 +66,6 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 
 	public ContrastRatioConsumer(String password, boolean enableAntialias, Float imagePixelSize) {
 		this.fileName = StaticContainers.getFileName();
-		this.processedTextChunks = 0;
 		this.textChunksNumber = StaticContainers.getTextChunksNumber();
 		IIORegistry registry = IIORegistry.getDefaultInstance();
 		registry.registerServiceProvider(new J2KImageReaderSpi());
@@ -80,6 +79,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 	@Override
 	public boolean run() {
 		if (fileName == null) {
+			logger.warning("The file name is missing for ContrastRatioConsumer");
 			return false;
 		}
 		if (!startStep()) {
