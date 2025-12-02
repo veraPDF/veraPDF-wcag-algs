@@ -148,9 +148,11 @@ public class ChunksMergeUtils {
 			if (superscriptProbability > subscriptProbability) {
 				oneLineProbability = superscriptProbability;
 				secondNode.setTextFormat(TextFormat.SUPERSCRIPT);
+				y.setTextFormat(TextFormat.SUPERSCRIPT);
 			} else {
 				oneLineProbability = subscriptProbability;
 				secondNode.setTextFormat(TextFormat.SUBSCRIPT);
+				y.setTextFormat(TextFormat.SUBSCRIPT);
 			}
 		} else {
 			double superscriptProbabilityFirst = getSuperscriptProbabilityFirstChunk(x, y, baseLineDiff, fontSizeDiff);
