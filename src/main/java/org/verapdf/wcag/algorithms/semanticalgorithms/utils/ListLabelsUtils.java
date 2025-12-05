@@ -132,8 +132,7 @@ public class ListLabelsUtils {
 		if (previousItem.getNumber() + 1 != currentItem.getNumber() && isSequential) {
 			return false;
 		}
-		if (!previousItem.getSuffix().isEmpty() && !currentItem.getSuffix().isEmpty() &&
-				previousItem.getSuffix().charAt(0) != currentItem.getSuffix().charAt(0)) {
+		if (haveDifferentSuffixChars(previousItem, currentItem)) {
 			return false;
 		}
 		if (!algo.checkPrefixAndSuffix(previousItem.getPrefix(), previousItem.getSuffix()) ||
@@ -145,6 +144,20 @@ public class ListLabelsUtils {
 		interval.getListItemsInfos().add(currentItem);
 		return true;
 	}
+
+    private static boolean haveDifferentSuffixChars(ListItemTextInfo previousItem, ListItemTextInfo currentItem) {
+        String prev = previousItem.getSuffix();
+        String curr = currentItem.getSuffix();
+
+        if (prev == null || curr == null || prev.isEmpty() || curr.isEmpty()) {
+            return false;
+        }
+
+        char p0 = prev.charAt(0);
+        char c0 = curr.charAt(0);
+
+        return !(p0 == c0 || prev.charAt(1) == c0 || p0 == curr.charAt(1));
+    }
 
 	private static boolean isUnorderedListItems(TextListInterval interval, ListItemTextInfo listItem, ListItemTextInfo previousListItem) {
 		List<ListItemTextInfo> items = new ArrayList<>(2);
