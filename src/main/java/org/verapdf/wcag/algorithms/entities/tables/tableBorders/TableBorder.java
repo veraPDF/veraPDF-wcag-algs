@@ -513,6 +513,15 @@ public class TableBorder extends BaseObject {
         this.xCoordinates.add(getTableColumnRightX(numberOfColumns - 1));
         this.xWidths.add(0.0d);
     }
+    
+    public boolean checkColumnsIntersections() {
+        for (int columnNumber = 0; columnNumber < numberOfColumns - 1; columnNumber++) {
+            if (getTableColumnRightX(columnNumber) > getTableColumnLeftX(columnNumber + 1)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     private double getTableColumnRightX(int columnNumber) {
         double rightX = -Double.MAX_VALUE;

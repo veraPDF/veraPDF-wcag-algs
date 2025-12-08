@@ -334,6 +334,9 @@ public class Table extends InfoChunk {
             }
         }
         TableBorder tableBorder = new TableBorder(getBoundingBox(), tableBorderRows, numberOfRows, numberOfColumns);
+        if (!tableBorder.checkColumnsIntersections()) {
+            return null;
+        }
         tableBorder.calculateBoundingBoxesUsingCoordinates(getPageNumber(), true);
         return tableBorder;
      }
