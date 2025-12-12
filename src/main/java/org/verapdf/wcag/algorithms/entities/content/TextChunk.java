@@ -202,7 +202,7 @@ public class TextChunk extends TextInfoChunk {
             return;
         }
         double multiplier;
-        if (textStart == textEnd) {
+        if (symbolEnds.get(symbolEnds.size() - 1).equals(symbolEnds.get(0))) {
             multiplier = 0;
         } else {
             multiplier = (textEnd - textStart) / (symbolEnds.get(symbolEnds.size() - 1) - symbolEnds.get(0));
