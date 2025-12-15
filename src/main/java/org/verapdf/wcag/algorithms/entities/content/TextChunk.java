@@ -3,6 +3,7 @@ package org.verapdf.wcag.algorithms.entities.content;
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.*;
@@ -202,7 +203,7 @@ public class TextChunk extends TextInfoChunk {
             return;
         }
         double multiplier;
-        if (symbolEnds.get(symbolEnds.size() - 1).equals(symbolEnds.get(0))) {
+        if (NodeUtils.areCloseNumbers(symbolEnds.get(symbolEnds.size() - 1), symbolEnds.get(0))) {
             multiplier = 0;
         } else {
             multiplier = (textEnd - textStart) / (symbolEnds.get(symbolEnds.size() - 1) - symbolEnds.get(0));
