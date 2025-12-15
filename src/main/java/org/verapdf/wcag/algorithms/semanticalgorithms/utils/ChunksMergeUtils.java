@@ -78,10 +78,14 @@ public class ChunksMergeUtils {
 	}
 
 	public static double toLineMergeProbability(TextInfoChunk x, TextInfoChunk y) {
+		return toLineMergeProbability(x, y, false);
+	}
+	
+	public static double toLineMergeProbability(TextInfoChunk x, TextInfoChunk y, boolean isTable) {
 		double baseLineDiff = getBaseLineDifference(x, y);
 		double fontSizeDiff = getFontSizeDifference(x, y);
 
-		double charSpacingProbability = mergeByCharSpacingProbability(x, y);
+		double charSpacingProbability = mergeByCharSpacingProbability(x, y, isTable);
 		double resultProbability = charSpacingProbability *
 				mergeNormalLineProbability(Math.abs(baseLineDiff), Math.abs(fontSizeDiff),
 						NORMAL_LINE_PROBABILITY_PARAMS);
@@ -484,6 +488,10 @@ public class ChunksMergeUtils {
 	}
 
 	private static double mergeByCharSpacingProbability(TextInfoChunk x, TextInfoChunk y) {
+		return mergeByCharSpacingProbability(x, y, false);
+	}
+
+	private static double mergeByCharSpacingProbability(TextInfoChunk x, TextInfoChunk y, boolean isTable) {
 //todo        if (Math.abs(x.getBaseLine() - y.getBaseLine()) > 0.95)
 //            return 1;
 //            replace with mergeYAlmostNestedProbability
@@ -493,7 +501,7 @@ public class ChunksMergeUtils {
 			return 0.0;
 		}
 
-		if (StaticContainers.isDataLoader()) {
+		if (!isTable && StaticContainers.isDataLoader()) {
 			return 1.0;
 		}
 		double firstChunkEnd = x.getTextEnd();

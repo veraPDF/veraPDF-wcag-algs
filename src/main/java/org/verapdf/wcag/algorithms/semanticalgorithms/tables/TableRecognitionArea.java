@@ -204,7 +204,7 @@ public class TableRecognitionArea {
                 Math.abs(header.getFirstBaseLine() - token.getFirstBaseLine()));
 
         if (baseLineDiff < TableUtils.ONE_LINE_TOLERANCE_FACTOR * token.getFontSize() &&
-                ChunksMergeUtils.toLineMergeProbability(header.getLastToken(), token) > TableUtils.MERGE_PROBABILITY_THRESHOLD) {
+                ChunksMergeUtils.toLineMergeProbability(header.getLastToken(), token, true) > TableUtils.MERGE_PROBABILITY_THRESHOLD) {
             // token can be appended to the last line of the header
             if (token instanceof TableCluster) {
                 header.mergeWithoutRowNumbers((TableCluster) token);
