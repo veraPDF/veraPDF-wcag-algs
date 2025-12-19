@@ -43,6 +43,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 	private static final int RENDER_DPI = 144;
 	public static final int PDF_DPI = 72;
 	private static final double LUMINOSITY_DIFFERENCE = 0.001;
+    private static final double SECOND_COLOR_MIN_PERCENTAGE_THRESHOLD = 0.1;
 	private long processedTextChunks;
 	private final Long textChunksNumber;
 	private PDDocument document;
@@ -307,7 +308,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 			approximatedTextLuminosity = textLuminosity;
 			double diff = 1.0;
 			Map<Color, DataPoint> imageColorMap = getImageColorMap(image);
-            if (StaticContainers.isDataLoader() && (imageColorMap.size() == 1 || getSecondColorPercent(imageColorMap) < 0.1)) {
+            if (StaticContainers.isDataLoader() && (imageColorMap.size() == 1 || getSecondColorPercent(imageColorMap) < SECOND_COLOR_MIN_PERCENTAGE_THRESHOLD)) {
                 return 1.0;
             }
 			textChunk.setBackgroundColor(checkForBackgroundColor(imageColorMap, textColor));
