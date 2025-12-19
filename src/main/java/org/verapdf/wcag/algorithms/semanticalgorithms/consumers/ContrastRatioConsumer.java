@@ -307,7 +307,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 			approximatedTextLuminosity = textLuminosity;
 			double diff = 1.0;
 			Map<Color, DataPoint> imageColorMap = getImageColorMap(image);
-            if (StaticContainers.isDataLoader() && imageColorMap.size() == 1) {
+            if (StaticContainers.isDataLoader() && (imageColorMap.size() == 1 || getSecondColorPercent(imageColorMap) < 0.1)) {
                 return 1.0;
             }
 			textChunk.setBackgroundColor(checkForBackgroundColor(imageColorMap, textColor));
@@ -338,6 +338,31 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 			return getContrastRatio(contrastColors[0], contrastColors[1]);
 		}
 	}
+
+    private double getSecondColorPercent(Map<Color, DataPoint> colorMap) {
+        if (colorMap == null || colorMap.isEmpty()) {
+            return 0.0;
+        }
+        int topCount = -1;
+        int secondCount = -1;
+        long totalPixels = 0L;
+
+        for (Map.Entry<Color, DataPoint> e : colorMap.entrySet()) {
+            DataPoint dp = e.getValue();
+            int occ = dp.totalOccurrence;
+            totalPixels += occ;
+            if (occ > topCount) {
+                secondCount = topCount;
+                topCount = occ;
+            } else if (occ > secondCount) {
+                secondCount = occ;
+            }
+        }
+        if (totalPixels <= 0 || secondCount <= 0) {
+            return 0.0;
+        }
+        return (double) secondCount / totalPixels;
+    }
 
 	private double[] checkForBackgroundColor(Map<Color, DataPoint> imageColorMap, Color textColor) {
 		Color backgroundColor = getBackgroundColor(imageColorMap, textColor);
