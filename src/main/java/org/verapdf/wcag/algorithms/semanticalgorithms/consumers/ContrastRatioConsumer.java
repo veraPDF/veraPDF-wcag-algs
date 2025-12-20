@@ -307,7 +307,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 			textLuminosity = relativeLuminosity(textColor);
 			approximatedTextLuminosity = textLuminosity;
 			double diff = 1.0;
-			Map<Color, DataPoint> imageColorMap = getImageColorMap(image);
+			SortedMap<Color, DataPoint> imageColorMap = getImageColorMap(image);
             if (StaticContainers.isDataLoader() && (imageColorMap.size() == 1 || getSecondColorPercent(imageColorMap) < SECOND_COLOR_MIN_PERCENTAGE_THRESHOLD)) {
                 return 1.0;
             }
@@ -342,7 +342,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 
     private double getSecondColorPercent(Map<Color, DataPoint> colorMap) {
         if (colorMap != null && colorMap.size() > 1) {
-            Map.Entry<Color, DataPoint> secondEntry = colorMap.entrySet().stream()
+            DataPoint secondEntry = colorMap.values().stream()
                     .skip(1)
                     .findFirst()
                     .orElse(null);
@@ -351,14 +351,13 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
                 long totalPixels = colorMap.values().stream()
                         .mapToInt(DataPoint::getTotalOccurrence)
                         .sum();
-                DataPoint result = secondEntry.getValue();
-                return (double) result.totalOccurrence / totalPixels;
+                return (double) secondEntry.totalOccurrence / totalPixels;
             }
         }
         return 0.0;
     }
 
-	private double[] checkForBackgroundColor(Map<Color, DataPoint> imageColorMap, Color textColor) {
+	private double[] checkForBackgroundColor(SortedMap<Color, DataPoint> imageColorMap, Color textColor) {
 		Color backgroundColor = getBackgroundColor(imageColorMap, textColor);
 		if (backgroundColor != null) {
 			float[] components = backgroundColor.getColorComponents(null);
@@ -385,7 +384,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		       Math.pow(((doubleColorComponent + 0.055) / 1.055), 2.4);
 	}
 
-	private Map<Color, DataPoint> getImageColorMap(BufferedImage bim) {
+	private SortedMap<Color, DataPoint> getImageColorMap(BufferedImage bim) {
 		int width = bim.getWidth();
 		int height = bim.getHeight();
 		Map<Color, DataPoint> colorMap = new HashMap<>();
@@ -422,7 +421,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		return new ArrayList<>(getImageColorMap(bim).values());
 	}
 
-	private Color getBackgroundColor(Map<Color, DataPoint> colorMap, Color textColor) {
+	private Color getBackgroundColor(SortedMap<Color, DataPoint> colorMap, Color textColor) {
 		if (colorMap.size() == 1) {
 			Map.Entry<Color, DataPoint> entry = colorMap.entrySet().iterator().next();
 			if (!textColor.equals(entry.getKey())) {
