@@ -340,7 +340,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		}
 	}
 
-    private double getSecondColorPercent(Map<Color, DataPoint> colorMap) {
+    private double getSecondColorPercent(SortedMap<Color, DataPoint> colorMap) {
         if (colorMap != null && colorMap.size() > 1) {
             DataPoint secondEntry = colorMap.values().stream()
                     .skip(1)
@@ -410,7 +410,11 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
         TreeMap<Color, DataPoint> sortedMap = new TreeMap<>((c1, c2) -> {
             DataPoint dp1 = colorMap.get(c1);
             DataPoint dp2 = colorMap.get(c2);
-            return Integer.compare(dp2.getTotalOccurrence(), dp1.getTotalOccurrence());
+            int occurrenceCompare = Integer.compare(dp2.getTotalOccurrence(), dp1.getTotalOccurrence());
+            if (occurrenceCompare != 0) {
+                return occurrenceCompare;
+            }
+            return Integer.compare(c1.getRGB(), c2.getRGB());
         });
         sortedMap.putAll(colorMap);
 
