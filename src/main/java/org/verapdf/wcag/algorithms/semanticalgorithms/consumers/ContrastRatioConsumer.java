@@ -43,6 +43,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 	private static final int RENDER_DPI = 144;
 	public static final int PDF_DPI = 72;
 	private static final double LUMINOSITY_DIFFERENCE = 0.001;
+    private static final double SECOND_COLOR_MIN_PERCENTAGE_THRESHOLD = 0.1;
 	private long processedTextChunks;
 	private final Long textChunksNumber;
 	private PDDocument document;
@@ -306,12 +307,12 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 			textLuminosity = relativeLuminosity(textColor);
 			approximatedTextLuminosity = textLuminosity;
 			double diff = 1.0;
-			Map<Color, DataPoint> imageColorMap = getImageColorMap(image);
-            if (StaticContainers.isDataLoader() && imageColorMap.size() == 1) {
+			SortedMap<Color, DataPoint> imageColorMap = getImageColorMap(image);
+            if (StaticContainers.isDataLoader() && (imageColorMap.size() == 1 || getSecondColorPercent(imageColorMap) < SECOND_COLOR_MIN_PERCENTAGE_THRESHOLD)) {
                 return 1.0;
             }
 			textChunk.setBackgroundColor(checkForBackgroundColor(imageColorMap, textColor));
-			List<DataPoint> dpFullArray = new ArrayList<>(new TreeSet<>(imageColorMap.values()));
+			List<DataPoint> dpFullArray = new ArrayList<>(imageColorMap.values());
 			for (DataPoint dp : dpFullArray) {
 				double luminosity = dp.getValue();
 				double currentDifference = Math.abs(luminosity - textLuminosity);
@@ -339,7 +340,24 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		}
 	}
 
-	private double[] checkForBackgroundColor(Map<Color, DataPoint> imageColorMap, Color textColor) {
+    private double getSecondColorPercent(SortedMap<Color, DataPoint> colorMap) {
+        if (colorMap != null && colorMap.size() > 1) {
+            DataPoint secondEntry = colorMap.values().stream()
+                    .skip(1)
+                    .findFirst()
+                    .orElse(null);
+
+            if (secondEntry != null) {
+                long totalPixels = colorMap.values().stream()
+                        .mapToInt(DataPoint::getTotalOccurrence)
+                        .sum();
+                return (double) secondEntry.totalOccurrence / totalPixels;
+            }
+        }
+        return 0.0;
+    }
+
+	private double[] checkForBackgroundColor(SortedMap<Color, DataPoint> imageColorMap, Color textColor) {
 		Color backgroundColor = getBackgroundColor(imageColorMap, textColor);
 		if (backgroundColor != null) {
 			float[] components = backgroundColor.getColorComponents(null);
@@ -366,7 +384,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		       Math.pow(((doubleColorComponent + 0.055) / 1.055), 2.4);
 	}
 
-	private Map<Color, DataPoint> getImageColorMap(BufferedImage bim) {
+	private SortedMap<Color, DataPoint> getImageColorMap(BufferedImage bim) {
 		int width = bim.getWidth();
 		int height = bim.getHeight();
 		Map<Color, DataPoint> colorMap = new HashMap<>();
@@ -389,14 +407,25 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 			}
 		}
 
-		return colorMap;
+        TreeMap<Color, DataPoint> sortedMap = new TreeMap<>((c1, c2) -> {
+            DataPoint dp1 = colorMap.get(c1);
+            DataPoint dp2 = colorMap.get(c2);
+            int occurrenceCompare = Integer.compare(dp2.getTotalOccurrence(), dp1.getTotalOccurrence());
+            if (occurrenceCompare != 0) {
+                return occurrenceCompare;
+            }
+            return Integer.compare(c1.getRGB(), c2.getRGB());
+        });
+        sortedMap.putAll(colorMap);
+
+		return sortedMap;
 	}
 
 	private List<DataPoint> getLuminosityPresenceList(BufferedImage bim) {
-		return new ArrayList<>(new TreeSet<>(getImageColorMap(bim).values()));
+		return new ArrayList<>(getImageColorMap(bim).values());
 	}
 
-	private Color getBackgroundColor(Map<Color, DataPoint> colorMap, Color textColor) {
+	private Color getBackgroundColor(SortedMap<Color, DataPoint> colorMap, Color textColor) {
 		if (colorMap.size() == 1) {
 			Map.Entry<Color, DataPoint> entry = colorMap.entrySet().iterator().next();
 			if (!textColor.equals(entry.getKey())) {
@@ -404,21 +433,13 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 			}
 			return null;
 		}
-		List<Integer> sortedOccurrences = colorMap.values()
-		                                         .stream().map(DataPoint::getTotalOccurrence)
-		                                         .sorted().collect(Collectors.toList());
-		int firstFrequency = sortedOccurrences.get(sortedOccurrences.size() - 1);
-		int secondFrequency = sortedOccurrences.get(sortedOccurrences.size() - 2);
-		Color firstColor = null;
-		Color secondColor = null;
-		for (Map.Entry<Color, DataPoint> entry : colorMap.entrySet()) {
-			if (firstColor == null && entry.getValue().getTotalOccurrence() == firstFrequency) {
-				firstColor = entry.getKey();
-			}
-			if (secondColor == null && entry.getValue().getTotalOccurrence() == secondFrequency) {
-				secondColor = entry.getKey();
-			}
-		}
+        Color firstColor = colorMap.keySet().stream()
+                .findFirst()
+                .orElse(null);
+        Color secondColor = colorMap.keySet().stream()
+                .skip(1)
+                .findFirst()
+                .orElse(null);
 		if (firstColor!= null && !NodeUtils.hasSimilarBackgroundColor(textColor, firstColor)) {
 			return firstColor;
 		} else if (secondColor!= null && !NodeUtils.hasSimilarBackgroundColor(textColor, secondColor)) {
@@ -451,23 +472,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 	}
 
 	private double[] get2MostPresentElements(List<DataPoint> source) {
-		double absoluteMaxPresent = -1;
-		double secondMaxPresent = -1;
-		int max = 0;
-		int secondMax = 0;
-
-		for (DataPoint dataPoint: source) {
-			if (dataPoint.totalOccurrence >= max) {
-				secondMaxPresent = absoluteMaxPresent;
-				secondMax = max;
-				absoluteMaxPresent = dataPoint.value;
-				max = dataPoint.totalOccurrence;
-			} else if (dataPoint.totalOccurrence >= secondMax) {
-				secondMax = dataPoint.totalOccurrence;
-				secondMaxPresent = dataPoint.value;
-			}
-		}
-		return new double[]{absoluteMaxPresent, secondMaxPresent};
+		return source.size() == 1 ? new double[] {source.get(0).value, -1} : new double[] {source.get(0).value, source.get(1).value};
 	}
 
 	@Override
