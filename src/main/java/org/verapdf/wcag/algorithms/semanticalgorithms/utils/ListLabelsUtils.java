@@ -156,7 +156,16 @@ public class ListLabelsUtils {
         char p0 = prev.charAt(0);
         char c0 = curr.charAt(0);
 
-        return !(p0 == c0 || prev.charAt(1) == c0 || p0 == curr.charAt(1));
+        boolean secondCharMatches = false;
+
+        if (prev.length() >= 2 && prev.charAt(1) == c0) {
+            secondCharMatches = true;
+        }
+        if (curr.length() >= 2 && p0 == curr.charAt(1)) {
+            secondCharMatches = true;
+        }
+
+        return !(p0 == c0 || secondCharMatches);
     }
 
 	private static boolean isUnorderedListItems(TextListInterval interval, ListItemTextInfo listItem, ListItemTextInfo previousListItem) {
