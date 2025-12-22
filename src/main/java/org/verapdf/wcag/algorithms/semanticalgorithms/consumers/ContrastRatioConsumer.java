@@ -32,7 +32,6 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INode>, Closeable {
@@ -43,7 +42,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 	private static final int RENDER_DPI = 144;
 	public static final int PDF_DPI = 72;
 	private static final double LUMINOSITY_DIFFERENCE = 0.001;
-    private static final double SECOND_COLOR_MIN_PERCENTAGE_THRESHOLD = 0.1;
+    private static final double BACKGROUND_COLOR_MIN_PERCENTAGE_THRESHOLD = 0.01;
 	private long processedTextChunks;
 	private final Long textChunksNumber;
 	private PDDocument document;
@@ -308,10 +307,14 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 			approximatedTextLuminosity = textLuminosity;
 			double diff = 1.0;
 			SortedMap<Color, DataPoint> imageColorMap = getImageColorMap(image);
-            if (StaticContainers.isDataLoader() && (imageColorMap.size() == 1 || getSecondColorPercent(imageColorMap) < SECOND_COLOR_MIN_PERCENTAGE_THRESHOLD)) {
+            if (StaticContainers.isDataLoader() && (imageColorMap.size() == 1)) {
                 return 1.0;
             }
-			textChunk.setBackgroundColor(checkForBackgroundColor(imageColorMap, textColor));
+            Color backgroundColor = getBackgroundColor(imageColorMap, textColor);
+			textChunk.setBackgroundColor(checkForBackgroundColor(backgroundColor));
+            if (getColorPercent(imageColorMap, backgroundColor) < BACKGROUND_COLOR_MIN_PERCENTAGE_THRESHOLD) {
+                return 1.0;
+            }
 			List<DataPoint> dpFullArray = new ArrayList<>(imageColorMap.values());
 			for (DataPoint dp : dpFullArray) {
 				double luminosity = dp.getValue();
@@ -340,25 +343,20 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		}
 	}
 
-    private double getSecondColorPercent(SortedMap<Color, DataPoint> colorMap) {
-        if (colorMap != null && colorMap.size() > 1) {
-            DataPoint secondEntry = colorMap.values().stream()
-                    .skip(1)
-                    .findFirst()
-                    .orElse(null);
-
-            if (secondEntry != null) {
+    private double getColorPercent(SortedMap<Color, DataPoint> colorMap, Color color) {
+        if (color != null && colorMap.containsKey(color)) {
+            DataPoint dp = colorMap.get(color);
+            if (dp != null) {
                 long totalPixels = colorMap.values().stream()
                         .mapToInt(DataPoint::getTotalOccurrence)
                         .sum();
-                return (double) secondEntry.totalOccurrence / totalPixels;
+                return (double) dp.totalOccurrence / totalPixels;
             }
         }
         return 0.0;
     }
 
-	private double[] checkForBackgroundColor(SortedMap<Color, DataPoint> imageColorMap, Color textColor) {
-		Color backgroundColor = getBackgroundColor(imageColorMap, textColor);
+	private double[] checkForBackgroundColor(Color backgroundColor) {
 		if (backgroundColor != null) {
 			float[] components = backgroundColor.getColorComponents(null);
 			return IntStream.range(0, components.length).mapToDouble(i -> components[i]).toArray();
