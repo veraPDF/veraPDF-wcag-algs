@@ -311,8 +311,8 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
                 return 1.0;
             }
             Color backgroundColor = getBackgroundColor(imageColorMap, textColor);
-			textChunk.setBackgroundColor(checkForBackgroundColor(backgroundColor));
-            if (getColorPercent(imageColorMap, backgroundColor) < BACKGROUND_COLOR_MIN_PERCENTAGE_THRESHOLD) {
+			textChunk.setBackgroundColor(extractColorComponents(backgroundColor));
+            if (StaticContainers.isDataLoader() && getColorPercent(imageColorMap, backgroundColor) < BACKGROUND_COLOR_MIN_PERCENTAGE_THRESHOLD) {
                 return 1.0;
             }
 			List<DataPoint> dpFullArray = new ArrayList<>(imageColorMap.values());
@@ -356,7 +356,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
         return 0.0;
     }
 
-	private double[] checkForBackgroundColor(Color backgroundColor) {
+	private double[] extractColorComponents(Color backgroundColor) {
 		if (backgroundColor != null) {
 			float[] components = backgroundColor.getColorComponents(null);
 			return IntStream.range(0, components.length).mapToDouble(i -> components[i]).toArray();
