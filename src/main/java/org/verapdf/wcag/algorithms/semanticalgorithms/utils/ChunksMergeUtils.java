@@ -31,6 +31,7 @@ public class ChunksMergeUtils {
 	private static final double[] COLUMNS_PROBABILITY_PARAMS = {0.75, 0.75};
 	private static final double[] FONT_SIZE_DIFFERENCE_PARAMS = {0.95, 3.97};
 	private static final double DIFFERENT_LINES_PARAM = 1.3;
+	private static final double CLOSE_DIFFERENT_LINES_PARAM = 1.05;
 	private static final double ALIGNMENT_PARAM = 0.2;
 	private static final double SUPERSCRIPT_BASELINE_THRESHOLD = 0.1;
 	private static final double SUPERSCRIPT_FONTSIZE_THRESHOLD = 0.1;
@@ -148,7 +149,7 @@ public class ChunksMergeUtils {
 		double superscriptProbability = getSuperscriptProbabilitySecondChunk(x, y, baseLineDiff, fontSizeDiff);
 		double subscriptProbability = getSubscriptProbabilitySecondChunk(x, y, baseLineDiff, fontSizeDiff);
 
-		if (Math.max(superscriptProbability, subscriptProbability) > normalTextProbability) {
+		if (Math.max(superscriptProbability, subscriptProbability) > Math.max(TO_LINE_PROBABILITY_THRESHOLD, normalTextProbability)) {
 			if (superscriptProbability > subscriptProbability) {
 				oneLineProbability = superscriptProbability;
 				secondNode.setTextFormat(TextFormat.SUPERSCRIPT);
@@ -161,7 +162,7 @@ public class ChunksMergeUtils {
 		} else {
 			double superscriptProbabilityFirst = getSuperscriptProbabilityFirstChunk(x, y, baseLineDiff, fontSizeDiff);
 			double subscriptProbabilityFirst = getSubscriptProbabilityFirstChunk(x, y, baseLineDiff, fontSizeDiff);
-			if (Math.max(superscriptProbabilityFirst, subscriptProbabilityFirst) > normalTextProbability) {
+			if (Math.max(superscriptProbabilityFirst, subscriptProbabilityFirst) > Math.max(TO_LINE_PROBABILITY_THRESHOLD, normalTextProbability)) {
 				if (superscriptProbabilityFirst > subscriptProbabilityFirst) {
 					oneLineProbability = superscriptProbabilityFirst;
 					x.setTextFormat(TextFormat.SUPERSCRIPT);
@@ -404,27 +405,41 @@ public class ChunksMergeUtils {
 	}
 
 	public static double mergeLeadingProbability(TextBlock x, TextLine y) {
+		return mergeLeadingProbability(x, y, false);
+	}
+
+	public static double mergeLeadingProbability(TextLine x, TextBlock y) {
+		return mergeLeadingProbability(x, y, false);
+	}
+
+	public static double mergeLeadingProbability(TextBlock x, TextLine y, boolean areShouldBeCloseLines) {
 		double maxBaseLinesDifference = 0.0d;
 		for (int lineNumber = 0; lineNumber < x.getLinesNumber() - 1; lineNumber++) {
 			maxBaseLinesDifference = Math.max(maxBaseLinesDifference,
 					Math.abs(x.getLines().get(lineNumber).getBaseLine() - x.getLines().get(lineNumber + 1).getBaseLine()));
 		}
-		if (Math.abs(x.getLastLine().getBaseLine() - y.getBaseLine()) > maxBaseLinesDifference * DIFFERENT_LINES_PARAM) {
+		if (Math.abs(x.getLastLine().getBaseLine() - y.getBaseLine()) > maxBaseLinesDifference * 
+				(areShouldBeCloseLines ? CLOSE_DIFFERENT_LINES_PARAM : DIFFERENT_LINES_PARAM)) {
 			return 0.0d;
 		}
 		return 1.0d;
 	}
 
-	public static double mergeLeadingProbability(TextLine x, TextBlock y) {
+	public static double mergeLeadingProbability(TextLine x, TextBlock y, boolean areShouldBeCloseLines) {
 		double maxBaseLinesDifference = 0.0d;
 		for (int lineNumber = 0; lineNumber < y.getLinesNumber() - 1; lineNumber++) {
 			maxBaseLinesDifference = Math.max(maxBaseLinesDifference,
 					Math.abs(y.getLines().get(lineNumber).getBaseLine() - y.getLines().get(lineNumber + 1).getBaseLine()));
 		}
-		if (Math.abs(x.getBaseLine() - y.getFirstLine().getBaseLine()) > maxBaseLinesDifference * DIFFERENT_LINES_PARAM) {
+		if (Math.abs(x.getBaseLine() - y.getFirstLine().getBaseLine()) > maxBaseLinesDifference *
+				(areShouldBeCloseLines ? CLOSE_DIFFERENT_LINES_PARAM : DIFFERENT_LINES_PARAM)) {
 			return 0.0d;
 		}
 		return 1.0d;
+	}
+
+	public static double mergeLeadingProbability(TextBlock x, TextBlock y) {
+		return Math.min(mergeLeadingProbability(x.getLastLine(), y, true), mergeLeadingProbability(x, y.getFirstLine(), true));
 	}
 
 	public static double mergeLeadingProbability(TextLine x, TextLine y) {
