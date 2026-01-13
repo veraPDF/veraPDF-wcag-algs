@@ -284,7 +284,7 @@
           ]
         },
         {
-          "type":"P",
+          "type":"H1",
           "children":[
             {
               "type":"Link",
