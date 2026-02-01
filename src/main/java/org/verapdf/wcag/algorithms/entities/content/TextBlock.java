@@ -6,7 +6,9 @@ import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TextBlock extends TextInfoChunk {
 
@@ -179,5 +181,15 @@ public class TextBlock extends TextInfoChunk {
 
 	public void setHasEndLine(boolean hasEndLine) {
 		this.hasEndLine = hasEndLine;
+	}
+	
+	public Set<Double> getTextSizes() {
+		Set<Double> textSizes = new HashSet<>();
+		for (TextLine textLine : getLines()) {
+			for (TextChunk textChunk : textLine.getTextChunks()) {
+				textSizes.add(textChunk.getFontSize());
+			}
+		}
+		return textSizes;
 	}
 }
