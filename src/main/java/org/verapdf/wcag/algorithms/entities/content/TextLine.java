@@ -23,6 +23,7 @@ package org.verapdf.wcag.algorithms.entities.content;
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ChunksMergeUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
@@ -102,7 +103,9 @@ public class TextLine extends TextInfoChunk {
     }
 
     public void add(TextLine line) {
-        addSpaceIfRequired(line);
+        if (!StaticContainers.isDataLoader()) {
+            addSpaceIfRequired(line);
+        }
         double size = this.fontSize;
         textChunks.addAll(line.getTextChunks());
         super.add(line);
