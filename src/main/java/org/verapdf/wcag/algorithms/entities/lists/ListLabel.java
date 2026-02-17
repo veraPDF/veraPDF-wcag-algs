@@ -20,13 +20,23 @@
  */
 package org.verapdf.wcag.algorithms.entities.lists;
 
+import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.tables.TableCell;
 
 public class ListLabel extends ListElement {
+    private TextLine label;
 
     public ListLabel(TableCell cell) {
         super(cell, SemanticType.LIST_LABEL);
     }
 
+    public ListLabel(TextLine textLine) {
+        super(textLine, SemanticType.LIST_LABEL);
+        this.label = textLine;
+    }
+
+    public TextLine getLabel() {
+        return label;
+    }
 }

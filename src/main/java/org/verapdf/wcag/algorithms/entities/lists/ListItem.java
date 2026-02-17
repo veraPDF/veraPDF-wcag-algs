@@ -22,6 +22,7 @@ package org.verapdf.wcag.algorithms.entities.lists;
 
 import org.verapdf.wcag.algorithms.entities.IObject;
 import org.verapdf.wcag.algorithms.entities.content.TextBlock;
+import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.tables.TableRow;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListItem extends TextBlock {
-    private final ListLabel label;
+    private ListLabel label;
     private final ListBody body;
     private SemanticType semanticType;
     private List<IObject> contents = new ArrayList<>();
@@ -66,6 +67,10 @@ public class ListItem extends TextBlock {
 
     public ListLabel getLabel() {
         return label;
+    }
+
+    public void setLabel(TextLine textLine) {
+        label = new ListLabel(textLine);
     }
 
     public ListBody getBody() {

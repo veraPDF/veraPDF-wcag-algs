@@ -21,6 +21,7 @@
 package org.verapdf.wcag.algorithms.entities.lists;
 
 import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
+import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.tables.TableCell;
 import org.verapdf.wcag.algorithms.entities.tables.TableTokenRow;
@@ -38,6 +39,12 @@ public class ListElement extends TextInfoChunk {
         this.semanticType = semanticType;
         content = new ArrayList<>();
         content.addAll(cell.getContent());
+    }
+
+    public ListElement(TextLine textLine, SemanticType semanticType) {
+        super(textLine.getBoundingBox(), textLine.getFontSize(), textLine.getBaseLine());
+        this.semanticType = semanticType;
+        content = new ArrayList<>();
     }
 
     public void setSemanticType(SemanticType semanticType) {
