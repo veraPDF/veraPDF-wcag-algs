@@ -21,7 +21,6 @@
 package org.verapdf.wcag.algorithms.entities.lists;
 
 import org.verapdf.wcag.algorithms.entities.content.TextInfoChunk;
-import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.tables.TableCell;
 import org.verapdf.wcag.algorithms.entities.tables.TableTokenRow;
