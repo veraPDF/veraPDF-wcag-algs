@@ -34,6 +34,7 @@ public class ListItem extends TextBlock {
     private ListLabel label;
     private final ListBody body;
     private SemanticType semanticType;
+    private int labelLength = 0;
     private List<IObject> contents = new ArrayList<>();
 
     public ListItem(TableRow tableRow) {
@@ -83,5 +84,13 @@ public class ListItem extends TextBlock {
 
     public void setContents(List<IObject> contents) {
         this.contents = contents;
+    }
+
+    public int getLabelLength() {
+        return labelLength;
+    }
+
+    public void setLabelLength(int labelLength) {
+        this.labelLength = labelLength;
     }
 }
