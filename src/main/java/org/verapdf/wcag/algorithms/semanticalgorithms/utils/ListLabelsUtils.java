@@ -99,13 +99,11 @@ public class ListLabelsUtils {
 				new RomanNumbersUpperCaseListLabelsDetectionAlgorithm(increment).isListLabels(labels, commonStartLength, commonEndLength);
 	}
 
-    public static void setDataToUnorderedInterval(TextListInterval interval) {
-        for (ListItemTextInfo info : interval.getListItemsInfos()) {
-            if (info.getPrefix() == null) {
-                info.setPrefix("");
-                info.setNumberedPart(info.getListItem().substring(0, 1));
-                info.setSuffix(info.getListItem().substring(1));
-            }
+    public static void setDataToListItemInfo(ListItemTextInfo info) {
+        if (info.getPrefix() == null) {
+            info.setPrefix("");
+            info.setNumberedPart(info.getListItem().substring(0, 1));
+            info.setSuffix(info.getListItem().substring(1));
         }
     }
 
@@ -203,6 +201,14 @@ public class ListLabelsUtils {
 		items.add(previousListItem);
 		items.add(listItem);
 		if (!getItemsWithEqualsLabels(items).isEmpty()) {
+            List<ListItemTextInfo> infos = interval.getListItemsInfos();
+            if (infos.size() == 1) {
+                ListItemTextInfo first = infos.get(0);
+                if (first.getPrefix() == null) {
+                    setDataToListItemInfo(first);
+                }
+            }
+            setDataToListItemInfo(listItem);
 			interval.setNumberingStyle(NumberingStyleNames.UNORDERED);
 			interval.getListItemsInfos().add(listItem);
 			return true;
