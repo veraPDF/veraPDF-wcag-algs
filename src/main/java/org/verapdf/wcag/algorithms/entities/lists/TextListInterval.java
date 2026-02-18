@@ -22,6 +22,7 @@ package org.verapdf.wcag.algorithms.entities.lists;
 
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemInfo;
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ListLabelsUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection.NumberingStyleNames;
 
 import java.util.ArrayList;
@@ -93,6 +94,31 @@ public class TextListInterval implements Comparable {
 		}
 		return null;
 	}
+
+    public void setCommonSuffixLengthToAllInfos() {
+        if (listItemsInfos == null || listItemsInfos.isEmpty()) {
+            return;
+        }
+        String common = listItemsInfos.get(0).getSuffix();
+        if (common == null) {
+            return;
+        }
+        for (int i = 1; i < listItemsInfos.size(); i++) {
+            String next = listItemsInfos.get(i).getSuffix();
+            if (next == null) {
+                return;
+            }
+            int commonLength = ListLabelsUtils.getCommonStartLength(common, next);
+            if (commonLength == 0) {
+                return;
+            }
+            common = common.substring(0, commonLength);
+        }
+        int finalLength = common.length();
+        for (ListItemTextInfo item : listItemsInfos) {
+            item.setCommonSuffixLength(finalLength);
+        }
+    }
 
 	public int getNumberOfListItems() {
 		return listItemsInfos.size();

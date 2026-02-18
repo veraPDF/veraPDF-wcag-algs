@@ -31,6 +31,7 @@ public class ListItemTextInfo extends ListItemInfo {
 	private String numberedPart;
 	private Integer number;
 	private String suffix;
+    private int commonSuffixLength = 0;
 	
 	public ListItemTextInfo(ListItemTextInfo info) {
 		super(info);
@@ -94,5 +95,17 @@ public class ListItemTextInfo extends ListItemInfo {
 	public void setNumber(Integer number) {
 		this.number = number;
 	}
+
+    public int getCommonSuffixLength() {
+        return commonSuffixLength;
+    }
+
+    public void setCommonSuffixLength(int commonSuffixLength) {
+        this.commonSuffixLength = commonSuffixLength;
+    }
+
+    public int getLabelLength() {
+        return this.prefix.length() + this.numberedPart.length() + this.commonSuffixLength;
+    }
 }
 

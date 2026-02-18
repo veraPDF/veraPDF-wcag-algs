@@ -99,6 +99,14 @@ public class ListLabelsUtils {
 				new RomanNumbersUpperCaseListLabelsDetectionAlgorithm(increment).isListLabels(labels, commonStartLength, commonEndLength);
 	}
 
+    public static void setDataToListItemInfo(ListItemTextInfo info) {
+        if (info.getPrefix() == null) {
+            info.setPrefix("");
+            info.setNumberedPart(info.getListItem().substring(0, 1));
+            info.setSuffix(info.getListItem().substring(1));
+        }
+    }
+
 	public static boolean isTwoListItemsOfOneList(TextListInterval interval, ListItemTextInfo listItem, Boolean isSequential, boolean isUnordered) {
 		ListItemTextInfo previousListItem = interval.getLastListItemInfo();
 		String style = interval.getNumberingStyle();
@@ -193,6 +201,14 @@ public class ListLabelsUtils {
 		items.add(previousListItem);
 		items.add(listItem);
 		if (!getItemsWithEqualsLabels(items).isEmpty()) {
+            List<ListItemTextInfo> infos = interval.getListItemsInfos();
+            if (infos.size() == 1) {
+                ListItemTextInfo first = infos.get(0);
+                if (first.getPrefix() == null) {
+                    setDataToListItemInfo(first);
+                }
+            }
+            setDataToListItemInfo(listItem);
 			interval.setNumberingStyle(NumberingStyleNames.UNORDERED);
 			interval.getListItemsInfos().add(listItem);
 			return true;
@@ -306,6 +322,7 @@ public class ListLabelsUtils {
 			ListItemTextInfo newItemInfo = new ListItemTextInfo(info);
 			newItemInfo.setPrefix("");
 			newItemInfo.setNumberedPart(info.getListItem().substring(0, 1));
+            newItemInfo.setSuffix(info.getListItem().substring(1));
 			interval.getListItemsInfos().add(newItemInfo);
 		}
 		if (interval.getNumberOfListItems() > 1 && checkForSuitableLabel(firstChar, secondChar)) {
