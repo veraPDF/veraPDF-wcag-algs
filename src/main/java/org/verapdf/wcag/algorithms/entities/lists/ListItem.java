@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListItem extends TextBlock {
-    private ListLabel label;
+    private final ListLabel label;
     private final ListBody body;
     private SemanticType semanticType;
     private int labelLength = 0;
@@ -68,10 +68,6 @@ public class ListItem extends TextBlock {
 
     public ListLabel getLabel() {
         return label;
-    }
-
-    public void setLabel(TextLine textLine) {
-        label = new ListLabel(textLine);
     }
 
     public ListBody getBody() {

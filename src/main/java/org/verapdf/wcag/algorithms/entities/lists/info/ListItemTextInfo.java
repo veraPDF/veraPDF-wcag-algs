@@ -104,7 +104,7 @@ public class ListItemTextInfo extends ListItemInfo {
         this.commonSuffixLength = commonSuffixLength;
     }
 
-    public int getCommonLabelLength() {
+    public int getLabelLength() {
         return this.prefix.length() + this.numberedPart.length() + this.commonSuffixLength;
     }
 }

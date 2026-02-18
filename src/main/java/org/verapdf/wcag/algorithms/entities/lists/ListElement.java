@@ -41,12 +41,6 @@ public class ListElement extends TextInfoChunk {
         content.addAll(cell.getContent());
     }
 
-    public ListElement(TextLine textLine, SemanticType semanticType) {
-        super(textLine.getBoundingBox(), textLine.getFontSize(), textLine.getBaseLine());
-        this.semanticType = semanticType;
-        content = new ArrayList<>();
-    }
-
     public void setSemanticType(SemanticType semanticType) {
         this.semanticType = semanticType;
     }
