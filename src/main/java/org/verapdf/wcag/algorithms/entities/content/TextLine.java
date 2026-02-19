@@ -60,10 +60,10 @@ public class TextLine extends TextInfoChunk {
             int nextIndex = currentIndex + textChunk.getValue().length();
             if (nextIndex > beginIndex) {
                 add(ChunksMergeUtils.getTrimTextChunk(TextChunk.getTextChunk(textChunk, Math.max(beginIndex - currentIndex, 0),
-                        Math.min(nextIndex - currentIndex, textChunk.getValue().length()))));
+                        Math.min(nextIndex - currentIndex, endIndex - currentIndex))));
             }
             currentIndex = nextIndex;
-            if (currentIndex > endIndex) {
+            if (currentIndex >= endIndex) {
                 return;
             }
         }
