@@ -99,6 +99,7 @@ public class TextChunkUtils {
         newTextChunk.setValue(firstTextChunk.getValue() + secondTextChunk.getValue());
         newTextChunk.getBoundingBox().union(secondTextChunk.getBoundingBox());
         newTextChunk.getSymbolEnds().addAll(secondTextChunk.getSymbolEnds().subList(1, secondTextChunk.getSymbolEnds().size()));
+        newTextChunk.getOperatorIndexes().addAll(secondTextChunk.getOperatorIndexes());
         return newTextChunk;
     }
 

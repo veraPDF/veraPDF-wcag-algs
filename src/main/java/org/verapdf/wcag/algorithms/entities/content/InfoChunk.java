@@ -34,6 +34,10 @@ public abstract class InfoChunk extends BaseObject implements IChunk {
         setBoundingBox(bbox);
     }
 
+    public InfoChunk(InfoChunk infoChunk) {
+        super(infoChunk);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
