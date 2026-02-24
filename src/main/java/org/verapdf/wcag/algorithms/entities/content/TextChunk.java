@@ -88,7 +88,7 @@ public class TextChunk extends TextInfoChunk {
         this.backgroundColor = chunk.backgroundColor;
         this.isUnderlinedText = chunk.isUnderlinedText;
         this.textFormat = chunk.textFormat;
-        this.symbolEnds = new ArrayList<>(chunk.symbolEnds);
+        this.symbolEnds = chunk.symbolEnds != null ? new ArrayList<>(chunk.symbolEnds) : null;
     }
 
     @Override
