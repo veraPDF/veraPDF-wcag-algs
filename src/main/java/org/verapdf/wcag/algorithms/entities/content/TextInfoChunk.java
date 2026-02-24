@@ -49,6 +49,14 @@ public abstract class TextInfoChunk extends InfoChunk {
         this.slantDegree = slantDegree;
     }
 
+    public TextInfoChunk(TextInfoChunk textInfoChunk) {
+        super(textInfoChunk);
+        this.fontSize = textInfoChunk.fontSize;
+        this.baseLine = textInfoChunk.baseLine;
+        this.slantDegree = textInfoChunk.slantDegree;
+        this.isHiddenText = textInfoChunk.isHiddenText;
+    }
+
     public void setFontSize(double fontSize) {
         this.fontSize = fontSize;
     }

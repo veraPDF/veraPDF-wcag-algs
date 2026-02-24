@@ -23,6 +23,7 @@ package org.verapdf.wcag.algorithms.entities;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -32,28 +33,29 @@ public class BaseObject implements IObject {
 	private BoundingBox boundingBox;
 	private final List<Integer> errorCodes;
 	private final List<List<Object>> errorArguments;
+	private final List<Integer> operatorIndexes;
 	private Long recognizedStructureId = null;
 	protected Integer index = null;
 	protected String level = null;
 
 	public BaseObject(BoundingBox boundingBox) {
-		this.boundingBox = boundingBox;
-		this.errorCodes = new LinkedList<>();
-		this.errorArguments = new LinkedList<>();
+		this(boundingBox, new LinkedList<>(), new LinkedList<>());
 	}
 
 	public BaseObject(BoundingBox boundingBox, List<Integer> errorCodes, List<List<Object>> errorArguments) {
 		this.boundingBox = boundingBox;
 		this.errorCodes = errorCodes;
 		this.errorArguments = errorArguments;
+		this.operatorIndexes = new ArrayList<>();
 	}
 
 	public BaseObject(BaseObject baseObject) {
-		this.boundingBox = baseObject.boundingBox;
+		setBoundingBox(baseObject.boundingBox);
 		this.errorCodes = baseObject.errorCodes;
 		this.errorArguments = baseObject.errorArguments;
 		this.recognizedStructureId = baseObject.recognizedStructureId;
 		this.index = baseObject.index;
+		this.operatorIndexes = baseObject.operatorIndexes;
 	}
 
 	@Override
@@ -118,6 +120,11 @@ public class BaseObject implements IObject {
 	@Override
 	public List<List<Object>> getErrorArguments() {
 		return errorArguments;
+	}
+
+	@Override
+	public List<Integer> getOperatorIndexes() {
+		return operatorIndexes;
 	}
 
 	@Override

@@ -76,8 +76,19 @@ public class TextChunk extends TextInfoChunk {
     }
 
     public TextChunk(TextChunk chunk) {
-        this(chunk.getBoundingBox(), chunk.value, chunk.fontName, chunk.fontSize, chunk.fontWeight, chunk.italicAngle,
-                chunk.baseLine, chunk.fontColor, chunk.symbolEnds, chunk.slantDegree);
+        super(chunk);
+        this.value = chunk.value;
+        this.fontName = chunk.fontName;
+        this.fontWeight = chunk.fontWeight;
+        this.italicAngle = chunk.italicAngle;
+        this.fontColor = chunk.fontColor != null ? chunk.fontColor.clone() : null;
+        this.contrastRatio = chunk.contrastRatio;
+        this.hasSpecialStyle = chunk.hasSpecialStyle;
+        this.hasSpecialBackground = chunk.hasSpecialBackground;
+        this.backgroundColor = chunk.backgroundColor;
+        this.isUnderlinedText = chunk.isUnderlinedText;
+        this.textFormat = chunk.textFormat;
+        this.symbolEnds = new ArrayList<>(chunk.symbolEnds);
     }
 
     @Override

@@ -54,6 +54,8 @@ public interface IObject {
 
 	public List<List<Object>> getErrorArguments();
 
+	public List<Integer> getOperatorIndexes();
+
 	void setRecognizedStructureId(Long id);
 
 	Long getRecognizedStructureId();
