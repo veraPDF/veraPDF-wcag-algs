@@ -227,7 +227,7 @@ public class ListUtils {
 	private static boolean isContainsHeading(INode node) {
 		INode currentNode = node;
 		while (currentNode.getPageNumber() != null) {
-			if (HeadingUtils.isDetectedHeadingNode(currentNode) &&
+			if (HeadingUtils.isDetectedHeadingNode(currentNode) && currentNode.getCorrectSemanticScore() != null &&
 					currentNode.getCorrectSemanticScore() >= NodeUtils.MIN_GOOD_HEADING_PROBABILITY) {
 				return true;
 			}
