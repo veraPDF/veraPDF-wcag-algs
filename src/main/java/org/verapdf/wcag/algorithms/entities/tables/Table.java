@@ -339,6 +339,11 @@ public class Table extends InfoChunk {
      public TableBorder createTableBorderFromTable() {
         int numberOfRows = this.rows.size();
         int numberOfColumns = this.rows.get(0).getCells().size();
+        for (TableRow tableRow : this.rows) {
+            if (tableRow.getCells().size() != numberOfColumns) {
+                return null;
+            }
+        }
         TableBorderRow[] tableBorderRows = new TableBorderRow[numberOfRows];
         for (int rowNumber = 0; rowNumber < numberOfRows; rowNumber++) {
             TableBorderRow tableBorderRow = new TableBorderRow(rowNumber, numberOfColumns, null);
