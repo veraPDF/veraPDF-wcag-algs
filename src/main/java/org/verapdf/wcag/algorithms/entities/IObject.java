@@ -21,6 +21,7 @@
 package org.verapdf.wcag.algorithms.entities;
 
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.StreamInfo;
 
 import java.util.List;
 
@@ -54,7 +55,7 @@ public interface IObject {
 
 	public List<List<Object>> getErrorArguments();
 
-	public List<Integer> getOperatorIndexes();
+	public List<StreamInfo> getStreamInfos();
 
 	void setRecognizedStructureId(Long id);
 
