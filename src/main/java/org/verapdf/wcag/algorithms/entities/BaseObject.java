@@ -22,6 +22,7 @@ package org.verapdf.wcag.algorithms.entities;
 
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.entities.geometry.MultiBoundingBox;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.StreamInfo;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -33,7 +34,7 @@ public class BaseObject implements IObject {
 	private BoundingBox boundingBox;
 	private final List<Integer> errorCodes;
 	private final List<List<Object>> errorArguments;
-	private final List<Integer> operatorIndexes;
+	private final List<StreamInfo> streamInfos;
 	private Long recognizedStructureId = null;
 	protected Integer index = null;
 	protected String level = null;
@@ -46,7 +47,7 @@ public class BaseObject implements IObject {
 		this.boundingBox = boundingBox;
 		this.errorCodes = errorCodes;
 		this.errorArguments = errorArguments;
-		this.operatorIndexes = new ArrayList<>();
+		this.streamInfos = new ArrayList<>();
 	}
 
 	public BaseObject(BaseObject baseObject) {
@@ -55,7 +56,10 @@ public class BaseObject implements IObject {
 		this.errorArguments = baseObject.errorArguments;
 		this.recognizedStructureId = baseObject.recognizedStructureId;
 		this.index = baseObject.index;
-		this.operatorIndexes = baseObject.operatorIndexes;
+		this.streamInfos = new ArrayList<>();
+		for (StreamInfo streamInfo : baseObject.streamInfos) {
+			streamInfos.add(new StreamInfo(streamInfo));
+		}
 	}
 
 	@Override
@@ -123,8 +127,8 @@ public class BaseObject implements IObject {
 	}
 
 	@Override
-	public List<Integer> getOperatorIndexes() {
-		return operatorIndexes;
+	public List<StreamInfo> getStreamInfos() {
+		return streamInfos;
 	}
 
 	@Override

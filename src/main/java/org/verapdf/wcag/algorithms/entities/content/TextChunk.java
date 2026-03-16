@@ -24,6 +24,7 @@ import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.StreamInfo;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
 import java.util.*;
@@ -264,6 +265,7 @@ public class TextChunk extends TextInfoChunk {
             return null;
         }
         TextChunk newTextChunk = new TextChunk(textChunk);
+        StreamInfo.updateStreamInfos(newTextChunk.getStreamInfos(), newTextChunk.getValue().length(), start, end);
         newTextChunk.setValue(textChunk.getValue().substring(start, end));
         newTextChunk.setSymbolEnds(textChunk.getSymbolEnds().subList(start, end + 1));
         if (newTextChunk.isHorizontalText() || newTextChunk.isVerticalText()) {
