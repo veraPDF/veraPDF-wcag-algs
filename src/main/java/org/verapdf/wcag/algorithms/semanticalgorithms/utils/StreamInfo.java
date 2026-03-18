@@ -76,6 +76,9 @@ public class StreamInfo implements Comparable<StreamInfo> {
     }
 
     public static void updateStreamInfos(List<StreamInfo> streamInfos, int length, int start, int end) {
+        if (streamInfos.isEmpty()) {
+            return;
+        }
         int gap = start;
         int index = 0;
         while (gap > 0) {
