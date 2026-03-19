@@ -41,6 +41,7 @@ public class TextChunk extends TextInfoChunk {
     private boolean hasSpecialBackground = false;
     private double[] backgroundColor;
     private boolean isUnderlinedText = false;
+    private boolean isStrikethroughText = false;
     private TextFormat textFormat = TextFormat.NORMAL;
     private List<Double> symbolEnds;
 
@@ -88,6 +89,7 @@ public class TextChunk extends TextInfoChunk {
         this.hasSpecialBackground = chunk.hasSpecialBackground;
         this.backgroundColor = chunk.backgroundColor;
         this.isUnderlinedText = chunk.isUnderlinedText;
+        this.isStrikethroughText = chunk.isStrikethroughText;
         this.textFormat = chunk.textFormat;
         this.symbolEnds = chunk.symbolEnds != null ? new ArrayList<>(chunk.symbolEnds) : null;
     }
@@ -171,6 +173,14 @@ public class TextChunk extends TextInfoChunk {
 
     public void setIsUnderlinedText() {
         this.isUnderlinedText = true;
+    }
+
+    public boolean getIsStrikethroughText() {
+        return isStrikethroughText;
+    }
+
+    public void setIsStrikethroughText() {
+        this.isStrikethroughText = true;
     }
 
     public TextFormat getTextFormat() {
