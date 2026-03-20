@@ -386,7 +386,7 @@ public class SemanticTextNode extends SemanticNode {
         for (TextColumn column : getColumns()) {
             for (TextLine line : column.getLines()) {
                 for (TextChunk chunk : line.getTextChunks()) {
-                    if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
+                    if (!TextChunkUtils.isWhiteSpaceChunk(chunk) && chunk.getFontColor() != null) {
                         List<Double> currentFontColor = Arrays.stream(chunk.getFontColor()).boxed().collect(Collectors.toList());
                         Double fontNameLength = textColorMap.get(currentFontColor);
                         textColorMap.put(currentFontColor,
