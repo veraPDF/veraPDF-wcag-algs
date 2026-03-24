@@ -32,7 +32,7 @@ public class TextChunkUtils {
     public static final double BASELINE_DIFFERENCE_EPSILON = 0.01;
     public static final double TEXT_CHUNK_SPACE_RATIO = 170;
     public static final double TEXT_LINE_SPACE_RATIO = 0.17;
-    public static final double SPLIT_THRESHOLD_FACTOR = 0.77;
+    public static final double SPLIT_THRESHOLD_FACTOR = 0.28;
 
     public static final Set<Character> HYPHENATION_SIGNS = new HashSet<>(Arrays.asList('\u002D','\u2014','\u00AD'));
 
