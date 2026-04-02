@@ -236,8 +236,8 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 			return null;
 		}
 
-		int x = (int) (Math.round(scaledBBox.getLeftX()));
-		int y = (int) (Math.round(scaledBBox.getTopY()));
+		int x = (int) (Math.floor(scaledBBox.getLeftX()));
+		int y = (int) (Math.ceil(scaledBBox.getTopY()));
 		int width = getIntegerBBoxValueForProcessing(scaledBBox.getWidth(), 1);
 		int height = getIntegerBBoxValueForProcessing(scaledBBox.getHeight(), 1);
 		return renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
