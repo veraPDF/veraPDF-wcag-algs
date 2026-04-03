@@ -20,6 +20,8 @@
  */
 package org.verapdf.wcag.algorithms.entities.content;
 
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -174,9 +176,11 @@ public class TextColumn extends TextInfoChunk {
 	@Override
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
-		for (TextBlock textBlock : textBlocks) {
-			stringBuilder.append(textBlock);
+		for (int i = 0; i < textBlocks.size() - 1; ++i) {
+			stringBuilder.append(textBlocks.get(i));
+            TextChunkUtils.formatLineEnd(stringBuilder);
 		}
+        stringBuilder.append(textBlocks.get(textBlocks.size() - 1));
 		return stringBuilder.toString();
 	}
 
