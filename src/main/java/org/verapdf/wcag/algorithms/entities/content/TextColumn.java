@@ -175,6 +175,10 @@ public class TextColumn extends TextInfoChunk {
 
 	@Override
 	public String toString() {
+        if (textBlocks.isEmpty()) {
+            return "";
+        }
+        
 		StringBuilder stringBuilder = new StringBuilder();
 		for (int i = 0; i < textBlocks.size() - 1; ++i) {
 			stringBuilder.append(textBlocks.get(i));
