@@ -311,6 +311,7 @@ public class TextChunk extends TextInfoChunk {
         if (value != null && !value.isEmpty() && hasConsecutiveWhiteSpaces()) {
             StringBuilder newValue = new StringBuilder();
             List<Double> newSymbolEnds = new ArrayList<>();
+            List<Integer> extraSpaceIndexes = new ArrayList<>();
             boolean lastWasSpace = false;
             newSymbolEnds.add(symbolEnds.get(0));
 
@@ -324,6 +325,7 @@ public class TextChunk extends TextInfoChunk {
                         newSymbolEnds.add(symbolEnds.get(i + 1));
                     } else {
                         newSymbolEnds.set(newSymbolEnds.size() - 1, symbolEnds.get(i + 1));
+                        extraSpaceIndexes.add(i);
                     }
                 } else {
                     newValue.append(currentChar);
@@ -333,6 +335,7 @@ public class TextChunk extends TextInfoChunk {
             }
             this.value = newValue.toString();
             this.symbolEnds = newSymbolEnds;
+            StreamInfo.updateStreamInfos(getStreamInfos(), extraSpaceIndexes);
         }
     }
 

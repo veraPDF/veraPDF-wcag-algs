@@ -1,5 +1,6 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StreamInfo implements Comparable<StreamInfo> {
@@ -105,6 +106,53 @@ public class StreamInfo implements Comparable<StreamInfo> {
             }
             index--;
         }
+        streamInfos.removeIf(streamInfo -> streamInfo.startIndex == streamInfo.endIndex);
+    }
+
+    public static void updateStreamInfos(List<StreamInfo> streamInfos, List<Integer> extraCharIndexes) {
+        if (streamInfos == null || extraCharIndexes.isEmpty()) {
+            return;
+        }
+        List<StreamInfo> result = new ArrayList<>();
+        int currentGlobalIndex = 0;
+        int removeIndexPos = 0;
+        for (StreamInfo streamInfo : streamInfos) {
+            int length = streamInfo.getEndIndex() - streamInfo.getStartIndex();
+            int localStart = 0;
+            while (removeIndexPos < extraCharIndexes.size()) {
+                int removeIndex = extraCharIndexes.get(removeIndexPos);
+                if (removeIndex < currentGlobalIndex) {
+                    removeIndexPos++;
+                    continue;
+                }
+                if (removeIndex >= currentGlobalIndex + length) {
+                    break;
+                }
+                int localRemoveIndex = removeIndex - currentGlobalIndex;
+                if (localRemoveIndex > localStart) {
+                    int newStart = streamInfo.getStartIndex() + localStart;
+                    int newEnd = streamInfo.getStartIndex() + localRemoveIndex;
+                    StreamInfo newStreamInfo = new StreamInfo(streamInfo);
+                    newStreamInfo.startIndex = newStart;
+                    newStreamInfo.endIndex = newEnd;
+                    result.add(newStreamInfo);
+                }
+
+                localStart = localRemoveIndex + 1;
+                removeIndexPos++;
+            }
+            if (localStart < length) {
+                int newStart = streamInfo.getStartIndex() + localStart;
+                int newEnd = streamInfo.getEndIndex();
+                StreamInfo newStreamInfo = new StreamInfo(streamInfo);
+                newStreamInfo.startIndex = newStart;
+                newStreamInfo.endIndex = newEnd;
+                result.add(newStreamInfo);
+            }
+            currentGlobalIndex += length;
+        }
+        streamInfos.clear();
+        streamInfos.addAll(result);
         streamInfos.removeIf(streamInfo -> streamInfo.startIndex == streamInfo.endIndex);
     }
 
