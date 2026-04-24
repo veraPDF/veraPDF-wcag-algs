@@ -41,6 +41,7 @@ public class TextListInterval implements Comparable {
 		for (ListItemInfo info : interval.getListItemsInfos()) {
 			getListItemsInfos().add((ListItemTextInfo) info);
 		}
+        setNumberingStyle(interval.getNumberingStyle());
 	}
 
 	public TextListInterval(List<ListItemTextInfo> listItemsInfos) {
