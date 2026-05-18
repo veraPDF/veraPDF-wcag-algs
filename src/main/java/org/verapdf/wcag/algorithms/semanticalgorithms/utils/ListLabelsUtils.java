@@ -78,11 +78,11 @@ public class ListLabelsUtils {
 		int commonEndLength = getCommonEndLength(labels.get(0), labels.get(1));
 		int minLength = Math.min(labels.get(0).length(), labels.get(1).length());
 		for (int i = 2; i < labels.size(); i++) {
-			commonStartLength = getCommonStartLength(labels.get(0), labels.get(i), commonStartLength);
-			commonEndLength = getCommonEndLength(labels.get(0), labels.get(i), commonEndLength);
 			if (minLength > labels.get(i).length()) {
 				minLength = labels.get(i).length();
 			}
+			commonStartLength = getCommonStartLength(labels.get(0), labels.get(i), Math.min(minLength, commonStartLength));
+			commonEndLength = getCommonEndLength(labels.get(0), labels.get(i), Math.min(minLength, commonEndLength));
 		}
 		if (commonStartLength + commonEndLength > minLength) {
 			int temp = commonEndLength;
