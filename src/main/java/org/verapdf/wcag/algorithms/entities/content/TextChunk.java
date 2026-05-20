@@ -22,12 +22,15 @@ package org.verapdf.wcag.algorithms.entities.content;
 
 import org.verapdf.wcag.algorithms.entities.enums.TextFormat;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
+import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ContrastRatioConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.StreamInfo;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class TextChunk extends TextInfoChunk {
@@ -356,6 +359,23 @@ public class TextChunk extends TextInfoChunk {
             }
         }
         return false;
+    }
+
+    public boolean isItalic() {
+        return !NodeUtils.areCloseNumbers(italicAngle, 0);
+    }
+
+    public boolean isNotDefaultFontColor() {
+        return !Color.BLACK.equals(ContrastRatioConsumer.getTextColorFromComponentArray(fontColor));
+    }
+
+    public int getRoundedFontWeight() {
+        int rounded = (int) Math.round(fontWeight / 100.0) * 100;
+
+        if (rounded < 100) {
+            return 100;
+        }
+        return Math.min(rounded, 900);
     }
 
     @Override
