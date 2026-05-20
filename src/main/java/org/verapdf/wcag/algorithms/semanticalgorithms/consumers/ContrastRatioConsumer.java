@@ -243,7 +243,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		return renderedPage.getSubimage(x, renderedPage.getHeight() - y, width,  height);
 	}
 
-	private double [] convertCmykToRgb(double [] cmykColorComponentArray) {
+	private static double [] convertCmykToRgb(double [] cmykColorComponentArray) {
 		double [] result = new double[3];
 		if (cmykColorComponentArray.length == 4) {
 			double black = 1 - cmykColorComponentArray[3];
@@ -254,7 +254,7 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		return result;
 	}
 
-	private Color getTextColorFromComponentArray(double [] colorComponentArray) {
+	public static Color getTextColorFromComponentArray(double [] colorComponentArray) {
 		Color res = null;
 		if (colorComponentArray != null) {
 			if (colorComponentArray.length == 1) {
@@ -272,14 +272,14 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 		return res;
 	}
 
-	private Color makeRgbColorFromDoubleValues(double [] colorComponentArray) {
+	private static Color makeRgbColorFromDoubleValues(double [] colorComponentArray) {
 		assert colorComponentArray.length == 3;
 		return new Color(convertDoubleColorValueToRgbInteger(colorComponentArray[0]),
 		                 convertDoubleColorValueToRgbInteger(colorComponentArray[1]),
 		                 convertDoubleColorValueToRgbInteger(colorComponentArray[2]));
 	}
 
-	private int convertDoubleColorValueToRgbInteger(double value) {
+	private static int convertDoubleColorValueToRgbInteger(double value) {
 		int result = (int) Math.floor(value * 256);
 		if (result > 255) {
 			result = 255;
