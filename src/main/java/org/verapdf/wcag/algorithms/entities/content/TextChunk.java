@@ -365,8 +365,8 @@ public class TextChunk extends TextInfoChunk {
         return !NodeUtils.areCloseNumbers(italicAngle, 0);
     }
 
-    public boolean isNotDefaultFontColor() {
-        return !Color.BLACK.equals(ContrastRatioConsumer.getTextColorFromComponentArray(fontColor));
+    public Color getTextColor() {
+        return ContrastRatioConsumer.getTextColorFromComponentArray(fontColor);
     }
 
     public int getRoundedFontWeight() {
