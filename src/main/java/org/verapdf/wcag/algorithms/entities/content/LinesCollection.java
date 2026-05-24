@@ -42,16 +42,15 @@ public class LinesCollection {
 		SortedSet<LineChunk> horizontalLines = this.horizontalLines.get(pageNumber);
 		if (horizontalLines == null) {
 			parseLines();
-			horizontalLines = this.horizontalLines.get(pageNumber);
-			if (horizontalLines == null) {
-				this.horizontalLines.put(pageNumber, new TreeSet<>(new LineChunk.HorizontalLineComparator()));
-				horizontalLines = this.horizontalLines.get(pageNumber);
-			}
+			horizontalLines = this.horizontalLines.computeIfAbsent(pageNumber, x -> new TreeSet<>(new LineChunk.HorizontalLineComparator()));
 		}
 		return horizontalLines;
 	}
 
 	private void parseLines() {
+		if (StaticContainers.getDocument() == null) {
+			return;
+		}
 		for (int pageNumber = 0; pageNumber < StaticContainers.getDocument().getNumberOfPages(); pageNumber++) {
 			parseLines(pageNumber);
 		}
@@ -109,11 +108,7 @@ public class LinesCollection {
 		SortedSet<LineChunk> verticalLines = this.verticalLines.get(pageNumber);
 		if (verticalLines == null) {
 			parseLines();
-			verticalLines = this.verticalLines.get(pageNumber);
-			if (verticalLines == null) {
-				this.verticalLines.put(pageNumber, new TreeSet<>(new LineChunk.VerticalLineComparator()));
-				verticalLines = this.verticalLines.get(pageNumber);
-			}
+			verticalLines = this.verticalLines.computeIfAbsent(pageNumber, x -> new TreeSet<>(new LineChunk.VerticalLineComparator()));
 		}
 		return verticalLines;
 	}
@@ -122,11 +117,7 @@ public class LinesCollection {
 		SortedSet<LineChunk> squares = this.squares.get(pageNumber);
 		if (squares == null) {
 			parseLines();
-			squares = this.squares.get(pageNumber);
-			if (squares == null) {
-				this.squares.put(pageNumber, new TreeSet<>(new LineChunk.VerticalLineComparator()));
-				squares = this.squares.get(pageNumber);
-			}
+			squares = this.squares.computeIfAbsent(pageNumber, x -> new TreeSet<>(new LineChunk.VerticalLineComparator()));
 		}
 		return squares;
 	}
