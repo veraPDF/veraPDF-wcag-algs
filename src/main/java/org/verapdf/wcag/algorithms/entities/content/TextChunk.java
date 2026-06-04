@@ -221,7 +221,7 @@ public class TextChunk extends TextInfoChunk {
 
     public Integer getSymbolStartIndexByCoordinate(double coordinate) {
         for (int index = 0; index < this.symbolEnds.size(); index++) {
-            if (symbolEnds.get(index) > coordinate) {
+            if (symbolEnds.get(index) >= coordinate) {
                 return index;
             }
         }

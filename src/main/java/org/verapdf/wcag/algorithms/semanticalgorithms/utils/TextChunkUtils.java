@@ -21,6 +21,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
+import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import java.util.*;
 
@@ -151,4 +152,40 @@ public class TextChunkUtils {
         return parts;
     }
 
+    public static TextChunk getTextChunkPartForRange(TextChunk textChunk, double leftX, double rightX, boolean isTrim) {
+        Integer start = textChunk.getSymbolStartIndexByCoordinate(leftX);
+        if (start == null) {
+            return null;
+        }
+        Integer end = textChunk.getSymbolEndIndexByCoordinate(rightX);
+        if (end == null) {
+            return null;
+        }
+        if (end != textChunk.getValue().length()) {
+            end++;
+        }
+        TextChunk result = TextChunk.getTextChunk(textChunk, start, end);
+        return isTrim ? ChunksMergeUtils.getTrimTextChunk(result) : result;
+    }
+
+    public static TextChunk getTextChunkPartBeforeBoundingBox(TextChunk textChunk, BoundingBox bbox) {
+        Integer end = textChunk.getSymbolEndIndexByCoordinate(bbox.getLeftX());
+        if (end == null) {
+            return null;
+        }
+        if (end != textChunk.getValue().length()) {
+            end++;
+        }
+        TextChunk result = TextChunk.getTextChunk(textChunk, 0, end);
+        return ChunksMergeUtils.getTrimTextChunk(result);
+    }
+
+    public static TextChunk getTextChunkPartAfterBoundingBox(TextChunk textChunk, BoundingBox bbox) {
+        Integer start = textChunk.getSymbolStartIndexByCoordinate(bbox.getRightX());
+        if (start == null) {
+            return null;
+        }
+        TextChunk result = TextChunk.getTextChunk(textChunk, start, textChunk.getValue().length());
+        return ChunksMergeUtils.getTrimTextChunk(result);
+    }
 }
