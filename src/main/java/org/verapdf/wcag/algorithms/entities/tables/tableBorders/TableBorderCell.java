@@ -114,6 +114,10 @@ public class TableBorderCell extends BaseObject {
     public int getColSpan() {
         return colSpan;
     }
+    
+    public boolean isHeaderCell() {
+        return semanticType == SemanticType.TABLE_HEADER;
+    }
 
     public BoundingBox getContentBoundingBox() {
         BoundingBox boundingBox = new MultiBoundingBox();
