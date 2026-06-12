@@ -57,11 +57,18 @@ public class TextBlock extends TextInfoChunk {
 		setHiddenText(line.isHiddenText());
 	}
 
+    private void updateVariables() {
+        mostCommonFontSize = null;
+    }
+
 	public TextBlock(TextBlock block) {
 		super(block.getBoundingBox(), block.getFontSize(), block.getBaseLine());
 		textLines.addAll(block.getLines());
 		setHiddenText(block.isHiddenText());
         this.mostCommonFontSize = block.mostCommonFontSize;
+        this.textAlignment = block.textAlignment;
+        this.hasStartLine = block.hasStartLine;
+        this.hasEndLine = block.hasEndLine;
 	}
 
     public double getMostCommonFontSize() {
@@ -122,6 +129,7 @@ public class TextBlock extends TextInfoChunk {
 	public void add(TextLine line) {
 		textLines.add(line);
 		super.add(line);
+        updateVariables();
 	}
 
 	public void add(List<TextLine> lines) {
