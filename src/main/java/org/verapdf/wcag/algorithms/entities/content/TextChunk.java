@@ -403,7 +403,7 @@ public class TextChunk extends TextInfoChunk {
         return "TextChunk{" +
                 "text='" + value + '\'' +
                 ", fontName='" + fontName + '\'' +
-                ", fontSize=" + fontSize +
+                ", fontSize=" + maxFontSize +
                 ", fontWeight=" + fontWeight +
                 ", italicAngle=" + italicAngle +
                 ", baseLine=" + baseLine +

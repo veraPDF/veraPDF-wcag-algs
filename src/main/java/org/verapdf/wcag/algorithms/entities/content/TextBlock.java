@@ -33,7 +33,7 @@ public class TextBlock extends TextInfoChunk {
 
 	private boolean hasStartLine = false;
 	private boolean hasEndLine = false;
-    private Double maxFontSize;
+    private Double mostCommonFontSize = null;
 
 	private TextAlignment textAlignment = null;
 
@@ -41,9 +41,9 @@ public class TextBlock extends TextInfoChunk {
 
 	}
 
-	public TextBlock(BoundingBox bbox, double fontSize, double baseLine) {
-		super(bbox, fontSize, baseLine);
-		this.fontSize = fontSize;
+	public TextBlock(BoundingBox bbox, double maxFontSize, double baseLine) {
+		super(bbox, maxFontSize, baseLine);
+		this.maxFontSize = maxFontSize;
 		this.baseLine = baseLine;
 	}
 
@@ -60,9 +60,16 @@ public class TextBlock extends TextInfoChunk {
 	public TextBlock(TextBlock block) {
 		super(block.getBoundingBox(), block.getFontSize(), block.getBaseLine());
 		textLines.addAll(block.getLines());
-        this.maxFontSize = block.maxFontSize;
 		setHiddenText(block.isHiddenText());
+        this.mostCommonFontSize = block.mostCommonFontSize;
 	}
+
+    public double getMostCommonFontSize() {
+        if (mostCommonFontSize == null) {
+            mostCommonFontSize = calculateFontSize();
+        }
+        return mostCommonFontSize;
+    }
 
 	public List<TextLine> getLines() {
 		return textLines;
@@ -133,7 +140,6 @@ public class TextBlock extends TextInfoChunk {
 
     private double calculateFontSize() {
         Map<Double, Double> fontSizeMap = new HashMap<>();
-        maxFontSize = 0.0;
 
         for (TextLine line : this.getLines()) {
             for (TextChunk chunk : line.getTextChunks()) {
@@ -141,7 +147,6 @@ public class TextBlock extends TextInfoChunk {
                     Double sizeLength = fontSizeMap.get(chunk.getFontSize());
                     fontSizeMap.put(chunk.getFontSize(),
                             ((sizeLength == null) ? 0 : sizeLength) + chunk.getTextLength());
-                    maxFontSize = Math.max(maxFontSize, chunk.getFontSize());
                 }
             }
         }
