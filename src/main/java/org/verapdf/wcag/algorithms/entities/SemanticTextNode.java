@@ -57,6 +57,7 @@ public class SemanticTextNode extends SemanticNode {
         this.textFormat = textNode.textFormat;
         this.maxFontSize = textNode.maxFontSize;
         this.backgroundColor = textNode.backgroundColor;
+        this.isHiddenText = textNode.isHiddenText;
     }
 
     public SemanticTextNode() {

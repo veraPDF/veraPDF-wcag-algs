@@ -103,18 +103,18 @@ public class TextLine extends TextInfoChunk {
 
     public void add(TextLine line) {
         addSpaceIfRequired(line);
-        double size = this.fontSize;
+        double size = this.maxFontSize;
         textChunks.addAll(line.getTextChunks());
         super.add(line);
         if (line.isSpaceLine()) {
-            this.fontSize = size;
+            this.maxFontSize = size;
         } else if (isSpaceLine()) {
-            this.fontSize = line.getFontSize();
+            this.maxFontSize = line.getFontSize();
         }
     }
 
     protected void addSpaceIfRequired(TextLine line) {
-        if (line.getLeftX() - this.getRightX() < this.fontSize * TextChunkUtils.TEXT_LINE_SPACE_RATIO) {
+        if (line.getLeftX() - this.getRightX() < this.maxFontSize * TextChunkUtils.TEXT_LINE_SPACE_RATIO) {
             return;
         }
 

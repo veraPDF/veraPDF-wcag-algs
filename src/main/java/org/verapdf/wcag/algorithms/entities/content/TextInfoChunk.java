@@ -26,7 +26,7 @@ import org.verapdf.wcag.algorithms.semanticalgorithms.utils.NodeUtils;
 import java.util.Objects;
 
 public abstract class TextInfoChunk extends InfoChunk {
-    protected double fontSize = 0d;
+    protected double maxFontSize = 0d;
     protected double baseLine = Double.MAX_VALUE;
     protected double slantDegree = 0.0;
     protected boolean isHiddenText = false;
@@ -38,31 +38,31 @@ public abstract class TextInfoChunk extends InfoChunk {
         super(bbox);
     }
 
-    public TextInfoChunk(BoundingBox bbox, double fontSize, double baseLine) {
+    public TextInfoChunk(BoundingBox bbox, double maxFontSize, double baseLine) {
         super(bbox);
-        this.fontSize = fontSize;
+        this.maxFontSize = maxFontSize;
         this.baseLine = baseLine;
     }
 
-    public TextInfoChunk(BoundingBox bbox, double fontSize, double baseLine, double slantDegree) {
-        this(bbox, fontSize, baseLine);
+    public TextInfoChunk(BoundingBox bbox, double maxFontSize, double baseLine, double slantDegree) {
+        this(bbox, maxFontSize, baseLine);
         this.slantDegree = slantDegree;
     }
 
     public TextInfoChunk(TextInfoChunk textInfoChunk) {
         super(textInfoChunk);
-        this.fontSize = textInfoChunk.fontSize;
+        this.maxFontSize = textInfoChunk.maxFontSize;
         this.baseLine = textInfoChunk.baseLine;
         this.slantDegree = textInfoChunk.slantDegree;
         this.isHiddenText = textInfoChunk.isHiddenText;
     }
 
-    public void setFontSize(double fontSize) {
-        this.fontSize = fontSize;
+    public void setFontSize(double maxFontSize) {
+        this.maxFontSize = maxFontSize;
     }
 
     public double getFontSize() {
-        return fontSize;
+        return maxFontSize;
     }
 
     public void setBaseLine(double baseLine) {
@@ -74,8 +74,8 @@ public abstract class TextInfoChunk extends InfoChunk {
     }
 
     protected void add(TextInfoChunk chunk) {
-        if (fontSize < chunk.getFontSize()) {
-            fontSize = chunk.getFontSize();
+        if (maxFontSize < chunk.getFontSize()) {
+            maxFontSize = chunk.getFontSize();
         }
         if (isLeftRightHorizontalText() || isUpBottomVerticalText()) {
             if (chunk.getBaseLine() < baseLine) {
@@ -218,7 +218,7 @@ public abstract class TextInfoChunk extends InfoChunk {
             return false;
         }
         TextInfoChunk that = (TextInfoChunk) o;
-        return Double.compare(that.fontSize, fontSize) == 0 &&
+        return Double.compare(that.maxFontSize, maxFontSize) == 0 &&
                 Double.compare(that.baseLine, baseLine) == 0 &&
                 Double.compare(that.slantDegree, slantDegree) == 0;
     }
@@ -226,7 +226,7 @@ public abstract class TextInfoChunk extends InfoChunk {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + Objects.hash(fontSize, baseLine);
+        result = 31 * result + Objects.hash(maxFontSize, baseLine);
         return result;
     }
 }
