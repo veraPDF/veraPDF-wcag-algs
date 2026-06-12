@@ -25,10 +25,7 @@ import org.verapdf.wcag.algorithms.entities.enums.TextAlignment;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class TextBlock extends TextInfoChunk {
 
@@ -36,6 +33,7 @@ public class TextBlock extends TextInfoChunk {
 
 	private boolean hasStartLine = false;
 	private boolean hasEndLine = false;
+    private Double maxFontSize;
 
 	private TextAlignment textAlignment = null;
 
@@ -62,6 +60,7 @@ public class TextBlock extends TextInfoChunk {
 	public TextBlock(TextBlock block) {
 		super(block.getBoundingBox(), block.getFontSize(), block.getBaseLine());
 		textLines.addAll(block.getLines());
+        this.maxFontSize = block.maxFontSize;
 		setHiddenText(block.isHiddenText());
 	}
 
@@ -131,6 +130,30 @@ public class TextBlock extends TextInfoChunk {
 		}
 		return 0.0d;
 	}
+
+    private double calculateFontSize() {
+        Map<Double, Double> fontSizeMap = new HashMap<>();
+        maxFontSize = 0.0;
+
+        for (TextLine line : this.getLines()) {
+            for (TextChunk chunk : line.getTextChunks()) {
+                if (!TextChunkUtils.isWhiteSpaceChunk(chunk)) {
+                    Double sizeLength = fontSizeMap.get(chunk.getFontSize());
+                    fontSizeMap.put(chunk.getFontSize(),
+                            ((sizeLength == null) ? 0 : sizeLength) + chunk.getTextLength());
+                    maxFontSize = Math.max(maxFontSize, chunk.getFontSize());
+                }
+            }
+        }
+
+        if (!fontSizeMap.isEmpty()) {
+            return fontSizeMap.entrySet()
+                    .stream()
+                    .max(Comparator.comparingDouble(Map.Entry::getValue))
+                    .get().getKey();
+        }
+        return 0.0;
+    }
 
 	public int getLinesNumber() {
 		return textLines.size();
