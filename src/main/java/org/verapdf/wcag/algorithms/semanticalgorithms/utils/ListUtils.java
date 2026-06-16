@@ -204,7 +204,17 @@ public class ListUtils {
 					} else {
 						numberOfColumns += lastChildNumberOfColumns + 1;
 					}
-				}
+				} else {
+                    if (StaticContainers.isDataLoader() && line2.getTopY() > line1.getTopY()) {
+                        updateListIntervalCollection(listIntervalsCollection, listInterval, listItemInfos, numberOfColumns);
+                        right = -Double.MAX_VALUE;
+                        numberOfColumns = getInitialListColumnsNumber(accumulatedChild);
+                        listItemInfos = new ArrayList<>();
+                        listItemInfos.add(info);
+                        previousItemInfo = info;
+                        continue;
+                    }
+                }
 				listItemInfos.add(info);
 				right = Math.max(right, accumulatedChild.getRightX());
 			} else {
