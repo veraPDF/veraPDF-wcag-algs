@@ -27,7 +27,7 @@ public class WCAGValidationInfo {
 	private volatile Boolean abortProcessing = false;
 	private WCAGConsumer currentConsumer = null;
 
-	public String getWCAGProcessStatusWithPercent() {
+	public WCAGProgress getWCAGProcess() {
 		if (currentConsumer == null) {
 			return null;
 		}
@@ -37,9 +37,13 @@ public class WCAGValidationInfo {
 		}
 		Double percent = currentConsumer.getPercent();
 		if (percent == null) {
-			return wcagProgressStatus.getValue();
+			return new WCAGProgress(wcagProgressStatus);
 		}
-		return wcagProgressStatus.getValue() + " " + percent.intValue() + "%";
+		return new WCAGProgress(wcagProgressStatus, percent);
+	}
+
+	public String getWCAGProcessStatusWithPercent() {
+		return getWCAGProcess().getMessage();
 	}
 
 	public Boolean getAbortProcessing() {
