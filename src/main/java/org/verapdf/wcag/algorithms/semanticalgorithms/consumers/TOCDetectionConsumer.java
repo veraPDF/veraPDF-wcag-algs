@@ -44,7 +44,7 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
     public static final double TOC_PROBABILITY_THRESHOLD = 0.75;
 
     private static final String LINK = "Link";
-    private static final String SPACES = "\\s\u00A0\u2007\u202F";
+    public static final String SPACES = "\\s\u00A0\u2007\u202F";
     private static final String SPACES_REGEX = "[" + SPACES + "]+";
     private static final String SPACES_DOTS_SPACES_REGEX = "[" + SPACES + "]*\\.*[" + SPACES + "]*";
     public static final String NON_CONTENT_REGEX = "[" + SPACES + "\u2011\u2010:\\-]";
