@@ -43,7 +43,8 @@ public class WCAGValidationInfo {
 	}
 
 	public String getWCAGProcessStatusWithPercent() {
-		return getWCAGProcess().getMessage();
+		WCAGProgress wcagProgress = getWCAGProcess();
+		return wcagProgress == null ? null : wcagProgress.getMessage();
 	}
 
 	public Boolean getAbortProcessing() {
