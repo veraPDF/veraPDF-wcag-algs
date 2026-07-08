@@ -1,5 +1,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils;
 
+import org.verapdf.wcag.algorithms.entities.ObjectKey;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,23 +9,26 @@ public class StreamInfo implements Comparable<StreamInfo> {
     
     private final int operatorIndex;
     private final String xObjectName;
+    private ObjectKey xImageObjectKey;
     private int startIndex;
     private int endIndex;
     private int length;
     private Integer mcid;
     
-    public StreamInfo(int operatorIndex, String xObjectName) {
+    public StreamInfo(int operatorIndex, String xObjectName, ObjectKey xImageObjectKey) {
         this.operatorIndex = operatorIndex;
         this.xObjectName = xObjectName;
+        this.xImageObjectKey = xImageObjectKey;
     }
 
     public StreamInfo(int operatorIndex, String xObjectName, int startIndex, int endIndex) {
-        this(operatorIndex, xObjectName, startIndex, endIndex, endIndex, null);
+        this(operatorIndex, xObjectName, null, startIndex, endIndex, endIndex, null);
     }
 
-    public StreamInfo(int operatorIndex, String xObjectName, int startIndex, int endIndex, int length, Integer mcid) {
+    public StreamInfo(int operatorIndex, String xObjectName, ObjectKey xImageObjectKey, int startIndex, int endIndex, int length, Integer mcid) {
         this.operatorIndex = operatorIndex;
         this.xObjectName = xObjectName;
+        this.xImageObjectKey = xImageObjectKey;
         this.startIndex = startIndex;
         this.endIndex = endIndex;
         this.length = length;
@@ -32,7 +37,7 @@ public class StreamInfo implements Comparable<StreamInfo> {
 
 
     public StreamInfo(StreamInfo streamInfo) {
-        this(streamInfo.operatorIndex, streamInfo.xObjectName, streamInfo.startIndex, streamInfo.endIndex, 
+        this(streamInfo.operatorIndex, streamInfo.xObjectName, streamInfo.xImageObjectKey, streamInfo.startIndex, streamInfo.endIndex, 
                 streamInfo.length, streamInfo.mcid);
     }
 
@@ -42,6 +47,10 @@ public class StreamInfo implements Comparable<StreamInfo> {
 
     public String getXObjectName() {
         return xObjectName;
+    }
+
+    public ObjectKey getXImageObjectKey() {
+        return xImageObjectKey;
     }
 
     public int getStartIndex() {

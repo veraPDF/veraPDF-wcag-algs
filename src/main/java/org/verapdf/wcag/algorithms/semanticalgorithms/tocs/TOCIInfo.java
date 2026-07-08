@@ -21,6 +21,7 @@
 package org.verapdf.wcag.algorithms.semanticalgorithms.tocs;
 
 import org.verapdf.wcag.algorithms.entities.INode;
+import org.verapdf.wcag.algorithms.entities.content.TextLine;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.TOCDetectionConsumer;
 
 public class TOCIInfo {
@@ -31,6 +32,8 @@ public class TOCIInfo {
     private Integer pageNumberLabel;
     private double right;
     private double maxTextSize;
+    private int index;
+    private TextLine firstLine;
 
     public void setText(String text) {
         this.text = text;
@@ -82,5 +85,25 @@ public class TOCIInfo {
 
     public void setDestinationStructElem(INode destinationStructElem) {
         this.destinationStructElem = destinationStructElem;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+    
+    public Integer getPageNumber() {
+        return firstLine.getPageNumber();
+    }
+    
+    public TextLine getTOCItemValue() {
+        return firstLine;
+    }
+    
+    public void setTOCItemValue(TextLine firstLine) {
+        this.firstLine = firstLine;
     }
 }
