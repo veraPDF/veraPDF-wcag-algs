@@ -33,6 +33,7 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ContrastRatioConsumer;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ImagesUtils;
 
 import java.io.IOException;
 import java.util.stream.Stream;
@@ -73,10 +74,13 @@ public class ContrastRatioConsumerTests {
 	void testColorContrastPass(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
 		IDocument document = JsonToPdfTree.getDocument(SRC_DIR + jsonPdfPath);
 		ITree tree = document.getTree();
-		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath)) {
+		StaticContainers.setFileName(ROOT_DIR + srcPdfPath);
+		try (ImagesUtils imagesUtils = new ImagesUtils(true)) {
+			StaticContainers.setImagesUtils(imagesUtils);
+			ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer();
 			tree.forEach(contrastRatioConsumer);
 			tree.forEach(node -> {
-			if (node.getChildren().isEmpty() && SemanticType.SPAN == node.getSemanticType()) {
+				if (node.getChildren().isEmpty() && SemanticType.SPAN == node.getSemanticType()) {
 					for (TextColumn textColumn : ((SemanticSpan)node).getColumns()) {
 						for (TextLine line : textColumn.getLines()) {
 							for	(TextChunk chunk : line.getTextChunks())	{
@@ -99,7 +103,10 @@ public class ContrastRatioConsumerTests {
 	void testColorContrastCompletedWithoutExceptions(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
 		IDocument document = JsonToPdfTree.getDocument(SRC_DIR + jsonPdfPath);
 		ITree tree = document.getTree();
-		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath)) {
+		StaticContainers.setFileName(ROOT_DIR + srcPdfPath);
+		try (ImagesUtils imagesUtils = new ImagesUtils(true)) {
+			StaticContainers.setImagesUtils(imagesUtils);
+			ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer();
 			tree.forEach(contrastRatioConsumer);
 			Assertions.assertTrue(true);
 		}
@@ -110,7 +117,10 @@ public class ContrastRatioConsumerTests {
 	void testColorContrastFail(String srcPdfPath, String jsonPdfPath, double ratioThreshold) throws IOException {
         IDocument document = JsonToPdfTree.getDocument(SRC_DIR + jsonPdfPath);
 		ITree tree = document.getTree();
-		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + srcPdfPath)) {
+		StaticContainers.setFileName(ROOT_DIR + srcPdfPath);
+		try (ImagesUtils imagesUtils = new ImagesUtils(true)) {
+			StaticContainers.setImagesUtils(imagesUtils);
+			ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer();
 			tree.forEach(contrastRatioConsumer);
 			tree.forEach(node -> {
 				if (node.getChildren().isEmpty() && SemanticType.SPAN == node.getSemanticType()) {
@@ -132,7 +142,10 @@ public class ContrastRatioConsumerTests {
 		nodeToCheck.add(new TextLine(new TextChunk(new BoundingBox(0, new double [] {100, 100, 100.1, 120}), ".", 14, 118)));
 		nodeToCheck.setPageNumber(0);
 		Assertions.assertEquals(0.1, nodeToCheck.getFirstLine().getFirstTextChunk().getBoundingBox().getWidth(), 0.0001);
-		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + "1.4.3-t02-fail-a.pdf")) {
+		StaticContainers.setFileName(ROOT_DIR + "1.4.3-t02-fail-a.pdf");
+		try (ImagesUtils imagesUtils = new ImagesUtils(true)) {
+			StaticContainers.setImagesUtils(imagesUtils);
+			ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer();
 			contrastRatioConsumer.accept(nodeToCheck);
 		}
 		Assertions.assertEquals(0.1, nodeToCheck.getFirstLine().getFirstTextChunk().getBoundingBox().getWidth(), 0.0001);
@@ -144,7 +157,10 @@ public class ContrastRatioConsumerTests {
 		nodeToCheck.add(new TextLine(new TextChunk(new BoundingBox(0, new double [] {100, 100, 110, 100.1}), ".", 14, 118)));
 		nodeToCheck.setPageNumber(0);
 		Assertions.assertEquals(0.1, nodeToCheck.getFirstLine().getFirstTextChunk().getBoundingBox().getHeight(), 0.0001);
-		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer(ROOT_DIR + "1.4.3-t02-fail-a.pdf")) {
+		StaticContainers.setFileName(ROOT_DIR + "1.4.3-t02-fail-a.pdf");
+		try (ImagesUtils imagesUtils = new ImagesUtils(true)) {
+			StaticContainers.setImagesUtils(imagesUtils);
+			ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer();
 			contrastRatioConsumer.accept(nodeToCheck);
 		}
 		Assertions.assertEquals(0.1, nodeToCheck.getFirstLine().getFirstTextChunk().getBoundingBox().getHeight(), 0.0001);
