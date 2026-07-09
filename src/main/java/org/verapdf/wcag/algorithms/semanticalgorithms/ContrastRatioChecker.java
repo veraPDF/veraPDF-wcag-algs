@@ -23,6 +23,8 @@ package org.verapdf.wcag.algorithms.semanticalgorithms;
 import org.verapdf.wcag.algorithms.entities.ITree;
 import org.verapdf.wcag.algorithms.entities.enums.TextType;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.ContrastRatioConsumer;
+import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ImagesUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -43,8 +45,11 @@ public class ContrastRatioChecker {
 	 * @param pdfName {@link String} path to the pdf document associated with given tree
 	 */
 	public void checkSemanticTree(ITree tree, String pdfName) {
-		try (ContrastRatioConsumer v = new ContrastRatioConsumer(pdfName)) {
-			tree.forEach(v);
+		StaticContainers.setFileName(pdfName);
+		try (ImagesUtils imagesUtils = new ImagesUtils(true)) {
+			StaticContainers.setImagesUtils(imagesUtils);
+			ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer();
+			tree.forEach(contrastRatioConsumer);
 		} catch (IOException e) {
 			e.printStackTrace();
 			LOGGER.warning(e.getMessage());

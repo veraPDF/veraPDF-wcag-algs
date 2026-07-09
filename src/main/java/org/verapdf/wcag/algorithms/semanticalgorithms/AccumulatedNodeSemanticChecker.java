@@ -24,6 +24,7 @@ import org.verapdf.wcag.algorithms.entities.IDocument;
 import org.verapdf.wcag.algorithms.entities.ITree;
 import org.verapdf.wcag.algorithms.semanticalgorithms.consumers.*;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ImagesUtils;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -47,8 +48,9 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 		if (new SemanticDocumentPreprocessingConsumer().run()) {
 			return;
 		}
-		try (ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer()) {
-			if (contrastRatioConsumer.run()) {
+		try (ImagesUtils imagesUtils = new ImagesUtils(false)) {
+			StaticContainers.setImagesUtils(imagesUtils);
+			if (new ContrastRatioConsumer().run()) {
 				return;
 			}
 		} catch (IOException e) {

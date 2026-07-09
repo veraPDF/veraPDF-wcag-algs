@@ -28,17 +28,25 @@ import org.verapdf.wcag.algorithms.entities.maps.AccumulatedNodeMapper;
 import org.verapdf.wcag.algorithms.entities.maps.ObjectKeyMapper;
 import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.IdMapper;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ImagesUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.WCAGValidationInfo;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class StaticContainers {
+
+	private static final Logger LOGGER = Logger.getLogger(StaticContainers.class.getCanonicalName());
 
 	private static final ThreadLocal<IDocument> document = new ThreadLocal<>();
 
 	private static final ThreadLocal<String> fileName = new ThreadLocal<>();
+
+	private static final ThreadLocal<String> password = new ThreadLocal<>();
 
 	private static final ThreadLocal<WCAGValidationInfo> wcagValidationInfo = new ThreadLocal<>();
 	
@@ -67,6 +75,8 @@ public class StaticContainers {
 	private static final ThreadLocal<Boolean> keepLineBreaks = new ThreadLocal<>();
 
 	private static final ThreadLocal<Boolean> isDataLoader = new ThreadLocal<>();
+	private static final ThreadLocal<ImagesUtils> imagesUtils = new ThreadLocal<>();
+	private static final ThreadLocal<Boolean> isImagesUtilsFailedToCreate = new ThreadLocal<>();
 
 	private static final ThreadLocal<Boolean> isIgnoreCharactersWithoutUnicode = new ThreadLocal<>();
 
@@ -82,6 +92,7 @@ public class StaticContainers {
 	public static void updateContainers(IDocument document, String fileName) {
 		StaticContainers.document.set(document);
 		StaticContainers.fileName.set(fileName);
+		StaticContainers.password.set("");
 		StaticContainers.accumulatedNodeMapper.set(new AccumulatedNodeMapper());
 		StaticContainers.objectKeyMapper.set(new ObjectKeyMapper());
 		StaticContainers.tableBordersCollection.set(new TableBordersCollection());
@@ -94,6 +105,15 @@ public class StaticContainers {
 		StaticContainers.textChunksNumber.set(0L);
 		StaticContainers.isIgnoreCharactersWithoutUnicode.set(true);
 		StaticContainers.keepLineBreaks.set(true);
+		if (StaticContainers.imagesUtils.get() != null) {
+			try {
+				StaticContainers.imagesUtils.get().close();
+			} catch (IOException e) {
+				LOGGER.log(Level.WARNING, "Exception during image utils closing");
+			}
+			StaticContainers.imagesUtils.remove();
+		}
+		StaticContainers.isImagesUtilsFailedToCreate.set(false);
 		StaticContainers.isDataLoader.set(false);
 		if (StaticContainers.isHuman() == null) {
 			StaticContainers.setIsHuman(true);
@@ -117,6 +137,14 @@ public class StaticContainers {
 
 	public static void setFileName(String fileName) {
 		StaticContainers.fileName.set(fileName);
+	}
+
+	public static String getPassword() {
+		return password.get();
+	}
+
+	public static void setPassword(String password) {
+		StaticContainers.password.set(password);
 	}
 
 	public static WCAGValidationInfo getWCAGValidationInfo() {
@@ -231,6 +259,33 @@ public class StaticContainers {
 
 	public static boolean isDataLoader() {
 		return isDataLoader.get();
+	}
+
+	public static ImagesUtils getImagesUtils() {
+		try {
+			if (imagesUtils.get() == null && !Boolean.TRUE.equals(isImagesUtilsFailedToCreate.get())) {
+				imagesUtils.set(new ImagesUtils(true));
+			}
+		} catch (Exception e) {
+			LOGGER.log(Level.SEVERE, "Failed to initialize ImagesUtils for PDF '" + StaticContainers.getFileName() + "'", e);
+			isImagesUtilsFailedToCreate.set(true);
+		}
+		return imagesUtils.get();
+	}
+
+	public static void setImagesUtils(ImagesUtils imagesUtils) {
+		StaticContainers.imagesUtils.set(imagesUtils);
+	}
+
+	public static void closeImagesUtils() {
+		try {
+			if (imagesUtils.get() != null) {
+				imagesUtils.get().close();
+				imagesUtils.remove();
+			}
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error closing images utils: " + e.getMessage());
+		}
 	}
 
 	public static Boolean getIsIgnoreCharactersWithoutUnicode() {
