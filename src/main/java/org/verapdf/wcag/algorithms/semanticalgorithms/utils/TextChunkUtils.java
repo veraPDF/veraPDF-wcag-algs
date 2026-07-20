@@ -76,6 +76,15 @@ public class TextChunkUtils {
         }
         return false;
     }
+    
+    public static Integer getIndexOfFirstWhiteSpaceChar(String string) {
+        for (int index = 0; index < string.length(); index++) {
+            if (isWhiteSpaceChar(string.charAt(index))) {
+                return index;
+            }
+        }
+        return null;
+    }
 
     public static boolean isWhiteSpaceChar(char symbol) {
         return Character.isWhitespace(symbol) || symbol == '\u00A0' || symbol == '\u2007' || symbol == '\u202F';
