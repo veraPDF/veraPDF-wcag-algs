@@ -29,6 +29,7 @@ import org.verapdf.wcag.algorithms.entities.maps.ObjectKeyMapper;
 import org.verapdf.wcag.algorithms.entities.tables.TableBordersCollection;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.IdMapper;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.ImagesUtils;
+import org.verapdf.wcag.algorithms.semanticalgorithms.utils.TextChunkUtils;
 import org.verapdf.wcag.algorithms.semanticalgorithms.utils.WCAGValidationInfo;
 
 import java.io.IOException;
@@ -80,9 +81,12 @@ public class StaticContainers {
 
 	private static final ThreadLocal<Boolean> isIgnoreCharactersWithoutUnicode = new ThreadLocal<>();
 
+    private static final ThreadLocal<Double> textLineSpaceRatio = new ThreadLocal<>();
+
 	static {
 		StaticContainers.wcagValidationInfo.set(new WCAGValidationInfo());
         StaticContainers.setIsDataLoader(false);
+        StaticContainers.textLineSpaceRatio.set(TextChunkUtils.TEXT_LINE_SPACE_RATIO);
 	}
 
 	public static void updateContainers(IDocument document) {
@@ -115,6 +119,7 @@ public class StaticContainers {
 		}
 		StaticContainers.isImagesUtilsFailedToCreate.set(false);
 		StaticContainers.isDataLoader.set(false);
+        StaticContainers.textLineSpaceRatio.set(TextChunkUtils.TEXT_LINE_SPACE_RATIO);
 		if (StaticContainers.isHuman() == null) {
 			StaticContainers.setIsHuman(true);
 		}
@@ -295,4 +300,12 @@ public class StaticContainers {
 	public static void setIsIgnoreCharactersWithoutUnicode(Boolean isIgnoreCharactersWithoutUnicode) {
 		StaticContainers.isIgnoreCharactersWithoutUnicode.set(isIgnoreCharactersWithoutUnicode);
 	}
+
+    public static Double getTextLineSpaceRatio() {
+        return textLineSpaceRatio.get();
+    }
+
+    public static void setTextLineSpaceRatio(Double textLineSpaceRatio) {
+        StaticContainers.textLineSpaceRatio.set(textLineSpaceRatio);
+    }
 }
