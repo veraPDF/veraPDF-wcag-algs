@@ -117,7 +117,7 @@ public class TextLine extends TextInfoChunk {
     }
 
     protected void addSpaceIfRequired(TextLine line) {
-        if (line.getLeftX() - this.getRightX() < this.maxFontSize * TextChunkUtils.TEXT_LINE_SPACE_RATIO) {
+        if (line.getLeftX() - this.getRightX() < this.maxFontSize * StaticContainers.getTextLineSpaceRatio()) {
             return;
         }
 
