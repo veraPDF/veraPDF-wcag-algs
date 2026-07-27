@@ -34,6 +34,8 @@ public class NumberingStyleNames {
     public static final String ARABIC_NUMBERS = "arabic numbers";
     public static final String CIRCLED_ARABIC_NUMBERS = "circled arabic numbers";
     public static final String UNORDERED = "unordered";
+    public static final String ORDERED = "ordered";
+    public static final String DESCRIPTION = "description";
     public static final String UNKNOWN = "unknown style";
 
 
