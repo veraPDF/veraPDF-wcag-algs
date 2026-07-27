@@ -25,6 +25,7 @@ import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDetectionAlgorithm {
 
@@ -37,16 +38,16 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
 
     @Override
     public boolean isListLabels(List<String> labels, int commonStartLength, int commonEndLength) {
-        if (!labels.get(0).substring(commonStartLength, labels.get(0).length() - commonEndLength).matches(getRegex())) {
+        if (!getRegexPattern().matcher(labels.get(0).substring(commonStartLength, labels.get(0).length() - commonEndLength)).matches()) {
             return false;
         }
         boolean isUpperCase;
         int startLength = getNotRegexStartLength(labels.get(0), commonStartLength);
         int endLength = getNotRegexEndLength(labels.get(0), commonEndLength);
         String substring = labels.get(0).substring(startLength, labels.get(0).length() - endLength);
-        if (substring.matches(getLowerCaseRegex())) {
+        if (getLowerCaseRegexPattern().matcher(substring).matches()) {
             isUpperCase = false;
-        } else if (substring.matches(getUpperCaseRegex())) {
+        } else if (getUpperCaseRegexPattern().matcher(substring).matches()) {
             isUpperCase = true;
         } else {
             return false;
@@ -60,8 +61,8 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
         }
         for (int i = 1; i < labels.size(); i++) {
             substring = labels.get(i).substring(startLength, labels.get(i).length() - endLength);
-            if ((!substring.matches(getLowerCaseRegex()) || isUpperCase) &&
-                    (!substring.matches(getUpperCaseRegex()) || !isUpperCase)) {
+            if ((!getLowerCaseRegexPattern().matcher(substring).matches() || isUpperCase) &&
+                    (!getUpperCaseRegexPattern().matcher(substring).matches() || !isUpperCase)) {
                 return false;
             }
             Integer nextNumber = getNumberFromString(substring);
@@ -92,8 +93,8 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
                 String s = getStringFromNumber(number);
                 if (s == null || !item.toUpperCase().startsWith(s, start) || !item.startsWith(prefix) ||
                     isCharMatchRegex(item, start + s.length()) || isBadItem(itemInfo, item, s, start) ||
-                    ((!item.substring(start, start + s.length()).matches(getLowerCaseRegex()) || isUpperCase) &&
-                     (!item.substring(start, start + s.length()).matches(getUpperCaseRegex()) || !isUpperCase))) {
+                    ((!getLowerCaseRegexPattern().matcher(item.substring(start, start + s.length())).matches() || isUpperCase) &&
+                     (!getUpperCaseRegexPattern().matcher(item.substring(start, start + s.length())).matches() || !isUpperCase))) {
                     if (SemanticType.LIST == itemInfo.getSemanticType()) {
                         interval.getListsIndexes().add(itemInfo.getIndex());
                         number -= getIncrement();
@@ -122,9 +123,9 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
                     continue;
                 }
                 substring = substring.substring(0, regexStartLength);
-                if (substring.matches(getLowerCaseRegex())) {
+                if (getLowerCaseRegexPattern().matcher(substring).matches()) {
                     isUpperCase = false;
-                } else if (substring.matches(getUpperCaseRegex())) {
+                } else if (getUpperCaseRegexPattern().matcher(substring).matches()) {
                     isUpperCase = true;
                 } else {
                     continue;
@@ -159,23 +160,23 @@ public abstract class LettersListLabelsDetectionAlgorithm extends ListLabelsDete
         return item.length() == start + s.length() && listItem.hasOneLine();
     }
 
-    protected abstract String getLowerCaseRegex();
-    
+    protected abstract Pattern getLowerCaseRegexPattern();
+
     protected List<Character> getLetters() {
         return null;
     }
 
-    protected abstract String getUpperCaseRegex();
+    protected abstract Pattern getUpperCaseRegexPattern();
 
     protected boolean isCharMatchRegex(String s, int index) {
-        return isCharMatchRegex(s, index, getRegex());
+        return isCharMatchRegex(s, index, getRegexPattern());
     }
 
-    private static boolean isCharMatchRegex(String s, int index, String regex) {
+    private static boolean isCharMatchRegex(String s, int index, Pattern regex) {
         if (s.length() <= index) {
             return false;
         }
-        return s.substring(index, index + 1).matches(regex);
+        return regex.matcher(s.substring(index, index + 1)).matches();
     }
 
     @Override

@@ -20,11 +20,16 @@
  */
 package org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection;
 
+import java.util.regex.Pattern;
+
 public class RomanNumbersListLabelsDetectionAlgorithm extends LettersListLabelsDetectionAlgorithm {
 
-    protected static final String ROMAN_NUMBER_REGEX = "[MDCLXVImdclxvi]*";
+    private static final String ROMAN_NUMBER_REGEX = "[MDCLXVImdclxvi]*";
+    protected static final Pattern ROMAN_NUMBER_REGEX_PATTERN = Pattern.compile(ROMAN_NUMBER_REGEX);
     private static final String UPPER_CASE_ROMAN_NUMBER_REGEX = "[MDCLXVI]+";
+    private static final Pattern UPPER_CASE_ROMAN_NUMBER_REGEX_PATTERN = Pattern.compile(UPPER_CASE_ROMAN_NUMBER_REGEX);
     private static final String LOWER_CASE_ROMAN_NUMBER_REGEX = "[mdclxvi]+";
+    private static final Pattern LOWER_CASE_ROMAN_NUMBER_REGEX_PATTERN = Pattern.compile(LOWER_CASE_ROMAN_NUMBER_REGEX);
 
     public RomanNumbersListLabelsDetectionAlgorithm() {
     }
@@ -39,18 +44,18 @@ public class RomanNumbersListLabelsDetectionAlgorithm extends LettersListLabelsD
     }
 
     @Override
-    protected String getRegex() {
-        return ROMAN_NUMBER_REGEX;
+    protected Pattern getRegexPattern() {
+        return ROMAN_NUMBER_REGEX_PATTERN;
     }
 
     @Override
-    protected String getLowerCaseRegex() {
-        return LOWER_CASE_ROMAN_NUMBER_REGEX;
+    protected Pattern getLowerCaseRegexPattern() {
+        return LOWER_CASE_ROMAN_NUMBER_REGEX_PATTERN;
     }
 
     @Override
-    protected String getUpperCaseRegex() {
-        return UPPER_CASE_ROMAN_NUMBER_REGEX;
+    protected Pattern getUpperCaseRegexPattern() {
+        return UPPER_CASE_ROMAN_NUMBER_REGEX_PATTERN;
     }
 
     @Override

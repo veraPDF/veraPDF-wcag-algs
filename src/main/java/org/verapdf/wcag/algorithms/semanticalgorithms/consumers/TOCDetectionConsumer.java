@@ -46,7 +46,9 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
     private static final String LINK = "Link";
     public static final String SPACES = "\\s\u00A0\u2007\u202F";
     private static final String SPACES_REGEX = "[" + SPACES + "]+";
+    private static final Pattern SPACES_END_REGEX_PATTERN = Pattern.compile(SPACES_REGEX + "$");
     private static final String SPACES_DOTS_SPACES_REGEX = "[" + SPACES + "]*\\.*[" + SPACES + "]*";
+    private static final Pattern SPACES_DOTS_SPACES_END_REGEX_PATTERN = Pattern.compile(SPACES_DOTS_SPACES_REGEX + "$");
     public static final String NON_CONTENT_REGEX = "[" + SPACES + "\u2011\u2010:\\-]";
     private static final double MAX_RIGHT_ALIGNMENT_GAP = 0.1;
 //    private static final double MAX_LEFT_ALIGNMENT_GAP = 0.1;
@@ -479,11 +481,11 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
                 info.setPageNumberLabel(getPageNumberLabel(textValue, textValue.length() - pageLabelLength));
             }
             textValue = textChunks.stream().map(TextChunk::getValue).collect(Collectors.joining(""));
-            if (textValue.matches(ArabicNumbersListLabelsDetectionAlgorithm.DOUBLE_REGEX)) {
+            if (ArabicNumbersListLabelsDetectionAlgorithm.DOUBLE_REGEX_PATTERN.matcher(textValue).matches()) {
                 textValue = null;
             } else {
                 textValue = textValue.substring(0, textValue.length() - numberOfSpaces - pageLabelLength);
-                textValue = textValue.substring(0, getLastRegexIndex(textValue, SPACES_DOTS_SPACES_REGEX));
+                textValue = textValue.substring(0, getLastRegexIndex(textValue, SPACES_DOTS_SPACES_END_REGEX_PATTERN));
             }
             info.setText(textValue);
         }
@@ -556,15 +558,16 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
     }
 
     private static int getNumberOfEndDigits(String string) {
-        return getNumberOfEndRegex(string, ArabicNumbersListLabelsDetectionAlgorithm.ARABIC_NUMBER_REGEX);
+        return getNumberOfEndRegex(string, ArabicNumbersListLabelsDetectionAlgorithm.ARABIC_NUMBER_END_REGEX_PATTERN);
     }
 
     private static int getNumberOfEndSpaces(String string) {
-        return getNumberOfEndRegex(string, SPACES_REGEX);
+        return getNumberOfEndRegex(string, SPACES_END_REGEX_PATTERN);
     }
 
-    private static int getLastRegexIndex(String string, String regex) {
-        Pattern pattern = Pattern.compile(regex + "$");
+    private static int getLastRegexIndex(String string, Pattern regex) {
+        Pattern pattern = !regex.pattern().isEmpty() && regex.pattern().charAt(regex.pattern().length() - 1) == '$' ? 
+                regex : Pattern.compile(regex.pattern() + "$");
         Matcher matcher = pattern.matcher(string);
         if (matcher.find()) {
             return matcher.start();
@@ -572,7 +575,7 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
         return string.length();
     }
 
-    private static int getNumberOfEndRegex(String string, String regex) {
+    private static int getNumberOfEndRegex(String string, Pattern regex) {
         return string.length() - getLastRegexIndex(string, regex);
     }
 
@@ -796,9 +799,9 @@ public class TOCDetectionConsumer extends WCAGConsumer implements Consumer<INode
 
     private static boolean checkArabicNumbering(INode child, String firstTOCI, String secondTOCI, String prefix) {
         String firstSubstring = firstTOCI.substring(0, ListLabelsDetectionAlgorithm.getRegexStartLength(firstTOCI,
-                ArabicNumbersListLabelsDetectionAlgorithm.ARABIC_NUMBER_REGEX));
+                ArabicNumbersListLabelsDetectionAlgorithm.ARABIC_NUMBER_REGEX_PATTERN));
         String secondSubstring = secondTOCI.substring(0, ListLabelsDetectionAlgorithm.getRegexStartLength(secondTOCI,
-                ArabicNumbersListLabelsDetectionAlgorithm.ARABIC_NUMBER_REGEX));
+                ArabicNumbersListLabelsDetectionAlgorithm.ARABIC_NUMBER_REGEX_PATTERN));
         if (firstSubstring.isEmpty() || secondSubstring.isEmpty()) {
             return false;
         }

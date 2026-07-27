@@ -24,9 +24,12 @@ import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class SemanticTypeMapper {
-
+    
+    public static final Pattern HN_REGEXP_PATTERN = Pattern.compile("H[1-9][0-9]*");
+    
     private static final Map<String, SemanticType> map = new HashMap<>();
 
     static {
@@ -74,7 +77,7 @@ public class SemanticTypeMapper {
         if (type == null) {
             return null;
         }
-        if (type.matches("^H[1-9][0-9]*$")) {
+        if (HN_REGEXP_PATTERN.matcher(type).matches()) {
             return SemanticType.NUMBER_HEADING;
         }
         return map.get(type);

@@ -22,6 +22,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class CircledArabicNumbersListLabelsDetectionAlgorithm extends LettersListLabelsDetectionAlgorithm {
 
@@ -34,6 +35,7 @@ public class CircledArabicNumbersListLabelsDetectionAlgorithm extends LettersLis
             '\u32BF');
 
     private static final String CIRCLED_ARABIC_NUMBERS_REGEX = "[\u24EA\u2460-\u2473\u3251-\u325F\u32B1-\u32BF]+";
+    private static final Pattern CIRCLED_ARABIC_NUMBERS_REGEX_PATTERN = Pattern.compile(CIRCLED_ARABIC_NUMBERS_REGEX);
 
     public CircledArabicNumbersListLabelsDetectionAlgorithm() {
     }
@@ -48,13 +50,13 @@ public class CircledArabicNumbersListLabelsDetectionAlgorithm extends LettersLis
     }
 
     @Override
-    protected String getRegex() {
-        return CIRCLED_ARABIC_NUMBERS_REGEX;
+    protected Pattern getRegexPattern() {
+        return CIRCLED_ARABIC_NUMBERS_REGEX_PATTERN;
     }
 
     @Override
-    protected String getLowerCaseRegex() {
-        return CIRCLED_ARABIC_NUMBERS_REGEX;
+    protected Pattern getLowerCaseRegexPattern() {
+        return CIRCLED_ARABIC_NUMBERS_REGEX_PATTERN;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class CircledArabicNumbersListLabelsDetectionAlgorithm extends LettersLis
     }
 
     @Override
-    protected String getUpperCaseRegex() {
-        return CIRCLED_ARABIC_NUMBERS_REGEX;
+    protected Pattern getUpperCaseRegexPattern() {
+        return CIRCLED_ARABIC_NUMBERS_REGEX_PATTERN;
     }
 }

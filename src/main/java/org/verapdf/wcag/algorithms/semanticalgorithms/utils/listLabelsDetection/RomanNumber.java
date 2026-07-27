@@ -34,7 +34,7 @@ public class RomanNumber {
     private final int arabicNumber;
 
     public RomanNumber(String s) throws NumberFormatException {
-        if (!s.matches(RomanNumbersListLabelsDetectionAlgorithm.ROMAN_NUMBER_REGEX) || s.isEmpty()) {
+        if (!RomanNumbersListLabelsDetectionAlgorithm.ROMAN_NUMBER_REGEX_PATTERN.matcher(s).matches() || s.isEmpty()) {
             throw new NumberFormatException();
         }
         List<Roman> romans = new ArrayList<>();

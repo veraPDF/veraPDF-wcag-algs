@@ -25,6 +25,7 @@ import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
 
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public abstract class ListLabelsDetectionAlgorithm {
 
@@ -56,19 +57,19 @@ public abstract class ListLabelsDetectionAlgorithm {
         return length;
     }
 
-    protected abstract String getRegex();
+    protected abstract Pattern getRegexPattern();
 
     protected abstract String getStringFromNumber(Integer number);
 
     protected abstract Integer getNumberFromString(String string);
 
     protected int getRegexStartLength(String string) {
-        return getRegexStartLength(string, getRegex());
+        return getRegexStartLength(string, getRegexPattern());
     }
 
-    public static int getRegexStartLength(String string, String regex) {
+    public static int getRegexStartLength(String string, Pattern regex) {
         for (int i = 0; i < string.length(); i++) {
-            if (!string.substring(i, i + 1).matches(regex)) {
+            if (!regex.matcher(string.substring(i, i + 1)).matches()) {
                 return i;
             }
         }
@@ -76,15 +77,15 @@ public abstract class ListLabelsDetectionAlgorithm {
     }
 
     protected int getNotRegexEndLength(String string, int commonEndLength) {
-        return getNotRegexEndLength(string, commonEndLength, getRegex());
+        return getNotRegexEndLength(string, commonEndLength, getRegexPattern());
     }
 
-    private static int getNotRegexEndLength(String string, int commonEndLength, String regex) {
+    private static int getNotRegexEndLength(String string, int commonEndLength, Pattern regex) {
         if (commonEndLength == 0) {
             return 0;
         }
         for (int i = commonEndLength; i > 0; i--) {
-            if (!string.substring(string.length() - i, string.length() - i + 1).matches(regex)) {
+            if (!regex.matcher(string.substring(string.length() - i, string.length() - i + 1)).matches()) {
                 return i;
             }
         }
@@ -92,15 +93,15 @@ public abstract class ListLabelsDetectionAlgorithm {
     }
 
     protected int getNotRegexStartLength(String string, int commonStartLength) {
-        return getNotRegexStartLength(string, commonStartLength, getRegex());
+        return getNotRegexStartLength(string, commonStartLength, getRegexPattern());
     }
 
-    private static int getNotRegexStartLength(String string, int commonStartLength, String regex) {
+    private static int getNotRegexStartLength(String string, int commonStartLength, Pattern regex) {
         if (commonStartLength == 0) {
             return 0;
         }
         for (int i = commonStartLength; i > 0; i--) {
-            if (!string.substring(i - 1, i).matches(regex)) {
+            if (!regex.matcher(string.substring(i - 1, i)).matches()) {
                 return i;
             }
         }

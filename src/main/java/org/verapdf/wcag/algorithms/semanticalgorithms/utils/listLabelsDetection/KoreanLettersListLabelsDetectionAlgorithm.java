@@ -22,6 +22,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class KoreanLettersListLabelsDetectionAlgorithm extends LettersListLabelsDetectionAlgorithm {
 
@@ -29,9 +30,7 @@ public class KoreanLettersListLabelsDetectionAlgorithm extends LettersListLabels
             '카', '타', '파', '하', '거', '너', '더', '러', '머', '버', '서', '어', '저', '처', '커', '터', '퍼', '허');
 
     private static final String KOREAN_LETTER_REGEX = "[가나다라마바사아자차카타파하거너더러머버서어저처커터퍼허]+";
-    private static final String UPPER_CASE_KOREAN_LETTER_REGEX = KOREAN_LETTER_REGEX;
-    private static final String LOWER_CASE_KOREAN_LETTER_REGEX = KOREAN_LETTER_REGEX;
-
+    private static final Pattern KOREAN_LETTER_REGEX_PATTERN = Pattern.compile(KOREAN_LETTER_REGEX);
     public KoreanLettersListLabelsDetectionAlgorithm() {
         super();
     }
@@ -46,13 +45,13 @@ public class KoreanLettersListLabelsDetectionAlgorithm extends LettersListLabels
     }
 
     @Override
-    protected String getRegex() {
-        return KOREAN_LETTER_REGEX;
+    protected Pattern getRegexPattern() {
+        return KOREAN_LETTER_REGEX_PATTERN;
     }
 
     @Override
-    protected String getLowerCaseRegex() {
-        return LOWER_CASE_KOREAN_LETTER_REGEX;
+    protected Pattern getLowerCaseRegexPattern() {
+        return KOREAN_LETTER_REGEX_PATTERN;
     }
 
     @Override
@@ -61,7 +60,7 @@ public class KoreanLettersListLabelsDetectionAlgorithm extends LettersListLabels
     }
 
     @Override
-    protected String getUpperCaseRegex() {
-        return UPPER_CASE_KOREAN_LETTER_REGEX;
+    protected Pattern getUpperCaseRegexPattern() {
+        return KOREAN_LETTER_REGEX_PATTERN;
     }
 }
