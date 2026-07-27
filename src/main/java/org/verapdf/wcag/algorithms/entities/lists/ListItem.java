@@ -88,4 +88,8 @@ public class ListItem extends TextBlock {
     public void setLabelLength(int labelLength) {
         this.labelLength = labelLength;
     }
+
+    public String getLabelText() {
+        return this.toString().substring(0, labelLength);
+    }
 }
