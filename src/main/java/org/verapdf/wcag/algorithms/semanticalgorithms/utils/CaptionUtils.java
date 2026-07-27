@@ -208,7 +208,7 @@ public class CaptionUtils {
 			if (value.startsWith(type.getValue())) {
 				value = value.substring(type.getValue().length()).trim();
 				if (!value.isEmpty() && ListLabelsDetectionAlgorithm.getRegexStartLength(value,
-						ArabicNumbersListLabelsDetectionAlgorithm.ARABIC_NUMBER_REGEX) > 0) {
+						ArabicNumbersListLabelsDetectionAlgorithm.ARABIC_NUMBER_REGEX_PATTERN) > 0) {
 					return CAPTION_PROBABILITY_PARAMS[4];
 				}
 				return CAPTION_PROBABILITY_PARAMS[5];

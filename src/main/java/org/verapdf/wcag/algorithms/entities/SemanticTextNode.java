@@ -498,7 +498,7 @@ public class SemanticTextNode extends SemanticNode {
     public boolean isStartsWithArabicNumber() {
         String value = getFirstLine().getValue().trim();
         if (!value.isEmpty() && ListLabelsDetectionAlgorithm.getRegexStartLength(value,
-                ArabicNumbersListLabelsDetectionAlgorithm.ARABIC_NUMBER_REGEX) > 0) {
+                ArabicNumbersListLabelsDetectionAlgorithm.ARABIC_NUMBER_REGEX_PATTERN) > 0) {
             return true;
         }
         return false;

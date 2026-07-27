@@ -26,11 +26,15 @@ import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetectionAlgorithm {
 
     public static final String ARABIC_NUMBER_REGEX = "\\d+";
+    public static final Pattern ARABIC_NUMBER_REGEX_PATTERN = Pattern.compile(ARABIC_NUMBER_REGEX);
+    public static final Pattern ARABIC_NUMBER_END_REGEX_PATTERN = Pattern.compile(ARABIC_NUMBER_REGEX + "$");
     public static final String DOUBLE_REGEX = ARABIC_NUMBER_REGEX + "\\." + ARABIC_NUMBER_REGEX;
+    public static final Pattern DOUBLE_REGEX_PATTERN = Pattern.compile(DOUBLE_REGEX);
 
     private boolean isHeaderOrFooterDetection = false;
 
@@ -44,7 +48,7 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
 
     @Override
     public boolean isListLabels(List<String> labels, int commonStartLength, int commonEndLength) {
-        if (!labels.get(0).substring(commonStartLength, labels.get(0).length() - commonEndLength).matches(getRegex())) {
+        if (!getRegexPattern().matcher(labels.get(0).substring(commonStartLength, labels.get(0).length() - commonEndLength)).matches()) {
             return false;
         }
         int startLength = getNotRegexStartLength(labels.get(0), commonStartLength);
@@ -137,8 +141,8 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
     }
 
     @Override
-    protected String getRegex() {
-        return ARABIC_NUMBER_REGEX;
+    protected Pattern getRegexPattern() {
+        return ARABIC_NUMBER_REGEX_PATTERN;
     }
 
     @Override
@@ -215,7 +219,7 @@ public class ArabicNumbersListLabelsDetectionAlgorithm extends ListLabelsDetecti
                     return true;
                 }   
             }
-            if (item.matches(DOUBLE_REGEX) && listItem.hasOneLine()) {
+            if (DOUBLE_REGEX_PATTERN.matcher(item).matches() && listItem.hasOneLine()) {
                 return true;
             }
             return false;

@@ -22,6 +22,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public abstract class AlfaLettersListLabelsDetectionAlgorithm extends LettersListLabelsDetectionAlgorithm {
 
@@ -29,8 +30,11 @@ public abstract class AlfaLettersListLabelsDetectionAlgorithm extends LettersLis
             'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
     private static final String UPPER_CASE_ENGLISH_LETTER_REGEX = "[A-Z]+";
+    private static final Pattern UPPER_CASE_ENGLISH_LETTER_REGEX_PATTERN = Pattern.compile(UPPER_CASE_ENGLISH_LETTER_REGEX);
     private static final String LOWER_CASE_ENGLISH_LETTER_REGEX = "[a-z]+";
+    private static final Pattern LOWER_CASE_ENGLISH_LETTER_REGEX_PATTERN = Pattern.compile(LOWER_CASE_ENGLISH_LETTER_REGEX);
     private static final String ENGLISH_LETTER_REGEX = "[A-Za-z]+";
+    private static final Pattern ENGLISH_LETTER_REGEX_PATTERN = Pattern.compile(ENGLISH_LETTER_REGEX);
 
     AlfaLettersListLabelsDetectionAlgorithm() {
         super();
@@ -41,8 +45,8 @@ public abstract class AlfaLettersListLabelsDetectionAlgorithm extends LettersLis
     }
 
     @Override
-    protected String getRegex() {
-        return ENGLISH_LETTER_REGEX;
+    protected Pattern getRegexPattern() {
+        return ENGLISH_LETTER_REGEX_PATTERN;
     }
 
     @Override
@@ -51,13 +55,13 @@ public abstract class AlfaLettersListLabelsDetectionAlgorithm extends LettersLis
     }
 
     @Override
-    protected String getLowerCaseRegex() {
-        return LOWER_CASE_ENGLISH_LETTER_REGEX;
+    protected Pattern getLowerCaseRegexPattern() {
+        return LOWER_CASE_ENGLISH_LETTER_REGEX_PATTERN;
     }
 
     @Override
-    protected String getUpperCaseRegex() {
-        return UPPER_CASE_ENGLISH_LETTER_REGEX;
+    protected Pattern getUpperCaseRegexPattern() {
+        return UPPER_CASE_ENGLISH_LETTER_REGEX_PATTERN;
     }
 
     @Override

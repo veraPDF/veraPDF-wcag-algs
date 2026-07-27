@@ -22,6 +22,7 @@ package org.verapdf.wcag.algorithms.semanticalgorithms.utils.listLabelsDetection
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class RomanNumbersLowerCaseListLabelsDetectionAlgorithm extends LettersListLabelsDetectionAlgorithm {
 
@@ -30,8 +31,7 @@ public class RomanNumbersLowerCaseListLabelsDetectionAlgorithm extends LettersLi
             '\u217B');
 
     private static final String SIMPLE_ROMAN_NUMBER_REGEX = "[\u2170-\u217B]+";
-    private static final String UPPER_CASE_SIMPLE_ROMAN_NUMBER_REGEX = SIMPLE_ROMAN_NUMBER_REGEX;
-    private static final String LOWER_CASE_SIMPLE_ROMAN_NUMBER_LETTER_REGEX = SIMPLE_ROMAN_NUMBER_REGEX;
+    private static final Pattern SIMPLE_ROMAN_NUMBER_REGEX_PATTERN = Pattern.compile(SIMPLE_ROMAN_NUMBER_REGEX);
 
     public RomanNumbersLowerCaseListLabelsDetectionAlgorithm() {
         super();
@@ -47,13 +47,13 @@ public class RomanNumbersLowerCaseListLabelsDetectionAlgorithm extends LettersLi
     }
 
     @Override
-    protected String getRegex() {
-        return SIMPLE_ROMAN_NUMBER_REGEX;
+    protected Pattern getRegexPattern() {
+        return SIMPLE_ROMAN_NUMBER_REGEX_PATTERN;
     }
 
     @Override
-    protected String getLowerCaseRegex() {
-        return LOWER_CASE_SIMPLE_ROMAN_NUMBER_LETTER_REGEX;
+    protected Pattern getLowerCaseRegexPattern() {
+        return SIMPLE_ROMAN_NUMBER_REGEX_PATTERN;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class RomanNumbersLowerCaseListLabelsDetectionAlgorithm extends LettersLi
     }
 
     @Override
-    protected String getUpperCaseRegex() {
-        return UPPER_CASE_SIMPLE_ROMAN_NUMBER_REGEX;
+    protected Pattern getUpperCaseRegexPattern() {
+        return SIMPLE_ROMAN_NUMBER_REGEX_PATTERN;
     }
 }

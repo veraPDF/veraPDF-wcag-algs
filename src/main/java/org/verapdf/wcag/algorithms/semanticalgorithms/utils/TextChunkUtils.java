@@ -24,6 +24,7 @@ import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.geometry.BoundingBox;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class TextChunkUtils {
 
@@ -34,6 +35,7 @@ public class TextChunkUtils {
     public static final double TEXT_CHUNK_SPACE_RATIO = 170;
     public static final double TEXT_LINE_SPACE_RATIO = 0.17;
     public static final double SPLIT_THRESHOLD_FACTOR = 0.21;
+    public static final Pattern ZERO_UNICODE_REGEX_PATTERN = Pattern.compile("\u0000+");
 
     public static final Set<Character> HYPHENATION_SIGNS = new HashSet<>(Arrays.asList('\u002D','\u2014','\u00AD'));
 

@@ -303,7 +303,7 @@ public class TextChunk extends TextInfoChunk {
     }
 
     public boolean isEmpty() {
-        return value.isEmpty() || (StaticContainers.getIsIgnoreCharactersWithoutUnicode() && value.matches("\u0000+"));
+        return value.isEmpty() || (StaticContainers.getIsIgnoreCharactersWithoutUnicode() && TextChunkUtils.ZERO_UNICODE_REGEX_PATTERN.matcher(value).matches());
     }
 
     public boolean isWhiteSpaceChunk() {
