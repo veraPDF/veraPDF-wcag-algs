@@ -37,7 +37,7 @@ public class ImagesUtils implements Closeable {
     private PDDocument document;
     private final Map<Integer, Float> renderDpiForPages = new HashMap<>();
     private final Map<Integer, BufferedImage> renderedPages = new HashMap<>();
-    private static final int RENDER_DPI = 288;
+    public static final int RENDER_DPI = 288;
     public static final int PDF_DPI = 72;
 
     private boolean isLoad = false;
@@ -131,7 +131,7 @@ public class ImagesUtils implements Closeable {
         renderingHints.put(RenderingHints.KEY_ANTIALIASING, enableAntialias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
         PDFRenderer pdfRenderer = new PDFRenderer(document);
         pdfRenderer.setRenderingHints(renderingHints);
-        float usedDPI = dpi != null ? dpi.floatValue() : RENDER_DPI;
+        float usedDPI = dpi != null ? dpi.floatValue() : StaticContainers.getImageResolution();
         renderDpiForPages.put(pageNumber, usedDPI / PDF_DPI);
         return pdfRenderer.renderImageWithDPI(pageNumber, usedDPI, ImageType.RGB);
     }

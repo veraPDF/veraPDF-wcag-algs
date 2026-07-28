@@ -82,11 +82,13 @@ public class StaticContainers {
 	private static final ThreadLocal<Boolean> isIgnoreCharactersWithoutUnicode = new ThreadLocal<>();
 
     private static final ThreadLocal<Double> textLineSpaceRatio = new ThreadLocal<>();
+    private static final ThreadLocal<Integer> imageResolution = new ThreadLocal<>();
 
 	static {
 		StaticContainers.wcagValidationInfo.set(new WCAGValidationInfo());
         StaticContainers.setIsDataLoader(false);
         StaticContainers.textLineSpaceRatio.set(TextChunkUtils.TEXT_LINE_SPACE_RATIO);
+        StaticContainers.imageResolution.set(ImagesUtils.RENDER_DPI);
 	}
 
 	public static void updateContainers(IDocument document) {
@@ -120,6 +122,7 @@ public class StaticContainers {
 		StaticContainers.isImagesUtilsFailedToCreate.set(false);
 		StaticContainers.isDataLoader.set(false);
         StaticContainers.textLineSpaceRatio.set(TextChunkUtils.TEXT_LINE_SPACE_RATIO);
+        StaticContainers.imageResolution.set(ImagesUtils.RENDER_DPI);
 		if (StaticContainers.isHuman() == null) {
 			StaticContainers.setIsHuman(true);
 		}
@@ -307,5 +310,13 @@ public class StaticContainers {
 
     public static void setTextLineSpaceRatio(Double textLineSpaceRatio) {
         StaticContainers.textLineSpaceRatio.set(textLineSpaceRatio);
+    }
+
+    public static Integer getImageResolution() {
+        return imageResolution.get();
+    }
+
+    public static void setImageResolution(Integer imageResolution) {
+        StaticContainers.imageResolution.set(imageResolution);
     }
 }
