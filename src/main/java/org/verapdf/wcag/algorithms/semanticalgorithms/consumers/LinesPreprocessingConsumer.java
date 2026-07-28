@@ -69,14 +69,14 @@ public class LinesPreprocessingConsumer extends WCAGConsumer {
 
     private List<TableBorderBuilder> findTableBorders(Integer pageNumber) {
         List<TableBorderBuilder> tableBorders = new ArrayList<>();
-        Set<LineChunk> set = new HashSet<>(StaticContainers.getLinesCollection().getHorizontalLines(pageNumber));
-        set.addAll(StaticContainers.getLinesCollection().getVerticalLines(pageNumber));
-        set.addAll(StaticContainers.getLinesCollection().getSquares(pageNumber));
-        if (set.size() > MAX_NUMBER_OF_LINES_FOR_PAGE) {
+        if (StaticContainers.getLinesCollection().getTotalNumberOfLines(pageNumber) > MAX_NUMBER_OF_LINES_FOR_PAGE) {
             LOGGER.log(Level.WARNING, "There are over {0} lines on the page {1}. Table border finding will be skipped",
                     new Object[]{MAX_NUMBER_OF_LINES_FOR_PAGE, pageNumber + 1});
             return tableBorders;
         }
+        Set<LineChunk> set = new HashSet<>(StaticContainers.getLinesCollection().getHorizontalLines(pageNumber));
+        set.addAll(StaticContainers.getLinesCollection().getVerticalLines(pageNumber));
+        set.addAll(StaticContainers.getLinesCollection().getSquares(pageNumber));
         for (LineChunk line : set) {
             if (line.getWidth() > MAX_LINE_WIDTH) {
                 continue;

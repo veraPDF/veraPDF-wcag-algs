@@ -121,4 +121,11 @@ public class LinesCollection {
 		}
 		return squares;
 	}
+
+    public Integer getTotalNumberOfLines(Integer pageNumber) {
+        if (this.horizontalLines.get(pageNumber) == null) {
+            parseLines();
+        }
+        return this.squares.get(pageNumber).size() + this.verticalLines.get(pageNumber).size() + this.horizontalLines.get(pageNumber).size();
+    }
 }
