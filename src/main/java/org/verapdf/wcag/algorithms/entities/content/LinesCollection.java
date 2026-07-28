@@ -123,9 +123,6 @@ public class LinesCollection {
 	}
 
     public Integer getTotalNumberOfLines(Integer pageNumber) {
-        if (this.horizontalLines.get(pageNumber) == null) {
-            parseLines();
-        }
         return getSquares(pageNumber).size() +  getVerticalLines(pageNumber).size() + getHorizontalLines(pageNumber).size();
     }
 }
