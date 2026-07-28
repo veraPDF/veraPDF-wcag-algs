@@ -121,4 +121,8 @@ public class LinesCollection {
 		}
 		return squares;
 	}
+
+    public Integer getTotalNumberOfLines(Integer pageNumber) {
+        return getSquares(pageNumber).size() +  getVerticalLines(pageNumber).size() + getHorizontalLines(pageNumber).size();
+    }
 }
