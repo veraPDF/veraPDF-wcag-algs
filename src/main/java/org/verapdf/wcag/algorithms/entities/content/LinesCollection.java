@@ -126,6 +126,6 @@ public class LinesCollection {
         if (this.horizontalLines.get(pageNumber) == null) {
             parseLines();
         }
-        return this.squares.get(pageNumber).size() + this.verticalLines.get(pageNumber).size() + this.horizontalLines.get(pageNumber).size();
+        return getSquares(pageNumber).size() +  getVerticalLines(pageNumber).size() + getHorizontalLines(pageNumber).size();
     }
 }
