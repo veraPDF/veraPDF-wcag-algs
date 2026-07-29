@@ -37,7 +37,7 @@ public class ImagesUtils implements Closeable {
     private PDDocument document;
     private final Map<Integer, Float> renderDpiForPages = new HashMap<>();
     private final Map<Integer, BufferedImage> renderedPages = new HashMap<>();
-    private static final int RENDER_DPI = 288;
+    private static final int RENDER_DPI = 144;
     public static final int PDF_DPI = 72;
 
     private boolean isLoad = false;
