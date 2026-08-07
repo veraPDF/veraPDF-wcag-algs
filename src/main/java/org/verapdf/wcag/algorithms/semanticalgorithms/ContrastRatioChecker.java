@@ -51,7 +51,6 @@ public class ContrastRatioChecker {
 			ContrastRatioConsumer contrastRatioConsumer = new ContrastRatioConsumer();
 			tree.forEach(contrastRatioConsumer);
 		} catch (IOException e) {
-			e.printStackTrace();
 			LOGGER.warning(e.getMessage());
 		}
 	}
