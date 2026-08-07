@@ -54,7 +54,6 @@ public class AccumulatedNodeSemanticChecker implements ISemanticsChecker {
 				return;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
 			LOGGER.warning(e.getMessage());
 		}
 		if (new AccumulatedNodeConsumer().run()) {

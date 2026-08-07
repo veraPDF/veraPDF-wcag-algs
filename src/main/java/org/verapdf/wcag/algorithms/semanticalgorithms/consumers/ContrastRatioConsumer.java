@@ -71,7 +71,6 @@ public class ContrastRatioConsumer extends WCAGConsumer implements Consumer<INod
 				calculateContrast(StaticContainers.getDocument().getTree());
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
 			logger.warning(e.getMessage());
 		}
 		return false;

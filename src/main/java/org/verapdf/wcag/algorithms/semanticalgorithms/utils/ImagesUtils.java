@@ -70,7 +70,6 @@ public class ImagesUtils implements Closeable {
                 renderedPage = renderPage(document, pageNumber, dpi, enableAntialias);
                 renderedPages.put(pageNumber, renderedPage);
             } catch (IOException | IllegalArgumentException e) {
-                e.printStackTrace();
                 LOGGER.warning(e.getMessage());
             }
         }

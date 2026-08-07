@@ -272,7 +272,7 @@ public class StaticContainers {
 				imagesUtils.set(new ImagesUtils(true));
 			}
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Failed to initialize ImagesUtils for PDF '" + StaticContainers.getFileName() + "'", e);
+			LOGGER.log(Level.SEVERE, "Failed to initialize ImagesUtils for PDF '" + StaticContainers.getFileName() + "'");
 			isImagesUtilsFailedToCreate.set(true);
 		}
 		return imagesUtils.get();
