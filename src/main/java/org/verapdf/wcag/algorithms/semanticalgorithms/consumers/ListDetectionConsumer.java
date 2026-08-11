@@ -101,9 +101,7 @@ public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INod
             if (child == null) {
                 continue;
             }
-            if (SemanticType.LIST == child.getSemanticType() && child.getChildren().stream()
-                    .filter(i -> SemanticType.LIST_ITEM == i.getSemanticType())
-                    .count() > 1) {
+            if (hasOneChildListWithSeveralListItems(child)) {
                 continue;
             }
             INode accumulatedChild = StaticContainers.getAccumulatedNodeMapper().get(child);
@@ -125,20 +123,21 @@ public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INod
             if (!(newChild instanceof SemanticFigure)) {
                 continue;
             }
+            boolean isList = hasOneChildList(child);
             SemanticFigure figure = (SemanticFigure) newChild;
             if (figure.getImages().isEmpty() && figure.getLineArts().size() == 1) {
                 LineArtChunk lineArt = figure.getLineArts().get(0);
                 if (lineArt.getRightX() <= line.getLeftX() && lineArt.getBoundingBox().getHeight() <
                         ListUtils.LIST_LABEL_HEIGHT_EPSILON * line.getBoundingBox().getHeight()) {
                     lineArtChildrenInfo.add(new ListItemLineArtInfo(child.getIndex(),
-                            child.getSemanticType(), lineArt));
+                            isList ? SemanticType.LIST : child.getSemanticType(), lineArt));
                 }
             } else if (figure.getImages().size() == 1 && figure.getLineArts().isEmpty()) {
                 ImageChunk image = figure.getImages().get(0);
                 if (image.getRightX() <= line.getLeftX() && image.getBoundingBox().getHeight() <
                         ListUtils.LIST_LABEL_HEIGHT_EPSILON * line.getBoundingBox().getHeight()) {
                     imageChildrenInfo.add(new ListItemImageInfo(child.getIndex(),
-                            child.getSemanticType(), image));
+                            isList ? SemanticType.LIST : child.getSemanticType(), image));
                 }
             }
         }
@@ -146,17 +145,39 @@ public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INod
             ListUtils.updateTreeWithRecognizedLists(node, ListUtils.getChildrenListIntervals(
                     ListLabelsUtils.getListItemsIntervals(textChildrenInfo), node.getChildren()));
         }
-        if (imageChildrenInfo.size() > 1) {
+        if (!updateTreeWithOneElementList(node, imageChildrenInfo) && imageChildrenInfo.size() > 1) {
             ListUtils.updateTreeWithRecognizedLists(node, ListUtils.getChildrenListIntervals(
                     ListLabelsUtils.getImageListItemsIntervals(imageChildrenInfo), node.getChildren()));
         }
-        if (lineArtChildrenInfo.size() > 1) {
+        if (!updateTreeWithOneElementList(node, lineArtChildrenInfo) && lineArtChildrenInfo.size() > 1) {
             ListUtils.updateTreeWithRecognizedLists(node, ListUtils.getChildrenListIntervals(
                     ListLabelsUtils.getImageListItemsIntervals(lineArtChildrenInfo), node.getChildren()));
         }
     }
 
-    private boolean updateTreeWithOneElementList(INode node, List<ListItemTextInfo> itemsInfo) {
+    private static boolean hasOneChildList(INode child) {
+        if (SemanticType.LIST == child.getSemanticType() && SemanticType.LIST == child.getInitialSemanticType()) {
+            return true;
+        }
+        if (child.getChildren().size() == 1) {
+            return hasOneChildList(child.getChildren().get(0));
+        }
+        return false;
+    }
+
+    private static boolean hasOneChildListWithSeveralListItems(INode child) {
+        if (SemanticType.LIST == child.getSemanticType()) {
+            return child.getChildren().stream()
+                    .filter(i -> SemanticType.LIST_ITEM == i.getSemanticType())
+                    .count() > 1;
+        }
+        if (child.getChildren().size() == 1) {
+            return hasOneChildList(child.getChildren().get(0));
+        }
+        return false;
+    }
+
+    private boolean updateTreeWithOneElementList(INode node, List<? extends ListItemInfo> itemsInfo) {
         if (SemanticType.LIST == node.getInitialSemanticType() &&
                 itemsInfo.size() == itemsInfo.stream()
                         .filter(i -> SemanticType.LIST == i.getSemanticType())
@@ -164,12 +185,12 @@ public class ListDetectionConsumer extends WCAGConsumer implements Consumer<INod
             int index = IntStream.range(0, itemsInfo.size())
                     .filter(i -> SemanticType.LIST != itemsInfo.get(i).getSemanticType())
                     .findFirst().orElse(0);
-            if (ListLabelsUtils.isListLabel(itemsInfo.get(index).getListItem())) {
+            if (!(itemsInfo.get(index) instanceof ListItemTextInfo) || ListLabelsUtils.isListLabel(((ListItemTextInfo)itemsInfo.get(index)).getListItem())) {
                 int originalIndex = itemsInfo.get(index).getIndex();
                 List<ListItemInfo> listItemsInfos = new ArrayList<>(Collections.singletonList(itemsInfo.get(index)));
                 ListUtils.updateTreeWithRecognizedList(node, new ListInterval(listItemsInfos,
                         itemsInfo.stream()
-                                .map(ListItemTextInfo::getIndex)
+                                .map(ListItemInfo::getIndex)
                                 .filter(i -> i != originalIndex)
                                 .collect(Collectors.toList()),
                         1));

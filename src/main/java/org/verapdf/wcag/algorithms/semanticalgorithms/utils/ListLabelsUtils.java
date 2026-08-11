@@ -258,12 +258,12 @@ public class ListLabelsUtils {
 		InfoChunk image = itemsInfo.get(0).getListItemValue();
 		for (int i = 1; i < itemsInfo.size(); i++) {
 			InfoChunk currentImage = itemsInfo.get(i).getListItemValue();
+			if (SemanticType.LIST == itemsInfo.get(i).getSemanticType()) {
+				interval.getListsIndexes().add(itemsInfo.get(i).getIndex());
+				continue;
+			}
 			if (!NodeUtils.areCloseNumbers(image.getBoundingBox().getWidth(), currentImage.getBoundingBox().getWidth()) ||
 			    !NodeUtils.areCloseNumbers(image.getBoundingBox().getHeight(), currentImage.getBoundingBox().getHeight())) {
-				if (SemanticType.LIST == itemsInfo.get(i).getSemanticType()) {
-					interval.getListsIndexes().add(itemsInfo.get(i).getIndex());
-					continue;
-				}
 				if (interval.getNumberOfListItems() > 1) {
 					listIntervals.add(interval);
 				}
