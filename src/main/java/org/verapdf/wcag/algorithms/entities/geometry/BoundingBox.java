@@ -192,7 +192,7 @@ public class BoundingBox {
         if (Math.abs(that.rightX - rightX) > EPSILON) {
             return false;
         }
-        return Math.abs(that.topY - topY) > EPSILON;
+        return Math.abs(that.topY - topY) < EPSILON;
     }
 
     public static boolean areSameBoundingBoxes(BoundingBox boundingBox1, BoundingBox boundingBox2) {
