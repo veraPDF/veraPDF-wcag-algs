@@ -47,6 +47,15 @@ public class TextChunk extends TextInfoChunk {
     private boolean isStrikethroughText = false;
     private TextFormat textFormat = TextFormat.NORMAL;
     private List<Double> symbolEnds;
+    /**
+     * Set when the chunk's bounding box is wholly outside the effective
+     * clipping path in force where it was shown, so the chunk cannot appear on
+     * the page at all. This is a distinct signal from {@link #isHiddenText()}:
+     * clipped text is absent, not merely low-contrast, and the consumers of the
+     * hidden-text flag must not react to it. Suppression is the consumer's
+     * decision; this class only records the fact.
+     */
+    private boolean isClippedText = false;
 
     public TextChunk() {
     }
@@ -95,6 +104,7 @@ public class TextChunk extends TextInfoChunk {
         this.isStrikethroughText = chunk.isStrikethroughText;
         this.textFormat = chunk.textFormat;
         this.symbolEnds = chunk.symbolEnds != null ? new ArrayList<>(chunk.symbolEnds) : null;
+        this.isClippedText = chunk.isClippedText;
     }
 
     @Override
@@ -192,6 +202,26 @@ public class TextChunk extends TextInfoChunk {
 
     public void setTextFormat(TextFormat textFormat) {
         this.textFormat = textFormat;
+    }
+
+    /**
+     * Reports whether this chunk was shown wholly outside its effective
+     * clipping path and therefore cannot be seen on the page.
+     *
+     * @return true if the chunk is clipped away, false otherwise
+     */
+    public boolean isClippedText() {
+        return isClippedText;
+    }
+
+    /**
+     * Records that this chunk was shown wholly outside its effective clipping
+     * path.
+     *
+     * @param clippedText true if the chunk is clipped away
+     */
+    public void setClippedText(boolean clippedText) {
+        this.isClippedText = clippedText;
     }
 
     public List<Double> getSymbolEnds() {
