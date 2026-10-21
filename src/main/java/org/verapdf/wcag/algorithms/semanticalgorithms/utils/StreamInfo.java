@@ -4,6 +4,7 @@ import org.verapdf.wcag.algorithms.entities.ObjectKey;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class StreamInfo implements Comparable<StreamInfo> {
     
@@ -174,5 +175,18 @@ public class StreamInfo implements Comparable<StreamInfo> {
             return startIndex - o.startIndex;
         }
         return 0;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StreamInfo that = (StreamInfo) o;
+        return operatorIndex == that.operatorIndex && Objects.equals(xObjectName, that.xObjectName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(operatorIndex, xObjectName);
     }
 }
