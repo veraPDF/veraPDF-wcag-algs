@@ -182,7 +182,8 @@ public class TextColumn extends TextInfoChunk {
 		StringBuilder stringBuilder = new StringBuilder();
 		for (int i = 0; i < textBlocks.size() - 1; ++i) {
 			stringBuilder.append(textBlocks.get(i));
-            TextChunkUtils.formatLineEnd(stringBuilder);
+            TextLine nextLine = textBlocks.get(i + 1).getFirstLine();
+            TextChunkUtils.formatLineEnd(stringBuilder, nextLine != null ? nextLine.getValue() : null);
 		}
         stringBuilder.append(textBlocks.get(textBlocks.size() - 1));
 		return stringBuilder.toString();
