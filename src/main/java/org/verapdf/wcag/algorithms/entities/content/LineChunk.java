@@ -183,6 +183,9 @@ public class LineChunk extends InfoChunk {
 			return new LineChunk(pageNumber, startX, startY, endX, endY, width);
 		}
 		double length = Math.sqrt(Math.pow(startX - endX, 2) + Math.pow(startY - endY, 2));
+		if (length == 0) {
+			return new LineChunk(pageNumber, startX, startY, endX, endY, width);
+		}
 		if (width > length) {
 			double centerX = 0.5 * (startX + endX);
 			double centerY = 0.5 * (startY + endY);
