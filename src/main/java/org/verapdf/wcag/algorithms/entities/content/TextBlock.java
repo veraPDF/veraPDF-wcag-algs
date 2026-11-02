@@ -186,7 +186,7 @@ public class TextBlock extends TextInfoChunk {
 		for (int i = 0; i < textLines.size() - 1; ++i) {
 			String textString = textLines.get(i).getValue();
 			result.append(textString);
-			TextChunkUtils.formatLineEnd(result);
+			TextChunkUtils.formatLineEnd(result, textLines.get(i + 1).getValue());
 		}
 
 		result.append(textLines.get(textLines.size() - 1).getValue());

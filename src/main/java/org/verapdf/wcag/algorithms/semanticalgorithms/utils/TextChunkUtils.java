@@ -37,7 +37,11 @@ public class TextChunkUtils {
     public static final double SPLIT_THRESHOLD_FACTOR = 0.21;
     public static final Pattern ZERO_UNICODE_REGEX_PATTERN = Pattern.compile("\u0000+");
 
-    public static final Set<Character> HYPHENATION_SIGNS = new HashSet<>(Arrays.asList('\u002D','\u2014','\u00AD'));
+    public static final Set<Character> HYPHENATION_SIGNS = new HashSet<>(Arrays.asList('\u002D','\u00AD'));
+
+    private static final char HYPHEN_MINUS = '\u002D';
+    private static final char SOFT_HYPHEN = '\u00AD';
+    private static final char EM_DASH = '\u2014';
 
     public static boolean isSpaceChunk(TextChunk chunk) {
         for (char symbol : chunk.getValue().toCharArray()) {
@@ -49,16 +53,107 @@ public class TextChunkUtils {
     }
 
     public static void formatLineEnd(StringBuilder stringBuilder) {
+        formatLineEnd(stringBuilder, null);
+    }
+
+    /**
+     * Ends a line of text that is continued by the next line. Soft hyphens at the line end are removed. A hyphen
+     * at the line end is removed if it is a hyphenation hyphen (see {@link #isHyphenationHyphen}), and kept
+     * otherwise. An em dash is kept. No space is added, except after a kept hyphen that follows white space
+     * or starts the text: it is a dash ("risk -" "Packing").
+     *
+     * @param stringBuilder the text up to the line end
+     * @param nextLine the text of the next line, or null if it is not known
+     */
+    public static void formatLineEnd(StringBuilder stringBuilder, String nextLine) {
         if (StaticContainers.isKeepLineBreaks()) {
             stringBuilder.append("\n");
-        } else {
-            if (TextChunkUtils.HYPHENATION_SIGNS.contains(stringBuilder.charAt(stringBuilder.length() - 1))) {
-                stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-            } else {
+            return;
+        }
+        int length = stringBuilder.length();
+        char lastSymbol = length > 0 ? stringBuilder.charAt(length - 1) : ' ';
+        if (lastSymbol == SOFT_HYPHEN) {
+            while (length > 0 && stringBuilder.charAt(length - 1) == SOFT_HYPHEN) {
+                stringBuilder.deleteCharAt(--length);
+            }
+        } else if (lastSymbol == HYPHEN_MINUS && isHyphenationHyphen(stringBuilder, nextLine)) {
+            stringBuilder.deleteCharAt(length - 1);
+        } else if (lastSymbol == HYPHEN_MINUS) {
+            if (length == 1 || isWhiteSpaceChar(stringBuilder.charAt(length - 2))) {
                 stringBuilder.append(" ");
             }
-
+        } else if (lastSymbol != EM_DASH) {
+            stringBuilder.append(" ");
         }
+    }
+
+    /**
+     * Checks if the hyphen at the end of the text is a hyphenation hyphen, that is, one that is there only
+     * because a word is broken over two lines. Hyphenation breaks a word between two letters and does not change
+     * the case of the letters, so the hyphen is part of the text if
+     * <ul>
+     *     <li>the symbol before it or the first symbol of the next line is not a letter ("1990-" "2000"),</li>
+     *     <li>the word before it is in capitals and the next line starts with a lowercase letter ("IT-" "department"),
+     *     or</li>
+     *     <li>the word before it is not in capitals and the next line starts with a capital ("Anglo-" "Saxon").</li>
+     * </ul>
+     * Two cases are taken to be hyphenation all the same: the next line starts with a hyphen, as some languages
+     * repeat the hyphen of a compound word there ("przyczynowo-" "-skutkowych"), and the hyphen follows white space
+     * and the next line starts with a lowercase letter ("insuffi -" "cienza"). If the next line is not known, the
+     * hyphen is taken to be a hyphenation hyphen.
+     *
+     * @param text the text, ending with a hyphen
+     * @param nextLine the text of the next line, or null if it is not known
+     * @return true if the hyphen is a hyphenation hyphen
+     */
+    public static boolean isHyphenationHyphen(CharSequence text, String nextLine) {
+        if (nextLine == null) {
+            return true;
+        }
+        int nextIndex = 0;
+        while (nextIndex < nextLine.length() && isWhiteSpaceChar(nextLine.charAt(nextIndex))) {
+            nextIndex++;
+        }
+        if (nextIndex == nextLine.length()) {
+            return false;
+        }
+        int nextCodePoint = nextLine.codePointAt(nextIndex);
+        int wordEnd = text.length() - 1;
+        if (wordEnd == 0) {
+            return false;
+        }
+        if (isWhiteSpaceChar(text.charAt(wordEnd - 1))) {
+            return Character.isLowerCase(nextCodePoint);
+        }
+        int wordStart = wordEnd;
+        boolean hasCapital = false;
+        boolean hasLowercase = false;
+        while (wordStart > 0) {
+            int codePoint = Character.codePointBefore(text, wordStart);
+            if (!Character.isLetter(codePoint)) {
+                break;
+            }
+            hasCapital |= Character.isUpperCase(codePoint);
+            hasLowercase |= Character.isLowerCase(codePoint);
+            wordStart -= Character.charCount(codePoint);
+        }
+        if (wordStart == wordEnd) {
+            return false;
+        }
+        if (nextCodePoint == HYPHEN_MINUS) {
+            return true;
+        }
+        if (!Character.isLetter(nextCodePoint)) {
+            return false;
+        }
+        boolean isCapitalWord = hasCapital && !hasLowercase;
+        if (Character.isLowerCase(nextCodePoint)) {
+            return !isCapitalWord;
+        }
+        if (Character.isUpperCase(nextCodePoint)) {
+            return isCapitalWord;
+        }
+        return true;
     }
 
     public static boolean isWhiteSpaceChunk(TextChunk chunk) {
