@@ -164,6 +164,9 @@ public class TextChunkUtils {
     }
 
     public static TextChunk getTextChunkPartForRange(TextChunk textChunk, double leftX, double rightX, boolean isTrim) {
+        if (textChunk == null || textChunk.getValue() == null || textChunk.getValue().isEmpty()) {
+            return null;
+        }
         Integer start = textChunk.getSymbolStartIndexByCoordinate(leftX);
         if (start == null) {
             return null;
@@ -172,8 +175,15 @@ public class TextChunkUtils {
         if (end == null) {
             return null;
         }
-        if (end != textChunk.getValue().length()) {
+        int length = textChunk.getValue().length();
+        if (start > length || end > length) {
+            return null;
+        }
+        if (end != length) {
             end++;
+        }
+        if (start > end) {
+            return null;
         }
         TextChunk result = TextChunk.getTextChunk(textChunk, start, end);
         return isTrim ? ChunksMergeUtils.getTrimTextChunk(result) : result;
