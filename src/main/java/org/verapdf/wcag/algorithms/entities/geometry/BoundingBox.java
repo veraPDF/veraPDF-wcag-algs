@@ -520,6 +520,41 @@ public class BoundingBox {
         return 0.0;
     }
 
+    /**
+     * Returns the intersection area for boxes on the same single page.
+     * Multi-page boxes and boxes on different pages have no measurable
+     * intersection area because their vertical coordinates are page-relative.
+     */
+    public static double getIntersectionArea(BoundingBox first, BoundingBox second) {
+        if (!first.isOnePageBoundingBox() || !second.isOnePageBoundingBox()
+                || !Objects.equals(first.pageNumber, second.pageNumber)) {
+            return 0;
+        }
+        double left = Math.max(first.getLeftX(), second.getLeftX());
+        double bottom = Math.max(first.getBottomY(), second.getBottomY());
+        double right = Math.min(first.getRightX(), second.getRightX());
+        double top = Math.min(first.getTopY(), second.getTopY());
+        return right <= left || top <= bottom ? 0 : (right - left) * (top - bottom);
+    }
+
+    /**
+     * Returns the Euclidean distance between boxes on the same single page.
+     *
+     * @throws IllegalArgumentException if either box spans multiple pages or
+     *                                  the boxes are on different pages
+     */
+    public static double getBoundingBoxDistance(BoundingBox first, BoundingBox second) {
+        if (!first.isOnePageBoundingBox() || !second.isOnePageBoundingBox()
+                || !Objects.equals(first.pageNumber, second.pageNumber)) {
+            throw new IllegalArgumentException("Distance is only defined for boxes on the same single page");
+        }
+        double horizontalDistance = Math.max(0,
+                Math.max(first.getLeftX() - second.getRightX(), second.getLeftX() - first.getRightX()));
+        double verticalDistance = Math.max(0,
+                Math.max(first.getBottomY() - second.getTopY(), second.getBottomY() - first.getTopY()));
+        return Math.hypot(horizontalDistance, verticalDistance);
+    }
+
     public String getLocation() {
         return ContextUtils.getContext(this);
     }
