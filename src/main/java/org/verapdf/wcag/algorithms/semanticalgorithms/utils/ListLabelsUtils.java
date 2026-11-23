@@ -42,11 +42,17 @@ public class ListLabelsUtils {
 	private static final Character o =  '\u006F';
 
 	public static boolean isListLabel(String value) {
+		if (value.isEmpty()) {
+			return false;
+		}
 		char label = value.charAt(0);
 		return labels.contains(label) || Character.isDigit(label) || isLetterLabel(value);
 	}
 
 	public static boolean isLetterLabel(String value) {
+		if (value.isEmpty()) {
+			return false;
+		}
 		boolean isFirstCharLetter = Character.isLetter(value.charAt(0));
 		if (value.length() > 2) {
 			return isFirstCharLetter && !Character.isLetter(value.charAt(1));
@@ -299,9 +305,10 @@ public class ListLabelsUtils {
 		Character secondChar = null;
 		ListInterval interval = new ListInterval();
 		for (ListItemTextInfo info : itemsInfo) {
-			boolean badListItem = info.getListItem().length() == 1 && info.hasOneLine() || 
+			boolean empty = info.getListItem().isEmpty();
+			boolean badListItem = info.getListItem().length() == 1 && info.hasOneLine() ||
 					(StaticContainers.isDataLoader() && firstChar != null && Objects.equals(firstChar, secondChar));
-			if (!Objects.equals(info.getListItem().charAt(0), firstChar) || badListItem) {
+			if (empty || !Objects.equals(info.getListItem().charAt(0), firstChar) || badListItem) {
 				if (SemanticType.LIST == info.getSemanticType()) {
 					interval.getListsIndexes().add(info.getIndex());
 					continue;
@@ -310,7 +317,7 @@ public class ListLabelsUtils {
 					interval.setNumberingStyle(NumberingStyleNames.UNORDERED);
 					listIntervals.add(interval);
 				}
-				if (badListItem) {
+				if (empty || badListItem) {
 					firstChar = null;
 					secondChar = null;
 				} else {
@@ -318,6 +325,9 @@ public class ListLabelsUtils {
 					secondChar = info.getListItem().length() > 1 ? info.getListItem().charAt(1) : ' ';
 				}
 				interval = new ListInterval();
+				if (empty) {
+					continue;
+				}
 			}
 			ListItemTextInfo newItemInfo = new ListItemTextInfo(info);
 			newItemInfo.setPrefix("");

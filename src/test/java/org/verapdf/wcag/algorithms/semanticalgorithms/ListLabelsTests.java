@@ -27,6 +27,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.verapdf.wcag.algorithms.entities.content.TextChunk;
 import org.verapdf.wcag.algorithms.entities.content.TextLine;
+import org.verapdf.wcag.algorithms.entities.enums.SemanticType;
 import org.verapdf.wcag.algorithms.entities.lists.ListInterval;
 import org.verapdf.wcag.algorithms.entities.lists.info.ListItemTextInfo;
 import org.verapdf.wcag.algorithms.semanticalgorithms.containers.StaticContainers;
@@ -202,6 +203,44 @@ public class ListLabelsTests {
            list.add(new ListItemTextInfo(i, null, new TextLine(new TextChunk(itemsList.get(i))), itemsList.get(i), false));
         }
         return list;
+    }
+
+    @Test
+    void testEmptyItemsSeparateListIntervals() {
+        StaticContainers.setIsDataLoader(false);
+        List<ListItemTextInfo> items = createInfoList(Arrays.asList("", "- first", "- second", "",
+                "- third", "- fourth", ""));
+        Set<ListInterval> intervals = ListLabelsUtils.getListItemsIntervals(items);
+        Assertions.assertEquals(2, intervals.size());
+        Assertions.assertTrue(intervals.contains(new ListInterval(1, 2)));
+        Assertions.assertTrue(intervals.contains(new ListInterval(4, 5)));
+        Assertions.assertFalse(ListLabelsUtils.isListLabel(""));
+        Assertions.assertFalse(ListLabelsUtils.isLetterLabel(""));
+    }
+
+    @Test
+    void testEmptyNestedListPreservesListInterval() {
+        StaticContainers.setIsDataLoader(false);
+        List<ListItemTextInfo> items = createInfoList(Arrays.asList("- first", "", "- second"));
+        items.set(1, new ListItemTextInfo(1, SemanticType.LIST,
+                new TextLine(new TextChunk("")), "", false));
+        Set<ListInterval> intervals = ListLabelsUtils.getListItemsIntervals(items);
+        Assertions.assertEquals(1, intervals.size());
+        ListInterval interval = intervals.iterator().next();
+        Assertions.assertEquals(Arrays.asList(1), interval.getListsIndexes());
+        Assertions.assertEquals(2, interval.getNumberOfListItems());
+        Assertions.assertEquals(0, interval.getStart());
+        Assertions.assertEquals(2, interval.getEnd());
+    }
+
+    @Test
+    void testEmptyItemsDoNotBreakNumberedDetection() {
+        List<ListItemTextInfo> items = createInfoList(Arrays.asList("", "1. first", "2. second", "",
+                "1. third", "2. fourth", ""));
+        Set<ListInterval> intervals = ListLabelsUtils.getListItemsIntervals(items);
+        Assertions.assertEquals(2, intervals.size());
+        Assertions.assertTrue(intervals.contains(new ListInterval(1, 2)));
+        Assertions.assertTrue(intervals.contains(new ListInterval(4, 5)));
     }
 
     @Test
